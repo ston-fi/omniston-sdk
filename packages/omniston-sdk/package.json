@@ -1,0 +1,48 @@
+{
+  "name": "@ston-fi/omniston-sdk",
+  "version": "0.1.0",
+  "description": "Typescript SDK for the STON.fi Omniston protocol",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ston-fi/omniston-sdk.git",
+    "directory": "packages/omniston-sdk"
+  },
+  "files": ["dist", "package.json", "README.md"],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "test": "CI=true pnpm run /^test:/",
+    "test:unit": "vitest",
+    "test:typecheck": "tsc --noEmit",
+    "dev": "tsup --watch",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "isomorphic-ws": "^5.0.0",
+    "json-rpc-2.0": "^1.7.0",
+    "rxjs": "^7.8.1",
+    "ws": "^8.17.1"
+  },
+  "devDependencies": {
+    "@ston-fi/typescript-config": "workspace:*",
+    "@types/ws": "^8.5.10",
+    "ts-proto": "^1.180.0",
+    "tsup": "^8.2.4",
+    "type-fest": "^4.23.0",
+    "typescript": "^5",
+    "vite": "5.3.1",
+    "vitest": "1.6.0"
+  }
+}

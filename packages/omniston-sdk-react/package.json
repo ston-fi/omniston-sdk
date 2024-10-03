@@ -1,0 +1,45 @@
+{
+  "name": "@ston-fi/omniston-sdk-react",
+  "version": "0.1.0",
+  "description": "React SDK for the STON.fi Omniston protocol",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ston-fi/omniston-sdk.git",
+    "directory": "packages/omniston-sdk-react"
+  },
+  "files": ["dist", "package.json", "README.md"],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "CI=true pnpm run /^test:/",
+    "test:typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ston-fi/omniston-sdk": "workspace:*",
+    "@tanstack/react-query": "^5.49.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@ston-fi/typescript-config": "workspace:*",
+    "@types/react": "^18",
+    "tsup": "^8.2.4",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  }
+}

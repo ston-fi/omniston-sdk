@@ -1,0 +1,7 @@
+{
+  "extends": "@ston-fi/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"]
+  }
+}

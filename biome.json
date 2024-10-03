@@ -2,18 +2,19 @@
   "$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["node_modules", ".turbo", "dist"]
+    "ignore": ["node_modules", ".turbo", ".next", "dist"]
   },
   "organizeImports": {
     "enabled": false
   },
   "formatter": {
     "enabled": true,
-    "include": ["./packages/**"],
+    "include": ["./examples/**", "./packages/**"],
     "indentStyle": "space"
   },
   "linter": {
     "enabled": true,
-    "include": ["./packages/**"]
+    "include": ["./packages/**"],
+    "ignore": ["./packages/omniston-sdk/src/api/messages/**"]
   }
 }
