@@ -1,0 +1,21 @@
+{
+  "name": "omniston-sdk-monorepo",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ston-fi/omniston-sdk"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "type": "module",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "prepare": "lefthook install",
+    "lint": "biome lint ./*",
+    "format": "biome format ./*"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "lefthook": "^1.7.11",
+    "turbo": "^2.0.12"
+  }
+}
