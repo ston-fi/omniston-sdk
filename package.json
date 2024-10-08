@@ -12,7 +12,11 @@
     "prepare": "lefthook install",
     "cleanup": "rm -rf .turbo node_modules ./{examples,packages}/**/{.next,.turbo,node_modules,dist}",
     "lint": "biome lint ./*",
-    "format": "biome format ./*"
+    "format": "biome format ./*",
+    "test": "turbo run test",
+    "build" : "turbo run build",
+    "build:packages" : "turbo run build --filter=./packages/*",
+    "build:examples" : "turbo run build --filter=./examples/*"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
