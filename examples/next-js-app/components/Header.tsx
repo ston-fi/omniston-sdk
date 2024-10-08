@@ -1,6 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { TonConnectButton } from "@tonconnect/ui-react";
+
+import logo from "../public/logo.svg";
 
 import { Badge } from "./ui/badge";
 
@@ -13,13 +16,13 @@ export function Header() {
           target="_blank"
           className="flex text-xl hover:opacity-80 transition-opacity relative w-max"
         >
-          <pre>Omniston</pre>
+          <Image src={logo} alt="logo" />
           <Badge className="absolute rotate-[-13deg] -right-8 -bottom-3 scale-[0.8]">
             demo
           </Badge>
         </a>
 
-        <TonConnectButton />
+        <TonConnectButton className="ml-[36px]" />
       </section>
     </header>
   );
