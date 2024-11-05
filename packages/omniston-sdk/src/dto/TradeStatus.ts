@@ -1,1 +1,1 @@
-export { TradeStatus } from "@/api/messages/omni/v1beta4/trader/trade";
+export { TradeStatus } from "@/api/messages/omni/v1beta5/trader/trade";

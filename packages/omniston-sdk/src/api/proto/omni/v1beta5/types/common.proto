@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package omni.v1beta5;
+
+// Generic address
+message Address {
+  // Blockchain code as defined by SLIP-044.
+  //
+  // See: <https://github.com/satoshilabs/slips/blob/master/slip-0044.md>
+  uint32 blockchain = 1;
+
+  // Blockchain-specific part of the address.
+  string address = 2;
+}
+
+// The method of trade settlement.
+enum SettlementMethod {
+  // Settlement of the trade by direct swap using 3rd-party contracts.
+  SETTLEMENT_METHOD_SWAP = 0;
+  // Settlement of the trade using an escrow contract.
+  SETTLEMENT_METHOD_ESCROW = 1;
+  // Settlement of the trade using Hash-Time-Lock Contract.
+  SETTLEMENT_METHOD_HTLC = 2;
+}
+
+message KeepAlive {
+
+}
+

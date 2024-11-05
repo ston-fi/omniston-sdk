@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package omni.v1beta5;
+
+message TonMessage {
+  string target_address = 1;
+  string send_amount = 2;
+  string payload = 3;
+}
+
+message TonTransaction {
+  repeated TonMessage messages = 1;
+}

@@ -92,27 +92,6 @@ describe("Omniston tests", () => {
       expect(lastQuote).toEqual(testQuote);
     });
 
-    test("a quote can expire", async () => {
-      // Setting up mocks.
-      vi.spyOn(fakeApiClient, "send").mockResolvedValue(testSubscriptionId);
-      vi.spyOn(fakeApiClient, "readStream").mockReturnValue(
-        from([QuoteEvent.toJSON(newEscrowQuoteEvent)]),
-      );
-
-      // Receiving a quote.
-      let lastQuote: Quote | null = null;
-      omniston.requestForQuote(quoteRequestEscrow).subscribe((quote) => {
-        lastQuote = quote;
-      });
-      await flushEventLoop();
-      expect(lastQuote).toEqual(testEscrowQuote);
-
-      // Advancing time for quote to expire.
-      // biome-ignore lint/style/noNonNullAssertion: test code
-      fakeTimer.time = testEscrowQuote.params!.escrow!.depositDeadline;
-      expect(lastQuote).toBeNull();
-    });
-
     test("clears a quote when server sends NoQuote", async () => {
       // Setting up mocks.
       const quoteEventSubject = new Subject<unknown>();
@@ -133,48 +112,6 @@ describe("Omniston tests", () => {
       // Sending a "no quote" event.
       quoteEventSubject.next(QuoteEvent.toJSON(noQuoteEvent));
       expect(lastQuote).toBeNull();
-    });
-
-    test("timers on first quote handler are unaffected if second quote handler is disposed", async () => {
-      // Setting up mocks.
-      const sendSpy = vi
-        .spyOn(fakeApiClient, "send")
-        .mockResolvedValue(testSubscriptionId);
-      vi.spyOn(fakeApiClient, "readStream").mockReturnValue(
-        from([QuoteEvent.toJSON(newEscrowQuoteEvent)]),
-      );
-
-      // Create first quote subscription.
-      let quote1: Quote | null = null;
-      const subscription1 = omniston
-        .requestForQuote(quoteRequestEscrow)
-        .subscribe((quote) => {
-          quote1 = quote;
-        });
-      await flushEventLoop();
-      expect(quote1).toEqual(testEscrowQuote);
-
-      // Create second quote subscription.
-      let quote2: Quote | null = null;
-      omniston.requestForQuote(quoteRequestEscrow).subscribe((quote) => {
-        quote2 = quote;
-      });
-      await flushEventLoop();
-      expect(quote2).toEqual(testEscrowQuote);
-
-      // Dispose the first subscription.
-      sendSpy.mockResolvedValue(true);
-      subscription1.unsubscribe();
-
-      // Advancing time for quote to expire.
-      // biome-ignore lint/style/noNonNullAssertion: test code
-      fakeTimer.time = testEscrowQuote.params!.escrow!.depositDeadline;
-
-      // The first subscription does not update the quote.
-      expect(quote1).toEqual(testEscrowQuote);
-
-      // The second subscription should expire the quote, even while the first one is disposed.
-      expect(quote2).toBeNull();
     });
 
     test("unsubscribe_quote is sent when user unsubscribes from the observable", async () => {

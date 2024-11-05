@@ -10,6 +10,10 @@ You can find all supported methods in our [docs](https://docs.ston.fi/docs/devel
 
 ## Installation
 
+> **Warning**
+> SDK is still under development and breaking changes might and probably will happen in the future. According to the [semantic versioning convention](https://semver.org/#spec-item-4), while the package's major version is zero, breaking changes might happen even in minor releases. Because of that, **if you are using SDK at this stage in production**, please **make sure that you are using the exact version of the package** in your `package.json` file
+> ​
+
 ### via NPM
 ```sh
 npm install @ston-fi/omniston-sdk-react

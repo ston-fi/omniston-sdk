@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package omni.v1beta5;
+
+import "omni/v1beta5/types/common.proto";
+
+// Represents route of swapping assets: `TON -> USDT`, `TON -> USDC -> USDT`, etc.
+message SwapRoute {
+  repeated SwapStep steps = 1;
+  string gas_budget = 2;
+  string extra_data_json = 10;
+}
+
+// Represents a single step in a route: `TON -> USDC -> USDT` route consists of `TON -> USDC` & `USDC -> USDT` steps.
+message SwapStep {
+  Address offer_asset_address = 1;
+  Address ask_asset_address = 2;
+  repeated SwapChunk chunks = 3;
+  string extra_data_json = 10;
+}
+
+// Represents a single swap tx in a step: `TON -> USDT` swap might consist of two chunks utilizing different protocols.
+message SwapChunk {
+  string protocol = 1; // StonFiV1, UniswapV2,
+  string offer_amount = 2;
+  string ask_amount = 3;
+  string extra_data_json = 10;
+}

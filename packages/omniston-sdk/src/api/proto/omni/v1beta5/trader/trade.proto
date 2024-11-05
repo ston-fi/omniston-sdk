@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package omni.v1beta5;
+
+import "omni/v1beta5/types/common.proto";
+
+//////////////////////////////////////////////
+// Chunks, steps & routes statuses
+//////////////////////////////////////////////
+
+enum ChunkResult {
+  CHUNK_RESULT_PROCESSING = 0;
+  CHUNK_RESULT_FILLED = 1;
+  CHUNK_RESULT_ABORTED = 2;
+}
+
+message ChunkStatus {
+  // Address of the contract that processes this chunk.
+  //
+  // Generally, this address receives offer tokens.
+  // More specifically, it might be the address of a protocol or liquidity pool.
+  Address target_address = 1;
+  string offer_units = 2;
+  string expected_ask_units = 3;
+  string actual_ask_units = 4;
+  ChunkResult result = 5;
+  string result_details_json = 6;
+}
+
+message StepStatus {
+  repeated ChunkStatus chunks = 1;
+}
+
+message RouteStatus {
+  repeated StepStatus steps = 1;
+}
+
+//////////////////////////////////////////////
+// Trade status
+//////////////////////////////////////////////
+
+
+enum TradeResult {
+  TRADE_RESULT_UNKNOWN = 0;
+  TRADE_RESULT_FULLY_FILLED = 1;
+  TRADE_RESULT_PARTIALLY_FILLED = 2;
+  TRADE_RESULT_ABORTED = 3;
+}
+
+// A request to track the status of specific trade
+message TrackTradeRequest {
+  // ID of the quote
+  string quote_id = 1;
+
+  // The address of trader's wallet that initiated transaction
+  Address trader_wallet_address = 2;
+}
+
+// Waiting for the trader to initiate the trade.
+// Getting this status means that the transaction initiating the trade hasn't appeared yet.
+message AwaitingTransfer {
+
+}
+
+// Initial transaction found, waiting for its mining.
+message Transferring {
+  // Hash of transaction that initiated the trade.
+  string outgoing_tx_hash = 1;
+}
+
+// Awaiting trade to fill.
+// For `SWAP`: awaiting swap transactions in the pools.
+// For `ESCROW` & `HTLC`: awaiting resolver's deposit
+message FillingTrade {
+  // Hash of transaction that initiated the trade.
+  string outgoing_tx_hash = 1;
+
+  // Info about partial filling of the trade.
+  repeated RouteStatus routes = 2;
+}
+
+// Specific to `HTLC` settlement. Resolver's deposit is claimable.
+// TODO: Think of joining Claims & Refunds in a single structure with multiple chunks.
+message ClaimAvailable {
+  // Address of HTLC contract with claimable deposit.
+  Address contract_address = 1;
+
+  // Index of deposit within HTLC contract with claimable deposit.
+  uint64 deposit_index = 2;
+}
+
+// Specific to `ESCROW` & `HTLC` settlement. Deposit timeout has expired, need to refund it.
+message RefundAvailable {
+  // Address of escrow or HTLC contract that enforces the swap.
+  Address contract_address = 1;
+
+  // Index of deposit within escrow or HTLC contract with refundable deposit.
+  uint64 deposit_index = 2;
+}
+
+// The transactions with incoming funds found, waiting for them to mine.
+message ReceivingFunds {
+  // Info about chunks of the trade.
+  repeated RouteStatus routes = 1;
+}
+
+// The trade has completed (fully or partially filled or fully aborted)
+message TradeSettled {
+  // Result of the trade
+  TradeResult result = 1;
+
+  // Info about partial filling of the trade.
+  repeated RouteStatus routes = 2;
+}
+
+message TradeStatus {
+  message StatusOneOf {
+    oneof status {
+      // Waiting for the trader to initiate the trade.
+      AwaitingTransfer awaiting_transfer = 1;
+      // Initial transaction found, waiting for transfer of funds to complete.
+      Transferring transferring = 2;
+
+      // Awaiting trade to fill.
+      // For `SWAP`: awaiting swap transactions in the pools.
+      // For `ESCROW` & `HTLC`: awaiting resolver's deposit.
+      FillingTrade filling_trade = 11;
+
+      // Specific to `HTLC` settlement. Resolver's deposit is claimable.
+      ClaimAvailable claim_available = 21;
+      // Specific to `ESCROW` & `HTLC` settlement. Deposit timeout has expired, need to refund it
+      RefundAvailable refund_available = 22;
+      // The transaction with incoming funds found, waiting for it to mine.
+      ReceivingFunds receiving_funds = 23;
+
+      // The trade has completed (fully or partially filled or fully aborted)
+      TradeSettled trade_settled = 91;
+
+      // The service message to keep connection alive
+      KeepAlive keep_alive = 100;
+    }
+  }
+
+  StatusOneOf status = 1;
+}
+
+service TradeGrpc {
+  // Request to track settling of the trade
+  //
+  // The server immediately sends current status in response and then all updates to the status.
+  //
+  // The server only closes the stream in case of errors. If the stream is interrupted or closed by the server,
+  // the client might reconnect to get further updates.
+  //
+  // The client should close the stream if it's not interested in further updates.
+  rpc Track (TrackTradeRequest) returns (stream TradeStatus){}
+}

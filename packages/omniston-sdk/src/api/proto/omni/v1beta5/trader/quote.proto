@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package omni.v1beta5;
+
+import "omni/v1beta5/types/common.proto";
+import "omni/v1beta5/types/quote.proto";
+
+// Indicates that the's no valid quote corresponding to RFQ.
+message NoQuoteEvent {
+
+}
+
+message QuoteEvent {
+  message EventOneOf {
+    oneof event {
+      Quote quote_updated = 1;
+      NoQuoteEvent no_quote = 2;
+      KeepAlive keep_alive = 100;
+    }
+  }
+
+  EventOneOf event = 1;
+}
+
+service QuoteGrpc {
+  // Request for quote.
+  //
+  // The server sends the stream of quotes in response, so that each next quote overrides previous one.
+  // This may occur either because the newer quote has better terms or because the older has expired.
+  //
+  // If there are no resolvers providing quotes for this request, empty stream is returned.
+  // If there are no resolvers providing quotes after an old quote has expired, the server sends an empty
+  // message (empty `quote_id` & other fields).
+  //
+  // The client is responsible for interrupting connection when not interested in further updates
+  // (either when starting the trade or because of cancelling the request).
+  rpc Quote (QuoteRequest) returns (stream QuoteEvent){}
+
+}

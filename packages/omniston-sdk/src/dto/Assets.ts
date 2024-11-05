@@ -1,7 +1,7 @@
 import {
   AssetInfo as ApiAssetInfo,
   AssetsResponse as ApiAssetsResponse,
-} from "@/api/messages/omni/v1beta4/trader/asset";
+} from "@/api/messages/omni/v1beta5/trader/asset";
 import type { Converter, SetNonNullable } from "@/types";
 
 export type AssetInfo = SetNonNullable<ApiAssetInfo, "address">;

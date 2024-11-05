@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Typescript SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -23,6 +23,7 @@
     }
   },
   "scripts": {
+    "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/api/messages --ts_proto_opt=outputEncodeMethods=false,snakeToCamel=keys,useNumericEnumForJson=true,stringEnums=true,emitDefaultValues=json-methods,outputServices=false,enumsAsLiterals=true -Isrc/api/proto src/api/proto/omni/v1beta5/**/*.proto",
     "test": "CI=true pnpm run /^test:/",
     "test:unit": "vitest",
     "test:typecheck": "tsc --noEmit",
@@ -36,6 +37,7 @@
     "ws": "^8.17.1"
   },
   "devDependencies": {
+    "@protobuf-ts/protoc": "^2.9.4",
     "@ston-fi/typescript-config": "workspace:*",
     "@types/ws": "^8.5.10",
     "ts-proto": "^1.180.0",

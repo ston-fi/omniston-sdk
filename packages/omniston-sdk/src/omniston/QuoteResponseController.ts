@@ -40,18 +40,6 @@ export class QuoteResponseController {
     if (event.event.quoteUpdated) {
       const quote = { ...event.event.quoteUpdated };
 
-      if (quote.params?.escrow) {
-        const expireTimeout =
-          quote.params.escrow.depositDeadline - quote.quoteTimestamp;
-
-        if (expireTimeout > 0) {
-          this.scheduler.schedule(
-            () => this.expireQuote(quote.quoteId),
-            expireTimeout,
-          );
-        }
-      }
-
       return quote;
     }
 

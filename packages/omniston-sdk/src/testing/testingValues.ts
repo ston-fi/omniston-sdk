@@ -54,6 +54,7 @@ export const testQuote = {
   referrerFeeUnits: "0",
   protocolFeeUnits: "0",
   params: {},
+  tradeStartDeadline: 0,
 } as const satisfies Quote;
 
 export const testEscrowQuote: Quote = {
@@ -68,7 +69,6 @@ export const testEscrowQuote: Quote = {
         address: "testResolverAddress",
         blockchain: Blockchain.TON,
       },
-      depositDeadline: 10000,
       resolveTimeout: 20000,
     },
   },
