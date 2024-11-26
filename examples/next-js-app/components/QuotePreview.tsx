@@ -7,18 +7,20 @@ import { bigNumberToFloat, cn } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
 
 export const QuotePreview = (props: { className?: string }) => {
-  const { data: quote, error, isFetching, isFetched } = useRfq();
+  const { data: quoteEvent, error, isFetching } = useRfq();
 
-  if (!isFetched && !isFetching) {
+  if (!isFetching) {
     return null;
   }
 
   return (
     <div {...props} className={cn("p-4 border rounded-md", props.className)}>
       {error ? (
-        <QuoteError error={error} />
-      ) : quote ? (
-        <QuoteData quote={quote} />
+        <QuoteError errorMessage={error.message} />
+      ) : quoteEvent?.type === "unsubscribed" ? (
+        <QuoteError errorMessage="Request timed out" />
+      ) : quoteEvent?.type === "quoteUpdated" ? (
+        <QuoteData quote={quoteEvent.quote} />
       ) : (
         <QuoteLoading />
       )}
@@ -26,11 +28,11 @@ export const QuotePreview = (props: { className?: string }) => {
   );
 };
 
-const QuoteError = ({ error }: { error: Error }) => {
+const QuoteError = ({ errorMessage }: { errorMessage: string }) => {
   return (
     <div className="text-red-500">
       <span>Error:&nbsp;</span>
-      <span className="overflow-hidden text-ellipsis">{error.message}</span>
+      <span className="overflow-hidden text-ellipsis">{errorMessage}</span>
     </div>
   );
 };

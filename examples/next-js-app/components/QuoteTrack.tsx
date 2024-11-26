@@ -22,7 +22,9 @@ function withQuoteTrackProps<P extends QuoteTrackProps>(
 ) {
   // eslint-disable-next-line react/display-name
   return (props: Omit<P, "quote" | "walletAddress">) => {
-    const { data: quote } = useRfq();
+    const { data: quoteEvent } = useRfq();
+    const quote =
+      quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : undefined;
     const walletAddress = useTonAddress();
 
     if (!quote) return null;
@@ -69,6 +71,10 @@ function TradeStatusContent({
   quote: Quote;
   status: NonNullable<TradeStatus["status"]>;
 }) {
+  if (status.unsubscribed) {
+    return <span>Request timed out</span>;
+  }
+
   if (status.awaitingTransfer) {
     return <span>Awaiting Transfer</span>;
   }

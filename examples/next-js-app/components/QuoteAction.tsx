@@ -21,7 +21,9 @@ export const QuoteAction = (buttonProps: Omit<ButtonProps, "children">) => {
   const wallet = useTonWallet();
   const omniston = useOmniston();
   const { slippageTolerance } = useSwapSettings();
-  const { data: quote } = useRfq();
+  const { data: quoteEvent } = useRfq();
+  const quote =
+    quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : undefined;
 
   const [isClicked, setIsClicked] = useState(false);
 
