@@ -12,3 +12,7 @@ Starting from [this moment](https://github.com/ston-fi/omniston-api/commit/c2892
 ### @ston-fi/omniston-sdk-react@0.3.0
 
 - the return type of the `useRfq` hook was changed. Now it will be an observable stream of events instead of `Quote | null` as it was before.
+
+### @ston-fi/omniston-example-next-js-app
+
+- [5a90083d](https://github.com/ston-fi/omniston-sdk/commit/5a90083d4acb298386f3b754b21626f3f4bacd14) apply required changes to support `@ston-fi/omniston-sdk-react@0.3.0`
