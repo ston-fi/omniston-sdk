@@ -1,7 +1,7 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { OmnistonProvider as _OmnistonProvider } from "@ston-fi/omniston-sdk-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function OmnistonProvider({
   children,

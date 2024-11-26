@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+
 import type { IApiClient } from "./ApiClient.types";
 
 export class FakeApiClient implements IApiClient {

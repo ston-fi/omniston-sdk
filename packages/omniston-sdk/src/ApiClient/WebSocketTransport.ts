@@ -1,6 +1,7 @@
 import WebSocket from "isomorphic-ws";
-import type { Transport } from "./Transport";
 import { Subject } from "rxjs";
+
+import type { Transport } from "./Transport";
 
 /**
  * WebSocket implementation of {@link Transport}.

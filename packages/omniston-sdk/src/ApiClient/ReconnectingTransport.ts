@@ -1,7 +1,8 @@
 import { Subject } from "rxjs";
+
+import { Timer } from "../helpers/timer/Timer";
+import type { ITimer } from "../helpers/timer/Timer.types";
 import type { Transport } from "./Transport";
-import type { ITimer } from "@/helpers/timer/Timer.types";
-import { Timer } from "@/helpers/timer/Timer";
 
 const DEFAULT_MAX_RETRIES = 10;
 const DEFAULT_RECONNECT_DELAY_MS = 1000;

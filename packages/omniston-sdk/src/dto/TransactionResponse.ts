@@ -1,5 +1,5 @@
-import { TransactionResponse as ApiTransactionResponse } from "@/api/messages/omni/v1beta5/trader/transaction_builder";
-import type { SetNonNullable } from "@/types";
+import { TransactionResponse as ApiTransactionResponse } from "../api/messages/omni/v1beta5/trader/transaction_builder";
+import type { SetNonNullable } from "../types";
 
 export type TransactionResponse = SetNonNullable<
   ApiTransactionResponse,

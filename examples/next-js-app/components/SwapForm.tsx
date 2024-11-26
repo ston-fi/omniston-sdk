@@ -1,15 +1,15 @@
 "use client";
 
-import type { ChangeEvent } from "react";
 import type { AssetInfo } from "@ston-fi/omniston-sdk-react";
+import type { ChangeEvent } from "react";
 
+import { AssetSelect } from "@/components/AssetSelect";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { AssetSelect } from "@/components/AssetSelect";
+import { addressEquals } from "@/helpers/addressEquals";
 import { useAssets } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { useSwapForm, useSwapFormDispatch } from "@/providers/swap-form";
-import { addressEquals } from "@/helpers/addressEquals";
 
 export const SwapForm = (props: { className?: string }) => {
   return (

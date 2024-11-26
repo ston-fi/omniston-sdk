@@ -27,3 +27,6 @@ message KeepAlive {
 
 }
 
+message Unsubscribed {
+
+}

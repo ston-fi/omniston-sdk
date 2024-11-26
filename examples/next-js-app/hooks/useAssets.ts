@@ -1,5 +1,5 @@
-import { useIsConnectionRestored } from "@tonconnect/ui-react";
 import { AssetInfo, useAssetList } from "@ston-fi/omniston-sdk-react";
+import { useIsConnectionRestored } from "@tonconnect/ui-react";
 
 type UseAssetsParams = {
   select?: (data: AssetInfo[]) => AssetInfo[];

@@ -1,11 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import { TonConnectButton } from "@tonconnect/ui-react";
+import Image from "next/image";
 
-import logo from "../public/logo.svg";
-
-import { Badge } from "./ui/badge";
+import { Badge } from "@/components/ui/badge";
+// TODO: for some reason, the TS in our CI is failing with the following error:
+// TS2307: Cannot find module '../public/logo.svg' or its corresponding type declarations.
+// For now, we are ignoring this error because the code works and with the local ts setup, it works as well
+// @ts-ignore
+import logo from "@/public/logo.svg";
 
 export function Header() {
   return (

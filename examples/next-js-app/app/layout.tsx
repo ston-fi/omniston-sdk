@@ -1,13 +1,12 @@
-import { unstable_noStore as noStore } from "next/cache";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import type { Metadata } from "next";
+import { unstable_noStore as noStore } from "next/cache";
+import { Inter } from "next/font/google";
 
-import { Providers } from "@/providers";
 import { Header } from "@/components/Header";
-
-import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Providers } from "@/providers";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

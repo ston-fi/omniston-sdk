@@ -1,13 +1,13 @@
-import type { QuoteEvent } from "@/dto/QuoteEvent";
-import type { Quote } from "@/dto/Quote";
-import type { QuoteRequest } from "@/dto/QuoteRequest";
-import type { TrackTradeRequest } from "@/dto/TrackTradeRequest";
-import type { TradeStatus } from "@/dto/TradeStatus";
-import type { TransactionRequest } from "@/dto/TransactionRequest";
-import type { TransactionResponse } from "@/dto/TransactionResponse";
-import { Blockchain, SettlementMethod } from "..";
-import type { AssetsResponse } from "@/dto/Assets";
-import type { Address } from "@/dto/Address";
+import { Blockchain, SettlementMethod } from "../constants";
+import type { Address } from "../dto/Address";
+import type { AssetsResponse } from "../dto/Assets";
+import type { Quote } from "../dto/Quote";
+import type { QuoteEvent } from "../dto/QuoteEvent";
+import type { QuoteRequest } from "../dto/QuoteRequest";
+import type { TrackTradeRequest } from "../dto/TrackTradeRequest";
+import type { TradeStatus } from "../dto/TradeStatus";
+import type { TransactionRequest } from "../dto/TransactionRequest";
+import type { TransactionResponse } from "../dto/TransactionResponse";
 
 export const assetTestRed: Address = {
   address: "kQDLvsZol3juZyOAVG8tWsJntOxeEZWEaWCbbSjYakQpuYN5",
@@ -17,7 +17,6 @@ export const assetTestBlue: Address = {
   address: "kQB_TOJSB7q3-Jm1O8s0jKFtqLElZDPjATs5uJGsujcjznq3",
   blockchain: Blockchain.TON,
 };
-// export const assetTestGreen = "kQCMGEfYTE-PkbmyVidhnc5rb2XSxUDevi8b2GBw3-Ke7w_p";
 
 export const quoteRequestSwap: QuoteRequest = {
   offerAssetAddress: assetTestRed,
@@ -93,6 +92,12 @@ export const newEscrowQuoteEvent: QuoteEvent = {
 export const noQuoteEvent: QuoteEvent = {
   event: {
     noQuote: {},
+  },
+};
+
+export const unsubscribedEvent: QuoteEvent = {
+  event: {
+    unsubscribed: {},
   },
 };
 

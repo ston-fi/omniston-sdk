@@ -1,8 +1,9 @@
 "use client";
 
-import * as React from "react";
-import { Omniston, type IOmnistonDependencies } from "@ston-fi/omniston-sdk";
+import { type IOmnistonDependencies, Omniston } from "@ston-fi/omniston-sdk";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import * as React from "react";
+
 import { ObservableRefCountCache } from "./ObservableRefCountCache";
 import { ObservableRefCountCacheContext } from "./ObservableRefCountCacheContext";
 
@@ -48,6 +49,9 @@ export const OmnistonProvider: React.FC<OmnistonProviderProps> =
 
     return (
       <OmnistonContext.Provider value={omniston}>
+        {
+          // TODO: if queryClient is passed it means that the provider already exists in the upper tree adn we don't need to create a new one
+        }
         <QueryClientProvider client={queryClient}>
           <ObservableRefCountCacheContext.Provider
             value={observableRefCountCacheRef.current}

@@ -1,32 +1,17 @@
-import { from, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import type { Quote } from "@/dto/Quote";
-import { QuoteRequest } from "@/dto/QuoteRequest";
-import { TrackTradeRequest } from "@/dto/TrackTradeRequest";
-import { TradeStatus } from "@/dto/TradeStatus";
-import { TransactionRequest } from "@/dto/TransactionRequest";
-import { TransactionResponse } from "@/dto/TransactionResponse";
-import { QuoteEvent } from "@/dto/QuoteEvent";
 import { FakeApiClient } from "../ApiClient/FakeApiClient";
+import { AssetsResponse } from "../dto/Assets";
+import type { Quote } from "../dto/Quote";
+import { QuoteEvent } from "../dto/QuoteEvent";
+import { QuoteRequest } from "../dto/QuoteRequest";
+import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";
+import { TrackTradeRequest } from "../dto/TrackTradeRequest";
+import { TradeStatus } from "../dto/TradeStatus";
+import { TransactionRequest } from "../dto/TransactionRequest";
+import { TransactionResponse } from "../dto/TransactionResponse";
 import { FakeTimer } from "../helpers/timer/FakeTimer";
-import {
-  newEscrowQuoteEvent,
-  newQuoteEvent,
-  noQuoteEvent,
-  quoteRequestEscrow,
-  quoteRequestSwap,
-  testEscrowQuote,
-  testAssetListResponse,
-  testQuote,
-  testTrackTradeRequest,
-  testTransactionRequest,
-  testTransactionResponse,
-  testTransactionResponseBase64,
-  tradeStatusAwaitingTransfer,
-} from "../testing/testingValues";
-import { Omniston } from "./Omniston";
-import { AssetsResponse } from "@/dto/Assets";
 import {
   METHOD_ASSET_QUERY,
   METHOD_BUILD_TRANSFER,
@@ -36,7 +21,21 @@ import {
   METHOD_TRACK_TRADE,
   METHOD_TRACK_TRADE_EVENT,
   METHOD_TRACK_TRADE_UNSUBSCRIBE,
-} from "@/omniston/rpcConstants";
+} from "../omniston/rpcConstants";
+import {
+  newQuoteEvent,
+  noQuoteEvent,
+  quoteRequestSwap,
+  testAssetListResponse,
+  testQuote,
+  testTrackTradeRequest,
+  testTransactionRequest,
+  testTransactionResponse,
+  testTransactionResponseBase64,
+  tradeStatusAwaitingTransfer,
+  unsubscribedEvent,
+} from "../testing/testingValues";
+import { Omniston } from "./Omniston";
 
 describe("Omniston tests", () => {
   const testSubscriptionId = 1;
@@ -73,8 +72,9 @@ describe("Omniston tests", () => {
 
       // Sending a quote request.
       let lastQuote: Quote | null = null;
-      omniston.requestForQuote(quoteRequestSwap).subscribe((quote) => {
-        lastQuote = quote;
+      omniston.requestForQuote(quoteRequestSwap).subscribe((quoteEvent) => {
+        lastQuote =
+          quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : null;
       });
       await flushEventLoop();
       expect(sendSpy).lastCalledWith(
@@ -92,7 +92,7 @@ describe("Omniston tests", () => {
       expect(lastQuote).toEqual(testQuote);
     });
 
-    test("clears a quote when server sends NoQuote", async () => {
+    test("sends a NoQuoteEvent when server sends NoQuote", async () => {
       // Setting up mocks.
       const quoteEventSubject = new Subject<unknown>();
       vi.spyOn(fakeApiClient, "send").mockResolvedValue(testSubscriptionId);
@@ -101,17 +101,15 @@ describe("Omniston tests", () => {
       );
 
       // Receiving a quote.
-      let lastQuote: Quote | null = null;
-      omniston.requestForQuote(quoteRequestSwap).subscribe((quote) => {
-        lastQuote = quote;
+      let lastQuoteEvent: QuoteResponseEvent | null = null;
+      omniston.requestForQuote(quoteRequestSwap).subscribe((quoteEvent) => {
+        lastQuoteEvent = quoteEvent;
       });
       await flushEventLoop();
-      quoteEventSubject.next(QuoteEvent.toJSON(newQuoteEvent));
-      expect(lastQuote).toEqual(testQuote);
 
       // Sending a "no quote" event.
       quoteEventSubject.next(QuoteEvent.toJSON(noQuoteEvent));
-      expect(lastQuote).toBeNull();
+      expect(lastQuoteEvent).toEqual({ type: "noQuote" });
     });
 
     test("unsubscribe_quote is sent when user unsubscribes from the observable", async () => {
@@ -156,6 +154,38 @@ describe("Omniston tests", () => {
       expect(sendSpy).lastCalledWith(METHOD_QUOTE_UNSUBSCRIBE, [
         testSubscriptionId,
       ]);
+    });
+
+    test("do not send unsubscribe_quote if received 'unsubscribed' event", async () => {
+      // Setting up mocks.
+      const quoteEventSubject = new Subject<unknown>();
+      const sendSpy = vi
+        .spyOn(fakeApiClient, "send")
+        .mockResolvedValue(testSubscriptionId);
+      vi.spyOn(fakeApiClient, "readStream").mockReturnValue(
+        quoteEventSubject.asObservable(),
+      );
+
+      // Receiving a quote.
+      let lastQuoteEvent: QuoteResponseEvent | null = null;
+      const subscription = omniston
+        .requestForQuote(quoteRequestSwap)
+        .subscribe((quoteEvent) => {
+          lastQuoteEvent = quoteEvent;
+        });
+      await flushEventLoop();
+
+      // Sending "unsubscribed" event.
+      quoteEventSubject.next(QuoteEvent.toJSON(unsubscribedEvent));
+      expect(lastQuoteEvent).toEqual({ type: "unsubscribed" });
+
+      subscription.unsubscribe();
+      await flushEventLoop();
+      // In the case of an "unsubscribed" event, we do not send an unsubscribe message.
+      expect(sendSpy).not.toHaveBeenCalledWith(
+        METHOD_QUOTE_UNSUBSCRIBE,
+        expect.anything(),
+      );
     });
   });
 

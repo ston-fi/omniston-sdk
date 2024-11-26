@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { ReconnectingTransport } from "./ReconnectingTransport";
+
+import { FakeTimer } from "../helpers/timer/FakeTimer";
 import { MockTransport } from "./MockTransport";
-import { FakeTimer } from "@/helpers/timer/FakeTimer";
+import { ReconnectingTransport } from "./ReconnectingTransport";
 
 describe("ReconnectingTransport tests", () => {
   let fakeTimer: FakeTimer;

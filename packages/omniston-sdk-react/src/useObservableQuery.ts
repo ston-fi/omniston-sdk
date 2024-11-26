@@ -1,11 +1,11 @@
+import type { Observable } from "@ston-fi/omniston-sdk";
 import {
+  type UseQueryOptions,
   useQuery,
   useQueryClient,
-  type QueryKey,
-  type UseQueryOptions,
 } from "@tanstack/react-query";
-import { createContext, useContext, useEffect } from "react";
-import { finalize, type Observable, type Subscription } from "rxjs";
+import { useContext, useEffect } from "react";
+
 import { ObservableRefCountCacheContext } from "./ObservableRefCountCacheContext";
 
 export type UseObservableQueryOptions<TData> = Omit<

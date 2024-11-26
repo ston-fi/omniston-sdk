@@ -1,6 +1,6 @@
 "use client";
 
-import { TonConnectUIProvider, THEME } from "@tonconnect/ui-react";
+import { THEME, TonConnectUIProvider } from "@tonconnect/ui-react";
 
 export function TonConnectProvider({
   children,

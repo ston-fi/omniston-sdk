@@ -2,12 +2,12 @@
 
 import { Settings } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { SwapSettings } from "@/components/SwapSettings";
-import { SwapForm } from "@/components/SwapForm";
 import { QuoteAction } from "@/components/QuoteAction";
 import { QuotePreview } from "@/components/QuotePreview";
 import { QuoteTrack } from "@/components/QuoteTrack";
+import { SwapForm } from "@/components/SwapForm";
+import { SwapSettings } from "@/components/SwapSettings";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (

@@ -1,10 +1,10 @@
 "use client";
 
-import type { Quote } from "@ston-fi/omniston-sdk-react";
 import { useRfq } from "@/hooks/useRfq";
+import type { Quote } from "@ston-fi/omniston-sdk-react";
 
+import { bigNumberToFloat, cn } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
-import { cn, bigNumberToFloat } from "@/lib/utils";
 
 export const QuotePreview = (props: { className?: string }) => {
   const { data: quote, error, isFetching, isFetched } = useRfq();

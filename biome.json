@@ -5,7 +5,7 @@
     "ignore": ["node_modules", ".turbo", ".next", "dist"]
   },
   "organizeImports": {
-    "enabled": false
+    "enabled": true
   },
   "formatter": {
     "enabled": true,

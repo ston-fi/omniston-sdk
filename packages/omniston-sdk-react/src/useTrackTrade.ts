@@ -3,8 +3,8 @@
 import type { TrackTradeRequest, TradeStatus } from "@ston-fi/omniston-sdk";
 
 import {
-  useObservableQuery,
   type UseObservableQueryOptions,
+  useObservableQuery,
 } from "./useObservableQuery";
 import { useOmniston } from "./useOmniston";
 

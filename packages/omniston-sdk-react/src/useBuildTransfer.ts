@@ -1,11 +1,11 @@
 import type {
-  TransactionResponse,
   TransactionRequest,
+  TransactionResponse,
 } from "@ston-fi/omniston-sdk";
 import {
-  useQuery,
   type UseQueryOptions,
   type UseQueryResult,
+  useQuery,
 } from "@tanstack/react-query";
 
 import { useOmniston } from "./useOmniston";

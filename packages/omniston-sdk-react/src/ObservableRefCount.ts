@@ -1,13 +1,11 @@
-import { finalize, type Observable, type Subscription } from "rxjs";
+import type { Observable as SimpleObservable } from "@ston-fi/omniston-sdk";
+import { Observable, type Subscription } from "rxjs";
 
 export class ObservableRefCount {
-  private readonly createObservable: () => Observable<unknown>;
   public refCount = 0;
   private subscription: Subscription | null = null;
 
-  constructor(createObservable: () => Observable<unknown>) {
-    this.createObservable = createObservable;
-  }
+  constructor(private createObservable: () => SimpleObservable<unknown>) {}
 
   subscribe({
     next,
@@ -21,8 +19,14 @@ export class ObservableRefCount {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
-    const observable = this.createObservable().pipe(finalize(finalizer));
-    this.subscription = observable.subscribe({ next, error });
+    this.subscription = new Observable<unknown>((subscriber) => {
+      const subscription = this.createObservable().subscribe(subscriber);
+
+      return () => {
+        subscription.unsubscribe();
+        finalizer();
+      };
+    }).subscribe({ next, error });
     return this.subscription;
   }
 

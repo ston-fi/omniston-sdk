@@ -1,10 +1,10 @@
 "use client";
 
-import { TonConnectProvider } from "./ton-connect";
-import { QueryProvider } from "./query";
 import { OmnistonProvider } from "./omniston";
-import { SwapSettingsProvider } from "./swap-settings";
+import { QueryProvider } from "./query";
 import { SwapFormProvider } from "./swap-form";
+import { SwapSettingsProvider } from "./swap-settings";
+import { TonConnectProvider } from "./ton-connect";
 
 export function Providers({
   children,

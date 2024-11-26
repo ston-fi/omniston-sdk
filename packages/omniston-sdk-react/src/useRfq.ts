@@ -1,11 +1,11 @@
 "use client";
 
-import type { Quote, QuoteRequest } from "@ston-fi/omniston-sdk";
+import type { QuoteRequest, QuoteResponseEvent } from "@ston-fi/omniston-sdk";
 import type { UseQueryResult } from "@tanstack/react-query";
 
 import {
-  useObservableQuery,
   type UseObservableQueryOptions,
+  useObservableQuery,
 } from "./useObservableQuery";
 import { useOmniston } from "./useOmniston";
 
@@ -15,10 +15,10 @@ import { useOmniston } from "./useOmniston";
 export function useRfq(
   quoteRequest: QuoteRequest,
   queryOptions?: Omit<
-    UseObservableQueryOptions<Quote | null>,
+    UseObservableQueryOptions<QuoteResponseEvent>,
     "queryKey" | "requestFn"
   >,
-): UseQueryResult<Quote | null> {
+): UseQueryResult<QuoteResponseEvent> {
   const omniston = useOmniston();
 
   return useObservableQuery({

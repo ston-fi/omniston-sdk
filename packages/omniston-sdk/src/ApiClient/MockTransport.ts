@@ -1,4 +1,5 @@
 import { Subject } from "rxjs";
+
 import type { Transport } from "./Transport";
 
 export class MockTransport implements Transport {

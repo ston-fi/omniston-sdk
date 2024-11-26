@@ -1,8 +1,8 @@
 import {
   JSONRPCClient,
+  type JSONRPCParams,
   JSONRPCServer,
   JSONRPCServerAndClient,
-  type JSONRPCParams,
 } from "json-rpc-2.0";
 import { Observable } from "rxjs";
 

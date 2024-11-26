@@ -1,5 +1,5 @@
-import { QuoteRequest as ApiQuoteRequest } from "@/api/messages/omni/v1beta5/types/quote";
-import type { SetOptional } from "@/types";
+import { QuoteRequest as ApiQuoteRequest } from "../api/messages/omni/v1beta5/types/quote";
+import type { SetOptional } from "../types";
 
 export type QuoteRequest = SetOptional<
   ApiQuoteRequest,

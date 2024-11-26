@@ -138,6 +138,7 @@ message TradeStatus {
 
       // The service message to keep connection alive
       KeepAlive keep_alive = 100;
+      Unsubscribed unsubscribed = 101;
     }
   }
 

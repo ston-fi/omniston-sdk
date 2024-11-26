@@ -1,5 +1,5 @@
-// @ts-check
-
+// @ts-ignore - esbuild-analyzer package is not typed
+import AnalyzerPlugin from "esbuild-analyzer";
 import { defineConfig } from "tsup";
 
 export default defineConfig({
@@ -9,4 +9,9 @@ export default defineConfig({
   dts: true,
   clean: true,
   sourcemap: true,
+  esbuildPlugins: [
+    AnalyzerPlugin({
+      outfile: "./build-report.html",
+    }),
+  ],
 });

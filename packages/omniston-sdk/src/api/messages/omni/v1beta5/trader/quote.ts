@@ -5,7 +5,7 @@
 // source: omni/v1beta5/trader/quote.proto
 
 /* eslint-disable */
-import { KeepAlive } from "../types/common";
+import { KeepAlive, Unsubscribed } from "../types/common";
 import { Quote } from "../types/quote";
 
 export const protobufPackage = "omni.v1beta5";
@@ -21,6 +21,7 @@ export interface QuoteEvent_EventOneOf {
   quoteUpdated?: Quote | undefined;
   noQuote?: NoQuoteEvent | undefined;
   keepAlive?: KeepAlive | undefined;
+  unsubscribed?: Unsubscribed | undefined;
 }
 
 function createBaseNoQuoteEvent(): NoQuoteEvent {
@@ -87,7 +88,12 @@ export const QuoteEvent = {
 };
 
 function createBaseQuoteEvent_EventOneOf(): QuoteEvent_EventOneOf {
-  return { quoteUpdated: undefined, noQuote: undefined, keepAlive: undefined };
+  return {
+    quoteUpdated: undefined,
+    noQuote: undefined,
+    keepAlive: undefined,
+    unsubscribed: undefined,
+  };
 }
 
 export const QuoteEvent_EventOneOf = {
@@ -102,6 +108,9 @@ export const QuoteEvent_EventOneOf = {
       keepAlive: isSet(object.keep_alive)
         ? KeepAlive.fromJSON(object.keep_alive)
         : undefined,
+      unsubscribed: isSet(object.unsubscribed)
+        ? Unsubscribed.fromJSON(object.unsubscribed)
+        : undefined,
     };
   },
 
@@ -115,6 +124,9 @@ export const QuoteEvent_EventOneOf = {
     }
     if (message.keepAlive !== undefined) {
       obj.keep_alive = KeepAlive.toJSON(message.keepAlive);
+    }
+    if (message.unsubscribed !== undefined) {
+      obj.unsubscribed = Unsubscribed.toJSON(message.unsubscribed);
     }
     return obj;
   },
@@ -139,6 +151,10 @@ export const QuoteEvent_EventOneOf = {
     message.keepAlive =
       object.keepAlive !== undefined && object.keepAlive !== null
         ? KeepAlive.fromPartial(object.keepAlive)
+        : undefined;
+    message.unsubscribed =
+      object.unsubscribed !== undefined && object.unsubscribed !== null
+        ? Unsubscribed.fromPartial(object.unsubscribed)
         : undefined;
     return message;
   },

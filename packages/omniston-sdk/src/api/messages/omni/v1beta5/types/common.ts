@@ -78,6 +78,8 @@ export interface Address {
 
 export interface KeepAlive {}
 
+export interface Unsubscribed {}
+
 function createBaseAddress(): Address {
   return { blockchain: 0, address: "" };
 }
@@ -133,6 +135,33 @@ export const KeepAlive = {
   },
   fromPartial<I extends Exact<DeepPartial<KeepAlive>, I>>(_: I): KeepAlive {
     const message = createBaseKeepAlive();
+    return message;
+  },
+};
+
+function createBaseUnsubscribed(): Unsubscribed {
+  return {};
+}
+
+export const Unsubscribed = {
+  fromJSON(_: any): Unsubscribed {
+    return {};
+  },
+
+  toJSON(_: Unsubscribed): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Unsubscribed>, I>>(
+    base?: I,
+  ): Unsubscribed {
+    return Unsubscribed.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Unsubscribed>, I>>(
+    _: I,
+  ): Unsubscribed {
+    const message = createBaseUnsubscribed();
     return message;
   },
 };

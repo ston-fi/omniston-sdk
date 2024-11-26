@@ -3,17 +3,17 @@
 import { useState } from "react";
 
 import { Blockchain, useOmniston } from "@ston-fi/omniston-sdk-react";
-import { useMemo } from "react";
 import {
-  useTonConnectUI,
   useTonConnectModal,
+  useTonConnectUI,
   useTonWallet,
 } from "@tonconnect/ui-react";
+import { useMemo } from "react";
 
-import { useRfq } from "@/hooks/useRfq";
-import { useSwapSettings } from "@/providers/swap-settings";
-import { percentToPercentBps } from "@/lib/utils";
 import { Button, type ButtonProps } from "@/components/ui/button";
+import { useRfq } from "@/hooks/useRfq";
+import { percentToPercentBps } from "@/lib/utils";
+import { useSwapSettings } from "@/providers/swap-settings";
 
 export const QuoteAction = (buttonProps: Omit<ButtonProps, "children">) => {
   const [tonConnect] = useTonConnectUI();

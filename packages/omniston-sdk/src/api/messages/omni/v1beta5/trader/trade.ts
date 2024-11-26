@@ -5,7 +5,7 @@
 // source: omni/v1beta5/trader/trade.proto
 
 /* eslint-disable */
-import { Address, KeepAlive } from "../types/common";
+import { Address, KeepAlive, Unsubscribed } from "../types/common";
 
 export const protobufPackage = "omni.v1beta5";
 
@@ -228,6 +228,7 @@ export interface TradeStatus_StatusOneOf {
   tradeSettled?: TradeSettled | undefined;
   /** The service message to keep connection alive */
   keepAlive?: KeepAlive | undefined;
+  unsubscribed?: Unsubscribed | undefined;
 }
 
 function createBaseChunkStatus(): ChunkStatus {
@@ -739,6 +740,7 @@ function createBaseTradeStatus_StatusOneOf(): TradeStatus_StatusOneOf {
     receivingFunds: undefined,
     tradeSettled: undefined,
     keepAlive: undefined,
+    unsubscribed: undefined,
   };
 }
 
@@ -769,6 +771,9 @@ export const TradeStatus_StatusOneOf = {
       keepAlive: isSet(object.keep_alive)
         ? KeepAlive.fromJSON(object.keep_alive)
         : undefined,
+      unsubscribed: isSet(object.unsubscribed)
+        ? Unsubscribed.fromJSON(object.unsubscribed)
+        : undefined,
     };
   },
 
@@ -797,6 +802,9 @@ export const TradeStatus_StatusOneOf = {
     }
     if (message.keepAlive !== undefined) {
       obj.keep_alive = KeepAlive.toJSON(message.keepAlive);
+    }
+    if (message.unsubscribed !== undefined) {
+      obj.unsubscribed = Unsubscribed.toJSON(message.unsubscribed);
     }
     return obj;
   },
@@ -841,6 +849,10 @@ export const TradeStatus_StatusOneOf = {
     message.keepAlive =
       object.keepAlive !== undefined && object.keepAlive !== null
         ? KeepAlive.fromPartial(object.keepAlive)
+        : undefined;
+    message.unsubscribed =
+      object.unsubscribed !== undefined && object.unsubscribed !== null
+        ? Unsubscribed.fromPartial(object.unsubscribed)
         : undefined;
     return message;
   },

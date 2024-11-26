@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, type FC } from "react";
+import type { AssetInfo } from "@ston-fi/omniston-sdk-react";
 import { ChevronDown } from "lucide-react";
+import { type FC, useState } from "react";
 
-import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Command,
   CommandEmpty,
@@ -20,8 +19,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-
-import type { AssetInfo } from "@ston-fi/omniston-sdk-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 type AssetSelectProps = {
   assets?: AssetInfo[];

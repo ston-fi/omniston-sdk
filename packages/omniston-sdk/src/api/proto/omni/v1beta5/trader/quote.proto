@@ -16,6 +16,7 @@ message QuoteEvent {
       Quote quote_updated = 1;
       NoQuoteEvent no_quote = 2;
       KeepAlive keep_alive = 100;
+      Unsubscribed unsubscribed = 101;
     }
   }
 

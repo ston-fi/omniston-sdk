@@ -1,8 +1,8 @@
 import type { AssetsResponse } from "@ston-fi/omniston-sdk";
 import {
-  useQuery,
   type UseQueryOptions,
   type UseQueryResult,
+  useQuery,
 } from "@tanstack/react-query";
 
 import { useOmniston } from "./useOmniston";

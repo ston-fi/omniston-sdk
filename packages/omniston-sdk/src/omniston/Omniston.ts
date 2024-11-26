@@ -1,21 +1,19 @@
-import { finalize, map, Observable, type Subscription } from "rxjs";
+import { Observable, type Subscription, filter, finalize, map } from "rxjs";
 
-import { ReconnectingTransport } from "@/ApiClient/ReconnectingTransport";
-import { WebSocketTransport } from "@/ApiClient/WebSocketTransport";
-import { AssetsResponse } from "@/dto/Assets";
-import type { Quote } from "@/dto/Quote";
-import { QuoteRequest } from "@/dto/QuoteRequest";
-import { TrackTradeRequest } from "@/dto/TrackTradeRequest";
-import { TradeStatus } from "@/dto/TradeStatus";
-import { TransactionRequest } from "@/dto/TransactionRequest";
-import { TransactionResponse } from "@/dto/TransactionResponse";
-import { QuoteEvent } from "@/dto/QuoteEvent";
 import { ApiClient } from "../ApiClient/ApiClient";
 import type { IApiClient } from "../ApiClient/ApiClient.types";
+import { ReconnectingTransport } from "../ApiClient/ReconnectingTransport";
+import { WebSocketTransport } from "../ApiClient/WebSocketTransport";
+import { AssetsResponse } from "../dto/Assets";
+import { QuoteEvent } from "../dto/QuoteEvent";
+import { QuoteRequest } from "../dto/QuoteRequest";
+import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";
+import { TrackTradeRequest } from "../dto/TrackTradeRequest";
+import { TradeStatus } from "../dto/TradeStatus";
+import { TransactionRequest } from "../dto/TransactionRequest";
+import { TransactionResponse } from "../dto/TransactionResponse";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
-import type { IOmnistonDependencies } from "./Omniston.types";
-import { QuoteResponseController } from "./QuoteResponseController";
 import {
   METHOD_ASSET_QUERY,
   METHOD_BUILD_TRANSFER,
@@ -25,7 +23,10 @@ import {
   METHOD_TRACK_TRADE,
   METHOD_TRACK_TRADE_EVENT,
   METHOD_TRACK_TRADE_UNSUBSCRIBE,
-} from "@/omniston/rpcConstants";
+} from "../omniston/rpcConstants";
+import type { Observable as SimpleObservable } from "../types";
+import type { IOmnistonDependencies } from "./Omniston.types";
+import { QuoteResponseController } from "./QuoteResponseController";
 
 /**
  * The main class for the Omniston Trader SDK.
@@ -72,7 +73,7 @@ export class Omniston {
 
   private async _requestForQuote(
     request: QuoteRequest,
-  ): Promise<Observable<Quote | null>> {
+  ): Promise<Observable<QuoteResponseEvent>> {
     await this.apiClient.ensureConnection();
 
     const subscriptionId = (await this.apiClient.send(
@@ -85,14 +86,15 @@ export class Omniston {
       .pipe(map(QuoteEvent.fromJSON));
 
     const quoteController = new QuoteResponseController({
-      timer: this.timer,
       quoteEvents,
     });
 
     return quoteController.quote.pipe(
-      finalize(() =>
-        this.unsubscribeFromStream(METHOD_QUOTE_UNSUBSCRIBE, subscriptionId),
-      ),
+      finalize(() => {
+        if (!quoteController.isServerUnsubscribed) {
+          this.unsubscribeFromStream(METHOD_QUOTE_UNSUBSCRIBE, subscriptionId);
+        }
+      }),
     );
   }
 
@@ -144,6 +146,7 @@ export class Omniston {
       .readStream(METHOD_TRACK_TRADE_EVENT, subscriptionId)
       .pipe(
         map((status) => TradeStatus.fromJSON(status)),
+        filter(({ status }) => !status?.keepAlive),
         finalize(() =>
           this.unsubscribeFromStream(
             METHOD_TRACK_TRADE_UNSUBSCRIBE,
@@ -194,7 +197,7 @@ function unwrapObservable<TArgs extends Array<unknown>, TReturn>(
   ) => Promise<Observable<TReturn>>,
 ) {
   return function (this: Omniston, ...args: TArgs) {
-    return new Observable<TReturn>((subscriber) => {
+    const observable = new Observable<TReturn>((subscriber) => {
       const result = originalMethod.apply(this, args);
 
       let unsubscribed = false;
@@ -218,5 +221,19 @@ function unwrapObservable<TArgs extends Array<unknown>, TReturn>(
         innerSubscription?.unsubscribe();
       };
     });
+
+    // Narrowing the RxJS Observable type to avoid exposing the whole RxJS API
+    // This will allow us to change the implementation without breaking the public API in the future
+    const simpleObservable: SimpleObservable<TReturn> = {
+      subscribe(cb) {
+        const subscription = observable.subscribe(cb);
+
+        return {
+          unsubscribe: subscription.unsubscribe.bind(subscription),
+        };
+      },
+    };
+
+    return simpleObservable;
   };
 }

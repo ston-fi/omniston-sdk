@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk-react",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "React SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -26,18 +26,20 @@
     "dev": "tsup --watch",
     "build": "tsup",
     "test": "CI=true pnpm run /^test:/",
+    "test:unit": "vitest",
     "test:typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ston-fi/omniston-sdk": "workspace:*",
     "@tanstack/react-query": "^5.49.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "vitest": "1.6.0"
   },
   "devDependencies": {
     "@ston-fi/typescript-config": "workspace:*",
     "@types/react": "^18",
-    "tsup": "^8.2.4",
-    "typescript": "^5"
+    "esbuild-analyzer": "0.2.0",
+    "tsup": "^8.2.4"
   },
   "peerDependencies": {
     "react": "^18.0.0"
