@@ -14,6 +14,7 @@ import { Button, type ButtonProps } from "@/components/ui/button";
 import { useRfq } from "@/hooks/useRfq";
 import { percentToPercentBps } from "@/lib/utils";
 import { useSwapSettings } from "@/providers/swap-settings";
+import { useTrackingQuoteState } from "@/providers/tracking-quote";
 
 export const QuoteAction = (buttonProps: Omit<ButtonProps, "children">) => {
   const [tonConnect] = useTonConnectUI();
@@ -24,6 +25,8 @@ export const QuoteAction = (buttonProps: Omit<ButtonProps, "children">) => {
   const { data: quoteEvent } = useRfq();
   const quote =
     quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : undefined;
+
+  const { setQuoteId } = useTrackingQuoteState();
 
   const [isClicked, setIsClicked] = useState(false);
 
@@ -57,6 +60,8 @@ export const QuoteAction = (buttonProps: Omit<ButtonProps, "children">) => {
           );
         }
 
+        setQuoteId(quote.quoteId);
+
         await tonConnect.sendTransaction({
           validUntil: Date.now() + 1000000,
           messages: omniMessages.map((message) => ({
@@ -67,6 +72,7 @@ export const QuoteAction = (buttonProps: Omit<ButtonProps, "children">) => {
         });
       } catch (error) {
         console.error(error);
+        setQuoteId(null);
       } finally {
         setIsClicked(false);
       }

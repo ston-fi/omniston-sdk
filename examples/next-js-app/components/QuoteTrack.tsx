@@ -9,11 +9,11 @@ import {
 import { useTonAddress } from "@tonconnect/ui-react";
 
 import { Spinner } from "@/components/ui/spinner";
-import { useRfq } from "@/hooks/useRfq";
 import { cn } from "@/lib/utils";
+import { useTrackingQuoteState } from "@/providers/tracking-quote";
 
 type QuoteTrackProps = {
-  quote: Quote;
+  quoteId: Quote["quoteId"];
   walletAddress: string;
 };
 
@@ -21,19 +21,17 @@ function withQuoteTrackProps<P extends QuoteTrackProps>(
   Component: React.ComponentType<P>,
 ) {
   // eslint-disable-next-line react/display-name
-  return (props: Omit<P, "quote" | "walletAddress">) => {
-    const { data: quoteEvent } = useRfq();
-    const quote =
-      quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : undefined;
+  return (props: Omit<P, "quoteId" | "walletAddress">) => {
+    const { quoteId } = useTrackingQuoteState();
     const walletAddress = useTonAddress();
 
-    if (!quote) return null;
+    if (!quoteId) return null;
     if (!walletAddress) return null;
 
     return (
       <Component
         {...(props as P)}
-        quote={quote}
+        quoteId={quoteId}
         walletAddress={walletAddress}
       />
     );
@@ -42,12 +40,12 @@ function withQuoteTrackProps<P extends QuoteTrackProps>(
 
 export const QuoteTrack = withQuoteTrackProps(
   ({
-    quote,
+    quoteId,
     walletAddress,
     ...props
   }: QuoteTrackProps & { className?: string }) => {
     const { data: tradeStatus } = useTrackTrade({
-      quoteId: quote.quoteId,
+      quoteId,
       traderWalletAddress: {
         address: walletAddress,
         blockchain: Blockchain.TON,
@@ -58,17 +56,15 @@ export const QuoteTrack = withQuoteTrackProps(
 
     return (
       <div className={cn("p-4 border rounded-md", props.className)}>
-        <TradeStatusContent quote={quote} status={tradeStatus.status} />
+        <TradeStatusContent status={tradeStatus.status} />
       </div>
     );
   },
 );
 
 function TradeStatusContent({
-  quote,
   status,
 }: {
-  quote: Quote;
   status: NonNullable<TradeStatus["status"]>;
 }) {
   if (status.unsubscribed) {

@@ -5,6 +5,7 @@ import { QueryProvider } from "./query";
 import { SwapFormProvider } from "./swap-form";
 import { SwapSettingsProvider } from "./swap-settings";
 import { TonConnectProvider } from "./ton-connect";
+import { TrackingQuoteProvider } from "./tracking-quote";
 
 export function Providers({
   children,
@@ -18,7 +19,9 @@ export function Providers({
       <QueryProvider>
         <OmnistonProvider apiUrl={omnistonApiUrl}>
           <SwapSettingsProvider>
-            <SwapFormProvider>{children}</SwapFormProvider>
+            <SwapFormProvider>
+              <TrackingQuoteProvider>{children}</TrackingQuoteProvider>
+            </SwapFormProvider>
           </SwapSettingsProvider>
         </OmnistonProvider>
       </QueryProvider>
