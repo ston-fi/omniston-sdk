@@ -7,9 +7,11 @@ import {
 import { useDebounce } from "@/hooks";
 import { floatToBigNumber } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
+import { useTrackingQuoteState } from "@/providers/tracking-quote";
 
 export const useRfq = () => {
   const { askAsset, offerAsset, askAmount, offerAmount } = useSwapForm();
+  const { quoteId } = useTrackingQuoteState();
 
   const [debouncedQuoteRequest] = useDebounce<QuoteRequest>(
     {
@@ -35,6 +37,6 @@ export const useRfq = () => {
     debouncedQuoteRequest.amount?.offerUnits !== undefined;
 
   return _useRfq(debouncedQuoteRequest, {
-    enabled: isFormFilled,
+    enabled: isFormFilled && !quoteId,
   });
 };
