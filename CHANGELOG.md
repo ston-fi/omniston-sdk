@@ -1,5 +1,15 @@
 # Changelog
 
+### 04-12-2024
+
+### @ston-fi/omniston-sdk-react@0.3.1
+
+- passing `disable` parameter to the `ObservableQuery` will cause the ws unsubscribe event
+
+### @ston-fi/omniston-example-next-js-app
+
+- the `QuotePreview` component was extended with the quote resolver information
+
 ### 26-11-2024
 
 Starting from [this moment](https://github.com/ston-fi/omniston-api/commit/c2892c10a7db36b01b91fa01306c874664f7a1bc) Omniston API can send `Unsubscribed` messages to the client. Receiving such an event in the `QuoteEvent` or `TradeStatus` stream means that no other events will ever be sent in response.

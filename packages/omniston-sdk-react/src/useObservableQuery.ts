@@ -37,12 +37,16 @@ export function useObservableQuery<TData>({
   );
 
   useEffect(() => {
+    if (queryOptions.enabled === false) {
+      return;
+    }
+
     observableRefCount.increaseRefCount();
 
     return () => {
       observableRefCount.decreaseRefCount();
     };
-  }, [observableRefCount]);
+  }, [observableRefCount, queryOptions.enabled]);
 
   return useQuery({
     ...queryOptions,

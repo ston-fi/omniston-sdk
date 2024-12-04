@@ -1,8 +1,11 @@
 "use client";
 
+import { ExternalLink } from "lucide-react";
+
 import { useRfq } from "@/hooks/useRfq";
 import type { Quote } from "@ston-fi/omniston-sdk-react";
 
+import { useExplorer } from "@/hooks/useExplorer";
 import { bigNumberToFloat, cn } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
 
@@ -43,33 +46,50 @@ const QuoteLoading = () => {
 
 const QuoteData = ({ quote }: { quote: Quote }) => {
   const { askAsset, offerAsset } = useSwapForm();
+  const { nftPreviewUrl } = useExplorer();
 
   if (!askAsset || !offerAsset) {
     return null;
   }
 
   return (
-    <ul className="grid grid-cols-[max-content,_1fr] gap-2">
-      <li className="contents">
+    <ul className="space-y-2 [&>li]:grid [&>li]:grid-cols-[max-content,_1fr] [&>li]:gap-2">
+      <li>
         <b>Offer amount:</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(quote.offerUnits, offerAsset.decimals)}&nbsp;
+          {bigNumberToFloat(quote.offerUnits, offerAsset.decimals)}
+          &nbsp;
           {offerAsset.symbol}
         </span>
       </li>
-      <li className="contents">
+      <li>
         <b>Ask amount:</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(quote.askUnits, askAsset.decimals)}&nbsp;
+          {bigNumberToFloat(quote.askUnits, askAsset.decimals)}
+          &nbsp;
           {askAsset.symbol}
         </span>
       </li>
-      <li className="contents">
+      <li>
         <b>Protocol fee:</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(quote.protocolFeeUnits, offerAsset.decimals)}&nbsp;
+          {bigNumberToFloat(quote.protocolFeeUnits, offerAsset.decimals)}
+          &nbsp;
           {offerAsset.symbol}
         </span>
+      </li>
+      <hr />
+      <li>
+        <b>Resolved by:</b>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={nftPreviewUrl(quote.resolverId).toString()}
+          className="overflow-hidden text-ellipsis text-end hover:text-primary inline-flex gap-1 items-center justify-end"
+        >
+          {quote.resolverName}
+          <ExternalLink size={16} />
+        </a>
       </li>
     </ul>
   );
