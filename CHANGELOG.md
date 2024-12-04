@@ -9,6 +9,8 @@
 ### @ston-fi/omniston-example-next-js-app
 
 - the `QuotePreview` component was extended with the quote resolver information
+- [b2ffcab5](https://github.com/ston-fi/omniston-sdk/commit/b2ffcab58f8bd9382e10068a96bb906e21288566) improve demo app by calling the quote track API only after accepting the quote
+- [25e7ebce](https://github.com/ston-fi/omniston-sdk/commit/25e7ebce09e5b28fbbbdc98f481c6bd28ef8444f) improve demo app by disabling the RFQ query when any quote tracking is in process
 
 ### 26-11-2024
 
