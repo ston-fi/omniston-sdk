@@ -13,12 +13,12 @@ export default function Home() {
   return (
     <section className="mx-auto w-full max-w-[500px] pt-4 md:pt-12 flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <h3 className="text-xl font-medium mr-auto">Swap</h3>
+        <h1 className="text-xl leading-8 font-medium mr-auto">Swap</h1>
 
         <SwapSettings
           trigger={
-            <Button variant="outline" className="p-2">
-              <Settings size={24} />
+            <Button variant="outline" className="size-8 p-0">
+              <Settings size={16} />
             </Button>
           }
         />
