@@ -1,5 +1,12 @@
 # Changelog
 
+### 16-12-2024
+
+### @ston-fi/omniston-sdk-react@0.3.2
+
+- allow React 19 as peer dependency
+- correct type declaration for `useAssetList` hook
+
 ### 04-12-2024
 
 ### @ston-fi/omniston-sdk-react@0.3.1

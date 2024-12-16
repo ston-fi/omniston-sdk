@@ -10,9 +10,12 @@ import { useOmniston } from "./useOmniston";
 /**
  * Wrapper for {@link Omniston.assetList} method to use with react-query.
  */
-export function useAssetList(
-  queryOptions?: Omit<UseQueryOptions<AssetsResponse>, "queryKey" | "queryFn">,
-): UseQueryResult<AssetsResponse> {
+export function useAssetList<TError = Error, TData = AssetsResponse>(
+  queryOptions?: Omit<
+    UseQueryOptions<AssetsResponse, TError, TData>,
+    "queryKey" | "queryFn"
+  >,
+): UseQueryResult<TData, TError> {
   const omniston = useOmniston();
 
   return useQuery({

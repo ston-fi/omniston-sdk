@@ -8,18 +8,8 @@ type UseAssetsParams = {
 export const useAssets = ({ select }: UseAssetsParams = {}) => {
   const isConnectionRestored = useIsConnectionRestored();
 
-  const result = useAssetList({
+  return useAssetList({
     enabled: isConnectionRestored,
+    select: ({ assets }) => (select ? select(assets) : assets),
   });
-
-  let data: AssetInfo[] = [];
-  if (result.data) {
-    const assets = result.data.assets;
-    data = select?.(assets) ?? assets;
-  }
-
-  return {
-    ...result,
-    data,
-  };
 };
