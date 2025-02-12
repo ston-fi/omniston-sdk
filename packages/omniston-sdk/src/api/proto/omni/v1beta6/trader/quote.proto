@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package omni.v1beta5;
+package omni.v1beta6;
 
-import "omni/v1beta5/types/common.proto";
-import "omni/v1beta5/types/quote.proto";
+import "omni/v1beta6/types/common.proto";
+import "omni/v1beta6/types/quote.proto";
 
 // Indicates that the's no valid quote corresponding to RFQ.
 message NoQuoteEvent {
@@ -14,13 +14,16 @@ message QuoteEvent {
   message EventOneOf {
     oneof event {
       Quote quote_updated = 1;
+      // Indicates that the's no valid quote corresponding to RFQ.
       NoQuoteEvent no_quote = 2;
+      // The service message to keep connection alive.
       KeepAlive keep_alive = 100;
+      // Service message indicating that a request for quote has expired. Used only for WebSocket API.
       Unsubscribed unsubscribed = 101;
     }
   }
 
-  EventOneOf event = 1;
+  EventOneOf event = 10000;
 }
 
 service QuoteGrpc {

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package omni.v1beta5;
+package omni.v1beta6;
 
 // Generic address
 message Address {
@@ -17,16 +17,20 @@ message Address {
 enum SettlementMethod {
   // Settlement of the trade by direct swap using 3rd-party contracts.
   SETTLEMENT_METHOD_SWAP = 0;
-  // Settlement of the trade using an escrow contract.
+  // Settlement of the trade using a single-chain escrow contract.
   SETTLEMENT_METHOD_ESCROW = 1;
   // Settlement of the trade using Hash-Time-Lock Contract.
   SETTLEMENT_METHOD_HTLC = 2;
 }
 
+// The server periodically emits `KeepAlive` message to keep the connection alive.
 message KeepAlive {
 
 }
 
+// Service message indicating that a request has expired.
+//
+// Used only for WebSocket API.
 message Unsubscribed {
 
 }

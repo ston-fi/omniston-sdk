@@ -29,6 +29,8 @@ export const OmnistonProvider: React.FC<OmnistonProviderProps> =
     const [omniston, setOmniston] = React.useState(
       () => new Omniston(omnistonProps),
     );
+    const [observableRefCountCache, setObservableRefCountCache] =
+      React.useState(() => new ObservableRefCountCache());
 
     // biome-ignore lint/correctness/useExhaustiveDependencies:
     const queryClient = React.useMemo(
@@ -36,16 +38,17 @@ export const OmnistonProvider: React.FC<OmnistonProviderProps> =
       [!!queryClientProp],
     );
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies:
+    // biome-ignore lint/correctness/useExhaustiveDependencies: use structural equality
     React.useEffect(() => {
-      setOmniston(new Omniston(omnistonProps));
+      omniston.close(); // this is needed only for the initial effect trigger
+      const instance = new Omniston(omnistonProps);
+      setOmniston(instance);
+      setObservableRefCountCache(new ObservableRefCountCache());
+
+      return () => {
+        instance.close();
+      };
     }, [JSON.stringify(omnistonProps)]);
-
-    React.useEffect(() => () => omniston.close(), [omniston]);
-
-    const observableRefCountCacheRef = React.useRef(
-      new ObservableRefCountCache(),
-    );
 
     return (
       <OmnistonContext.Provider value={omniston}>
@@ -54,7 +57,7 @@ export const OmnistonProvider: React.FC<OmnistonProviderProps> =
         }
         <QueryClientProvider client={queryClient}>
           <ObservableRefCountCacheContext.Provider
-            value={observableRefCountCacheRef.current}
+            value={observableRefCountCache}
           >
             {children}
           </ObservableRefCountCacheContext.Provider>

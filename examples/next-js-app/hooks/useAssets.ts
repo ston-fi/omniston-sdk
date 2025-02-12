@@ -1,15 +1,9 @@
-import { AssetInfo, useAssetList } from "@ston-fi/omniston-sdk-react";
-import { useIsConnectionRestored } from "@tonconnect/ui-react";
+import { STATIC_ASSETS, type AssetInfo } from "@/constants/assets";
 
 type UseAssetsParams = {
   select?: (data: AssetInfo[]) => AssetInfo[];
 };
 
 export const useAssets = ({ select }: UseAssetsParams = {}) => {
-  const isConnectionRestored = useIsConnectionRestored();
-
-  return useAssetList({
-    enabled: isConnectionRestored,
-    select: ({ assets }) => (select ? select(assets) : assets),
-  });
+  return { data: select ? select(STATIC_ASSETS) : STATIC_ASSETS };
 };

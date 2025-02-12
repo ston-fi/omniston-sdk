@@ -1,13 +1,22 @@
 syntax = "proto3";
 
-package omni.v1beta5;
+package omni.v1beta6;
 
+// TODO: Document
 message TonMessage {
   string target_address = 1;
   string send_amount = 2;
   string payload = 3;
 }
 
+// TODO: Document
 message TonTransaction {
   repeated TonMessage messages = 1;
+}
+
+// TODO: Document
+message Transaction {
+  oneof transaction {
+    TonTransaction ton = 607;
+  }
 }

@@ -2,7 +2,6 @@ import { Subject } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { FakeApiClient } from "../ApiClient/FakeApiClient";
-import { AssetsResponse } from "../dto/Assets";
 import type { Quote } from "../dto/Quote";
 import { QuoteEvent } from "../dto/QuoteEvent";
 import { QuoteRequest } from "../dto/QuoteRequest";
@@ -13,7 +12,6 @@ import { TransactionRequest } from "../dto/TransactionRequest";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { FakeTimer } from "../helpers/timer/FakeTimer";
 import {
-  METHOD_ASSET_QUERY,
   METHOD_BUILD_TRANSFER,
   METHOD_QUOTE,
   METHOD_QUOTE_EVENT,
@@ -26,7 +24,6 @@ import {
   newQuoteEvent,
   noQuoteEvent,
   quoteRequestSwap,
-  testAssetListResponse,
   testQuote,
   testTrackTradeRequest,
   testTransactionRequest,
@@ -36,6 +33,7 @@ import {
   unsubscribedEvent,
 } from "../testing/testingValues";
 import { Omniston } from "./Omniston";
+import { OmnistonError } from "@/omniston";
 
 describe("Omniston tests", () => {
   const testSubscriptionId = 1;
@@ -187,19 +185,50 @@ describe("Omniston tests", () => {
         expect.anything(),
       );
     });
+
+    test("propagates errors from the ApiClient in the event stream", async () => {
+      // Setting up mocks.
+      const quoteEventSubject = new Subject<unknown>();
+      vi.spyOn(fakeApiClient, "send").mockResolvedValue(testSubscriptionId);
+      vi.spyOn(fakeApiClient, "readStream").mockReturnValue(
+        quoteEventSubject.asObservable(),
+      );
+
+      // Receiving a quote.
+      let lastError: unknown = null;
+      omniston.requestForQuote(quoteRequestSwap).subscribe({
+        error: (err) => {
+          lastError = err;
+        },
+      });
+      await flushEventLoop();
+
+      quoteEventSubject.error("test error");
+      expect(lastError).toBeInstanceOf(OmnistonError);
+      expect((lastError as OmnistonError).message).toBe("test error");
+    });
   });
 
-  test("can build a transaction", async () => {
-    const sendSpy = vi
-      .spyOn(fakeApiClient, "send")
-      .mockResolvedValue(TransactionResponse.toJSON(testTransactionResponse));
-    const result = await omniston.buildTransfer(testTransactionRequest);
-    expect(sendSpy).lastCalledWith(
-      METHOD_BUILD_TRANSFER,
-      TransactionRequest.toJSON(testTransactionRequest),
-    );
-    // Omniston translates payload from hex-encoded to base64-encoded.
-    expect(result).toEqual(testTransactionResponseBase64);
+  describe("buildTransfer", () => {
+    test("can build a transaction", async () => {
+      const sendSpy = vi
+        .spyOn(fakeApiClient, "send")
+        .mockResolvedValue(TransactionResponse.toJSON(testTransactionResponse));
+      const result = await omniston.buildTransfer(testTransactionRequest);
+      expect(sendSpy).lastCalledWith(
+        METHOD_BUILD_TRANSFER,
+        TransactionRequest.toJSON(testTransactionRequest),
+      );
+      // Omniston translates payload from hex-encoded to base64-encoded.
+      expect(result).toEqual(testTransactionResponseBase64);
+    });
+
+    test("errors are propagated", async () => {
+      vi.spyOn(fakeApiClient, "send").mockRejectedValue("test error");
+      await expect(
+        omniston.buildTransfer(testTransactionRequest),
+      ).rejects.toThrowError("test error");
+    });
   });
 
   describe("track trade", () => {
@@ -254,6 +283,28 @@ describe("Omniston tests", () => {
         testSubscriptionId,
       ]);
     });
+
+    test("errors are propagated", async () => {
+      // Setting up mocks.
+      const tradeStatusSubject = new Subject<unknown>();
+      vi.spyOn(fakeApiClient, "send").mockResolvedValue(testSubscriptionId);
+      vi.spyOn(fakeApiClient, "readStream").mockReturnValue(
+        tradeStatusSubject.asObservable(),
+      );
+
+      // Receiving a trade status.
+      let lastError: unknown = null;
+      omniston.trackTrade(testTrackTradeRequest).subscribe({
+        error: (err) => {
+          lastError = err;
+        },
+      });
+      await flushEventLoop();
+
+      tradeStatusSubject.error("test error");
+      expect(lastError).toBeInstanceOf(OmnistonError);
+      expect((lastError as OmnistonError).message).toBe("test error");
+    });
   });
 
   test("closes the ApiClient", () => {
@@ -262,16 +313,5 @@ describe("Omniston tests", () => {
     omniston.close();
 
     expect(closeSpy).toHaveBeenCalledOnce();
-  });
-
-  test("gets a list of assets", async () => {
-    const sendSpy = vi
-      .spyOn(fakeApiClient, "send")
-      .mockResolvedValue(AssetsResponse.toJSON(testAssetListResponse));
-
-    const result = await omniston.assetList();
-
-    expect(sendSpy).lastCalledWith(METHOD_ASSET_QUERY, {});
-    expect(result).toEqual(testAssetListResponse);
   });
 });

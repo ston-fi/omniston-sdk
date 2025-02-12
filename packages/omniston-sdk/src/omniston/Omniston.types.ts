@@ -14,7 +14,7 @@ export interface IOmnistonDependencies {
   /**
    * Omniston WebSocket API URL.
    *
-   * {@example `https://omni.ston.fi/ws`}
+   * {@example `wss://omni-ws.ston.fi`}
    */
   readonly apiUrl: URL | string;
 }

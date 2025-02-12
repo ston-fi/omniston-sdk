@@ -1,4 +1,3 @@
-import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { unstable_noStore as noStore } from "next/cache";
 import { Inter } from "next/font/google";
@@ -25,7 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn(inter.className, "flex flex-col min-h-[100svh]")}>
-        <Analytics />
         <Providers
           omnistonApiUrl={
             process.env.NEXT_PUBLIC_OMNISTON_API_URL ?? "wss://omni-ws.ston.fi"

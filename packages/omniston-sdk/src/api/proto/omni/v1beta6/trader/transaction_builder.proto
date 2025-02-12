@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package omni.v1beta6;
+
+import "omni/v1beta6/types/common.proto";
+import "omni/v1beta6/types/quote.proto";
+import "omni/v1beta6/types/transaction.proto";
+
+// A request to generate unsigned transfer to initiate the trade.
+message BuildTransferRequest {
+  // The address on `offer_blockchain` that will send initial transaction to start the trade
+  Address source_address = 1;
+  // The address on `ask_blockchain` that will receive result of the trade
+  Address destination_address = 2;
+  // The valid quote received from `QuoteGrpc`
+  Quote quote = 10;
+}
+
+service TransactionBuilderGrpc {
+  rpc BuildTransfer (BuildTransferRequest) returns (Transaction){}
+
+  // TODO
+  // rpc BuildClaim(BuildClaimRequest) returns (Transaction){}
+}

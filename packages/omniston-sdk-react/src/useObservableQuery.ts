@@ -1,4 +1,4 @@
-import type { Observable } from "@ston-fi/omniston-sdk";
+import type { Observable, OmnistonError } from "@ston-fi/omniston-sdk";
 import {
   type UseQueryOptions,
   useQuery,
@@ -9,8 +9,8 @@ import { useContext, useEffect } from "react";
 import { ObservableRefCountCacheContext } from "./ObservableRefCountCacheContext";
 
 export type UseObservableQueryOptions<TData> = Omit<
-  UseQueryOptions<TData>,
-  "queryFn" | "staleTime"
+  UseQueryOptions<TData, OmnistonError>,
+  "queryFn" | "staleTime" | "retry"
 > & {
   /**
    * Use instead of queryFn to define the query function.
@@ -52,23 +52,29 @@ export function useObservableQuery<TData>({
     ...queryOptions,
     queryFn: () => {
       return new Promise<never>((_, reject) => {
+        let isRejected = false;
+
         observableRefCount.subscribe({
           next: (data) => {
             queryClient.setQueryData(queryOptions.queryKey, data);
           },
           error: (err) => {
+            isRejected = true;
             reject(err);
           },
           finalizer: () => {
-            queryClient.cancelQueries({ queryKey: queryOptions.queryKey });
-            queryClient.invalidateQueries({
-              queryKey: queryOptions.queryKey,
-              refetchType: "none",
-            });
+            if (!isRejected) {
+              queryClient.cancelQueries({ queryKey: queryOptions.queryKey });
+              queryClient.invalidateQueries({
+                queryKey: queryOptions.queryKey,
+                refetchType: "none",
+              });
+            }
           },
         });
       });
     },
     staleTime: Number.POSITIVE_INFINITY,
+    retry: false,
   });
 }

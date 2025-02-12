@@ -1,9 +1,16 @@
-import { QuoteRequest as ApiQuoteRequest } from "../api/messages/omni/v1beta5/types/quote";
-import type { SetOptional } from "../types";
+import type { RequestSettlementParams } from "@/dto/RequestSettlementParams";
+import { QuoteRequest as ApiQuoteRequest } from "../api/messages/omni/v1beta6/types/quote";
+import type { OverrideProperties, SetOptional } from "../types";
 
-export type QuoteRequest = SetOptional<
-  ApiQuoteRequest,
-  "referrerAddress" | "referrerFeeBps" | "askAssetAddress" | "offerAssetAddress"
+export type QuoteRequest = OverrideProperties<
+  SetOptional<
+    ApiQuoteRequest,
+    | "referrerAddress"
+    | "referrerFeeBps"
+    | "askAssetAddress"
+    | "offerAssetAddress"
+  >,
+  { settlementParams?: RequestSettlementParams }
 >;
 
 export const QuoteRequest = {

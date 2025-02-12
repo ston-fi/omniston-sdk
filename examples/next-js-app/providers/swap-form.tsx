@@ -1,6 +1,6 @@
 "use client";
 
-import type { AssetInfo } from "@ston-fi/omniston-sdk-react";
+import type { AssetInfo } from "@/constants/assets";
 import {
   type Dispatch,
   type ReactNode,

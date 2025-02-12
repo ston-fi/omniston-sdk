@@ -1,4 +1,5 @@
 import type {
+  OmnistonError,
   TransactionRequest,
   TransactionResponse,
 } from "@ston-fi/omniston-sdk";
@@ -16,10 +17,10 @@ import { useOmniston } from "./useOmniston";
 export function useBuildTransfer(
   request: TransactionRequest,
   queryOptions?: Omit<
-    UseQueryOptions<TransactionResponse>,
+    UseQueryOptions<TransactionResponse, OmnistonError>,
     "queryKey" | "queryFn"
   >,
-): UseQueryResult<TransactionResponse> {
+): UseQueryResult<TransactionResponse, OmnistonError> {
   const omniston = useOmniston();
 
   return useQuery({

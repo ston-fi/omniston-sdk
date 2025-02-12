@@ -1,14 +1,26 @@
 syntax = "proto3";
 
-package omni.v1beta5;
+package omni.v1beta6;
 
-import "omni/v1beta5/types/common.proto";
-import "omni/v1beta5/types/swap.proto";
+import "omni/v1beta6/types/common.proto";
+import "omni/v1beta6/types/swap.proto";
 
 /////////////////////////////////////////////////////////////////
 // The set of types for `QuoteGrpc.Quote` method.
 /////////////////////////////////////////////////////////////////
 
+// Additional parameters of RFQ related to settlement.
+//
+// Some parameters might be valid only in a subset of settlement methods on a subset of supported blockchains.
+// These parameters might be omitted if corresponding settlement methods won't be used.
+message RequestSettlementParams {
+  // Max price slippage in basis points (0.01%).
+  uint32 max_price_slippage_bps = 1;
+  // Max number of outgoing messages supported by the wallet.
+  //
+  // For TON blockchain defaults to 4 if omitted.
+  uint32 max_outgoing_messages = 2;
+}
 
 // Settlement parameters specific to `SWAP` settlement method.
 message SwapSettlementParams {
@@ -17,6 +29,8 @@ message SwapSettlementParams {
 }
 
 // Settlement parameters specific to `ESCROW` settlement method.
+//
+// **UNSTABLE:** This is unstable API, it's subject to backward-incompatible changes.
 message EscrowSettlementParams {
   // Address of escrow contract that enforces the swap.
   Address contract_address = 1;
@@ -30,6 +44,8 @@ message EscrowSettlementParams {
 }
 
 // Settlement parameters specific to `HTLC` settlement method.
+//
+// **UNSTABLE:** This is unstable API, it's subject to backward-incompatible changes.
 message HtlcSettlementParams {
   // Address of htlc contract that enforces the swap.
   Address contract_address = 1;
@@ -59,8 +75,8 @@ message QuoteRequest {
       string ask_units = 4;
     }
   }
-  // Either the amount of offer asset or ask asset.
-  AmountOneOf amount = 3;
+
+  AmountOneOf amount = 10000;
 
   // The address of referrer that will receive the fees.
   Address referrer_address = 5;
@@ -72,6 +88,9 @@ message QuoteRequest {
   // The protocol limits settlement methods in quotes to specified methods.
   // Different combinations of offer & ask chains might support different methods.
   repeated SettlementMethod settlement_methods = 7;
+
+  // Additional parameters of request related to settlement.
+  RequestSettlementParams settlement_params = 10;
 }
 
 message Quote {
@@ -99,10 +118,10 @@ message Quote {
   // The address of referrer that will receive the fees.
   Address referrer_address = 8;
 
-  // The amount of fees that the referrer will get (in units of `offer_asset_address`).
+  // The amount of fees that the referrer will get (in units of `ask_asset_address`).
   string referrer_fee_units = 9;
 
-  // The amount of fees charged by the protocol (in units of `offer_asset_address`).
+  // The amount of fees charged by the protocol (in units of `ask_asset_address`).
   string protocol_fee_units = 10;
 
   // The timestamp (UTC seconds) of Quote sent by resolver.
@@ -114,6 +133,9 @@ message Quote {
   // The resolver may still settle the trades started after this deadline has passed at own discretion.
   uint64 trade_start_deadline = 12;
 
+  // Total gas budget required to perform the trade.
+  string gas_budget = 13;
+
   // Additional parameters specific to settlement method.
   message ParamsOneOf {
     oneof params {
@@ -123,6 +145,5 @@ message Quote {
     }
   }
 
-  // Additional parameters specific to settlement method.
-  ParamsOneOf params = 13;
+  ParamsOneOf params = 10001;
 }

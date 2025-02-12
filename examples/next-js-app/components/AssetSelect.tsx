@@ -1,6 +1,5 @@
 "use client";
 
-import type { AssetInfo } from "@ston-fi/omniston-sdk-react";
 import { ChevronDown } from "lucide-react";
 import { type FC, useState } from "react";
 
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import type { AssetInfo } from "@/constants/assets";
 
 type AssetSelectProps = {
   assets?: AssetInfo[];
@@ -40,9 +40,7 @@ export const AssetSelect: FC<AssetSelectProps> = ({
   const [open, setOpen] = useState(false);
 
   const handleAssetSelect = (assetAddress: string) => {
-    const asset = assets.find(
-      (asset) => asset.address?.address === assetAddress,
-    );
+    const asset = assets.find((asset) => asset.address === assetAddress);
 
     if (asset && onAssetSelect) {
       onAssetSelect(asset);
@@ -94,8 +92,8 @@ export const AssetSelect: FC<AssetSelectProps> = ({
               {assets.map((asset) => (
                 <CommandItem
                   className="flex gap-2"
-                  key={asset.address?.address}
-                  value={asset.address?.address}
+                  key={asset.address}
+                  value={asset.address}
                   keywords={[asset.symbol]}
                   onSelect={handleAssetSelect}
                 >

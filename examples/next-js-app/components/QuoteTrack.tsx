@@ -11,9 +11,11 @@ import { useTonAddress } from "@tonconnect/ui-react";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useTrackingQuoteState } from "@/providers/tracking-quote";
+import { useOutgoingTxHash } from "@/hooks/useOutgoingTxHash";
 
 type QuoteTrackProps = {
   quoteId: Quote["quoteId"];
+  outgoingTxHash: string;
   walletAddress: string;
 };
 
@@ -21,17 +23,20 @@ function withQuoteTrackProps<P extends QuoteTrackProps>(
   Component: React.ComponentType<P>,
 ) {
   // eslint-disable-next-line react/display-name
-  return (props: Omit<P, "quoteId" | "walletAddress">) => {
-    const { quoteId } = useTrackingQuoteState();
+  return (props: Omit<P, "quoteId" | "walletAddress" | "outgoingTxHash">) => {
+    const { quoteId, externalTxHash } = useTrackingQuoteState();
     const walletAddress = useTonAddress();
+    const outgoingTxHash = useOutgoingTxHash(externalTxHash);
 
     if (!quoteId) return null;
     if (!walletAddress) return null;
+    if (!outgoingTxHash) return null;
 
     return (
       <Component
         {...(props as P)}
         quoteId={quoteId}
+        outgoingTxHash={outgoingTxHash}
         walletAddress={walletAddress}
       />
     );
@@ -41,11 +46,13 @@ function withQuoteTrackProps<P extends QuoteTrackProps>(
 export const QuoteTrack = withQuoteTrackProps(
   ({
     quoteId,
+    outgoingTxHash,
     walletAddress,
     ...props
   }: QuoteTrackProps & { className?: string }) => {
     const { data: tradeStatus } = useTrackTrade({
       quoteId,
+      outgoingTxHash,
       traderWalletAddress: {
         address: walletAddress,
         blockchain: Blockchain.TON,
@@ -84,11 +91,20 @@ function TradeStatusContent({
     );
   }
 
-  if (status.fillingTrade) {
+  if (status.awaitingFill) {
     return (
       <span className="inline-flex gap-2 items-center">
         <Spinner />
-        <span>Filling trade...</span>
+        <span>Waiting for trade to be filled...</span>
+      </span>
+    );
+  }
+
+  if (status.swapping) {
+    return (
+      <span className="inline-flex gap-2 items-center">
+        <Spinner />
+        <span>Swapping...</span>
       </span>
     );
   }

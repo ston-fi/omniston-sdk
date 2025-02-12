@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package omni.v1beta5;
+package omni.v1beta6;
 
-import "omni/v1beta5/types/common.proto";
+import "omni/v1beta6/types/common.proto";
 
 //////////////////////////////////////////////
 // Chunks, steps & routes statuses
@@ -15,16 +15,18 @@ enum ChunkResult {
 }
 
 message ChunkStatus {
+  string protocol = 1;
   // Address of the contract that processes this chunk.
   //
   // Generally, this address receives offer tokens.
   // More specifically, it might be the address of a protocol or liquidity pool.
-  Address target_address = 1;
-  string offer_units = 2;
-  string expected_ask_units = 3;
-  string actual_ask_units = 4;
-  ChunkResult result = 5;
-  string result_details_json = 6;
+  Address target_address = 2;
+  string offer_units = 3;
+  string expected_ask_units = 4;
+  string actual_ask_units = 5;
+  ChunkResult result = 6;
+  // Hash of the transaction that performs swapping of the chunk.
+  string tx_hash = 7;
 }
 
 message StepStatus {
@@ -54,6 +56,9 @@ message TrackTradeRequest {
 
   // The address of trader's wallet that initiated transaction
   Address trader_wallet_address = 2;
+
+  // Hash of tx outgoing from the wallet
+  string outgoing_tx_hash = 3;
 }
 
 // Waiting for the trader to initiate the trade.
@@ -64,23 +69,28 @@ message AwaitingTransfer {
 
 // Initial transaction found, waiting for its mining.
 message Transferring {
-  // Hash of transaction that initiated the trade.
-  string outgoing_tx_hash = 1;
 }
 
-// Awaiting trade to fill.
-// For `SWAP`: awaiting swap transactions in the pools.
-// For `ESCROW` & `HTLC`: awaiting resolver's deposit
-message FillingTrade {
-  // Hash of transaction that initiated the trade.
-  string outgoing_tx_hash = 1;
+// Awaiting swap transactions in the DEX protocols.
+//
+// Specific to `SWAP` settlement method.
+message Swapping {
 
   // Info about partial filling of the trade.
   repeated RouteStatus routes = 2;
 }
 
+// Awaiting resolver's deposit.
+//
+// Specific to `ESCROW` & `HTLC` settlement.
+//
+// **UNSTABLE:** This is unstable API, it's subject to backward-incompatible changes.
+message AwaitingFill {
+}
+
 // Specific to `HTLC` settlement. Resolver's deposit is claimable.
-// TODO: Think of joining Claims & Refunds in a single structure with multiple chunks.
+//
+// **UNSTABLE:** This is unstable API, it's subject to backward-incompatible changes.
 message ClaimAvailable {
   // Address of HTLC contract with claimable deposit.
   Address contract_address = 1;
@@ -90,6 +100,8 @@ message ClaimAvailable {
 }
 
 // Specific to `ESCROW` & `HTLC` settlement. Deposit timeout has expired, need to refund it.
+//
+// **UNSTABLE:** This is unstable API, it's subject to backward-incompatible changes.
 message RefundAvailable {
   // Address of escrow or HTLC contract that enforces the swap.
   Address contract_address = 1;
@@ -121,28 +133,29 @@ message TradeStatus {
       // Initial transaction found, waiting for transfer of funds to complete.
       Transferring transferring = 2;
 
-      // Awaiting trade to fill.
-      // For `SWAP`: awaiting swap transactions in the pools.
-      // For `ESCROW` & `HTLC`: awaiting resolver's deposit.
-      FillingTrade filling_trade = 11;
+      // Awaiting swap transactions in the DEX protocols.
+      Swapping swapping = 11;
+      // Awaiting resolver's deposit.
+      AwaitingFill awaiting_fill = 12;
 
       // Specific to `HTLC` settlement. Resolver's deposit is claimable.
       ClaimAvailable claim_available = 21;
       // Specific to `ESCROW` & `HTLC` settlement. Deposit timeout has expired, need to refund it
       RefundAvailable refund_available = 22;
       // The transaction with incoming funds found, waiting for it to mine.
-      ReceivingFunds receiving_funds = 23;
+      ReceivingFunds receiving_funds = 31;
 
       // The trade has completed (fully or partially filled or fully aborted)
       TradeSettled trade_settled = 91;
 
       // The service message to keep connection alive
       KeepAlive keep_alive = 100;
+      // Service message indicating that a request for state has expired. Used only for WebSocket API
       Unsubscribed unsubscribed = 101;
     }
   }
 
-  StatusOneOf status = 1;
+  StatusOneOf status = 10000;
 }
 
 service TradeGrpc {

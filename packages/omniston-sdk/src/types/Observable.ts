@@ -1,8 +1,10 @@
+import type { OmnistonError } from "../omniston/OmnistonError";
+
 type Unsubscribable = { unsubscribe: () => void };
 type ObjSubscriber<T> = {
-  next: (value: T) => void;
-  error: (err: unknown) => void;
-  complete: () => void;
+  next?: (value: T) => void;
+  error?: (err: OmnistonError) => void;
+  complete?: () => void;
 };
 type FnSubscriber<T> = (value: T) => void;
 

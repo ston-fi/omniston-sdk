@@ -6,11 +6,15 @@ import { useSwapForm } from "./swap-form";
 type TrackingQuoteState = {
   quoteId: Quote["quoteId"] | null;
   setQuoteId: React.Dispatch<React.SetStateAction<Quote["quoteId"] | null>>;
+  externalTxHash: string | null;
+  setExternalTxHash: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 const TrackingQuoteContext = createContext<TrackingQuoteState>({
   quoteId: null,
   setQuoteId: () => {},
+  externalTxHash: null,
+  setExternalTxHash: () => {},
 });
 
 export const useTrackingQuoteState = () => {
@@ -30,18 +34,17 @@ export const TrackingQuoteProvider: React.FC<React.PropsWithChildren> = ({
 }) => {
   const { askAsset, offerAsset, askAmount, offerAmount } = useSwapForm();
   const [quoteId, setQuoteId] = useState<TrackingQuoteState["quoteId"]>(null);
+  const [externalTxHash, setExternalTxHash] =
+    useState<TrackingQuoteState["externalTxHash"]>(null);
 
   useEffect(() => {
     setQuoteId(null);
-  }, [
-    askAsset?.address.address,
-    offerAsset?.address.address,
-    askAmount,
-    offerAmount,
-  ]);
+  }, [askAsset?.address, offerAsset?.address, askAmount, offerAmount]);
 
   return (
-    <TrackingQuoteContext.Provider value={{ quoteId, setQuoteId }}>
+    <TrackingQuoteContext.Provider
+      value={{ quoteId, setQuoteId, externalTxHash, setExternalTxHash }}
+    >
       {children}
     </TrackingQuoteContext.Provider>
   );

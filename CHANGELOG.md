@@ -1,13 +1,31 @@
 # Changelog
 
-### 16-12-2024
+## 12-02-2025
+
+> [!IMPORTANT]
+> API breaking changes.
+> The Omniston SDK 0.4 packages work with the `v1beta6` API.
+> The `v1beta5` to `v1beta6` API changes are not backward compatible. The API changes overview can be found in the [announcement post](https://t.me/stonfidevs/17). The updated proto files are also available in the [Omniston API repo](https://github.com/ston-fi/omniston-api).
+
+> [!WARNING]
+> `wss://omni-ws.ston.fi` API still uses `v1beta5` API. API release is scheduled for the near future. Please follow the announcements in [our channel](https://t.me/stonfidevs) to not miss API updates
+
+### @ston-fi/omniston-sdk@0.4.0
+
+- support for `v1beta6` Omniston API. See examples of the updated SDK usage in our [docs](https://docs.ston.fi/docs/developer-section/omniston/omniston-nodejs)
+
+### @ston-fi/omniston-sdk-react@0.4.0
+
+- support for `v1beta6` Omniston API. See examples of the updated SDK usage in our [docs](https://docs.ston.fi/docs/developer-section/omniston/omniston-react)
+
+## 16-12-2024
 
 ### @ston-fi/omniston-sdk-react@0.3.2
 
 - allow React 19 as peer dependency
 - correct type declaration for `useAssetList` hook
 
-### 04-12-2024
+## 04-12-2024
 
 ### @ston-fi/omniston-sdk-react@0.3.1
 
@@ -19,7 +37,7 @@
 - [b2ffcab5](https://github.com/ston-fi/omniston-sdk/commit/b2ffcab58f8bd9382e10068a96bb906e21288566) improve demo app by calling the quote track API only after accepting the quote
 - [25e7ebce](https://github.com/ston-fi/omniston-sdk/commit/25e7ebce09e5b28fbbbdc98f481c6bd28ef8444f) improve demo app by disabling the RFQ query when any quote tracking is in process
 
-### 26-11-2024
+## 26-11-2024
 
 Starting from [this moment](https://github.com/ston-fi/omniston-api/commit/c2892c10a7db36b01b91fa01306c874664f7a1bc) Omniston API can send `Unsubscribed` messages to the client. Receiving such an event in the `QuoteEvent` or `TradeStatus` stream means that no other events will ever be sent in response.
 

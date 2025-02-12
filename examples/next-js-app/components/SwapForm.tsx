@@ -1,15 +1,14 @@
 "use client";
 
-import type { AssetInfo } from "@ston-fi/omniston-sdk-react";
 import type { ChangeEvent } from "react";
 
 import { AssetSelect } from "@/components/AssetSelect";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { addressEquals } from "@/helpers/addressEquals";
 import { useAssets } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { useSwapForm, useSwapFormDispatch } from "@/providers/swap-form";
+import type { AssetInfo } from "@/constants/assets";
 
 export const SwapForm = (props: { className?: string }) => {
   return (
@@ -56,7 +55,7 @@ const OfferAssetSelect = (props: { className?: string }) => {
   const { offerAsset } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
-  const { data, isLoading } = useAssets();
+  const { data } = useAssets();
 
   const handleAssetSelect = (asset: AssetInfo | null) => {
     dispatch({ type: "SET_OFFER_ASSET", payload: asset });
@@ -68,7 +67,7 @@ const OfferAssetSelect = (props: { className?: string }) => {
       assets={data}
       selectedAsset={offerAsset}
       onAssetSelect={handleAssetSelect}
-      loading={isLoading}
+      loading={false}
     />
   );
 };
@@ -111,11 +110,9 @@ const AskAssetSelect = (props: { className?: string }) => {
   const { askAsset, offerAsset } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
-  const { data, isLoading } = useAssets({
+  const { data } = useAssets({
     select: (data) =>
-      data.filter(
-        ({ address }) => !addressEquals(address, offerAsset?.address),
-      ),
+      data.filter(({ address }) => address !== offerAsset?.address),
   });
 
   const handleAssetSelect = (asset: AssetInfo | null) => {
@@ -128,7 +125,7 @@ const AskAssetSelect = (props: { className?: string }) => {
       assets={data}
       selectedAsset={askAsset}
       onAssetSelect={handleAssetSelect}
-      loading={isLoading}
+      loading={false}
     />
   );
 };

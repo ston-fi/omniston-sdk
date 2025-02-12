@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Typescript SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -23,12 +23,13 @@
     }
   },
   "scripts": {
-    "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/api/messages --ts_proto_opt=outputEncodeMethods=false,snakeToCamel=keys,useNumericEnumForJson=true,stringEnums=true,emitDefaultValues=json-methods,outputServices=false,enumsAsLiterals=true -Isrc/api/proto src/api/proto/omni/v1beta5/**/*.proto",
+    "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/api/messages --ts_proto_opt=outputEncodeMethods=false,snakeToCamel=keys,useNumericEnumForJson=true,stringEnums=true,emitDefaultValues=json-methods,outputServices=false,enumsAsLiterals=true -Isrc/api/proto src/api/proto/omni/v1beta6/**/*.proto",
     "test": "CI=true pnpm run /^test:/",
     "test:unit": "vitest",
     "test:typecheck": "tsc --noEmit",
     "dev": "tsup --watch",
-    "build": "tsup"
+    "build": "tsup",
+    "prepublishOnly": "pnpm install && turbo run build"
   },
   "dependencies": {
     "isomorphic-ws": "^5.0.0",
@@ -44,6 +45,7 @@
     "ts-proto": "^1.180.0",
     "tsup": "^8.2.4",
     "type-fest": "^4.23.0",
+    "vite-tsconfig-paths": "5.1.4",
     "vitest": "1.6.0"
   }
 }

@@ -4,7 +4,6 @@ import { ApiClient } from "../ApiClient/ApiClient";
 import type { IApiClient } from "../ApiClient/ApiClient.types";
 import { ReconnectingTransport } from "../ApiClient/ReconnectingTransport";
 import { WebSocketTransport } from "../ApiClient/WebSocketTransport";
-import { AssetsResponse } from "../dto/Assets";
 import { QuoteEvent } from "../dto/QuoteEvent";
 import { QuoteRequest } from "../dto/QuoteRequest";
 import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";
@@ -15,7 +14,6 @@ import { TransactionResponse } from "../dto/TransactionResponse";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
 import {
-  METHOD_ASSET_QUERY,
   METHOD_BUILD_TRANSFER,
   METHOD_QUOTE,
   METHOD_QUOTE_EVENT,
@@ -27,6 +25,9 @@ import {
 import type { Observable as SimpleObservable } from "../types";
 import type { IOmnistonDependencies } from "./Omniston.types";
 import { QuoteResponseController } from "./QuoteResponseController";
+import { wrapErrorsAsync } from "@/helpers/wrapErrorsAsync";
+import { wrapErrorsSync } from "@/helpers/wrapErrorsSync";
+import { wrapError } from "@/helpers/wrapError";
 
 /**
  * The main class for the Omniston Trader SDK.
@@ -104,17 +105,17 @@ export class Omniston {
    * @param request {@see TransactionRequest}
    * @returns {@see TransactionResponse}
    */
-  async buildTransfer(
-    request: TransactionRequest,
-  ): Promise<TransactionResponse> {
-    await this.apiClient.ensureConnection();
+  buildTransfer(request: TransactionRequest): Promise<TransactionResponse> {
+    return wrapErrorsAsync(async () => {
+      await this.apiClient.ensureConnection();
 
-    const response = await this.apiClient.send(
-      METHOD_BUILD_TRANSFER,
-      TransactionRequest.toJSON(request),
-    );
+      const response = await this.apiClient.send(
+        METHOD_BUILD_TRANSFER,
+        TransactionRequest.toJSON(request),
+      );
 
-    return TransactionResponse.fromJSON(response);
+      return TransactionResponse.fromJSON(response);
+    });
   }
 
   /**
@@ -157,21 +158,12 @@ export class Omniston {
   }
 
   /**
-   * Get a list of supported assets information.
-   */
-  async assetList(): Promise<AssetsResponse> {
-    await this.apiClient.ensureConnection();
-
-    const response = await this.apiClient.send(METHOD_ASSET_QUERY, {});
-
-    return AssetsResponse.fromJSON(response);
-  }
-
-  /**
    * Closes the underlying connection, no longer accepting requests.
    */
   public close() {
-    this.apiClient.close();
+    return wrapErrorsSync(() => {
+      this.apiClient.close();
+    });
   }
 
   private async unsubscribeFromStream(method: string, subscriptionId: number) {
@@ -205,14 +197,18 @@ function unwrapObservable<TArgs extends Array<unknown>, TReturn>(
 
       result.then(
         (inner) => {
-          innerSubscription = inner.subscribe(subscriber);
+          innerSubscription = inner.subscribe({
+            next: subscriber.next.bind(subscriber),
+            error: (err) => subscriber.error(wrapError(err)),
+            complete: subscriber.complete.bind(subscriber),
+          });
 
           if (unsubscribed) {
             innerSubscription.unsubscribe();
           }
         },
         (err) => {
-          subscriber.error(err);
+          subscriber.error(wrapError(err));
         },
       );
 

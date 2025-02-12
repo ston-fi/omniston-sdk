@@ -8,18 +8,23 @@ import type { Quote } from "@ston-fi/omniston-sdk-react";
 import { useExplorer } from "@/hooks/useExplorer";
 import { bigNumberToFloat, cn } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
+import { useEffect } from "react";
 
 export const QuotePreview = (props: { className?: string }) => {
   const { data: quoteEvent, error, isFetching } = useRfq();
 
-  if (!isFetching) {
+  useEffect(() => {
+    if (error) console.error(error);
+  }, [error]);
+
+  if (!isFetching && error == null) {
     return null;
   }
 
   return (
     <div {...props} className={cn("p-4 border rounded-md", props.className)}>
       {error ? (
-        <QuoteError errorMessage={error.message} />
+        <QuoteError errorMessage={`[${error.code}] ${error.message}`} />
       ) : quoteEvent?.type === "unsubscribed" ? (
         <QuoteError errorMessage="Request timed out" />
       ) : quoteEvent?.type === "quoteUpdated" ? (

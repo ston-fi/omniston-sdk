@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk-react",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "React SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -27,7 +27,8 @@
     "build": "tsup",
     "test": "CI=true pnpm run /^test:/",
     "test:unit": "vitest",
-    "test:typecheck": "tsc --noEmit"
+    "test:typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm install && turbo run build"
   },
   "dependencies": {
     "@ston-fi/omniston-sdk": "workspace:*",

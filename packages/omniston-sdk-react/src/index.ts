@@ -5,4 +5,3 @@ export * from "./useOmniston";
 export * from "./useRfq";
 export * from "./useBuildTransfer";
 export * from "./useTrackTrade";
-export * from "./useAssetList";
