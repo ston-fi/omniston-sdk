@@ -1,25 +1,63 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo } from "react";
 
-export function useOutgoingTxHash(externalTxHash: string | null) {
+interface TonApiSuccessResponse {
+  success: true;
+  transaction: {
+    hash: string;
+  };
+  emulated?: boolean;
+}
+
+const REFETCH_DELAY = 5000;
+
+export type UseOutgoingTxHashResult =
+  | { status: "loading" }
+  | { status: "error"; error: Error }
+  | { status: "success"; data: string };
+
+export function useOutgoingTxHash(
+  externalTxHash: string | null,
+): UseOutgoingTxHashResult {
+  const queryClient = useQueryClient();
+
+  const queryKey = ["outgoingTxHash", externalTxHash];
+
   const result = useQuery({
-    queryKey: ["outgoingTxHash", externalTxHash],
-    queryFn: async () => {
+    queryKey,
+    queryFn: async ({ signal }) => {
       const response = await fetch(
         `https://tonapi.io/v2/traces/${externalTxHash}`,
         {
           headers: {
             "Content-Type": "application/json",
           },
+          signal,
         },
       );
-      const result = await response.json();
+      const result = (await response.json()) as TonApiSuccessResponse;
       if (!response.ok) {
-        console.error("Error fetching transaction", result);
         throw new Error("Error fetching transaction", { cause: result });
       }
-      return (result as any).transaction.hash as string;
+      if (result.emulated) {
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey });
+        }, REFETCH_DELAY);
+        return null;
+      }
+      return result.transaction.hash;
     },
     enabled: externalTxHash !== null,
+    staleTime: Number.POSITIVE_INFINITY,
   });
-  return result.data;
+
+  return useMemo(() => {
+    if (result.error) {
+      return { status: "error", error: result.error };
+    } else if (result.data) {
+      return { status: "success", data: result.data };
+    } else {
+      return { status: "loading" };
+    }
+  }, [result.data, result.error]);
 }

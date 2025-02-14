@@ -30,13 +30,31 @@ function withQuoteTrackProps<P extends QuoteTrackProps>(
 
     if (!quoteId) return null;
     if (!walletAddress) return null;
-    if (!outgoingTxHash) return null;
+
+    if (outgoingTxHash.status === "loading") {
+      return (
+        <div className="p-4 border rounded-md">
+          <span className="inline-flex gap-2 items-center">
+            <Spinner />
+            <span>{"Loading transaction hash..."}</span>
+          </span>
+        </div>
+      );
+    }
+
+    if (outgoingTxHash.status === "error") {
+      return (
+        <div className="p-4 border rounded-md text-red-500">
+          {`Error loading transaction hash: ${outgoingTxHash.error.message}`}
+        </div>
+      );
+    }
 
     return (
       <Component
         {...(props as P)}
         quoteId={quoteId}
-        outgoingTxHash={outgoingTxHash}
+        outgoingTxHash={outgoingTxHash.data}
         walletAddress={walletAddress}
       />
     );
