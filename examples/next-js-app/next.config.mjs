@@ -2,6 +2,11 @@
 const nextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  compiler: {
+    removeConsole: {
+      exclude: ["error", "warn"], // remove all console logs except error and warn
+    },
+  },
 
   // enabling server side source maps
   /**

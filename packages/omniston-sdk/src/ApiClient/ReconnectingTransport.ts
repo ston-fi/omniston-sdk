@@ -1,5 +1,6 @@
 import { Subject } from "rxjs";
 
+import type { Logger } from "@/omniston";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
 import type { Transport } from "./Transport";
@@ -13,6 +14,7 @@ const DEFAULT_RECONNECT_DELAY_MS = 1000;
 export class ReconnectingTransport implements Transport {
   private readonly factory: () => Transport;
   private readonly timer: ITimer;
+  private readonly logger?: Logger;
   private readonly maxRetries: number;
   private readonly reconnectDelayMs: number;
   private activeTransport: Transport | null = null;
@@ -40,9 +42,14 @@ export class ReconnectingTransport implements Transport {
      * Duration of a pause between connection attempts in milliseconds. Equals to {@link DEFAULT_RECONNECT_DELAY_MS} by default.
      */
     reconnectDelayMs?: number;
+    /**
+     * Optional {@link Logger} implementation.
+     */
+    logger?: Logger;
   }) {
     this.factory = options.factory;
     this.timer = options.timer ?? new Timer();
+    this.logger = options.logger;
     this.maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
     this.reconnectDelayMs =
       options.reconnectDelayMs ?? DEFAULT_RECONNECT_DELAY_MS;
@@ -88,7 +95,7 @@ export class ReconnectingTransport implements Transport {
         lastError = err;
         const retriesLeft = this.maxRetries - attempt;
         if (retriesLeft > 0) {
-          console.log(
+          this.logger?.log(
             `Failed to connect. Retries left: ${retriesLeft}, will retry after ${this.reconnectDelayMs} ms...`,
             err,
           );

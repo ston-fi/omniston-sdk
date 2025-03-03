@@ -14,3 +14,4 @@ export type { TransactionResponse } from "../dto/TransactionResponse";
 export { Omniston } from "./Omniston";
 export type { IOmnistonDependencies } from "./Omniston.types";
 export { OmnistonError } from "./OmnistonError";
+export type { Logger } from "../logger/Logger";

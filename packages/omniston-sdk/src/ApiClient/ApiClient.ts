@@ -6,6 +6,7 @@ import {
 } from "json-rpc-2.0";
 import { Observable } from "rxjs";
 
+import type { Logger } from "../logger/Logger";
 import type { IApiClient } from "./ApiClient.types";
 import type { Transport } from "./Transport";
 
@@ -17,29 +18,45 @@ type StreamPayload = { subscription: number } & (
   | { error: unknown }
 );
 
+export interface ApiClientOptions {
+  /**
+   * A transport to use.
+   */
+  transport: Transport;
+  /**
+   * Optional {@link Logger} implementation.
+   */
+  logger?: Logger;
+}
+
 /**
  * A default implementation for Omniston protocol client.
  * Uses JSON RPC to communicate over the given transport.
  */
 export class ApiClient implements IApiClient {
   private readonly serverAndClient: JSONRPCServerAndClient;
+  private readonly transport: Transport;
+  private readonly logger?: Logger;
+
   private streamConsumers = new Map<string, StreamConsumerMap>();
 
   // TODO: use abort controller to cancel requests and pass signal to transport
   private isClosed = false;
 
-  /**
-   * @param transport A transport to use.
-   */
-  constructor(private readonly transport: Transport) {
+  constructor(options: ApiClientOptions) {
+    this.transport = options.transport;
+    this.logger = options.logger;
+
     this.serverAndClient = new JSONRPCServerAndClient(
       new JSONRPCServer(),
-      new JSONRPCClient((request) => transport.send(JSON.stringify(request))),
+      new JSONRPCClient((request) =>
+        this.transport.send(JSON.stringify(request)),
+      ),
     );
 
-    transport.messages.subscribe({
+    this.transport.messages.subscribe({
       next: (message) => {
-        console.debug(`Received: ${message}`);
+        this.logger?.debug(`Received: ${message}`);
         this.serverAndClient.receiveAndSend(JSON.parse(message));
       },
       complete: () => {
@@ -62,7 +79,7 @@ export class ApiClient implements IApiClient {
    * @param payload Method parameters as JSON
    */
   async send(method: string, payload: JSONRPCParams): Promise<unknown> {
-    console.debug(
+    this.logger?.debug(
       `Sending: method=${method} payload=${JSON.stringify(payload)}`,
     );
     return this.serverAndClient.request(method, payload);

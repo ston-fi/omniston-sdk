@@ -1,5 +1,8 @@
 import { Observable, type Subscription, filter, finalize, map } from "rxjs";
 
+import { wrapError } from "@/helpers/wrapError";
+import { wrapErrorsAsync } from "@/helpers/wrapErrorsAsync";
+import { wrapErrorsSync } from "@/helpers/wrapErrorsSync";
 import { ApiClient } from "../ApiClient/ApiClient";
 import type { IApiClient } from "../ApiClient/ApiClient.types";
 import { ReconnectingTransport } from "../ApiClient/ReconnectingTransport";
@@ -13,6 +16,7 @@ import { TransactionRequest } from "../dto/TransactionRequest";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
+import type { Logger } from "../logger/Logger";
 import {
   METHOD_BUILD_TRANSFER,
   METHOD_QUOTE,
@@ -25,9 +29,6 @@ import {
 import type { Observable as SimpleObservable } from "../types";
 import type { IOmnistonDependencies } from "./Omniston.types";
 import { QuoteResponseController } from "./QuoteResponseController";
-import { wrapErrorsAsync } from "@/helpers/wrapErrorsAsync";
-import { wrapErrorsSync } from "@/helpers/wrapErrorsSync";
-import { wrapError } from "@/helpers/wrapError";
 
 /**
  * The main class for the Omniston Trader SDK.
@@ -38,6 +39,7 @@ import { wrapError } from "@/helpers/wrapError";
  */
 export class Omniston {
   private readonly apiClient: IApiClient;
+  private readonly logger?: Logger;
   private timer: ITimer = new Timer();
 
   /**
@@ -46,14 +48,17 @@ export class Omniston {
    */
   constructor(dependencies: IOmnistonDependencies) {
     const apiUrl = dependencies.apiUrl;
+    this.logger = dependencies.logger;
     this.apiClient =
       dependencies.client ??
-      new ApiClient(
-        new ReconnectingTransport({
+      new ApiClient({
+        transport: new ReconnectingTransport({
           factory: () => new WebSocketTransport(apiUrl),
           timer: this.timer,
+          logger: this.logger,
         }),
-      );
+        logger: this.logger,
+      });
   }
 
   /**
@@ -172,7 +177,7 @@ export class Omniston {
       subscriptionId,
     );
     if (result !== true) {
-      console.warn(
+      this.logger?.warn(
         `Failed to unsubscribe with method ${method} and subscription ID ${subscriptionId}. Server returned ${result}`,
       );
     }

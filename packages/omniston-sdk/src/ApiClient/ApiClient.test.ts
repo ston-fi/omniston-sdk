@@ -14,7 +14,7 @@ describe("ApiClient tests", () => {
 
   beforeEach(() => {
     mockTransport = new MockTransport();
-    apiClient = new ApiClient(mockTransport);
+    apiClient = new ApiClient({ transport: mockTransport });
   });
 
   test("ensureConnection propagates to transport", async () => {

@@ -1,4 +1,5 @@
 import type { IApiClient } from "../ApiClient/ApiClient.types";
+import type { Logger } from "../logger/Logger";
 
 /**
  * Dependencies used to construct an Omniston instance.
@@ -17,4 +18,10 @@ export interface IOmnistonDependencies {
    * {@example `wss://omni-ws.ston.fi`}
    */
   readonly apiUrl: URL | string;
+  /**
+   * An optional {@link Logger} implementation. By default, no logs are produced.
+   *
+   * You can pass `console` here, it is compatible with Logger interface.
+   */
+  readonly logger?: Logger;
 }

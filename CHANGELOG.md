@@ -1,14 +1,23 @@
 # Changelog
 
+## 03-03-2025
+
+To prevent the logging of the Omniston protocol messages in production but still allow access to them, a new optional `logger` parameter was added to the `Omniston` constructor. By default, the logger will be a `VoidLogger` (no logging at all). You can pass any logger that is compatible with the console interface.
+
+### @ston-fi/omniston-sdk@0.4.1
+
+- A new `logger` field was added to the `Omniston` constructor parameters
+
+### @ston-fi/omniston-sdk-react@0.4.1
+
+- A new `logger` field was added to the `OmnistonProvider` component props
+
 ## 12-02-2025
 
 > [!IMPORTANT]
 > API breaking changes.
 > The Omniston SDK 0.4 packages work with the `v1beta6` API.
 > The `v1beta5` to `v1beta6` API changes are not backward compatible. The API changes overview can be found in the [announcement post](https://t.me/stonfidevs/17). The updated proto files are also available in the [Omniston API repo](https://github.com/ston-fi/omniston-api).
-
-> [!WARNING]
-> `wss://omni-ws.ston.fi` API still uses `v1beta5` API. API release is scheduled for the near future. Please follow the announcements in [our channel](https://t.me/stonfidevs) to not miss API updates
 
 ### @ston-fi/omniston-sdk@0.4.0
 

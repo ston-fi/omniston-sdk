@@ -10,7 +10,11 @@ export function OmnistonProvider({
   const queryClient = useQueryClient();
 
   return (
-    <_OmnistonProvider queryClient={queryClient} apiUrl={apiUrl}>
+    <_OmnistonProvider
+      queryClient={queryClient}
+      apiUrl={apiUrl}
+      logger={console}
+    >
       {children}
     </_OmnistonProvider>
   );
