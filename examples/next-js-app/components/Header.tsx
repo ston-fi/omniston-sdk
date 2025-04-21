@@ -19,7 +19,7 @@ export function Header() {
         >
           <Image src={logo} alt="logo" />
           <Badge className="absolute rotate-[-13deg] -right-8 -bottom-3 scale-[0.8]">
-            demo
+            beta
           </Badge>
         </a>
 
