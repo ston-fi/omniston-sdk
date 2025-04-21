@@ -10,10 +10,6 @@ import { ObservableRefCountCacheContext } from "./ObservableRefCountCacheContext
 export const OmnistonContext = React.createContext<Omniston | null>(null);
 
 interface OmnistonProviderProps extends IOmnistonDependencies {
-  /**
-   * Provide a queryClient instance to use in Omniston hooks.
-   */
-  queryClient?: QueryClient;
   children: React.ReactNode;
 }
 
@@ -21,22 +17,14 @@ interface OmnistonProviderProps extends IOmnistonDependencies {
  * Place it at the root of your app to use {@link useOmniston()}
  */
 export const OmnistonProvider: React.FC<OmnistonProviderProps> =
-  function OmnistonProvider({
-    children,
-    queryClient: queryClientProp,
-    ...omnistonProps
-  }) {
+  function OmnistonProvider({ children, ...omnistonProps }) {
     const [omniston, setOmniston] = React.useState(
       () => new Omniston(omnistonProps),
     );
     const [observableRefCountCache, setObservableRefCountCache] =
       React.useState(() => new ObservableRefCountCache());
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies:
-    const queryClient = React.useMemo(
-      () => queryClientProp ?? new QueryClient(),
-      [!!queryClientProp],
-    );
+    const queryClient = React.useMemo(() => new QueryClient(), []);
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: use structural equality
     React.useEffect(() => {
@@ -52,9 +40,6 @@ export const OmnistonProvider: React.FC<OmnistonProviderProps> =
 
     return (
       <OmnistonContext.Provider value={omniston}>
-        {
-          // TODO: if queryClient is passed it means that the provider already exists in the upper tree adn we don't need to create a new one
-        }
         <QueryClientProvider client={queryClient}>
           <ObservableRefCountCacheContext.Provider
             value={observableRefCountCache}

@@ -1,6 +1,7 @@
 "use client";
 
-import { OmnistonProvider } from "./omniston";
+import { OmnistonProvider } from "@ston-fi/omniston-sdk-react";
+
 import { QueryProvider } from "./query";
 import { SwapFormProvider } from "./swap-form";
 import { SwapSettingsProvider } from "./swap-settings";
@@ -17,7 +18,7 @@ export function Providers({
   return (
     <TonConnectProvider>
       <QueryProvider>
-        <OmnistonProvider apiUrl={omnistonApiUrl}>
+        <OmnistonProvider apiUrl={omnistonApiUrl} logger={console}>
           <SwapSettingsProvider>
             <SwapFormProvider>
               <TrackingQuoteProvider>{children}</TrackingQuoteProvider>

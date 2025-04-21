@@ -1,5 +1,18 @@
 # Changelog
 
+## 21-04-2025
+
+### @ston-fi/omniston-sdk-react@0.4.2
+
+- `queryClient` prom was removed from the `OmnistonProvider` component. The mismatch between `@tanstack/react-query` package version in `omniston-sdk-react` and consumer's apps lead to the TS error about mismatching `QueryClient` types. In future versions of the `omniston-sdk-react` package, we are targeting to get rid of `@tanstack/react-query` dependency completely.
+
+  ```diff
+      <OmnistonProvider
+  --    queryClient={queryClient}
+        apiUrl="wss://omni-ws.ston.fi"
+      >
+  ```
+
 ## 03-03-2025
 
 To prevent the logging of the Omniston protocol messages in production but still allow access to them, a new optional `logger` parameter was added to the `Omniston` constructor. By default, the logger will be a `VoidLogger` (no logging at all). You can pass any logger that is compatible with the console interface.
