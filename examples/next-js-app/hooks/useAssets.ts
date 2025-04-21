@@ -1,4 +1,4 @@
-import { STATIC_ASSETS, type AssetInfo } from "@/constants/assets";
+import { type AssetInfo, STATIC_ASSETS } from "@/constants/assets";
 
 type UseAssetsParams = {
   select?: (data: AssetInfo[]) => AssetInfo[];

@@ -9,9 +9,9 @@ import {
 import { useTonAddress } from "@tonconnect/ui-react";
 
 import { Spinner } from "@/components/ui/spinner";
+import { useOutgoingTxHash } from "@/hooks/useOutgoingTxHash";
 import { cn } from "@/lib/utils";
 import { useTrackingQuoteState } from "@/providers/tracking-quote";
-import { useOutgoingTxHash } from "@/hooks/useOutgoingTxHash";
 
 type QuoteTrackProps = {
   quoteId: Quote["quoteId"];

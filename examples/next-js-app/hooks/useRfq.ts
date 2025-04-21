@@ -8,8 +8,8 @@ import {
 import { useDebounce } from "@/hooks";
 import { floatToBigNumber, percentToPercentBps } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
-import { useTrackingQuoteState } from "@/providers/tracking-quote";
 import { useSwapSettings } from "@/providers/swap-settings";
+import { useTrackingQuoteState } from "@/providers/tracking-quote";
 
 export const useRfq = () => {
   const { askAsset, offerAsset, askAmount, offerAmount } = useSwapForm();

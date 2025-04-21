@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { OmnistonError } from "@/omniston";
 import { FakeApiClient } from "../ApiClient/FakeApiClient";
 import type { Quote } from "../dto/Quote";
 import { QuoteEvent } from "../dto/QuoteEvent";
@@ -33,7 +34,6 @@ import {
   unsubscribedEvent,
 } from "../testing/testingValues";
 import { Omniston } from "./Omniston";
-import { OmnistonError } from "@/omniston";
 
 describe("Omniston tests", () => {
   const testSubscriptionId = 1;

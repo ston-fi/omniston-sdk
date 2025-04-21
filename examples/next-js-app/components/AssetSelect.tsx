@@ -19,8 +19,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 import type { AssetInfo } from "@/constants/assets";
+import { cn } from "@/lib/utils";
 
 type AssetSelectProps = {
   assets?: AssetInfo[];

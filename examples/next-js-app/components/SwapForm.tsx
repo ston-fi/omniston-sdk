@@ -5,10 +5,10 @@ import type { ChangeEvent } from "react";
 import { AssetSelect } from "@/components/AssetSelect";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import type { AssetInfo } from "@/constants/assets";
 import { useAssets } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { useSwapForm, useSwapFormDispatch } from "@/providers/swap-form";
-import type { AssetInfo } from "@/constants/assets";
 
 export const SwapForm = (props: { className?: string }) => {
   return (
