@@ -1,8 +1,3 @@
 {
-  "extends": "@ston-fi/typescript-config/tsconfig.json",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+  "extends": "@ston-fi/typescript-config/tsconfig.json"
 }

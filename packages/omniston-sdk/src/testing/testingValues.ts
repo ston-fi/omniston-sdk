@@ -8,10 +8,16 @@ import type { TradeStatus } from "../dto/TradeStatus";
 import type { TransactionRequest } from "../dto/TransactionRequest";
 import type { TransactionResponse } from "../dto/TransactionResponse";
 
+export const assetTon: Address = {
+  address: "EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c",
+  blockchain: Blockchain.TON,
+};
+
 export const assetTestRed: Address = {
   address: "kQDLvsZol3juZyOAVG8tWsJntOxeEZWEaWCbbSjYakQpuYN5",
   blockchain: Blockchain.TON,
 };
+
 export const assetTestBlue: Address = {
   address: "kQB_TOJSB7q3-Jm1O8s0jKFtqLElZDPjATs5uJGsujcjznq3",
   blockchain: Blockchain.TON,
@@ -24,7 +30,7 @@ export const quoteRequestSwap: QuoteRequest = {
   },
   askAssetAddress: assetTestBlue,
   referrerAddress: {
-    address: "EQCXSs2xZ2dhk9TAxzGzXra2EbG_S2SqyN8Tfi6fJ82EYiVj",
+    address: "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn",
     blockchain: Blockchain.TON,
   },
   referrerFeeBps: 0,
@@ -49,7 +55,7 @@ export const testQuote = {
   askUnits: "1000",
   quoteTimestamp: 0,
   referrerAddress: {
-    address: "EQCXSs2xZ2dhk9TAxzGzXra2EbG_S2SqyN8Tfi6fJ82EYiVj",
+    address: "UQAQnxLqlX2B6w4jQzzzPWA8eyWZVZBz6Y0D_8noARLOaEAn",
     blockchain: Blockchain.TON,
   },
   referrerFeeUnits: "0",
@@ -57,6 +63,9 @@ export const testQuote = {
   params: {},
   tradeStartDeadline: 0,
   gasBudget: "1000000000",
+  estimatedGasConsumption: "100000000",
+  referrerFeeAsset: assetTestBlue,
+  protocolFeeAsset: assetTestBlue,
 } as const satisfies Quote;
 
 export const testEscrowQuote: Quote = {
@@ -140,6 +149,10 @@ export const testTransactionRequest: TransactionRequest = {
     blockchain: Blockchain.TON,
   },
   quote: testQuote,
+  gasExcessAddress: {
+    address: "0QCXSs2xZ2dhk9TAxzGzXra2EbG_S2SqyN8Tfi6fJ82EYsMs",
+    blockchain: Blockchain.TON,
+  },
 };
 
 const testWalletAddress: Address = {
@@ -160,4 +173,6 @@ export const tradeStatusAwaitingTransfer: TradeStatus = {
   status: {
     awaitingTransfer: {},
   },
+  transferTimestamp: 0,
+  estimatedFinishTimestamp: 0,
 };

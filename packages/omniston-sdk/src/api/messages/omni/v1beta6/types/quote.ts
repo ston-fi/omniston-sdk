@@ -118,9 +118,9 @@ export interface Quote {
   askUnits: string;
   /** The address of referrer that will receive the fees. */
   referrerAddress: Address | undefined;
-  /** The amount of fees that the referrer will get (in units of `ask_asset_address`). */
+  /** The amount of fees that the referrer will get (in units of the asset specified in `referrer_fee_asset`). */
   referrerFeeUnits: string;
-  /** The amount of fees charged by the protocol (in units of `ask_asset_address`). */
+  /** The amount of fees charged by the protocol (in units of the asset specified in `protocol_fee_asset`). */
   protocolFeeUnits: string;
   /** The timestamp (UTC seconds) of Quote sent by resolver. */
   quoteTimestamp: number;
@@ -131,8 +131,22 @@ export interface Quote {
    * The resolver may still settle the trades started after this deadline has passed at own discretion.
    */
   tradeStartDeadline: number;
-  /** Total gas budget required to perform the trade. */
+  /**
+   * Total gas budget required to perform the trade.
+   *
+   * This field if filled by Omniston service, resolvers may omit this field when generating the quote.
+   */
   gasBudget: string;
+  /**
+   * Estimated amount of gas units that will be spent to perform the trade.
+   *
+   * This field if filled by Omniston service, resolvers may omit this field when generating the quote.
+   */
+  estimatedGasConsumption: string;
+  /** The asset of the fees that the referrer will get (the amount is specified in `referrer_fee_units`). */
+  referrerFeeAsset: Address | undefined;
+  /** The asset of the fees charged by the protocol (the amount is specified in `protocol_fee_units`). */
+  protocolFeeAsset: Address | undefined;
   params: Quote_ParamsOneOf | undefined;
 }
 
@@ -500,6 +514,9 @@ function createBaseQuote(): Quote {
     quoteTimestamp: 0,
     tradeStartDeadline: 0,
     gasBudget: "",
+    estimatedGasConsumption: "",
+    referrerFeeAsset: undefined,
+    protocolFeeAsset: undefined,
     params: undefined,
   };
 }
@@ -544,6 +561,15 @@ export const Quote = {
       gasBudget: isSet(object.gas_budget)
         ? globalThis.String(object.gas_budget)
         : "",
+      estimatedGasConsumption: isSet(object.estimated_gas_consumption)
+        ? globalThis.String(object.estimated_gas_consumption)
+        : "",
+      referrerFeeAsset: isSet(object.referrer_fee_asset)
+        ? Address.fromJSON(object.referrer_fee_asset)
+        : undefined,
+      protocolFeeAsset: isSet(object.protocol_fee_asset)
+        ? Address.fromJSON(object.protocol_fee_asset)
+        : undefined,
       params: isSet(object.params)
         ? Quote_ParamsOneOf.fromJSON(object.params)
         : undefined,
@@ -591,6 +617,15 @@ export const Quote = {
     if (message.gasBudget !== undefined) {
       obj.gas_budget = message.gasBudget;
     }
+    if (message.estimatedGasConsumption !== undefined) {
+      obj.estimated_gas_consumption = message.estimatedGasConsumption;
+    }
+    if (message.referrerFeeAsset !== undefined) {
+      obj.referrer_fee_asset = Address.toJSON(message.referrerFeeAsset);
+    }
+    if (message.protocolFeeAsset !== undefined) {
+      obj.protocol_fee_asset = Address.toJSON(message.protocolFeeAsset);
+    }
     if (message.params !== undefined) {
       obj.params = Quote_ParamsOneOf.toJSON(message.params);
     }
@@ -625,6 +660,15 @@ export const Quote = {
     message.quoteTimestamp = object.quoteTimestamp ?? 0;
     message.tradeStartDeadline = object.tradeStartDeadline ?? 0;
     message.gasBudget = object.gasBudget ?? "";
+    message.estimatedGasConsumption = object.estimatedGasConsumption ?? "";
+    message.referrerFeeAsset =
+      object.referrerFeeAsset !== undefined && object.referrerFeeAsset !== null
+        ? Address.fromPartial(object.referrerFeeAsset)
+        : undefined;
+    message.protocolFeeAsset =
+      object.protocolFeeAsset !== undefined && object.protocolFeeAsset !== null
+        ? Address.fromPartial(object.protocolFeeAsset)
+        : undefined;
     message.params =
       object.params !== undefined && object.params !== null
         ? Quote_ParamsOneOf.fromPartial(object.params)

@@ -8,13 +8,13 @@ import "omni/v1beta6/types/common.proto";
 // Chunks, steps & routes statuses
 //////////////////////////////////////////////
 
-enum ChunkResult {
+enum SwapChunkResult {
   CHUNK_RESULT_PROCESSING = 0;
   CHUNK_RESULT_FILLED = 1;
   CHUNK_RESULT_ABORTED = 2;
 }
 
-message ChunkStatus {
+message SwapChunkStatus {
   string protocol = 1;
   // Address of the contract that processes this chunk.
   //
@@ -24,17 +24,17 @@ message ChunkStatus {
   string offer_units = 3;
   string expected_ask_units = 4;
   string actual_ask_units = 5;
-  ChunkResult result = 6;
+  SwapChunkResult result = 6;
   // Hash of the transaction that performs swapping of the chunk.
   string tx_hash = 7;
 }
 
-message StepStatus {
-  repeated ChunkStatus chunks = 1;
+message SwapStepStatus {
+  repeated SwapChunkStatus chunks = 1;
 }
 
-message RouteStatus {
-  repeated StepStatus steps = 1;
+message SwapRouteStatus {
+  repeated SwapStepStatus steps = 1;
 }
 
 //////////////////////////////////////////////
@@ -77,7 +77,7 @@ message Transferring {
 message Swapping {
 
   // Info about partial filling of the trade.
-  repeated RouteStatus routes = 2;
+  repeated SwapRouteStatus routes = 2;
 }
 
 // Awaiting resolver's deposit.
@@ -86,6 +86,7 @@ message Swapping {
 //
 // **UNSTABLE:** This is unstable API, it's subject to backward-incompatible changes.
 message AwaitingFill {
+  // TODO: Info about partial fills of Escrow/HTLC.
 }
 
 // Specific to `HTLC` settlement. Resolver's deposit is claimable.
@@ -112,8 +113,8 @@ message RefundAvailable {
 
 // The transactions with incoming funds found, waiting for them to mine.
 message ReceivingFunds {
-  // Info about chunks of the trade.
-  repeated RouteStatus routes = 1;
+  // Specific to `SWAP` settlement. Info about chunks of the trade.
+  repeated SwapRouteStatus routes = 1;
 }
 
 // The trade has completed (fully or partially filled or fully aborted)
@@ -121,8 +122,8 @@ message TradeSettled {
   // Result of the trade
   TradeResult result = 1;
 
-  // Info about partial filling of the trade.
-  repeated RouteStatus routes = 2;
+  // Specific to `SWAP` settlement. Info about partial filling of the trade.
+  repeated SwapRouteStatus routes = 2;
 }
 
 message TradeStatus {
@@ -142,6 +143,7 @@ message TradeStatus {
       ClaimAvailable claim_available = 21;
       // Specific to `ESCROW` & `HTLC` settlement. Deposit timeout has expired, need to refund it
       RefundAvailable refund_available = 22;
+
       // The transaction with incoming funds found, waiting for it to mine.
       ReceivingFunds receiving_funds = 31;
 
@@ -156,6 +158,18 @@ message TradeStatus {
   }
 
   StatusOneOf status = 10000;
+
+  // Timestamp (UTC seconds) when outgoing transfer has been detected.
+  //
+  // This field contains zero until the transfer has been detected.
+  uint64 transfer_timestamp = 110;
+
+  // Timestamp (UTC seconds) of completion of the trade.
+  //
+  // This field contains zero until the transfer has been detected.
+  // For non-settled trades this field contains estimated timestamp of trade completion.
+  // For settled trades this field contains the exact timestamp of last transaction of the trade.
+  uint64 estimated_finish_timestamp = 111;
 }
 
 service TradeGrpc {

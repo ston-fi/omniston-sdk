@@ -1,6 +1,7 @@
-import { ErrorCode } from "@/constants";
-import { OmnistonError } from "@/omniston/OmnistonError";
 import { JSONRPCErrorException } from "json-rpc-2.0";
+
+import { ErrorCode } from "../constants";
+import { OmnistonError } from "../omniston/OmnistonError";
 
 export function wrapError(error: unknown): OmnistonError {
   if (error instanceof OmnistonError) {

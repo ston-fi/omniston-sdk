@@ -1,8 +1,5 @@
 import { Observable, type Subscription, filter, finalize, map } from "rxjs";
 
-import { wrapError } from "@/helpers/wrapError";
-import { wrapErrorsAsync } from "@/helpers/wrapErrorsAsync";
-import { wrapErrorsSync } from "@/helpers/wrapErrorsSync";
 import { ApiClient } from "../ApiClient/ApiClient";
 import type { IApiClient } from "../ApiClient/ApiClient.types";
 import { ReconnectingTransport } from "../ApiClient/ReconnectingTransport";
@@ -16,6 +13,9 @@ import { TransactionRequest } from "../dto/TransactionRequest";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
+import { wrapError } from "../helpers/wrapError";
+import { wrapErrorsAsync } from "../helpers/wrapErrorsAsync";
+import { wrapErrorsSync } from "../helpers/wrapErrorsSync";
 import type { Logger } from "../logger/Logger";
 import {
   METHOD_BUILD_TRANSFER,

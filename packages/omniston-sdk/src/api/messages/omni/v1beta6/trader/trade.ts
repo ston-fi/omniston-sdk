@@ -9,50 +9,52 @@ import { Address, KeepAlive, Unsubscribed } from "../types/common";
 
 export const protobufPackage = "omni.v1beta6";
 
-export const ChunkResult = {
+export const SwapChunkResult = {
   CHUNK_RESULT_PROCESSING: "CHUNK_RESULT_PROCESSING",
   CHUNK_RESULT_FILLED: "CHUNK_RESULT_FILLED",
   CHUNK_RESULT_ABORTED: "CHUNK_RESULT_ABORTED",
   UNRECOGNIZED: "UNRECOGNIZED",
 } as const;
 
-export type ChunkResult = (typeof ChunkResult)[keyof typeof ChunkResult];
+export type SwapChunkResult =
+  (typeof SwapChunkResult)[keyof typeof SwapChunkResult];
 
-export namespace ChunkResult {
+export namespace SwapChunkResult {
   export type CHUNK_RESULT_PROCESSING =
-    typeof ChunkResult.CHUNK_RESULT_PROCESSING;
-  export type CHUNK_RESULT_FILLED = typeof ChunkResult.CHUNK_RESULT_FILLED;
-  export type CHUNK_RESULT_ABORTED = typeof ChunkResult.CHUNK_RESULT_ABORTED;
-  export type UNRECOGNIZED = typeof ChunkResult.UNRECOGNIZED;
+    typeof SwapChunkResult.CHUNK_RESULT_PROCESSING;
+  export type CHUNK_RESULT_FILLED = typeof SwapChunkResult.CHUNK_RESULT_FILLED;
+  export type CHUNK_RESULT_ABORTED =
+    typeof SwapChunkResult.CHUNK_RESULT_ABORTED;
+  export type UNRECOGNIZED = typeof SwapChunkResult.UNRECOGNIZED;
 }
 
-export function chunkResultFromJSON(object: any): ChunkResult {
+export function swapChunkResultFromJSON(object: any): SwapChunkResult {
   switch (object) {
     case 0:
     case "CHUNK_RESULT_PROCESSING":
-      return ChunkResult.CHUNK_RESULT_PROCESSING;
+      return SwapChunkResult.CHUNK_RESULT_PROCESSING;
     case 1:
     case "CHUNK_RESULT_FILLED":
-      return ChunkResult.CHUNK_RESULT_FILLED;
+      return SwapChunkResult.CHUNK_RESULT_FILLED;
     case 2:
     case "CHUNK_RESULT_ABORTED":
-      return ChunkResult.CHUNK_RESULT_ABORTED;
+      return SwapChunkResult.CHUNK_RESULT_ABORTED;
     case -1:
     case "UNRECOGNIZED":
     default:
-      return ChunkResult.UNRECOGNIZED;
+      return SwapChunkResult.UNRECOGNIZED;
   }
 }
 
-export function chunkResultToJSON(object: ChunkResult): number {
+export function swapChunkResultToJSON(object: SwapChunkResult): number {
   switch (object) {
-    case ChunkResult.CHUNK_RESULT_PROCESSING:
+    case SwapChunkResult.CHUNK_RESULT_PROCESSING:
       return 0;
-    case ChunkResult.CHUNK_RESULT_FILLED:
+    case SwapChunkResult.CHUNK_RESULT_FILLED:
       return 1;
-    case ChunkResult.CHUNK_RESULT_ABORTED:
+    case SwapChunkResult.CHUNK_RESULT_ABORTED:
       return 2;
-    case ChunkResult.UNRECOGNIZED:
+    case SwapChunkResult.UNRECOGNIZED:
     default:
       return -1;
   }
@@ -115,7 +117,7 @@ export function tradeResultToJSON(object: TradeResult): number {
   }
 }
 
-export interface ChunkStatus {
+export interface SwapChunkStatus {
   protocol: string;
   /**
    * Address of the contract that processes this chunk.
@@ -127,17 +129,17 @@ export interface ChunkStatus {
   offerUnits: string;
   expectedAskUnits: string;
   actualAskUnits: string;
-  result: ChunkResult;
+  result: SwapChunkResult;
   /** Hash of the transaction that performs swapping of the chunk. */
   txHash: string;
 }
 
-export interface StepStatus {
-  chunks: ChunkStatus[];
+export interface SwapStepStatus {
+  chunks: SwapChunkStatus[];
 }
 
-export interface RouteStatus {
-  steps: StepStatus[];
+export interface SwapRouteStatus {
+  steps: SwapStepStatus[];
 }
 
 /** A request to track the status of specific trade */
@@ -166,7 +168,7 @@ export interface Transferring {}
  */
 export interface Swapping {
   /** Info about partial filling of the trade. */
-  routes: RouteStatus[];
+  routes: SwapRouteStatus[];
 }
 
 /**
@@ -204,20 +206,34 @@ export interface RefundAvailable {
 
 /** The transactions with incoming funds found, waiting for them to mine. */
 export interface ReceivingFunds {
-  /** Info about chunks of the trade. */
-  routes: RouteStatus[];
+  /** Specific to `SWAP` settlement. Info about chunks of the trade. */
+  routes: SwapRouteStatus[];
 }
 
 /** The trade has completed (fully or partially filled or fully aborted) */
 export interface TradeSettled {
   /** Result of the trade */
   result: TradeResult;
-  /** Info about partial filling of the trade. */
-  routes: RouteStatus[];
+  /** Specific to `SWAP` settlement. Info about partial filling of the trade. */
+  routes: SwapRouteStatus[];
 }
 
 export interface TradeStatus {
   status: TradeStatus_StatusOneOf | undefined;
+  /**
+   * Timestamp (UTC seconds) when outgoing transfer has been detected.
+   *
+   * This field contains zero until the transfer has been detected.
+   */
+  transferTimestamp: number;
+  /**
+   * Timestamp (UTC seconds) of completion of the trade.
+   *
+   * This field contains zero until the transfer has been detected.
+   * For non-settled trades this field contains estimated timestamp of trade completion.
+   * For settled trades this field contains the exact timestamp of last transaction of the trade.
+   */
+  estimatedFinishTimestamp: number;
 }
 
 export interface TradeStatus_StatusOneOf {
@@ -243,20 +259,20 @@ export interface TradeStatus_StatusOneOf {
   unsubscribed?: Unsubscribed | undefined;
 }
 
-function createBaseChunkStatus(): ChunkStatus {
+function createBaseSwapChunkStatus(): SwapChunkStatus {
   return {
     protocol: "",
     targetAddress: undefined,
     offerUnits: "",
     expectedAskUnits: "",
     actualAskUnits: "",
-    result: ChunkResult.CHUNK_RESULT_PROCESSING,
+    result: SwapChunkResult.CHUNK_RESULT_PROCESSING,
     txHash: "",
   };
 }
 
-export const ChunkStatus = {
-  fromJSON(object: any): ChunkStatus {
+export const SwapChunkStatus = {
+  fromJSON(object: any): SwapChunkStatus {
     return {
       protocol: isSet(object.protocol)
         ? globalThis.String(object.protocol)
@@ -274,13 +290,13 @@ export const ChunkStatus = {
         ? globalThis.String(object.actual_ask_units)
         : "",
       result: isSet(object.result)
-        ? chunkResultFromJSON(object.result)
-        : ChunkResult.CHUNK_RESULT_PROCESSING,
+        ? swapChunkResultFromJSON(object.result)
+        : SwapChunkResult.CHUNK_RESULT_PROCESSING,
       txHash: isSet(object.tx_hash) ? globalThis.String(object.tx_hash) : "",
     };
   },
 
-  toJSON(message: ChunkStatus): unknown {
+  toJSON(message: SwapChunkStatus): unknown {
     const obj: any = {};
     if (message.protocol !== undefined) {
       obj.protocol = message.protocol;
@@ -298,7 +314,7 @@ export const ChunkStatus = {
       obj.actual_ask_units = message.actualAskUnits;
     }
     if (message.result !== undefined) {
-      obj.result = chunkResultToJSON(message.result);
+      obj.result = swapChunkResultToJSON(message.result);
     }
     if (message.txHash !== undefined) {
       obj.tx_hash = message.txHash;
@@ -306,13 +322,15 @@ export const ChunkStatus = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<ChunkStatus>, I>>(base?: I): ChunkStatus {
-    return ChunkStatus.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<SwapChunkStatus>, I>>(
+    base?: I,
+  ): SwapChunkStatus {
+    return SwapChunkStatus.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ChunkStatus>, I>>(
+  fromPartial<I extends Exact<DeepPartial<SwapChunkStatus>, I>>(
     object: I,
-  ): ChunkStatus {
-    const message = createBaseChunkStatus();
+  ): SwapChunkStatus {
+    const message = createBaseSwapChunkStatus();
     message.protocol = object.protocol ?? "";
     message.targetAddress =
       object.targetAddress !== undefined && object.targetAddress !== null
@@ -321,75 +339,80 @@ export const ChunkStatus = {
     message.offerUnits = object.offerUnits ?? "";
     message.expectedAskUnits = object.expectedAskUnits ?? "";
     message.actualAskUnits = object.actualAskUnits ?? "";
-    message.result = object.result ?? ChunkResult.CHUNK_RESULT_PROCESSING;
+    message.result = object.result ?? SwapChunkResult.CHUNK_RESULT_PROCESSING;
     message.txHash = object.txHash ?? "";
     return message;
   },
 };
 
-function createBaseStepStatus(): StepStatus {
+function createBaseSwapStepStatus(): SwapStepStatus {
   return { chunks: [] };
 }
 
-export const StepStatus = {
-  fromJSON(object: any): StepStatus {
+export const SwapStepStatus = {
+  fromJSON(object: any): SwapStepStatus {
     return {
       chunks: globalThis.Array.isArray(object?.chunks)
-        ? object.chunks.map((e: any) => ChunkStatus.fromJSON(e))
+        ? object.chunks.map((e: any) => SwapChunkStatus.fromJSON(e))
         : [],
     };
   },
 
-  toJSON(message: StepStatus): unknown {
+  toJSON(message: SwapStepStatus): unknown {
     const obj: any = {};
     if (message.chunks?.length) {
-      obj.chunks = message.chunks.map((e) => ChunkStatus.toJSON(e));
+      obj.chunks = message.chunks.map((e) => SwapChunkStatus.toJSON(e));
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<StepStatus>, I>>(base?: I): StepStatus {
-    return StepStatus.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<SwapStepStatus>, I>>(
+    base?: I,
+  ): SwapStepStatus {
+    return SwapStepStatus.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<StepStatus>, I>>(
+  fromPartial<I extends Exact<DeepPartial<SwapStepStatus>, I>>(
     object: I,
-  ): StepStatus {
-    const message = createBaseStepStatus();
+  ): SwapStepStatus {
+    const message = createBaseSwapStepStatus();
     message.chunks =
-      object.chunks?.map((e) => ChunkStatus.fromPartial(e)) || [];
+      object.chunks?.map((e) => SwapChunkStatus.fromPartial(e)) || [];
     return message;
   },
 };
 
-function createBaseRouteStatus(): RouteStatus {
+function createBaseSwapRouteStatus(): SwapRouteStatus {
   return { steps: [] };
 }
 
-export const RouteStatus = {
-  fromJSON(object: any): RouteStatus {
+export const SwapRouteStatus = {
+  fromJSON(object: any): SwapRouteStatus {
     return {
       steps: globalThis.Array.isArray(object?.steps)
-        ? object.steps.map((e: any) => StepStatus.fromJSON(e))
+        ? object.steps.map((e: any) => SwapStepStatus.fromJSON(e))
         : [],
     };
   },
 
-  toJSON(message: RouteStatus): unknown {
+  toJSON(message: SwapRouteStatus): unknown {
     const obj: any = {};
     if (message.steps?.length) {
-      obj.steps = message.steps.map((e) => StepStatus.toJSON(e));
+      obj.steps = message.steps.map((e) => SwapStepStatus.toJSON(e));
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<RouteStatus>, I>>(base?: I): RouteStatus {
-    return RouteStatus.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<SwapRouteStatus>, I>>(
+    base?: I,
+  ): SwapRouteStatus {
+    return SwapRouteStatus.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<RouteStatus>, I>>(
+  fromPartial<I extends Exact<DeepPartial<SwapRouteStatus>, I>>(
     object: I,
-  ): RouteStatus {
-    const message = createBaseRouteStatus();
-    message.steps = object.steps?.map((e) => StepStatus.fromPartial(e)) || [];
+  ): SwapRouteStatus {
+    const message = createBaseSwapRouteStatus();
+    message.steps =
+      object.steps?.map((e) => SwapStepStatus.fromPartial(e)) || [];
     return message;
   },
 };
@@ -507,7 +530,7 @@ export const Swapping = {
   fromJSON(object: any): Swapping {
     return {
       routes: globalThis.Array.isArray(object?.routes)
-        ? object.routes.map((e: any) => RouteStatus.fromJSON(e))
+        ? object.routes.map((e: any) => SwapRouteStatus.fromJSON(e))
         : [],
     };
   },
@@ -515,7 +538,7 @@ export const Swapping = {
   toJSON(message: Swapping): unknown {
     const obj: any = {};
     if (message.routes?.length) {
-      obj.routes = message.routes.map((e) => RouteStatus.toJSON(e));
+      obj.routes = message.routes.map((e) => SwapRouteStatus.toJSON(e));
     }
     return obj;
   },
@@ -526,7 +549,7 @@ export const Swapping = {
   fromPartial<I extends Exact<DeepPartial<Swapping>, I>>(object: I): Swapping {
     const message = createBaseSwapping();
     message.routes =
-      object.routes?.map((e) => RouteStatus.fromPartial(e)) || [];
+      object.routes?.map((e) => SwapRouteStatus.fromPartial(e)) || [];
     return message;
   },
 };
@@ -656,7 +679,7 @@ export const ReceivingFunds = {
   fromJSON(object: any): ReceivingFunds {
     return {
       routes: globalThis.Array.isArray(object?.routes)
-        ? object.routes.map((e: any) => RouteStatus.fromJSON(e))
+        ? object.routes.map((e: any) => SwapRouteStatus.fromJSON(e))
         : [],
     };
   },
@@ -664,7 +687,7 @@ export const ReceivingFunds = {
   toJSON(message: ReceivingFunds): unknown {
     const obj: any = {};
     if (message.routes?.length) {
-      obj.routes = message.routes.map((e) => RouteStatus.toJSON(e));
+      obj.routes = message.routes.map((e) => SwapRouteStatus.toJSON(e));
     }
     return obj;
   },
@@ -679,7 +702,7 @@ export const ReceivingFunds = {
   ): ReceivingFunds {
     const message = createBaseReceivingFunds();
     message.routes =
-      object.routes?.map((e) => RouteStatus.fromPartial(e)) || [];
+      object.routes?.map((e) => SwapRouteStatus.fromPartial(e)) || [];
     return message;
   },
 };
@@ -695,7 +718,7 @@ export const TradeSettled = {
         ? tradeResultFromJSON(object.result)
         : TradeResult.TRADE_RESULT_UNKNOWN,
       routes: globalThis.Array.isArray(object?.routes)
-        ? object.routes.map((e: any) => RouteStatus.fromJSON(e))
+        ? object.routes.map((e: any) => SwapRouteStatus.fromJSON(e))
         : [],
     };
   },
@@ -706,7 +729,7 @@ export const TradeSettled = {
       obj.result = tradeResultToJSON(message.result);
     }
     if (message.routes?.length) {
-      obj.routes = message.routes.map((e) => RouteStatus.toJSON(e));
+      obj.routes = message.routes.map((e) => SwapRouteStatus.toJSON(e));
     }
     return obj;
   },
@@ -722,13 +745,17 @@ export const TradeSettled = {
     const message = createBaseTradeSettled();
     message.result = object.result ?? TradeResult.TRADE_RESULT_UNKNOWN;
     message.routes =
-      object.routes?.map((e) => RouteStatus.fromPartial(e)) || [];
+      object.routes?.map((e) => SwapRouteStatus.fromPartial(e)) || [];
     return message;
   },
 };
 
 function createBaseTradeStatus(): TradeStatus {
-  return { status: undefined };
+  return {
+    status: undefined,
+    transferTimestamp: 0,
+    estimatedFinishTimestamp: 0,
+  };
 }
 
 export const TradeStatus = {
@@ -737,6 +764,12 @@ export const TradeStatus = {
       status: isSet(object.status)
         ? TradeStatus_StatusOneOf.fromJSON(object.status)
         : undefined,
+      transferTimestamp: isSet(object.transfer_timestamp)
+        ? globalThis.Number(object.transfer_timestamp)
+        : 0,
+      estimatedFinishTimestamp: isSet(object.estimated_finish_timestamp)
+        ? globalThis.Number(object.estimated_finish_timestamp)
+        : 0,
     };
   },
 
@@ -744,6 +777,14 @@ export const TradeStatus = {
     const obj: any = {};
     if (message.status !== undefined) {
       obj.status = TradeStatus_StatusOneOf.toJSON(message.status);
+    }
+    if (message.transferTimestamp !== undefined) {
+      obj.transfer_timestamp = Math.round(message.transferTimestamp);
+    }
+    if (message.estimatedFinishTimestamp !== undefined) {
+      obj.estimated_finish_timestamp = Math.round(
+        message.estimatedFinishTimestamp,
+      );
     }
     return obj;
   },
@@ -759,6 +800,8 @@ export const TradeStatus = {
       object.status !== undefined && object.status !== null
         ? TradeStatus_StatusOneOf.fromPartial(object.status)
         : undefined;
+    message.transferTimestamp = object.transferTimestamp ?? 0;
+    message.estimatedFinishTimestamp = object.estimatedFinishTimestamp ?? 0;
     return message;
   },
 };

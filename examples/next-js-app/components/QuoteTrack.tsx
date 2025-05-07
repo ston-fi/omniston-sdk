@@ -80,8 +80,18 @@ export const QuoteTrack = withQuoteTrackProps(
     if (!tradeStatus?.status) return null;
 
     return (
-      <div className={cn("p-4 border rounded-md", props.className)}>
+      <div className={cn("p-4 border rounded-md spaced-y-2", props.className)}>
         <TradeStatusContent status={tradeStatus.status} />
+        <div className="flex gap-2 items-center">
+          <span>Transfer timestamp:</span>
+          <pre>{new Date(tradeStatus.transferTimestamp).toLocaleString()}</pre>
+        </div>
+        <div className="flex gap-2 items-center">
+          <span>Estimated finish timestamp: </span>
+          <pre>
+            {new Date(tradeStatus.estimatedFinishTimestamp).toLocaleString()}
+          </pre>
+        </div>
       </div>
     );
   },
@@ -97,7 +107,7 @@ function TradeStatusContent({
   }
 
   if (status.awaitingTransfer) {
-    return <span>Awaiting Transfer</span>;
+    return <span>Awaiting Transfer...</span>;
   }
 
   if (status.transferring) {
@@ -130,7 +140,7 @@ function TradeStatusContent({
   if (status.tradeSettled) {
     return (
       <span className="inline-flex gap-2 items-center">
-        <span>Trade Settled</span>
+        <span>Trade Settled:</span>
         <pre>{status.tradeSettled.result}</pre>
       </span>
     );

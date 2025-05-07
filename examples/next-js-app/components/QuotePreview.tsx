@@ -1,14 +1,14 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
-
-import { useRfq } from "@/hooks/useRfq";
 import type { Quote } from "@ston-fi/omniston-sdk-react";
+import { ExternalLink } from "lucide-react";
+import { useEffect } from "react";
 
+import { useAssets } from "@/hooks/useAssets";
 import { useExplorer } from "@/hooks/useExplorer";
+import { useRfq } from "@/hooks/useRfq";
 import { bigNumberToFloat, cn } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
-import { useEffect } from "react";
 
 export const QuotePreview = (props: { className?: string }) => {
   const { data: quoteEvent, error, isFetching } = useRfq();
@@ -51,6 +51,14 @@ const QuoteLoading = () => {
 
 const QuoteData = ({ quote }: { quote: Quote }) => {
   const { askAsset, offerAsset } = useSwapForm();
+
+  const protocolFeeAsset = useAssets({
+    select: (assets) =>
+      assets.filter(
+        (asset) => asset.address === quote.protocolFeeAsset?.address,
+      ),
+  }).data[0]!;
+
   const { nftPreviewUrl } = useExplorer();
 
   if (!askAsset || !offerAsset) {
@@ -78,9 +86,16 @@ const QuoteData = ({ quote }: { quote: Quote }) => {
       <li>
         <b>Protocol fee:</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(quote.protocolFeeUnits, offerAsset.decimals)}
+          {bigNumberToFloat(quote.protocolFeeUnits, protocolFeeAsset.decimals)}
           &nbsp;
-          {offerAsset.symbol}
+          {protocolFeeAsset.symbol}
+        </span>
+      </li>
+      <li>
+        <b>Estimated gas consumption:</b>
+        <span className="overflow-hidden text-ellipsis text-right">
+          {bigNumberToFloat(quote.estimatedGasConsumption, 9)}
+          &nbsp; TON
         </span>
       </li>
       <hr />

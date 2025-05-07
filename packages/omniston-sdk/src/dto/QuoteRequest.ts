@@ -1,5 +1,5 @@
-import type { RequestSettlementParams } from "@/dto/RequestSettlementParams";
 import { QuoteRequest as ApiQuoteRequest } from "../api/messages/omni/v1beta6/types/quote";
+import type { RequestSettlementParams } from "../dto/RequestSettlementParams";
 import type { OverrideProperties, SetOptional } from "../types";
 
 export type QuoteRequest = OverrideProperties<

@@ -1,8 +1,8 @@
 import { Subject } from "rxjs";
 
-import type { Logger } from "@/omniston";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
+import type { Logger } from "../omniston";
 import type { Transport } from "./Transport";
 
 const DEFAULT_MAX_RETRIES = 10;

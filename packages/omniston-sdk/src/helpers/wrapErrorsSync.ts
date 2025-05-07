@@ -1,4 +1,4 @@
-import { wrapError } from "@/helpers/wrapError";
+import { wrapError } from "../helpers/wrapError";
 
 export function wrapErrorsSync<T>(fn: () => T): T {
   try {

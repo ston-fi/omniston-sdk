@@ -1,7 +1,6 @@
 import { Subject } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { OmnistonError } from "@/omniston";
 import { FakeApiClient } from "../ApiClient/FakeApiClient";
 import type { Quote } from "../dto/Quote";
 import { QuoteEvent } from "../dto/QuoteEvent";
@@ -12,6 +11,7 @@ import { TradeStatus } from "../dto/TradeStatus";
 import { TransactionRequest } from "../dto/TransactionRequest";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { FakeTimer } from "../helpers/timer/FakeTimer";
+import { OmnistonError } from "../omniston";
 import {
   METHOD_BUILD_TRANSFER,
   METHOD_QUOTE,

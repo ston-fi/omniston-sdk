@@ -12,6 +12,8 @@ message BuildTransferRequest {
   Address source_address = 1;
   // The address on `ask_blockchain` that will receive result of the trade
   Address destination_address = 2;
+  // The address that will receive the gas not spent by the trade.
+  Address gas_excess_address = 3;
   // The valid quote received from `QuoteGrpc`
   Quote quote = 10;
 }

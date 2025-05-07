@@ -27,6 +27,10 @@ export function useBuildAndSendTransaction() {
           address: wallet?.account.address.toString(),
           blockchain: Blockchain.TON,
         },
+        gasExcessAddress: {
+          address: wallet?.account.address.toString(),
+          blockchain: Blockchain.TON,
+        },
       });
 
       const omniMessages = tx.ton?.messages;

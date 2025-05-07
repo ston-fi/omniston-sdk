@@ -1,5 +1,19 @@
 # Changelog
 
+## 07-05-2025
+
+Based on our integrators' feedback, the `v1beta6` was extended with more fields. The updated API is fully backward compatible.
+
+### @ston-fi/omniston-sdk@0.5.0
+### @ston-fi/omniston-sdk-react@0.5.0
+
+- `buildTransfer` method extended with the `gasExcessAddress` field to configure the address that will receive the gas not spent by the trade.
+- `Quote` object extended with the `estimatedGasConsumption` field that represents the estimated amount of gas units that will be spent to perform the trade
+- `Quote` object extended with the `referrerFeeAsset` field that specifies the asset of the fees that the referrer will get
+- `Quote` object extended with the `protocolFeeAsset` field that specifies the asset of the fees charged by the protocol
+- `TradeStatus` object extended with the `transferTimestamp` field with the Timestamp of when the outgoing transfer has been detected.
+- `TradeStatus` object extended with the `estimatedFinishTimestamp` field, with the Timestamp of completion of the trade.
+
 ## 21-04-2025
 
 ### @ston-fi/omniston-sdk-react@0.4.2

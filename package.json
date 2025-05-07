@@ -20,8 +20,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "lefthook": "1.11.11",
-    "turbo": "2.5.0",
+    "lefthook": "1.11.12",
+    "turbo": "2.5.3",
     "typescript": "^5"
   }
 }

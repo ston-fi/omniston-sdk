@@ -12,6 +12,7 @@ export const protobufPackage = "omni.v1beta6";
 /** Represents route of swapping assets: `TON -> USDT`, `TON -> USDC -> USDT`, etc. */
 export interface SwapRoute {
   steps: SwapStep[];
+  /** *DEPRECATED** This field if filled by Omniston service */
   gasBudget: string;
 }
 

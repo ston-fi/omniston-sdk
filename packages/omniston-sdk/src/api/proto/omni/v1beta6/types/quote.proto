@@ -118,10 +118,10 @@ message Quote {
   // The address of referrer that will receive the fees.
   Address referrer_address = 8;
 
-  // The amount of fees that the referrer will get (in units of `ask_asset_address`).
+  // The amount of fees that the referrer will get (in units of the asset specified in `referrer_fee_asset`).
   string referrer_fee_units = 9;
 
-  // The amount of fees charged by the protocol (in units of `ask_asset_address`).
+  // The amount of fees charged by the protocol (in units of the asset specified in `protocol_fee_asset`).
   string protocol_fee_units = 10;
 
   // The timestamp (UTC seconds) of Quote sent by resolver.
@@ -134,7 +134,20 @@ message Quote {
   uint64 trade_start_deadline = 12;
 
   // Total gas budget required to perform the trade.
+  //
+  // This field if filled by Omniston service, resolvers may omit this field when generating the quote.
   string gas_budget = 13;
+
+  // Estimated amount of gas units that will be spent to perform the trade.
+  //
+  // This field if filled by Omniston service, resolvers may omit this field when generating the quote.
+  string estimated_gas_consumption = 14;
+
+  // The asset of the fees that the referrer will get (the amount is specified in `referrer_fee_units`).
+  Address referrer_fee_asset = 15;
+
+  // The asset of the fees charged by the protocol (the amount is specified in `protocol_fee_units`).
+  Address protocol_fee_asset = 16;
 
   // Additional parameters specific to settlement method.
   message ParamsOneOf {

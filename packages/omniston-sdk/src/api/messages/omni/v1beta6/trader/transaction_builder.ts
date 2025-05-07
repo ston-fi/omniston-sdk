@@ -16,6 +16,8 @@ export interface BuildTransferRequest {
   sourceAddress: Address | undefined;
   /** The address on `ask_blockchain` that will receive result of the trade */
   destinationAddress: Address | undefined;
+  /** The address that will receive the gas not spent by the trade. */
+  gasExcessAddress: Address | undefined;
   /** The valid quote received from `QuoteGrpc` */
   quote: Quote | undefined;
 }
@@ -24,6 +26,7 @@ function createBaseBuildTransferRequest(): BuildTransferRequest {
   return {
     sourceAddress: undefined,
     destinationAddress: undefined,
+    gasExcessAddress: undefined,
     quote: undefined,
   };
 }
@@ -37,6 +40,9 @@ export const BuildTransferRequest = {
       destinationAddress: isSet(object.destination_address)
         ? Address.fromJSON(object.destination_address)
         : undefined,
+      gasExcessAddress: isSet(object.gas_excess_address)
+        ? Address.fromJSON(object.gas_excess_address)
+        : undefined,
       quote: isSet(object.quote) ? Quote.fromJSON(object.quote) : undefined,
     };
   },
@@ -48,6 +54,9 @@ export const BuildTransferRequest = {
     }
     if (message.destinationAddress !== undefined) {
       obj.destination_address = Address.toJSON(message.destinationAddress);
+    }
+    if (message.gasExcessAddress !== undefined) {
+      obj.gas_excess_address = Address.toJSON(message.gasExcessAddress);
     }
     if (message.quote !== undefined) {
       obj.quote = Quote.toJSON(message.quote);
@@ -72,6 +81,10 @@ export const BuildTransferRequest = {
       object.destinationAddress !== undefined &&
       object.destinationAddress !== null
         ? Address.fromPartial(object.destinationAddress)
+        : undefined;
+    message.gasExcessAddress =
+      object.gasExcessAddress !== undefined && object.gasExcessAddress !== null
+        ? Address.fromPartial(object.gasExcessAddress)
         : undefined;
     message.quote =
       object.quote !== undefined && object.quote !== null

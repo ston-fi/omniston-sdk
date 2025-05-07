@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
-
 import { useTonConnectModal, useTonWallet } from "@tonconnect/ui-react";
+import { useCallback, useState } from "react";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { useBuildAndSendTransaction } from "@/hooks/useBuildAndSendTransaction";
