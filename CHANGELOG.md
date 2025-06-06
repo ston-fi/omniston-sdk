@@ -1,5 +1,11 @@
 # Changelog
 
+## 05-06-2025
+
+### @ston-fi/omniston-sdk-react@0.5.1
+
+`useRfq` and `useTrackTrade` hook results were extended with the explicit `unsubscribe` function
+
 ## 07-05-2025
 
 Based on our integrators' feedback, the `v1beta6` was extended with more fields. The updated API is fully backward compatible.
