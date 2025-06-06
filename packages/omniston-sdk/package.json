@@ -29,7 +29,7 @@
     "test:typecheck": "tsc --noEmit",
     "dev": "tsup --watch",
     "build": "tsup",
-    "prepublishOnly": "pnpm install && turbo run build"
+    "prepublishOnly": "turbo run test && turbo run build"
   },
   "dependencies": {
     "isomorphic-ws": "^5.0.0",

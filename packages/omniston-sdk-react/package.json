@@ -28,7 +28,7 @@
     "test": "CI=true pnpm run /^test:/",
     "test:unit": "vitest",
     "test:typecheck": "tsc --noEmit",
-    "prepublishOnly": "pnpm install && turbo run build"
+    "prepublishOnly": "turbo run test && turbo run build"
   },
   "dependencies": {
     "@ston-fi/omniston-sdk": "workspace:*",
