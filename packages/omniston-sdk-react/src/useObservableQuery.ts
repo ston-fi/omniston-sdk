@@ -4,7 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 
 import { ObservableRefCountCacheContext } from "./ObservableRefCountCacheContext";
 
@@ -24,57 +24,65 @@ export type UseObservableQueryOptions<TData> = Omit<
  * A wrapper for data fetching functions that return an Observable to use with react-query.
  */
 export function useObservableQuery<TData>({
+  queryKey,
   requestFn,
+  enabled,
   ...queryOptions
 }: UseObservableQueryOptions<TData>) {
   const queryClient = useQueryClient();
 
   const cache = useContext(ObservableRefCountCacheContext);
 
-  const observableRefCount = cache.getOrCreate(
-    queryOptions.queryKey,
-    requestFn,
-  );
+  const observableRefCount = cache.getOrCreate(queryKey, requestFn);
+
+  const unsubscribeRef = useRef<() => void>(() => {});
 
   useEffect(() => {
-    if (queryOptions.enabled === false) {
-      return;
-    }
+    if (enabled === false) return;
 
     observableRefCount.increaseRefCount();
 
     return () => {
       observableRefCount.decreaseRefCount();
     };
-  }, [observableRefCount, queryOptions.enabled]);
+  }, [observableRefCount, enabled]);
 
-  return useQuery({
-    ...queryOptions,
-    queryFn: () => {
-      return new Promise<never>((_, reject) => {
-        let isRejected = false;
+  return {
+    ...useQuery({
+      ...queryOptions,
+      queryKey,
+      enabled,
+      queryFn: () => {
+        return new Promise<never>((_, reject) => {
+          let isRejected = false;
 
-        observableRefCount.subscribe({
-          next: (data) => {
-            queryClient.setQueryData(queryOptions.queryKey, data);
-          },
-          error: (err) => {
-            isRejected = true;
-            reject(err);
-          },
-          finalizer: () => {
-            if (!isRejected) {
-              queryClient.cancelQueries({ queryKey: queryOptions.queryKey });
-              queryClient.invalidateQueries({
-                queryKey: queryOptions.queryKey,
-                refetchType: "none",
-              });
-            }
-          },
+          const subscription = observableRefCount.subscribe({
+            next: (data) => {
+              queryClient.setQueryData(queryKey, data);
+            },
+            error: (err) => {
+              isRejected = true;
+              reject(err);
+            },
+            finalizer: () => {
+              if (!isRejected) {
+                queryClient.cancelQueries({ queryKey });
+                queryClient.invalidateQueries({
+                  queryKey,
+                  refetchType: "none",
+                });
+              }
+            },
+          });
+
+          unsubscribeRef.current = () => {
+            subscription.unsubscribe();
+          };
         });
-      });
-    },
-    staleTime: Number.POSITIVE_INFINITY,
-    retry: false,
-  });
+      },
+      staleTime: Number.POSITIVE_INFINITY,
+      retry: false,
+    }),
+    unsubscribe: unsubscribeRef.current,
+  };
 }
