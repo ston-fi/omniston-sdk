@@ -11,7 +11,7 @@ import { bigNumberToFloat, cn } from "@/lib/utils";
 import { useSwapForm } from "@/providers/swap-form";
 
 export const QuotePreview = (props: { className?: string }) => {
-  const { data: quoteEvent, error, isFetching } = useRfq();
+  const { data: quoteEvent, error, isFetching, unsubscribe } = useRfq();
 
   useEffect(() => {
     if (error) console.error(error);
@@ -22,7 +22,13 @@ export const QuotePreview = (props: { className?: string }) => {
   }
 
   return (
-    <div {...props} className={cn("p-4 border rounded-md", props.className)}>
+    <div
+      {...props}
+      className={cn(
+        "flex flex-col gap-2 p-4 border rounded-md",
+        props.className,
+      )}
+    >
       {error ? (
         <QuoteError errorMessage={`[${error.code}] ${error.message}`} />
       ) : quoteEvent?.type === "unsubscribed" ? (
@@ -32,6 +38,13 @@ export const QuotePreview = (props: { className?: string }) => {
       ) : (
         <QuoteLoading />
       )}
+
+      <button
+        className="inline-flex px-1 items-center rounded-sm border border-destructive text-destructive mb-2"
+        onClick={unsubscribe}
+      >
+        Unsubscribe
+      </button>
     </div>
   );
 };
