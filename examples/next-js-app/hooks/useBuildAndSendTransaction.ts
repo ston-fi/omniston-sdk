@@ -42,7 +42,7 @@ export function useBuildAndSendTransaction() {
       }
 
       const { boc } = await tonConnect.sendTransaction({
-        validUntil: Date.now() + 1000000,
+        validUntil: Math.floor(Date.now() / 1000) + 5 * 60, // 5 minutes
         messages: omniMessages.map((message) => ({
           address: message.targetAddress,
           amount: message.sendAmount,
