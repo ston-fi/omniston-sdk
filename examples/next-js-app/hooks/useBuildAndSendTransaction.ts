@@ -1,4 +1,5 @@
 import { useOmniston, useRfq } from "@/hooks";
+import { useSwapSettings } from "@/providers/swap-settings";
 import { Blockchain } from "@ston-fi/omniston-sdk-react";
 import { Cell } from "@ton/core";
 import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
@@ -11,6 +12,8 @@ export function useBuildAndSendTransaction() {
   const { data: quoteEvent } = useRfq();
   const quote =
     quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : undefined;
+
+  const { autoSlippageTolerance } = useSwapSettings();
 
   return useMemo(() => {
     if (!wallet) return undefined;
@@ -31,6 +34,7 @@ export function useBuildAndSendTransaction() {
           address: wallet?.account.address.toString(),
           blockchain: Blockchain.TON,
         },
+        useRecommendedSlippage: autoSlippageTolerance,
       });
 
       const omniMessages = tx.ton?.messages;
@@ -47,6 +51,7 @@ export function useBuildAndSendTransaction() {
           address: message.targetAddress,
           amount: message.sendAmount,
           payload: message.payload,
+          stateInit: message.jettonWalletStateInit,
         })),
       });
 

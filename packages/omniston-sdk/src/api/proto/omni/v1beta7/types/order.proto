@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package omni.v1beta7;
+
+import "omni/v1beta7/types/common.proto";
+import "omni/v1beta7/trader/trade.proto";
+import "omni/v1beta7/types/quote.proto";
+
+//TODO: Design multi-chain data
+message OrderData {
+  Quote quote = 1;
+  Address escrow_address = 2;
+  Address escrow_item_address = 3;
+  TradeStatus status = 4;
+}

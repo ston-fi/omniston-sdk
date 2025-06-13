@@ -63,7 +63,7 @@ const QuoteLoading = () => {
 };
 
 const QuoteData = ({ quote }: { quote: Quote }) => {
-  const { askAsset, offerAsset } = useSwapForm();
+  const { askAsset, bidAsset } = useSwapForm();
 
   const protocolFeeAsset = useAssets({
     select: (assets) =>
@@ -74,18 +74,18 @@ const QuoteData = ({ quote }: { quote: Quote }) => {
 
   const { nftPreviewUrl } = useExplorer();
 
-  if (!askAsset || !offerAsset) {
+  if (!askAsset || !bidAsset) {
     return null;
   }
 
   return (
     <ul className="space-y-2 [&>li]:grid [&>li]:grid-cols-[max-content,_1fr] [&>li]:gap-2">
       <li>
-        <b>Offer amount:</b>
+        <b>Bid amount:</b>
         <span className="overflow-hidden text-ellipsis text-right">
-          {bigNumberToFloat(quote.offerUnits, offerAsset.decimals)}
+          {bigNumberToFloat(quote.bidUnits, bidAsset.decimals)}
           &nbsp;
-          {offerAsset.symbol}
+          {bidAsset.symbol}
         </span>
       </li>
       <li>

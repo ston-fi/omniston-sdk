@@ -15,10 +15,10 @@ export const SwapForm = (props: { className?: string }) => {
     <Card {...props}>
       <CardContent className="flex flex-col gap-4 p-6">
         <section>
-          <OfferAssetHeader className="mb-1" />
+          <BidAssetHeader className="mb-1" />
           <div className="flex gap-2">
             <OfferAssetSelect className="min-w-[150px] w-1/3 max-w-[150px]" />
-            <OfferAssetInput />
+            <BidAssetInput />
           </div>
         </section>
 
@@ -37,7 +37,7 @@ export const SwapForm = (props: { className?: string }) => {
 const validateFloatValue = (value: string): boolean =>
   /^([0-9]+([.][0-9]*)?|[.][0-9]+)$/.test(value);
 
-const OfferAssetHeader = (props: { className?: string }) => {
+const BidAssetHeader = (props: { className?: string }) => {
   return (
     <div
       {...props}
@@ -46,47 +46,47 @@ const OfferAssetHeader = (props: { className?: string }) => {
         props.className,
       )}
     >
-      You offer
+      You bid
     </div>
   );
 };
 
 const OfferAssetSelect = (props: { className?: string }) => {
-  const { offerAsset } = useSwapForm();
+  const { bidAsset } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
   const { data } = useAssets();
 
   const handleAssetSelect = (asset: AssetInfo | null) => {
-    dispatch({ type: "SET_OFFER_ASSET", payload: asset });
+    dispatch({ type: "SET_BID_ASSET", payload: asset });
   };
 
   return (
     <AssetSelect
       {...props}
       assets={data}
-      selectedAsset={offerAsset}
+      selectedAsset={bidAsset}
       onAssetSelect={handleAssetSelect}
       loading={false}
     />
   );
 };
 
-const OfferAssetInput = (props: { className?: string }) => {
-  const { offerAsset, offerAmount } = useSwapForm();
+const BidAssetInput = (props: { className?: string }) => {
+  const { bidAsset, bidAmount } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
   const handleInputUpdate = ({ target }: ChangeEvent<HTMLInputElement>) => {
     if (target.value && !validateFloatValue(target.value)) return;
 
-    dispatch({ type: "SET_OFFER_AMOUNT", payload: target.value });
+    dispatch({ type: "SET_BID_AMOUNT", payload: target.value });
   };
 
   return (
     <Input
       {...props}
-      disabled={!offerAsset}
-      value={offerAmount}
+      disabled={!bidAsset}
+      value={bidAmount}
       onChange={handleInputUpdate}
     />
   );
@@ -107,12 +107,12 @@ const AskAssetHeader = (props: { className?: string }) => {
 };
 
 const AskAssetSelect = (props: { className?: string }) => {
-  const { askAsset, offerAsset } = useSwapForm();
+  const { askAsset, bidAsset } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
   const { data } = useAssets({
     select: (data) =>
-      data.filter(({ address }) => address !== offerAsset?.address),
+      data.filter(({ address }) => address !== bidAsset?.address),
   });
 
   const handleAssetSelect = (asset: AssetInfo | null) => {

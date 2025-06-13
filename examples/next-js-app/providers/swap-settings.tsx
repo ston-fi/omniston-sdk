@@ -3,9 +3,14 @@ import { createContext, useContext, useState } from "react";
 type SwapSettings = {
   slippageTolerance: number;
   setSlippageTolerance: (value: SwapSettings["slippageTolerance"]) => void;
+  autoSlippageTolerance: boolean;
+  setAutoSlippageTolerance: (
+    value: SwapSettings["autoSlippageTolerance"],
+  ) => void;
 };
 
-const DEFAULT_SLIPPAGE_TOLERANCE: SwapSettings["slippageTolerance"] = 0.05;
+export const DEFAULT_SLIPPAGE_TOLERANCE: SwapSettings["slippageTolerance"] = 0.05;
+const DEFAULT_AUTO_SLIPPAGE_TOLERANCE: SwapSettings["autoSlippageTolerance"] = false;
 
 const SwapSettingsContext = createContext<SwapSettings>({} as SwapSettings);
 
@@ -18,11 +23,17 @@ export const SwapSettingsProvider = ({
     DEFAULT_SLIPPAGE_TOLERANCE,
   );
 
+  const [autoSlippageTolerance, setAutoSlippageTolerance] = useState(
+    DEFAULT_AUTO_SLIPPAGE_TOLERANCE,
+  );
+
   return (
     <SwapSettingsContext.Provider
       value={{
         slippageTolerance,
         setSlippageTolerance,
+        autoSlippageTolerance,
+        setAutoSlippageTolerance,
       }}
     >
       {children}

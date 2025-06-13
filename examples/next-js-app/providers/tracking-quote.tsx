@@ -32,14 +32,14 @@ export const useTrackingQuoteState = () => {
 export const TrackingQuoteProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const { askAsset, offerAsset, askAmount, offerAmount } = useSwapForm();
+  const { askAsset, bidAsset, askAmount, bidAmount } = useSwapForm();
   const [quoteId, setQuoteId] = useState<TrackingQuoteState["quoteId"]>(null);
   const [externalTxHash, setExternalTxHash] =
     useState<TrackingQuoteState["externalTxHash"]>(null);
 
   useEffect(() => {
     setQuoteId(null);
-  }, [askAsset?.address, offerAsset?.address, askAmount, offerAmount]);
+  }, [askAsset?.address, bidAsset?.address, askAmount, bidAmount]);
 
   return (
     <TrackingQuoteContext.Provider

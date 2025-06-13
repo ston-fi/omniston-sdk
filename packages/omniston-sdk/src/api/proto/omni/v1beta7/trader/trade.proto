@@ -1,27 +1,27 @@
 syntax = "proto3";
 
-package omni.v1beta6;
+package omni.v1beta7;
 
-import "omni/v1beta6/types/common.proto";
+import "omni/v1beta7/types/common.proto";
 
 //////////////////////////////////////////////
 // Chunks, steps & routes statuses
 //////////////////////////////////////////////
 
 enum SwapChunkResult {
-  CHUNK_RESULT_PROCESSING = 0;
-  CHUNK_RESULT_FILLED = 1;
-  CHUNK_RESULT_ABORTED = 2;
+  SWAP_CHUNK_RESULT_PROCESSING = 0;
+  SWAP_CHUNK_RESULT_FILLED = 1;
+  SWAP_CHUNK_RESULT_ABORTED = 2;
 }
 
 message SwapChunkStatus {
   string protocol = 1;
   // Address of the contract that processes this chunk.
   //
-  // Generally, this address receives offer tokens.
+  // Generally, this address receives bid tokens.
   // More specifically, it might be the address of a protocol or liquidity pool.
   Address target_address = 2;
-  string offer_units = 3;
+  string bid_units = 3;
   string expected_ask_units = 4;
   string actual_ask_units = 5;
   SwapChunkResult result = 6;
@@ -106,9 +106,6 @@ message ClaimAvailable {
 message RefundAvailable {
   // Address of escrow or HTLC contract that enforces the swap.
   Address contract_address = 1;
-
-  // Index of deposit within escrow or HTLC contract with refundable deposit.
-  uint64 deposit_index = 2;
 }
 
 // The transactions with incoming funds found, waiting for them to mine.
@@ -181,5 +178,5 @@ service TradeGrpc {
   // the client might reconnect to get further updates.
   //
   // The client should close the stream if it's not interested in further updates.
-  rpc Track (TrackTradeRequest) returns (stream TradeStatus){}
+  rpc Track (TrackTradeRequest) returns (stream TradeStatus) {}
 }

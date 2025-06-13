@@ -1,13 +1,22 @@
 syntax = "proto3";
 
-package omni.v1beta6;
+package omni.v1beta7;
 
-import "omni/v1beta6/types/common.proto";
-import "omni/v1beta6/types/swap.proto";
+import "omni/v1beta7/types/common.proto";
+import "omni/v1beta7/types/swap.proto";
 
 /////////////////////////////////////////////////////////////////
 // The set of types for `QuoteGrpc.Quote` method.
 /////////////////////////////////////////////////////////////////
+
+enum GaslessSettlement {
+  // Gasless settlement either unsupported or prohibited by trader.
+  GASLESS_SETTLEMENT_PROHIBITED = 0;
+  // Gasless possible.
+  GASLESS_SETTLEMENT_POSSIBLE = 1;
+  // Gasless settlement required.
+  GASLESS_SETTLEMENT_REQUIRED = 2;
+}
 
 // Additional parameters of RFQ related to settlement.
 //
@@ -16,16 +25,24 @@ import "omni/v1beta6/types/swap.proto";
 message RequestSettlementParams {
   // Max price slippage in basis points (0.01%).
   uint32 max_price_slippage_bps = 1;
+
   // Max number of outgoing messages supported by the wallet.
   //
   // For TON blockchain defaults to 4 if omitted.
   uint32 max_outgoing_messages = 2;
+
+  // Gasless settlement parameters.
+  GaslessSettlement gasless_settlement = 3;
 }
 
 // Settlement parameters specific to `SWAP` settlement method.
 message SwapSettlementParams {
   repeated SwapRoute routes = 1;
   // TODO: Add a separate destination for trade tracking and fee collection
+  // Filled by Omniston service
+  string min_ask_amount = 50;
+  string recommended_min_ask_amount = 51;
+  uint32 recommended_slippage_bps = 52;
 }
 
 // Settlement parameters specific to `ESCROW` settlement method.
@@ -38,9 +55,12 @@ message EscrowSettlementParams {
   // Address of the resolver.
   Address resolver_address = 2;
 
-  // Duration in seconds after the deposit of offer asset to complete the trade.
+  // Duration in seconds after the deposit of bid asset to complete the trade.
   // The trader can return the deposit as soon as the timeout elapses.
   uint64 resolve_timeout = 3;
+
+  // Indicates whether a gasless order should be created for the quote.
+  bool gasless = 4;
 }
 
 // Settlement parameters specific to `HTLC` settlement method.
@@ -53,24 +73,25 @@ message HtlcSettlementParams {
   // Address of the resolver.
   Address resolver_address = 2;
 
-  // Duration in seconds after the deposit of offer asset to redeem the deposit by resolver.
+  // Duration in seconds after the deposit of bid asset to redeem the deposit by resolver.
   // The trader can return the deposit as soon as the timeout elapses.
   uint64 resolve_timeout = 3;
 }
 
 // A request for quote (RFQ) sent by the trader
 message QuoteRequest {
-  // Blockchain-specific address of offer asset.
-  Address offer_asset_address = 1;
+
+  // Blockchain-specific address of bid asset.
+  Address bid_asset_address = 1;
 
   // Blockchain-specific address of ask asset.
   Address ask_asset_address = 2;
 
-  // Either the amount of offer asset or ask asset.
+  // Either the amount of bid asset or ask asset.
   message AmountOneOf {
     oneof amount {
-      // The amount of offer asset the trader wants to pay, including all fees.
-      string offer_units = 3;
+      // The amount of bid asset the trader wants to pay, including all fees.
+      string bid_units = 3;
       // The amount of ask asset the trader wants to get after all fees.
       string ask_units = 4;
     }
@@ -86,8 +107,9 @@ message QuoteRequest {
 
   // Supported methods of swap settlement.
   // The protocol limits settlement methods in quotes to specified methods.
-  // Different combinations of offer & ask chains might support different methods.
+  // Different combinations of bid & ask chains might support different methods.
   repeated SettlementMethod settlement_methods = 7;
+
 
   // Additional parameters of request related to settlement.
   RequestSettlementParams settlement_params = 10;
@@ -103,14 +125,14 @@ message Quote {
   // Name of the resolver
   string resolver_name = 3;
 
-  // Blockchain-specific address of offer asset.
-  Address offer_asset_address = 4;
+  // Blockchain-specific address of bid asset.
+  Address bid_asset_address = 4;
 
   // Blockchain-specific address of ask asset.
   Address ask_asset_address = 5;
 
-  // The amount of offer asset the trader must pay, including all fees.
-  string offer_units = 6;
+  // The amount of bid asset the trader must pay, including all fees.
+  string bid_units = 6;
 
   // The amount of ask asset the trader will get after all fees.
   string ask_units = 7;
@@ -118,36 +140,26 @@ message Quote {
   // The address of referrer that will receive the fees.
   Address referrer_address = 8;
 
+  // The asset of the fees that the referrer will get (the amount is specified in  `referrer_fee_units`).
+  Address referrer_fee_asset = 9;
+
   // The amount of fees that the referrer will get (in units of the asset specified in `referrer_fee_asset`).
-  string referrer_fee_units = 9;
+  string referrer_fee_units = 10;
+
+  // The asset of the fees charged by the protocol (the amount is specified in  `protocol_fee_units`).
+  Address protocol_fee_asset = 11;
 
   // The amount of fees charged by the protocol (in units of the asset specified in `protocol_fee_asset`).
-  string protocol_fee_units = 10;
+  string protocol_fee_units = 12;
 
   // The timestamp (UTC seconds) of Quote sent by resolver.
-  uint64 quote_timestamp = 11;
+  uint64 quote_timestamp = 13;
 
   // Max timestamp (UTC seconds) of start of the trade.
   //
-  // The start of the trade is defined as the reception of offer asset by the corresponding smart contract.
+  // The start of the trade is defined as the reception of bid asset by the corresponding smart contract.
   // The resolver may still settle the trades started after this deadline has passed at own discretion.
-  uint64 trade_start_deadline = 12;
-
-  // Total gas budget required to perform the trade.
-  //
-  // This field if filled by Omniston service, resolvers may omit this field when generating the quote.
-  string gas_budget = 13;
-
-  // Estimated amount of gas units that will be spent to perform the trade.
-  //
-  // This field if filled by Omniston service, resolvers may omit this field when generating the quote.
-  string estimated_gas_consumption = 14;
-
-  // The asset of the fees that the referrer will get (the amount is specified in `referrer_fee_units`).
-  Address referrer_fee_asset = 15;
-
-  // The asset of the fees charged by the protocol (the amount is specified in `protocol_fee_units`).
-  Address protocol_fee_asset = 16;
+  uint64 trade_start_deadline = 14;
 
   // Additional parameters specific to settlement method.
   message ParamsOneOf {
@@ -159,4 +171,14 @@ message Quote {
   }
 
   ParamsOneOf params = 10001;
+
+  // Total gas budget required to perform the trade.
+  //
+  // This field if filled by Omniston service, resolvers may omit this field when generating the quote.
+  string gas_budget = 50;
+
+  // Estimated amount of gas units that will be spent to perform the trade.
+  //
+  // This field if filled by Omniston service, resolvers may omit this field when generating the quote.
+  string estimated_gas_consumption = 51;
 }

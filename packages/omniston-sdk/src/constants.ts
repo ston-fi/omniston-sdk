@@ -1,4 +1,5 @@
-export { SettlementMethod } from "./api/messages/omni/v1beta6/types/common";
+export { SettlementMethod } from "./api/messages/omni/v1beta7/types/common";
+export { GaslessSettlement } from "./api/messages/omni/v1beta7/types/quote";
 
 export enum Blockchain {
   UNKNOWN_BLOCKCHAIN = 0,

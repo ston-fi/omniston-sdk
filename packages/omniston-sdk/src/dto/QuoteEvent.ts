@@ -1,7 +1,7 @@
 import {
   QuoteEvent as ApiQuoteEvent,
   type QuoteEvent_EventOneOf,
-} from "../api/messages/omni/v1beta6/trader/quote";
+} from "../api/messages/omni/v1beta7/trader/quote";
 import type { Quote } from "../dto/Quote";
 import type { Converter, OverrideProperties } from "../types";
 

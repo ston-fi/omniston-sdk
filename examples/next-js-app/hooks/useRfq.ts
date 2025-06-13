@@ -1,5 +1,6 @@
 import {
   Blockchain,
+  GaslessSettlement,
   type QuoteRequest,
   SettlementMethod,
   useRfq as _useRfq,
@@ -12,7 +13,7 @@ import { useSwapSettings } from "@/providers/swap-settings";
 import { useTrackingQuoteState } from "@/providers/tracking-quote";
 
 export const useRfq = () => {
-  const { askAsset, offerAsset, askAmount, offerAmount } = useSwapForm();
+  const { askAsset, bidAsset, askAmount, bidAmount } = useSwapForm();
   const { slippageTolerance } = useSwapSettings();
   const { quoteId } = useTrackingQuoteState();
 
@@ -22,13 +23,13 @@ export const useRfq = () => {
       askAssetAddress: askAsset
         ? { address: askAsset.address, blockchain: Blockchain.TON }
         : undefined,
-      offerAssetAddress: offerAsset
-        ? { address: offerAsset.address, blockchain: Blockchain.TON }
+      bidAssetAddress: bidAsset
+        ? { address: bidAsset.address, blockchain: Blockchain.TON }
         : undefined,
       amount: {
-        offerUnits:
-          offerAsset && offerAmount
-            ? floatToBigNumber(offerAmount, offerAsset.decimals).toString()
+        bidUnits:
+          bidAsset && bidAmount
+            ? floatToBigNumber(bidAmount, bidAsset.decimals).toString()
             : undefined,
         askUnits:
           askAsset && askAmount
@@ -38,6 +39,7 @@ export const useRfq = () => {
       settlementParams: {
         maxPriceSlippageBps: percentToPercentBps(slippageTolerance),
         maxOutgoingMessages: 4,
+        gaslessSettlement: GaslessSettlement.GASLESS_SETTLEMENT_POSSIBLE,
       },
     },
     300,
@@ -45,9 +47,9 @@ export const useRfq = () => {
 
   const isFormFilled =
     debouncedQuoteRequest.askAssetAddress !== undefined &&
-    debouncedQuoteRequest.offerAssetAddress !== undefined &&
+    debouncedQuoteRequest.bidAssetAddress !== undefined &&
     (debouncedQuoteRequest.amount?.askUnits !== undefined ||
-      debouncedQuoteRequest.amount?.offerUnits !== undefined);
+      debouncedQuoteRequest.amount?.bidUnits !== undefined);
 
   return _useRfq(debouncedQuoteRequest, {
     enabled: isFormFilled && !quoteId,

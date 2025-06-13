@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package omni.v1beta7;
+
+import "omni/v1beta7/types/common.proto";
+import "omni/v1beta7/types/quote.proto";
+import "omni/v1beta7/types/transaction.proto";
+
+// A request to generate unsigned transfer to initiate the trade.
+message BuildTransferRequest {
+  // The address on `bid_blockchain` that will send initial transaction to start the trade
+  Address source_address = 1;
+  // The address on `ask_blockchain` that will receive result of the trade
+  Address destination_address = 2;
+  // The address that will receive the gas not spent by the trade.
+  Address gas_excess_address = 3;
+  // The valid quote received from `QuoteGrpc`
+  Quote quote = 10;
+  // Use the slippage recommended by Omniston instead of slippage provided by trader in QuoteRequest.
+  bool use_recommended_slippage = 11;
+}
+
+service TransactionBuilderGrpc {
+  rpc BuildTransfer (BuildTransferRequest) returns (Transaction){}
+
+  // TODO: Build transaction for gasless approvals/wallet extensions (out of scope for prototype)
+  // rpc BuildApproval (BuildApprovalRequest) returns (Transaction){}
+
+  // TODO: Build refund transaction from escrow contract (out of scope for prototype)
+  // rpc BuildRefund (BuildRefundRequest) returns (Transaction){}
+
+  // TODO
+  // rpc BuildClaim(BuildClaimRequest) returns (Transaction){}
+}

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package omni.v1beta6;
+package omni.v1beta7;
 
 // Generic address
 message Address {

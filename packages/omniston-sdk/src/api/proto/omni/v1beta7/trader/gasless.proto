@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package omni.v1beta7;
+
+import "omni/v1beta7/types/common.proto";
+import "omni/v1beta7/types/order.proto";
+import "omni/v1beta7/types/quote.proto";
+
+message BuildRequest {
+  // The address on `bid_blockchain` that will send initial transaction to start the trade
+  Address source_address = 1;
+  // The valid quote received from `QuoteGrpc`
+  Quote quote = 10;
+}
+
+message BuildResponse {
+  //payload to be signed by user
+  repeated uint32 payload = 11;
+}
+
+message PlaceRequest {
+  //Data to be sent to the resolver to create a gasless transaction.
+  repeated uint32 message = 1;
+  //Signature of the message
+  repeated uint32 signature = 2;
+}
+
+message PlaceResponse {
+  string status = 1;
+}
+
+message ListRequest {
+  string wallet_address = 1;
+  //todo: Auth
+}
+
+message OrderList {
+  repeated OrderData orders = 1;
+}
+
+message CancelRequest {
+  string quote_id = 1;
+  //todo: Auth
+}
+
+message CancelResponse {
+  string status = 1;
+}
+
+// Service for interactions with gasless orders
+service GaslessGrpc {
+
+  rpc Build (BuildRequest) returns (BuildResponse){}
+
+  // Place signed gasless order
+  rpc Place (PlaceRequest) returns (PlaceResponse){}
+
+  // Get list of active user's limit orders
+  // TODO: Design authentication (out of scope for prototype)
+  rpc List (ListRequest) returns (OrderList){}
+
+  // Cancel the limit order. we don't guarantee that anybody won't create escrow order
+  // TODO: Design authentication (out of scope for prototype)
+  rpc Cancel (CancelRequest) returns (CancelResponse){}
+
+}

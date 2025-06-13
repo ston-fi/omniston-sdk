@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package omni.v1beta6;
+package omni.v1beta7;
 
-import "omni/v1beta6/types/common.proto";
-import "omni/v1beta6/types/quote.proto";
+import "omni/v1beta7/types/common.proto";
+import "omni/v1beta7/types/quote.proto";
 
 // Indicates that the's no valid quote corresponding to RFQ.
 message NoQuoteEvent {
@@ -26,6 +26,38 @@ message QuoteEvent {
   EventOneOf event = 10000;
 }
 
+message LimitOrderQuoteRequest {
+  // Blockchain-specific address of bid asset.
+  Address bid_asset_address = 1;
+
+  // Blockchain-specific address of ask asset.
+  Address ask_asset_address = 2;
+
+  // The amount of bid asset the trader wants to pay, including all fees.
+  string bid_units = 3;
+
+  // The amount of ask asset the trader wants to get after all fees.
+  string ask_units = 4;
+
+  // The address of referrer that will receive the fees.
+  Address referrer_address = 5;
+
+  // The amount of fees required by the referrer in basis points (1/10000 or 0.01%)
+  uint32 referrer_fee_bps = 6;
+
+  // The protocol limits settlement methods in quotes to specified methods.
+  // Different combinations of bid & ask chains might support different methods.
+  // For Limit Orders only Escrow and HTLC settlement methods are supported.
+  repeated SettlementMethod settlement_methods = 7;
+
+  RequestSettlementParams settlement_params = 10;
+
+}
+
+message QuoteResponse {
+  Quote quote = 1;
+}
+
 service QuoteGrpc {
   // Request for quote.
   //
@@ -39,5 +71,8 @@ service QuoteGrpc {
   // The client is responsible for interrupting connection when not interested in further updates
   // (either when starting the trade or because of cancelling the request).
   rpc Quote (QuoteRequest) returns (stream QuoteEvent){}
+
+  // Creates an artificial quote representing a limit order.
+  rpc LimitOrderQuote (LimitOrderQuoteRequest) returns (QuoteResponse) {}
 
 }

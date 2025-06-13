@@ -1,5 +1,15 @@
 # Changelog
 
+## 13-06-2025
+
+### @ston-fi/omniston-sdk@0.6.0
+### @ston-fi/omniston-sdk-react@0.6.0
+
+> [!NOTE]
+> Currently, v1beta7 API is only deployed to the sandbox stand: wss://omni-ws-sandbox.ston.fi/
+
+Support for [`v1beta7` API](https://github.com/ston-fi/omniston-api)
+
 ## 05-06-2025
 
 ### @ston-fi/omniston-sdk-react@0.5.1

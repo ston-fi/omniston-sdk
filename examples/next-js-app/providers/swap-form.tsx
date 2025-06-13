@@ -10,26 +10,26 @@ import {
 } from "react";
 
 type SwapState = {
-  offerAsset: AssetInfo | null;
+  bidAsset: AssetInfo | null;
   askAsset: AssetInfo | null;
-  offerAmount: string;
+  bidAmount: string;
   askAmount: string;
 };
 
 const initialState: SwapState = {
-  offerAsset: null,
+  bidAsset: null,
   askAsset: null,
-  offerAmount: "",
+  bidAmount: "",
   askAmount: "",
 };
 
 type IAction =
   | {
-      type: "SET_OFFER_ASSET" | "SET_ASK_ASSET";
+      type: "SET_BID_ASSET" | "SET_ASK_ASSET";
       payload: AssetInfo | null;
     }
   | {
-      type: "SET_OFFER_AMOUNT" | "SET_ASK_AMOUNT";
+      type: "SET_BID_AMOUNT" | "SET_ASK_AMOUNT";
       payload: string;
     };
 
@@ -37,12 +37,12 @@ const SwapContext = createContext<SwapState>(initialState);
 const SwapContextDispatch = createContext<Dispatch<IAction>>(() => {});
 
 const swapReducer = (state: SwapState, action: IAction): SwapState => {
-  if (action.type === "SET_OFFER_ASSET") {
+  if (action.type === "SET_BID_ASSET") {
     const shouldResetAsk = state.askAsset?.address === action.payload?.address;
 
     return {
       ...state,
-      offerAsset: action.payload,
+      bidAsset: action.payload,
       askAsset: shouldResetAsk ? null : state.askAsset,
       askAmount: shouldResetAsk ? "" : state.askAmount,
     };
@@ -52,12 +52,12 @@ const swapReducer = (state: SwapState, action: IAction): SwapState => {
     return { ...state, askAsset: action.payload };
   }
 
-  if (action.type === "SET_OFFER_AMOUNT") {
-    return { ...state, offerAmount: action.payload, askAmount: "" };
+  if (action.type === "SET_BID_AMOUNT") {
+    return { ...state, bidAmount: action.payload, askAmount: "" };
   }
 
   if (action.type === "SET_ASK_AMOUNT") {
-    return { ...state, askAmount: action.payload, offerAmount: "" };
+    return { ...state, askAmount: action.payload, bidAmount: "" };
   }
 
   return state;
