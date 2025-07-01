@@ -1,9 +1,14 @@
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 
 import type { IApiClient } from "./ApiClient.types";
+import type {
+  ConnectionStatus,
+  ConnectionStatusEvent,
+} from "./ConnectionStatus";
 
 export class FakeApiClient implements IApiClient {
-  async ensureConnection(): Promise<void> {}
+  public connectionStatus: ConnectionStatus = "ready";
+  public readonly connectionStatusEvents = new Subject<ConnectionStatusEvent>();
 
   async send(method: string, payload: unknown): Promise<unknown> {
     return {};

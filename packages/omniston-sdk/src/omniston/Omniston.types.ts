@@ -1,4 +1,5 @@
 import type { IApiClient } from "../ApiClient/ApiClient.types";
+import type { Transport } from "../ApiClient/Transport";
 import type { Logger } from "../logger/Logger";
 
 /**
@@ -8,10 +9,17 @@ import type { Logger } from "../logger/Logger";
  */
 export interface IOmnistonDependencies {
   /**
+   * @deprecated DEPRECATED: use `transport` instead.
+   *
    * Optional. Provide this if you want to override the default API client.
-   * By default, this will be an {@link ApiClient} using {@link ReconnectingTransport}
+   * By default, this will be an {@link ApiClient} using {@link AutoReconnectTransport}
    */
   readonly client?: IApiClient;
+  /**
+   * Optional. Provide this if you want to override the default network transport.
+   * By default, this will be {@link AutoReconnectTransport} with underlying {@link WebSocketTransport}
+   */
+  readonly transport?: Transport;
   /**
    * Omniston WebSocket API URL.
    *

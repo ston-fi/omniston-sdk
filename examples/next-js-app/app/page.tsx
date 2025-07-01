@@ -2,6 +2,7 @@
 
 import { Settings } from "lucide-react";
 
+import { ConnectionStatus } from "@/components/ConnectionStatus";
 import { QuoteAction } from "@/components/QuoteAction";
 import { QuotePreview } from "@/components/QuotePreview";
 import { QuoteTrack } from "@/components/QuoteTrack";
@@ -14,6 +15,8 @@ export default function Home() {
     <section className="mx-auto w-full max-w-[500px] pt-4 md:pt-12 flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <h1 className="text-xl leading-8 font-medium mr-auto">Swap</h1>
+
+        <ConnectionStatus />
 
         <SwapSettings
           trigger={

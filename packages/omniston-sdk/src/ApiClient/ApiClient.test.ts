@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { ApiClient } from "./ApiClient";
+import type { ConnectionStatusEvent } from "./ConnectionStatus";
 import { MockTransport } from "./MockTransport";
 
 describe("ApiClient tests", () => {
@@ -17,19 +18,12 @@ describe("ApiClient tests", () => {
     apiClient = new ApiClient({ transport: mockTransport });
   });
 
-  test("ensureConnection propagates to transport", async () => {
-    const spy = vi.spyOn(mockTransport, "ensureConnection").mockResolvedValue();
-
-    await expect(apiClient.ensureConnection()).resolves.toBeUndefined();
-
-    expect(spy).toBeCalled();
-  });
-
   test("method call", async () => {
     const sendSpy = vi.spyOn(mockTransport, "send");
     const expectedResponse = { testKey2: "testValue2" };
 
     const response = apiClient.send(testMethod, testPayload);
+    await Promise.resolve();
     const expectedRequest = jsonRpcPayload({
       id: 1,
       method: testMethod,
@@ -50,13 +44,14 @@ describe("ApiClient tests", () => {
   test("returns an error if transport throws", async () => {
     vi.spyOn(mockTransport, "send").mockRejectedValue(testError);
 
-    await expect(apiClient.send(testMethod, testPayload)).rejects.toEqual(
-      testError,
+    await expect(apiClient.send(testMethod, testPayload)).rejects.toThrowError(
+      testError.message,
     );
   });
 
   test("returns an error if server returns an error", async () => {
     const response = apiClient.send(testMethod, testPayload);
+    await Promise.resolve();
 
     const serverErrorResponse = jsonRpcPayload({
       id: 1,
@@ -154,14 +149,6 @@ describe("ApiClient tests", () => {
     expect(receivedError?.message).toContain("Test error");
   });
 
-  test("rejects all pending requests when transport closes the connection", async () => {
-    const response = apiClient.send(testMethod, testPayload);
-
-    mockTransport.messages.complete();
-
-    await expect(response).rejects.toThrowError("Connection is closed");
-  });
-
   test("closes the underlying transport", async () => {
     const closeSpy = vi.spyOn(mockTransport, "close");
 
@@ -172,6 +159,8 @@ describe("ApiClient tests", () => {
 
   test("unsubscribe sends a message", async () => {
     const sendSpy = vi.spyOn(mockTransport, "send");
+
+    mockTransport.connectionStatusEvents.next({ status: "connected" });
 
     const response = apiClient.unsubscribeFromStream(
       testMethod,
@@ -200,11 +189,50 @@ describe("ApiClient tests", () => {
 
     apiClient.close();
 
+    mockTransport.connectionStatusEvents.next({ status: "closed" });
+
     await expect(
       apiClient.unsubscribeFromStream(testMethod, testSubscriptionId),
     ).resolves.toBe(true);
 
     expect(sendSpy).not.toHaveBeenCalled();
+  });
+
+  test("propagates connection status events", () => {
+    expect(apiClient.connectionStatus).toBe("ready");
+
+    const capturedEvents: ConnectionStatusEvent[] = [];
+    apiClient.connectionStatusEvents.subscribe((event) =>
+      capturedEvents.push(event),
+    );
+
+    mockTransport.connectionStatusEvents.next({ status: "connected" });
+
+    expect(apiClient.connectionStatus).toBe("connected");
+    expect(capturedEvents).toEqual([{ status: "connected" }]);
+  });
+
+  test("calls connect before calling send", async () => {
+    const connectSpy = vi.spyOn(mockTransport, "connect");
+    // Make a simple server to respond on all methods
+    vi.spyOn(mockTransport, "send").mockImplementation(async (message) => {
+      const requestId = JSON.parse(message).id;
+      mockTransport.messages.next(
+        JSON.stringify(
+          jsonRpcPayload({
+            id: requestId,
+            result: "ok",
+          }),
+        ),
+      );
+    });
+
+    await apiClient.send("test", testPayload);
+    expect(connectSpy).toHaveBeenCalledTimes(1);
+
+    // Does not call connect the second time
+    await apiClient.send("test2", testPayload);
+    expect(connectSpy).toHaveBeenCalledTimes(1);
   });
 });
 

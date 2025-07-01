@@ -1,12 +1,25 @@
 # Changelog
 
+## 01-07-2025
+
+### @ston-fi/omniston-sdk@0.7.0
+
+- Deprecated passing `client` to Omniston class constructor. For advanced users: you can pass `transport` instead to have fine control over underlying WebSocket connection.
+- Added `connectionStatus` getter to Omniston class instance
+- Added `connectionStatusEvents` observable stream
+
+### @ston-fi/omniston-sdk-react@0.7.0
+
+- Added `useConnectionStatus` hook
+
+### @ston-fi/omniston-example-next-js-app
+
+- Added a badge to monitor connection status
+
 ## 13-06-2025
 
 ### @ston-fi/omniston-sdk@0.6.0
 ### @ston-fi/omniston-sdk-react@0.6.0
-
-> [!NOTE]
-> Currently, v1beta7 API is only deployed to the sandbox stand: wss://omni-ws-sandbox.ston.fi/
 
 Support for [`v1beta7` API](https://github.com/ston-fi/omniston-api)
 

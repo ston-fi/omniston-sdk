@@ -2,7 +2,7 @@ import { Observable, type Subscription, filter, finalize, map } from "rxjs";
 
 import { ApiClient } from "../ApiClient/ApiClient";
 import type { IApiClient } from "../ApiClient/ApiClient.types";
-import { ReconnectingTransport } from "../ApiClient/ReconnectingTransport";
+import { AutoReconnectTransport } from "../ApiClient/AutoReconnectTransport";
 import { WebSocketTransport } from "../ApiClient/WebSocketTransport";
 import { QuoteEvent } from "../dto/QuoteEvent";
 import { QuoteRequest } from "../dto/QuoteRequest";
@@ -49,16 +49,37 @@ export class Omniston {
   constructor(dependencies: IOmnistonDependencies) {
     const apiUrl = dependencies.apiUrl;
     this.logger = dependencies.logger;
+    const transport =
+      dependencies.transport ??
+      new AutoReconnectTransport({
+        transport: new WebSocketTransport(apiUrl),
+        timer: this.timer,
+        logger: this.logger,
+      });
     this.apiClient =
       dependencies.client ??
       new ApiClient({
-        transport: new ReconnectingTransport({
-          factory: () => new WebSocketTransport(apiUrl),
-          timer: this.timer,
-          logger: this.logger,
-        }),
+        transport,
         logger: this.logger,
       });
+  }
+
+  /**
+   * Current connection status.
+   *
+   * @see ConnectionStatus
+   */
+  public get connectionStatus() {
+    return this.apiClient.connectionStatus;
+  }
+
+  /**
+   * A stream of connection status changes.
+   *
+   * @see ConnectionStatusEvent
+   */
+  public get connectionStatusEvents() {
+    return this.apiClient.connectionStatusEvents;
   }
 
   /**
@@ -80,8 +101,6 @@ export class Omniston {
   private async _requestForQuote(
     request: QuoteRequest,
   ): Promise<Observable<QuoteResponseEvent>> {
-    await this.apiClient.ensureConnection();
-
     const subscriptionId = (await this.apiClient.send(
       METHOD_QUOTE,
       QuoteRequest.toJSON(request),
@@ -112,8 +131,6 @@ export class Omniston {
    */
   buildTransfer(request: TransactionRequest): Promise<TransactionResponse> {
     return wrapErrorsAsync(async () => {
-      await this.apiClient.ensureConnection();
-
       const response = await this.apiClient.send(
         METHOD_BUILD_TRANSFER,
         TransactionRequest.toJSON(request),
@@ -141,8 +158,6 @@ export class Omniston {
   private async _trackTrade(
     request: TrackTradeRequest,
   ): Promise<Observable<TradeStatus>> {
-    await this.apiClient.ensureConnection();
-
     const subscriptionId = (await this.apiClient.send(
       METHOD_TRACK_TRADE,
       TrackTradeRequest.toJSON(request),

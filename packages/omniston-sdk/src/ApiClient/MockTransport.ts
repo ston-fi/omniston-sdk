@@ -1,13 +1,16 @@
 import { Subject } from "rxjs";
 
+import type { ConnectionStatusEvent } from "./ConnectionStatus";
 import type { Transport } from "./Transport";
 
 export class MockTransport implements Transport {
-  async ensureConnection(): Promise<void> {}
-
   messages = new Subject<string>();
 
-  async send(message: string): Promise<void> {}
+  connectionStatusEvents = new Subject<ConnectionStatusEvent>();
+
+  async connect(): Promise<void> {}
+
+  async send(_message: string): Promise<void> {}
 
   close() {}
 }

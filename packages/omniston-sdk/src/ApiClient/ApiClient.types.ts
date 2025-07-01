@@ -1,14 +1,13 @@
 import type { Observable } from "rxjs";
+import type {
+  ConnectionStatus,
+  ConnectionStatusEvent,
+} from "./ConnectionStatus";
 
 /**
  * A client to communicate with Omniston API.
  */
 export interface IApiClient {
-  /**
-   * Ensures that the client is connected to the API server.
-   * Rejects if the underlying connection is closed or is in an invalid state.
-   */
-  ensureConnection(): Promise<void>;
   /**
    * Calls a method on the API, returning the result as JSON.
    * @param method Method name
@@ -35,4 +34,16 @@ export interface IApiClient {
    * Closes the connection and rejects all pending requests.
    */
   close(): void;
+  /**
+   * A stream of connection status changes.
+   *
+   * @see ConnectionStatusEvent
+   */
+  get connectionStatusEvents(): Observable<ConnectionStatusEvent>;
+  /**
+   * Current connection status.
+   *
+   * @see ConnectionStatus
+   */
+  get connectionStatus(): ConnectionStatus;
 }

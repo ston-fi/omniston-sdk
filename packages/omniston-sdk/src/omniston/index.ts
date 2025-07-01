@@ -15,3 +15,12 @@ export { Omniston } from "./Omniston";
 export type { IOmnistonDependencies } from "./Omniston.types";
 export { OmnistonError } from "./OmnistonError";
 export type { Logger } from "../logger/Logger";
+export type {
+  ConnectionStatus,
+  ConnectionStatusEvent,
+  ConnectionConnectingEvent,
+  ConnectionConnectedEvent,
+  ConnectionClosingEvent,
+  ConnectionClosedEvent,
+  ConnectionErrorEvent,
+} from "../ApiClient/ConnectionStatus";

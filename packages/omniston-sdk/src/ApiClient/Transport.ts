@@ -1,18 +1,22 @@
 import type { Observable } from "rxjs";
+import type { ConnectionStatusEvent } from "./ConnectionStatus";
 
 /**
  * Transport to handle sending and receiving messages which can be serialized and deserialized as strings.
  */
 export interface Transport {
   /**
-   * Ensures that the transport is connected and functioning.
-   * Rejects if the underlying connection is closed or is in an invalid state.
-   */
-  ensureConnection(): Promise<void>;
-  /**
    * A stream of server-sent messages.
    */
-  messages: Observable<string>;
+  get messages(): Observable<string>;
+  /**
+   * A stream of connection status events.
+   */
+  get connectionStatusEvents(): Observable<ConnectionStatusEvent>;
+  /**
+   * Makes a new connection to the server. Rejects on connection errors.
+   */
+  connect(): Promise<void>;
   /**
    * Sends a message to the server.
    * @param message A message to send.

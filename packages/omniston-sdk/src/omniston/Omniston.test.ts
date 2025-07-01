@@ -11,7 +11,7 @@ import { TradeStatus } from "../dto/TradeStatus";
 import { TransactionRequest } from "../dto/TransactionRequest";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { FakeTimer } from "../helpers/timer/FakeTimer";
-import { OmnistonError } from "../omniston";
+import { type ConnectionStatusEvent, OmnistonError } from "../omniston";
 import {
   METHOD_BUILD_TRANSFER,
   METHOD_QUOTE,
@@ -313,5 +313,22 @@ describe("Omniston tests", () => {
     omniston.close();
 
     expect(closeSpy).toHaveBeenCalledOnce();
+  });
+
+  test("propagates the connection status", () => {
+    fakeApiClient.connectionStatus = "connecting";
+
+    expect(omniston.connectionStatus).toBe("connecting");
+  });
+
+  test("propagates connection status events", () => {
+    const capturedEvents: ConnectionStatusEvent[] = [];
+    omniston.connectionStatusEvents.subscribe((event) =>
+      capturedEvents.push(event),
+    );
+
+    fakeApiClient.connectionStatusEvents.next({ status: "closing" });
+
+    expect(capturedEvents).toEqual([{ status: "closing" }]);
   });
 });

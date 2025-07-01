@@ -34,7 +34,7 @@
   "devDependencies": {
     "@ston-fi/typescript-config": "workspace:*",
     "@total-typescript/ts-reset": "0.6.1",
-    "@types/node": "^22.10.2",
+    "@types/node": "^24.0.8",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "eslint": "^9.17.0",

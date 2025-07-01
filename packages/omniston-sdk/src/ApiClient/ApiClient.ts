@@ -4,10 +4,14 @@ import {
   JSONRPCServer,
   JSONRPCServerAndClient,
 } from "json-rpc-2.0";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 
 import type { Logger } from "../logger/Logger";
 import type { IApiClient } from "./ApiClient.types";
+import type {
+  ConnectionStatus,
+  ConnectionStatusEvent,
+} from "./ConnectionStatus";
 import type { Transport } from "./Transport";
 
 type StreamConsumer = (err: unknown | undefined, data: unknown) => void;
@@ -37,11 +41,16 @@ export class ApiClient implements IApiClient {
   private readonly serverAndClient: JSONRPCServerAndClient;
   private readonly transport: Transport;
   private readonly logger?: Logger;
+  private connection: Promise<void> | undefined;
 
   private streamConsumers = new Map<string, StreamConsumerMap>();
 
   // TODO: use abort controller to cancel requests and pass signal to transport
   private isClosed = false;
+
+  private _connectionStatus: ConnectionStatus = "ready";
+
+  public readonly connectionStatusEvents = new Subject<ConnectionStatusEvent>();
 
   constructor(options: ApiClientOptions) {
     this.transport = options.transport;
@@ -54,23 +63,33 @@ export class ApiClient implements IApiClient {
       ),
     );
 
-    this.transport.messages.subscribe({
-      next: (message) => {
-        this.logger?.debug(`Received: ${message}`);
-        this.serverAndClient.receiveAndSend(JSON.parse(message));
-      },
-      complete: () => {
-        this.serverAndClient.rejectAllPendingRequests("Connection is closed");
-      },
+    this.transport.messages.subscribe((message) => {
+      this.logger?.debug(`Received: ${message}`);
+      this.serverAndClient.receiveAndSend(JSON.parse(message));
     });
+
+    this.transport.connectionStatusEvents.subscribe((statusEvent) => {
+      // TODO: log events?
+      this._connectionStatus = statusEvent.status;
+      this.connectionStatusEvents.next(statusEvent);
+    });
+  }
+
+  public get connectionStatus() {
+    return this._connectionStatus;
   }
 
   /**
    * Ensures that the client is connected to the API server.
    * Rejects if the underlying connection is closed or is in an invalid state.
+   * Rejects if close() method was called.
    */
-  ensureConnection(): Promise<void> {
-    return this.transport.ensureConnection();
+  private ensureConnection(): Promise<void> {
+    if (this.isClosed) {
+      return Promise.reject(new Error("ApiClient is closed"));
+    }
+    this.connection ??= this.transport.connect();
+    return this.connection;
   }
 
   /**
@@ -79,6 +98,7 @@ export class ApiClient implements IApiClient {
    * @param payload Method parameters as JSON
    */
   async send(method: string, payload: JSONRPCParams): Promise<unknown> {
+    await this.ensureConnection();
     this.logger?.debug(
       `Sending: method=${method} payload=${JSON.stringify(payload)}`,
     );
@@ -116,11 +136,10 @@ export class ApiClient implements IApiClient {
     method: string,
     subscriptionId: number,
   ): Promise<unknown> {
-    if (this.isClosed) {
-      // Do not try to unsubscribe if the connection is already closed, the server should unsubscribe automatically.
+    if (this.connectionStatus !== "connected") {
+      // Do not try to unsubscribe if not already connected.
       return true;
     }
-    await this.ensureConnection();
     return await this.send(method, [subscriptionId]);
   }
 

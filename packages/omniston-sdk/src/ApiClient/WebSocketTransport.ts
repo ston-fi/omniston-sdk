@@ -1,17 +1,20 @@
 import WebSocket from "isomorphic-ws";
 import { Subject } from "rxjs";
 
+import type { ConnectionStatusEvent } from "./ConnectionStatus";
 import type { Transport } from "./Transport";
+
+const READY_STATE_CONNECTING = 0;
+const READY_STATE_OPEN = 1;
 
 /**
  * WebSocket implementation of {@link Transport}.
  */
 export class WebSocketTransport implements Transport {
   private webSocket: WebSocket | undefined;
-  private connection: Promise<void> | undefined;
-  private isClosed = false;
-  private closeReason: unknown;
+  private isClosing = false;
 
+  public readonly connectionStatusEvents = new Subject<ConnectionStatusEvent>();
   public readonly messages = new Subject<string>();
 
   /**
@@ -19,27 +22,23 @@ export class WebSocketTransport implements Transport {
    */
   constructor(private readonly url: string | URL) {}
 
-  async ensureConnection(): Promise<void> {
-    if (this.isClosed) {
-      throw new Error("Connection is closed", { cause: this.closeReason });
-    }
-    this.connection ??= this.connect();
-    return this.connection;
-  }
-
-  private connect(): Promise<void> {
+  connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      if (this.isClosed) {
-        reject("Connection is closed");
-        return;
-      }
+      this.webSocket?.close();
+      this.isClosing = false;
 
       const ws = new WebSocket(this.url);
-
       this.webSocket = ws;
+
+      this.connectionStatusEvents.next({
+        status: "connecting",
+      });
 
       ws.addEventListener("open", () => {
         resolve();
+        this.connectionStatusEvents.next({
+          status: "connected",
+        });
       });
 
       ws.addEventListener("message", (event) => {
@@ -47,19 +46,27 @@ export class WebSocketTransport implements Transport {
       });
 
       ws.addEventListener("close", (event) => {
-        this.isClosed = true;
-        this.closeReason = event.reason;
-        reject(this.closeReason);
-        this.messages.complete();
+        if (this.isClosing) {
+          this.isClosing = false;
+          reject(new Error("Closed by client"));
+          this.connectionStatusEvents.next({
+            status: "closed",
+          });
+        } else {
+          const error = new Error(event.reason);
+          reject(error);
+          this.connectionStatusEvents.next({
+            status: "error",
+            errorMessage: error.message,
+          });
+        }
       });
     });
   }
 
   send(message: string): Promise<void> {
-    if (!this.webSocket) {
-      return Promise.reject(
-        "WebSocket is not initialized, did you forget to call ensureConnection()?",
-      );
+    if (this.webSocket?.readyState !== READY_STATE_OPEN) {
+      return Promise.reject(new Error("WebSocket is not ready"));
     }
     try {
       this.webSocket.send(message);
@@ -70,7 +77,16 @@ export class WebSocketTransport implements Transport {
   }
 
   close(): void {
+    this.isClosing = true;
+    const readyState = this.webSocket?.readyState;
+    if (
+      readyState === READY_STATE_CONNECTING ||
+      readyState === READY_STATE_OPEN
+    ) {
+      this.connectionStatusEvents.next({
+        status: "closing",
+      });
+    }
     this.webSocket?.close();
-    this.isClosed = true;
   }
 }
