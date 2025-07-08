@@ -1,5 +1,11 @@
 # Changelog
 
+## 08-07-2025
+
+### @ston-fi/omniston-sdk-react@0.7.1
+
+- Fix Omniston call's from queries without observers
+
 ## 01-07-2025
 
 ### @ston-fi/omniston-sdk@0.7.0
