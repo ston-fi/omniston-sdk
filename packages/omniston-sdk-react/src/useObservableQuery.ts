@@ -51,7 +51,7 @@ export function useObservableQuery<TData>({
     ...useQuery({
       ...queryOptions,
       queryKey,
-      enabled: enabled && observableRefCount.refCount > 0,
+      enabled,
       queryFn: () => {
         return new Promise<never>((_, reject) => {
           let isRejected = false;

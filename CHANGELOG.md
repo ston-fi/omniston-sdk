@@ -1,5 +1,43 @@
 # Changelog
 
+## 17-07-2025
+
+### @ston-fi/omniston-sdk-react@0.7.2
+
+> [!WARNING]
+> **Breaking Changes**
+
+- `OmnistonProvider` now requires a pre-instantiated `Omniston` instance instead of constructor parameters
+
+**Migration Guide:**
+
+```diff
+-- import { OmnistonProvider } from "@ston-fi/omniston-sdk-react";
+++ import { Omniston, OmnistonProvider } from "@ston-fi/omniston-sdk-react";
+
+++ const omniston = new Omniston({ apiUrl: "wss://omni-ws.ston.fi" });
+
+-- <OmnistonProvider apiUrl="wss://omni-ws.ston.fi">
+++ <OmnistonProvider omniston={omniston}>
+```
+
+This also fixes the ability for react-sdk consumers to configure custom Omniston `Transport` for more precise control over the WebSocket API connection
+
+```ts
+const omnistonApiUrl = "wss://omni-ws.ston.fi";
+const omnistonTransport = new WebSocketTransport(omnistonApiUrl);
+
+const omniston = new Omniston({
+  apiUrl: omnistonApiUrl,
+  transport: omnistonTransport,
+});
+
+// omnistonTransport.close();
+// omnistonTransport.connect();
+// omnistonTransport.connectionStatusEvents.subscribe(({ status }) => { /* ... */ })
+```
+
+
 ## 08-07-2025
 
 ### @ston-fi/omniston-sdk-react@0.7.1

@@ -1,6 +1,7 @@
 "use client";
 
-import { OmnistonProvider } from "@ston-fi/omniston-sdk-react";
+import { Omniston, OmnistonProvider } from "@ston-fi/omniston-sdk-react";
+import { useMemo } from "react";
 
 import { QueryProvider } from "./query";
 import { SwapFormProvider } from "./swap-form";
@@ -15,10 +16,15 @@ export function Providers({
   children: React.ReactNode;
   omnistonApiUrl: string;
 }) {
+  const omniston = useMemo(
+    () => new Omniston({ apiUrl: omnistonApiUrl, logger: console }),
+    [omnistonApiUrl],
+  );
+
   return (
     <TonConnectProvider>
       <QueryProvider>
-        <OmnistonProvider apiUrl={omnistonApiUrl} logger={console}>
+        <OmnistonProvider omniston={omniston}>
           <SwapSettingsProvider>
             <SwapFormProvider>
               <TrackingQuoteProvider>{children}</TrackingQuoteProvider>
