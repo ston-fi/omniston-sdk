@@ -9,9 +9,9 @@ import {
   Address,
   KeepAlive,
   SettlementMethod,
-  Unsubscribed,
   settlementMethodFromJSON,
   settlementMethodToJSON,
+  Unsubscribed,
 } from "../types/common";
 import { Quote, RequestSettlementParams } from "../types/quote";
 

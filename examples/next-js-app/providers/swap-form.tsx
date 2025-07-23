@@ -1,13 +1,14 @@
 "use client";
 
-import type { AssetInfo } from "@/constants/assets";
 import {
+  createContext,
   type Dispatch,
   type ReactNode,
-  createContext,
   useContext,
   useReducer,
 } from "react";
+
+import type { AssetInfo } from "@/constants/assets";
 
 type SwapState = {
   bidAsset: AssetInfo | null;

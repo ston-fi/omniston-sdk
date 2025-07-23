@@ -13,14 +13,14 @@
     "lint": "biome lint ./*",
     "format": "biome format ./*",
     "test": "turbo run test",
-    "build" : "turbo run build",
-    "build:packages" : "turbo run build --filter=./packages/*",
-    "build:examples" : "turbo run build --filter=./examples/*"
+    "build": "turbo run build",
+    "build:packages": "turbo run build --filter=./packages/*",
+    "build:examples": "turbo run build --filter=./examples/*"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "lefthook": "1.11.12",
-    "turbo": "2.5.3",
-    "typescript": "^5"
+    "@biomejs/biome": "2.1.2",
+    "lefthook": "1.12.2",
+    "turbo": "2.5.5",
+    "typescript": "5.8.3"
   }
 }

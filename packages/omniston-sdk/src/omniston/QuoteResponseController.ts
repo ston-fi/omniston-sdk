@@ -1,4 +1,4 @@
-import { type Observable, filter, map, tap } from "rxjs";
+import { filter, map, type Observable, tap } from "rxjs";
 
 import type { QuoteEvent } from "../dto/QuoteEvent";
 import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";

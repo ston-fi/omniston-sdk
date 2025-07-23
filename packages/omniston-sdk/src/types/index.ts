@@ -1,7 +1,7 @@
 export type {
-  SetOptional,
   OverrideProperties,
   SetNonNullable,
+  SetOptional,
 } from "type-fest";
 
 export type { Converter } from "./Converter";

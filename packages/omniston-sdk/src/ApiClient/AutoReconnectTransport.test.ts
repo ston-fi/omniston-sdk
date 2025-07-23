@@ -1,6 +1,6 @@
+import { firstValueFrom, Subject } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { Subject, firstValueFrom } from "rxjs";
 import { FakeTimer } from "../helpers/timer/FakeTimer";
 import {
   AutoReconnectTransport,

@@ -93,4 +93,13 @@ export const STATIC_ASSETS: AssetInfo[] = [
     imageUrl: "https://assets.dedust.io/images/dust.gif",
     decimals: 9,
   },
+  {
+    address: "EQCchJFPbn3khudbWGmx6Vg8yUjdXzx652l1knLyDS9bnhzL",
+    symbol: "TMJ",
+    name: "Test Mintless",
+    // imageUrl: "https://i.ibb.co/SKMtNTG/mintless.png",
+    imageUrl:
+      "https://asset-stage.ston.fi/img/EQCchJFPbn3khudbWGmx6Vg8yUjdXzx652l1knLyDS9bnhzL/618d80b4e2b914598a51d20e7eef9380b31315c76c4aefcce25d9d1179d9065d",
+    decimals: 9,
+  },
 ];

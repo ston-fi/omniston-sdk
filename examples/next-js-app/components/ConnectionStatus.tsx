@@ -1,8 +1,9 @@
-import { Badge } from "@/components/ui/badge";
 import {
   type ConnectionStatus,
   useConnectionStatus,
 } from "@ston-fi/omniston-sdk-react";
+
+import { Badge } from "@/components/ui/badge";
 
 export function ConnectionStatus() {
   const connectionStatus = useConnectionStatus();
