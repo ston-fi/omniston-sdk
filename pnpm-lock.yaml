@@ -23,6 +23,9 @@ importers:
 
   examples/next-js-app:
     dependencies:
+      '@next/env':
+        specifier: 15.4.2
+        version: 15.4.2
       '@radix-ui/react-avatar':
         specifier: ^1.0.4
         version: 1.1.2(@types/react-dom@19.0.2(@types/react@19.0.1))(@types/react@19.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -773,6 +776,9 @@ packages:
 
   '@next/env@14.2.20':
     resolution: {integrity: sha512-JfDpuOCB0UBKlEgEy/H6qcBSzHimn/YWjUHzKl1jMeUO+QVRdzmTTl8gFJaNO87c8DXmVKhFCtwxQ9acqB3+Pw==}
+
+  '@next/env@15.4.2':
+    resolution: {integrity: sha512-kd7MvW3pAP7tmk1NaiX4yG15xb2l4gNhteKQxt3f+NGR22qwPymn9RBuv26QKfIKmfo6z2NpgU8W2RT0s0jlvg==}
 
   '@next/eslint-plugin-next@15.1.0':
     resolution: {integrity: sha512-+jPT0h+nelBT6HC9ZCHGc7DgGVy04cv4shYdAe6tKlEbjQUtwU3LzQhzbDHQyY2m6g39m6B0kOFVuLGBrxxbGg==}
@@ -3725,6 +3731,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@next/env@14.2.20': {}
+
+  '@next/env@15.4.2': {}
 
   '@next/eslint-plugin-next@15.1.0':
     dependencies:

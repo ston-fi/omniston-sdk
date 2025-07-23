@@ -7,6 +7,10 @@ import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
 import "./globals.css";
 
+const OMNISTON_API_URL = process.env.NEXT_PUBLIC_OMNISTON_API_URL!;
+const TONCONNECT_MANIFEST_URL =
+  process.env.NEXT_PUBLIC_TONCONNECT_MANIFEST_URL!;
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,9 +29,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(inter.className, "flex flex-col min-h-[100svh]")}>
         <Providers
-          omnistonApiUrl={
-            process.env.NEXT_PUBLIC_OMNISTON_API_URL ?? "wss://omni-ws.ston.fi"
-          }
+          omnistonApiUrl={OMNISTON_API_URL}
+          tonConnectManifestUrl={TONCONNECT_MANIFEST_URL}
         >
           <Header />
           <main className="container flex flex-col flex-1 h-full py-10">
