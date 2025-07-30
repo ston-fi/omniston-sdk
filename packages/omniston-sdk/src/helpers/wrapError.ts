@@ -8,7 +8,10 @@ export function wrapError(error: unknown): OmnistonError {
     return error;
   }
   if (error instanceof JSONRPCErrorException) {
-    return new OmnistonError(error.code, error.message, { cause: error });
+    return new OmnistonError(error.code, error.message, {
+      cause: error,
+      details: error.data,
+    });
   }
   if (error instanceof Error) {
     return new OmnistonError(ErrorCode.UNKNOWN, error.message, {

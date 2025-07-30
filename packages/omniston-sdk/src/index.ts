@@ -10,5 +10,6 @@ export {
   GaslessSettlement,
   SettlementMethod,
 } from "./constants";
+export type { OmnistonErrorDetails, OmnistonErrorInfo } from "./omniston";
 export * from "./omniston";
 export type { Observable } from "./types";

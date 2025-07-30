@@ -1,5 +1,11 @@
 # Changelog
 
+## 30-07-2025
+
+### @ston-fi/omniston-sdk@0.7.1
+
+- `OmnistonError` class was extended with the optional `details` field, which contains error-related information. Possible error details data are described with the new `OmnistonErrorDetails` type
+
 ## 17-07-2025
 
 ### @ston-fi/omniston-sdk-react@0.7.2

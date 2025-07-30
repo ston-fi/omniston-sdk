@@ -1,11 +1,13 @@
 import {
   JSONRPCClient,
+  JSONRPCErrorException,
   type JSONRPCParams,
   JSONRPCServer,
   JSONRPCServerAndClient,
 } from "json-rpc-2.0";
 import { Observable, Subject } from "rxjs";
 
+import { isJSONRPCError } from "../helpers/isJSONRPCError";
 import type { Logger } from "../logger/Logger";
 import type { IApiClient } from "./ApiClient.types";
 import type {
@@ -158,10 +160,17 @@ export class ApiClient implements IApiClient {
     this.serverAndClient.addMethod(method, (payload: StreamPayload) => {
       const consumer = result.get(payload.subscription);
       if ("error" in payload) {
-        consumer?.(
-          new Error(`Server error: ${JSON.stringify(payload.error)}`),
-          undefined,
-        );
+        const payloadError = payload.error;
+
+        const serverError = isJSONRPCError(payloadError)
+          ? new JSONRPCErrorException(
+              payloadError.message,
+              payloadError.code,
+              payloadError.data,
+            )
+          : new Error(`Server error: ${JSON.stringify(payloadError)}`);
+
+        consumer?.(serverError, undefined);
       } else {
         consumer?.(undefined, payload.result);
       }
