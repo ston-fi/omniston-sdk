@@ -14,6 +14,8 @@ message BuildTransferRequest {
   Address destination_address = 2;
   // The address that will receive the gas not spent by the trade.
   Address gas_excess_address = 3;
+  // The address to which funds will be returned in case of an failure.
+  Address refund_address = 4;
   // The valid quote received from `QuoteGrpc`
   Quote quote = 10;
   // Use the slippage recommended by Omniston instead of slippage provided by trader in QuoteRequest.

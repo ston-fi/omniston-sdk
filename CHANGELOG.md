@@ -1,5 +1,15 @@
 # Changelog
 
+## 08-08-2025
+
+### @ston-fi/omniston-sdk@0.7.2
+
+- Added new optional field to `TransactionRequest`.
+
+| Name            | Type      | Description                                                       |
+|-----------------|-----------|-------------------------------------------------------------------|
+| `refundAddress` | `Address` | The address to which funds will be returned in case of an failure |
+
 ## 30-07-2025
 
 ### @ston-fi/omniston-sdk@0.7.1

@@ -158,6 +158,10 @@ export const testTransactionRequest: TransactionRequest = {
     address: "0QCXSs2xZ2dhk9TAxzGzXra2EbG_S2SqyN8Tfi6fJ82EYsMs",
     blockchain: Blockchain.TON,
   },
+  refundAddress: {
+    address: "0QCXSs2xZ2dhk9TAxzGzXra2EbG_S2SqyN8Tfi6fJ82EYsMs",
+    blockchain: Blockchain.TON,
+  },
   useRecommendedSlippage: false,
 };
 

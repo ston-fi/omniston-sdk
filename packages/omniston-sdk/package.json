@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Typescript SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
