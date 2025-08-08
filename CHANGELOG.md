@@ -3,6 +3,7 @@
 ## 08-08-2025
 
 ### @ston-fi/omniston-sdk@0.7.2
+### @ston-fi/omniston-sdk-react@0.7.4
 
 - Added new optional field to `TransactionRequest`.
 
