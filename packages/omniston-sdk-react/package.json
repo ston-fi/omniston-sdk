@@ -43,7 +43,6 @@
     "react": "^18 || ^19"
   },
   "devDependencies": {
-    "@ston-fi/typescript-config": "workspace:*",
     "@types/react": "^19",
     "esbuild-analyzer": "0.2.0",
     "tsup": "^8.2.4",

@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@protobuf-ts/protoc": "^2.9.4",
-    "@ston-fi/typescript-config": "workspace:*",
     "@types/node": "^24.0.8",
     "@types/ws": "^8.5.10",
     "esbuild-analyzer": "0.2.0",

@@ -33,7 +33,6 @@
     "use-debounce": "^10.0.1"
   },
   "devDependencies": {
-    "@ston-fi/typescript-config": "workspace:*",
     "@total-typescript/ts-reset": "0.6.1",
     "@types/node": "^24.0.8",
     "@types/react": "^19.0.1",

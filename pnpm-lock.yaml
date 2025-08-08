@@ -90,9 +90,6 @@ importers:
         specifier: ^10.0.1
         version: 10.0.4(react@18.3.1)
     devDependencies:
-      '@ston-fi/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
       '@total-typescript/ts-reset':
         specifier: 0.6.1
         version: 0.6.1
@@ -136,9 +133,6 @@ importers:
       '@protobuf-ts/protoc':
         specifier: ^2.9.4
         version: 2.9.4
-      '@ston-fi/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@types/node':
         specifier: ^24.0.8
         version: 24.0.8
@@ -176,9 +170,6 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
-      '@ston-fi/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@types/react':
         specifier: ^19
         version: 19.0.1
@@ -191,12 +182,6 @@ importers:
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/node@24.0.8)
-
-  packages/typescript-config:
-    devDependencies:
-      '@total-typescript/tsconfig':
-        specifier: ^1.0.4
-        version: 1.0.4
 
 packages:
 
@@ -1365,9 +1350,6 @@ packages:
 
   '@total-typescript/ts-reset@0.6.1':
     resolution: {integrity: sha512-cka47fVSo6lfQDIATYqb/vO1nvFfbPw7uWLayIXIhGETj0wcOOlrlkobOMDNQOFr9QOafegUPq13V2+6vtD7yg==}
-
-  '@total-typescript/tsconfig@1.0.4':
-    resolution: {integrity: sha512-fO4ctMPGz1kOFOQ4RCPBRBfMy3gDn+pegUfrGyUFRMv/Rd0ZM3/SHH3hFCYG4u6bPLG8OlmOGcBLDexvyr3A5w==}
 
   '@types/chai@5.2.2':
     resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
@@ -4240,8 +4222,6 @@ snapshots:
       - encoding
 
   '@total-typescript/ts-reset@0.6.1': {}
-
-  '@total-typescript/tsconfig@1.0.4': {}
 
   '@types/chai@5.2.2':
     dependencies:
