@@ -1,5 +1,50 @@
 # Changelog
 
+## 03-09-2025
+
+### @ston-fi/omniston-sdk@0.7.3
+
+- Added new `QuoteRequestAck` quote event with `rfq_id` assignment.
+
+This event will be sent by the Omniston protocol after receiving a quote request. This ID will allow identification of what events took place during the lifetime of this quote request's event stream.
+
+It was implemented as a dedicated event and not as part of a `Quote` event to be able to identify cases when a request was sent and an `rfq_id` was assigned by the protocol, but no `Quote` events were later sent from the protocol to this RFQ stream.
+
+```ts
+omniston.requestForQuote(quoteRequest).subscribe({
+  next: (quoteResponseEvent) => {
+    switch (quoteResponseEvent.type) {
+      case 'ack': {
+        const { rfqId } = quoteResponseEvent;
+
+        ///
+      }
+    }
+  },
+})
+```
+
+- For ease of use of the new `QuoteRequestAck` event at the SDK level, each event received after a `QuoteRequestAck` event was extended with the rfqId field.
+
+```ts
+omniston.requestForQuote(quoteRequest).subscribe({
+  next: (quoteResponseEvent) => {
+    switch (quoteResponseEvent.type) {
+      case 'quoteUpdated': {
+        const { rfqId } = quoteResponseEvent;
+
+        ///
+      }
+      case 'unsubscribed': {
+        const { rfqId } = quoteResponseEvent;
+
+        ///
+      }
+    }
+  },
+})
+```
+
 ## 08-08-2025
 
 ### @ston-fi/omniston-sdk@0.7.2
