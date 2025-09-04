@@ -34,7 +34,7 @@ export const QuotePreview = (props: { className?: string }) => {
       ) : quoteEvent?.type === "unsubscribed" ? (
         <QuoteError errorMessage="Request timed out" />
       ) : quoteEvent?.type === "quoteUpdated" ? (
-        <QuoteData quote={quoteEvent.quote} />
+        <QuoteData quote={quoteEvent.quote} rfqId={quoteEvent.rfqId} />
       ) : (
         <QuoteLoading />
       )}
@@ -62,7 +62,7 @@ const QuoteLoading = () => {
   return <span>Waiting for a quote...</span>;
 };
 
-const QuoteData = ({ quote }: { quote: Quote }) => {
+const QuoteData = ({ quote, rfqId }: { quote: Quote; rfqId: string }) => {
   const { askAsset, bidAsset } = useSwapForm();
 
   const protocolFeeAsset = useAssets({
@@ -109,6 +109,12 @@ const QuoteData = ({ quote }: { quote: Quote }) => {
         <span className="overflow-hidden text-ellipsis text-right">
           {bigNumberToFloat(quote.estimatedGasConsumption, 9)}
           &nbsp; TON
+        </span>
+      </li>
+      <li>
+        <b>Request ID:</b>
+        <span className="overflow-hidden text-ellipsis text-right">
+          {rfqId}
         </span>
       </li>
       <hr />
