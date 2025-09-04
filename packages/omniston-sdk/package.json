@@ -49,6 +49,7 @@
     "ts-proto": "^1.180.0",
     "tsup": "^8.2.4",
     "type-fest": "^4.23.0",
+    "typescript": "5.8.3",
     "vitest": "3.2.4"
   }
 }

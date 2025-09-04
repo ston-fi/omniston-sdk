@@ -22,6 +22,7 @@ import {
   METHOD_TRACK_TRADE_UNSUBSCRIBE,
 } from "../omniston/rpcConstants";
 import {
+  ackEvent,
   newQuoteEvent,
   noQuoteEvent,
   quoteRequestSwap,
@@ -86,8 +87,38 @@ describe("Omniston tests", () => {
       expect(lastQuote).toBeNull();
 
       // Receiving a quote.
+      quoteEventSubject.next(QuoteEvent.toJSON(ackEvent));
       quoteEventSubject.next(QuoteEvent.toJSON(newQuoteEvent));
       expect(lastQuote).toEqual(testQuote);
+    });
+
+    test("populates RFQ ID in quote events", async () => {
+      // Set up mocks.
+      const quoteEventSubject = new Subject<unknown>();
+      vi.spyOn(fakeApiClient, "send").mockResolvedValue(testSubscriptionId);
+      vi.spyOn(fakeApiClient, "readStream").mockReturnValue(
+        quoteEventSubject.asObservable(),
+      );
+
+      // Save last received event.
+      let lastQuoteEvent: QuoteResponseEvent | null = null;
+      omniston.requestForQuote(quoteRequestSwap).subscribe((quoteEvent) => {
+        lastQuoteEvent = quoteEvent;
+      });
+      await flushEventLoop();
+
+      // Receive ACK, then a quote event
+      quoteEventSubject.next(
+        QuoteEvent.toJSON({ event: { ack: { rfqId: "test-id" } } }),
+      );
+      quoteEventSubject.next(QuoteEvent.toJSON(newQuoteEvent));
+
+      const expectedEvent: QuoteResponseEvent = {
+        type: "quoteUpdated",
+        quote: testQuote,
+        rfqId: "test-id",
+      };
+      expect(lastQuoteEvent).toEqual(expectedEvent);
     });
 
     test("sends a NoQuoteEvent when server sends NoQuote", async () => {
@@ -106,8 +137,12 @@ describe("Omniston tests", () => {
       await flushEventLoop();
 
       // Sending a "no quote" event.
+      quoteEventSubject.next(QuoteEvent.toJSON(ackEvent));
       quoteEventSubject.next(QuoteEvent.toJSON(noQuoteEvent));
-      expect(lastQuoteEvent).toEqual({ type: "noQuote" });
+      expect(lastQuoteEvent).toEqual({
+        type: "noQuote",
+        rfqId: expect.anything(),
+      });
     });
 
     test("unsubscribe_quote is sent when user unsubscribes from the observable", async () => {
@@ -174,8 +209,12 @@ describe("Omniston tests", () => {
       await flushEventLoop();
 
       // Sending "unsubscribed" event.
+      quoteEventSubject.next(QuoteEvent.toJSON(ackEvent));
       quoteEventSubject.next(QuoteEvent.toJSON(unsubscribedEvent));
-      expect(lastQuoteEvent).toEqual({ type: "unsubscribed" });
+      expect(lastQuoteEvent).toEqual({
+        type: "unsubscribed",
+        rfqId: expect.anything(),
+      });
 
       subscription.unsubscribe();
       await flushEventLoop();

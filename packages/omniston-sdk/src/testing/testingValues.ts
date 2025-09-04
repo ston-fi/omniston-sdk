@@ -88,6 +88,14 @@ export const testEscrowQuote: Quote = {
   },
 };
 
+export const ackEvent: QuoteEvent = {
+  event: {
+    ack: {
+      rfqId: "testRfqId",
+    },
+  },
+};
+
 export const newQuoteEvent: QuoteEvent = {
   event: {
     quoteUpdated: {
