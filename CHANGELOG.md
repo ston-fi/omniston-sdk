@@ -3,6 +3,7 @@
 ## 03-09-2025
 
 ### @ston-fi/omniston-sdk@0.7.3
+### @ston-fi/omniston-sdk-react@0.7.5
 
 - Added new `QuoteRequestAck` quote event with `rfq_id` assignment.
 
