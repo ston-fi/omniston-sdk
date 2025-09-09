@@ -3,6 +3,7 @@
 ## 09-09-2025
 
 ### @ston-fi/omniston-sdk@0.7.4
+### @ston-fi/omniston-sdk-react@0.7.6
 
 - Empty `TonMessage.jettonWalletStateInit` now will be `undefined` instead of `""`
 
