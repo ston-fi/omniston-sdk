@@ -144,7 +144,6 @@ export const testTransactionResponseBase64: TransactionResponse = {
       {
         targetAddress: "kQBsGx9ArADUrREB34W-ghgsCgBShvfUr4Jvlu-0KGc33a1n",
         sendAmount: "1000",
-        jettonWalletStateInit: "",
         payload:
           "te6cckEBAwEA3AABaGIAKRLvX954Mp6Yz90LToJjvg6iR3sViMEHrFvQ/+/nhpygjw0YAAAAAAAAAAAAAAAAAAEBAWkPin6lpuyZ3h39bgYgPogA2DY+gVgBqVoiA78LfQQwWBQApQ3vqV8E3y3faFDOb7oQO5rKAwIA1SWThWGAGRJLGp902gDg2/e1g5dERsvQZk3XOz6kyFpbys9XynzEA+kAJdKzbFnZ2GT1MDHMbNetrYRsb9LZKrI3xN+Lp8nzYRiwAl0rNsWdnYZPUwMcxs162thGxv0tkqsjfE34unyfNhGKKDlYtA==",
       },

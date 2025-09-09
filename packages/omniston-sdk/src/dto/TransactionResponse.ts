@@ -1,23 +1,35 @@
-import { Transaction as ApiTransactionResponse } from "../api/messages/omni/v1beta7/types/transaction";
+import {
+  Transaction as ApiTransactionResponse,
+  type TonMessage,
+} from "../api/messages/omni/v1beta7/types/transaction";
 
-export type TransactionResponse = ApiTransactionResponse;
+export type TransactionResponse = {
+  ton?: {
+    messages: (Omit<TonMessage, "jettonWalletStateInit"> & {
+      jettonWalletStateInit?: string;
+    })[];
+  };
+};
 
 export const TransactionResponse = {
   fromJSON(object: unknown): TransactionResponse {
-    const result = ApiTransactionResponse.fromJSON(object);
+    const result = ApiTransactionResponse.fromJSON(
+      object,
+    ) as TransactionResponse;
 
     for (const message of result.ton?.messages ?? []) {
       message.payload = Buffer.from(message.payload, "hex").toString("base64");
-      message.jettonWalletStateInit = Buffer.from(
-        message.jettonWalletStateInit,
-        "hex",
-      ).toString("base64");
+      message.jettonWalletStateInit = message.jettonWalletStateInit
+        ? Buffer.from(message.jettonWalletStateInit, "hex").toString("base64")
+        : undefined;
     }
 
     return result as TransactionResponse;
   },
 
   toJSON(transactionResponse: TransactionResponse): unknown {
-    return ApiTransactionResponse.toJSON(transactionResponse);
+    return ApiTransactionResponse.toJSON(
+      transactionResponse as ApiTransactionResponse,
+    );
   },
 };
