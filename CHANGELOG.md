@@ -1,5 +1,13 @@
 # Changelog
 
+## 09-09-2025
+
+### @ston-fi/omniston-sdk@0.7.4
+
+- Empty `TonMessage.jettonWalletStateInit` now will be `undefined` instead of `""`
+
+These changes were due to the fact that in yesterday's release of the [`@tonconnect/*@2.3.0`](https://github.com/ton-connect/sdk/blob/main/packages/sdk/CHANGELOG.md#330) packages, the breaking changes with the strict request validation were introduced. Previously, the optional `jettonWalletStateInit` field from the omniston protocol was parsed as an empty string, and empty strings do not pass the new strict validation.
+
 ## 03-09-2025
 
 ### @ston-fi/omniston-sdk@0.7.3
