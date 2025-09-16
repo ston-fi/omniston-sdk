@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import GitBookIcon from "@/public/icons/gitbook.svg";
 import GitHubIcon from "@/public/icons/github.svg";
-import logo from "@/public/logo.svg";
 
 export function Header() {
   return (
@@ -17,8 +16,13 @@ export function Header() {
           target="_blank noopener noreferrer"
           className="hover:opacity-80 transition-opacity relative mr-auto"
         >
-          <Image src={logo} alt="logo" />
-          <Badge className="absolute rotate-[-13deg] -right-8 -bottom-3 scale-[0.8]">
+          <Image
+            src="https://static.ston.fi/branbook/omniston/logo/black.svg"
+            width={180}
+            height={60}
+            alt="logo"
+          />
+          <Badge className="absolute rotate-[-13deg] -right-6 bottom-1 scale-[0.8]">
             beta
           </Badge>
         </a>
