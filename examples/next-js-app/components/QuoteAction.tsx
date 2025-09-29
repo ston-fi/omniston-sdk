@@ -41,7 +41,9 @@ export const QuoteAction = (buttonProps: Omit<ButtonProps, "children">) => {
   return wallet ? (
     <Button
       {...buttonProps}
-      disabled={isClicked || !handleQuoteClick || buttonProps.disabled}
+      disabled={
+        isClicked || !handleQuoteClick || buttonProps.disabled || !quote
+      }
       onClick={handleQuoteClick}
     >
       Accept quote

@@ -1,9 +1,9 @@
-function nftPreviewUrl(nftAddress: string) {
-  return new URL(`https://getgems.io/nft/${nftAddress}`);
+function addressPreviewUrl(address: string) {
+  return new URL(`https://tonviewer.com/${address}`);
 }
 
 const explorer = {
-  nftPreviewUrl,
+  addressPreviewUrl,
 };
 
 export function useExplorer() {

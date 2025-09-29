@@ -2,10 +2,10 @@
 
 import { Omniston, OmnistonProvider } from "@ston-fi/omniston-sdk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { THEME, TonConnectUIProvider } from "@tonconnect/ui-react";
 import React, { useRef } from "react";
 
+import { AssetsProvider } from "./assets";
 import { SwapFormProvider } from "./swap-form";
 import { SwapSettingsProvider } from "./swap-settings";
 import { TrackingQuoteProvider } from "./tracking-quote";
@@ -37,16 +37,16 @@ export function Providers({
         }}
         manifestUrl={tonConnectManifestUrl}
       >
-        <OmnistonProvider omniston={omniston.current}>
-          <SwapSettingsProvider>
-            <SwapFormProvider>
-              <TrackingQuoteProvider>{children}</TrackingQuoteProvider>
-            </SwapFormProvider>
-          </SwapSettingsProvider>
-        </OmnistonProvider>
+        <AssetsProvider>
+          <OmnistonProvider omniston={omniston.current}>
+            <SwapSettingsProvider>
+              <SwapFormProvider>
+                <TrackingQuoteProvider>{children}</TrackingQuoteProvider>
+              </SwapFormProvider>
+            </SwapSettingsProvider>
+          </OmnistonProvider>
+        </AssetsProvider>
       </TonConnectUIProvider>
-
-      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 }

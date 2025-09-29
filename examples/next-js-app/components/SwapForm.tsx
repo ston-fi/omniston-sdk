@@ -5,9 +5,8 @@ import type { ChangeEvent } from "react";
 import { AssetSelect } from "@/components/AssetSelect";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { AssetInfo } from "@/constants/assets";
-import { useAssets } from "@/hooks";
 import { cn } from "@/lib/utils";
+import { useAssets } from "@/providers/assets";
 import { useSwapForm, useSwapFormDispatch } from "@/providers/swap-form";
 
 export const SwapForm = (props: { className?: string }) => {
@@ -52,28 +51,31 @@ const BidAssetHeader = (props: { className?: string }) => {
 };
 
 const OfferAssetSelect = (props: { className?: string }) => {
-  const { bidAsset } = useSwapForm();
+  const { bidAddress } = useSwapForm();
   const dispatch = useSwapFormDispatch();
+  const { assetsQuery, getAssetByAddress } = useAssets();
+  const bidAsset = getAssetByAddress(bidAddress);
 
-  const { data } = useAssets();
-
-  const handleAssetSelect = (asset: AssetInfo | null) => {
-    dispatch({ type: "SET_BID_ASSET", payload: asset });
-  };
+  const assets = [...(assetsQuery.data ?? new Map()).values()];
 
   return (
     <AssetSelect
       {...props}
-      assets={data}
-      selectedAsset={bidAsset}
-      onAssetSelect={handleAssetSelect}
-      loading={false}
+      assets={assets}
+      selectedAsset={bidAsset ?? null}
+      onAssetSelect={(asset) => {
+        dispatch({
+          type: "SET_BID_ASSET",
+          payload: asset ? asset.contract_address : "",
+        });
+      }}
+      loading={assetsQuery.isLoading}
     />
   );
 };
 
 const BidAssetInput = (props: { className?: string }) => {
-  const { bidAsset, bidAmount } = useSwapForm();
+  const { bidAddress, bidAmount } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
   const handleInputUpdate = ({ target }: ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +87,7 @@ const BidAssetInput = (props: { className?: string }) => {
   return (
     <Input
       {...props}
-      disabled={!bidAsset}
+      disabled={!bidAddress}
       value={bidAmount}
       onChange={handleInputUpdate}
     />
@@ -107,31 +109,36 @@ const AskAssetHeader = (props: { className?: string }) => {
 };
 
 const AskAssetSelect = (props: { className?: string }) => {
-  const { askAsset, bidAsset } = useSwapForm();
+  const { askAddress, bidAddress } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
-  const { data } = useAssets({
-    select: (data) =>
-      data.filter(({ address }) => address !== bidAsset?.address),
-  });
+  const { getAssetByAddress, assetsQuery } = useAssets();
 
-  const handleAssetSelect = (asset: AssetInfo | null) => {
-    dispatch({ type: "SET_ASK_ASSET", payload: asset });
-  };
+  const askAsset = getAssetByAddress(askAddress);
+  const bidAsset = getAssetByAddress(bidAddress);
+
+  const assets = [...(assetsQuery.data ?? new Map()).values()].filter(
+    (asset) => asset.contract_address !== bidAsset?.contract_address,
+  );
 
   return (
     <AssetSelect
       {...props}
-      assets={data}
-      selectedAsset={askAsset}
-      onAssetSelect={handleAssetSelect}
-      loading={false}
+      assets={assets}
+      selectedAsset={askAsset ?? null}
+      onAssetSelect={(asset) => {
+        dispatch({
+          type: "SET_ASK_ASSET",
+          payload: asset ? asset.contract_address : "",
+        });
+      }}
+      loading={assetsQuery.isLoading}
     />
   );
 };
 
 const AskAssetInput = (props: { className?: string }) => {
-  const { askAsset, askAmount } = useSwapForm();
+  const { askAddress, askAmount } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
   const handleInputUpdate = ({ target }: ChangeEvent<HTMLInputElement>) => {
@@ -143,7 +150,7 @@ const AskAssetInput = (props: { className?: string }) => {
   return (
     <Input
       {...props}
-      disabled={!askAsset}
+      disabled={!askAddress}
       value={askAmount}
       onChange={handleInputUpdate}
     />

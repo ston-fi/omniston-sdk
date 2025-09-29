@@ -3,39 +3,55 @@ import {
   Blockchain,
   GaslessSettlement,
   type QuoteRequest,
-  SettlementMethod,
 } from "@ston-fi/omniston-sdk-react";
 
-import { useDebounce } from "@/hooks";
+import { useDebounce } from "@/hooks/useDebounce";
 import { floatToBigNumber, percentToPercentBps } from "@/lib/utils";
+import { useAssets } from "@/providers/assets";
 import { useSwapForm } from "@/providers/swap-form";
 import { useSwapSettings } from "@/providers/swap-settings";
 import { useTrackingQuoteState } from "@/providers/tracking-quote";
 
 export const useRfq = () => {
-  const { askAsset, bidAsset, askAmount, bidAmount } = useSwapForm();
-  const { slippageTolerance } = useSwapSettings();
+  const { askAddress, bidAddress, askAmount, bidAmount } = useSwapForm();
+  const {
+    slippageTolerance,
+    settlementMethods,
+    referrerAddress,
+    referrerFeeBps,
+  } = useSwapSettings();
   const { quoteId } = useTrackingQuoteState();
+  const { getAssetByAddress } = useAssets();
 
   const [debouncedQuoteRequest] = useDebounce<QuoteRequest>(
     {
-      settlementMethods: [SettlementMethod.SETTLEMENT_METHOD_SWAP],
-      askAssetAddress: askAsset
-        ? { address: askAsset.address, blockchain: Blockchain.TON }
+      settlementMethods,
+      askAssetAddress: askAddress
+        ? { address: askAddress, blockchain: Blockchain.TON }
         : undefined,
-      bidAssetAddress: bidAsset
-        ? { address: bidAsset.address, blockchain: Blockchain.TON }
+      bidAssetAddress: bidAddress
+        ? { address: bidAddress, blockchain: Blockchain.TON }
         : undefined,
       amount: {
         bidUnits:
-          bidAsset && bidAmount
-            ? floatToBigNumber(bidAmount, bidAsset.decimals).toString()
+          bidAddress && bidAmount
+            ? floatToBigNumber(
+                bidAmount,
+                getAssetByAddress(bidAddress)!.meta.decimals,
+              ).toString()
             : undefined,
         askUnits:
-          askAsset && askAmount
-            ? floatToBigNumber(askAmount, askAsset.decimals).toString()
+          askAddress && askAmount
+            ? floatToBigNumber(
+                askAmount,
+                getAssetByAddress(askAddress)!.meta.decimals,
+              ).toString()
             : undefined,
       },
+      referrerAddress: referrerAddress
+        ? { address: referrerAddress, blockchain: Blockchain.TON }
+        : undefined,
+      referrerFeeBps: referrerFeeBps,
       settlementParams: {
         maxPriceSlippageBps: percentToPercentBps(slippageTolerance),
         maxOutgoingMessages: 4,

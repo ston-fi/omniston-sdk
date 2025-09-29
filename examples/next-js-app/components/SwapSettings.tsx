@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   DEFAULT_SLIPPAGE_TOLERANCE,
+  SettlementMethod,
   useSwapSettings,
 } from "@/providers/swap-settings";
 
@@ -34,6 +35,8 @@ export function SwapSettings({
           <DialogTitle>Swap Settings</DialogTitle>
         </DialogHeader>
         <SlippageToleranceSection />
+        <ReferrerSection />
+        <SettlementMethodsSection />
       </DialogContent>
     </Dialog>
   );
@@ -105,6 +108,98 @@ const SlippageToleranceSection = () => {
       >
         Auto
       </Button>
+    </section>
+  );
+};
+
+const ReferrerSection = () => {
+  const {
+    referrerAddress,
+    setReferrerAddress,
+    referrerFeeBps,
+    setReferrerFeeBps,
+  } = useSwapSettings();
+
+  const addressInputId = useId();
+  const feeInputId = useId();
+
+  return (
+    <section className="flex flex-col space-y-2">
+      <div className="grid items-center gap-1.5 w-full">
+        <Label htmlFor={addressInputId}>Referrer Address</Label>
+        <Input
+          id={addressInputId}
+          type="text"
+          value={referrerAddress}
+          placeholder="EQ..."
+          onChange={(e) => {
+            const address = e.target.value || undefined;
+
+            // TODO: add validation
+
+            setReferrerAddress(address);
+
+            if (!address) {
+              setReferrerFeeBps(undefined);
+            }
+          }}
+        />
+      </div>
+      <div className="grid items-center gap-1.5 w-full">
+        <Label htmlFor={feeInputId}>Referrer Fee (BPS)</Label>
+        <Input
+          id={feeInputId}
+          type="number"
+          disabled={!referrerAddress}
+          min={0}
+          max={100}
+          value={referrerFeeBps}
+          placeholder="0-100"
+          onChange={(e) => {
+            const feeBps = e.target.value;
+
+            // TODO: add validation
+
+            setReferrerFeeBps(feeBps ? Number.parseInt(feeBps) : undefined);
+          }}
+        />
+      </div>
+    </section>
+  );
+};
+
+const SettlementMethodsSection = () => {
+  const { settlementMethods, setSettlementMethods } = useSwapSettings();
+
+  return (
+    <section className="space-y-2">
+      <p className="text-sm font-medium">Settlement Methods</p>
+      <div className="flex flex-wrap gap-2">
+        {Object.entries(SettlementMethod).map(([key, value]) => (
+          <Button
+            key={key}
+            disabled={
+              settlementMethods.length === 1 && settlementMethods[0] === value
+            }
+            variant={
+              settlementMethods.includes(value) ? "default" : "secondary"
+            }
+            onClick={() => {
+              if (settlementMethods.includes(value)) {
+                setSettlementMethods([
+                  ...new Set(settlementMethods.filter((m) => m !== value)),
+                ]);
+              } else {
+                setSettlementMethods([
+                  ...new Set([...settlementMethods, value]),
+                ]);
+              }
+            }}
+          >
+            {key}
+          </Button>
+        ))}
+      </div>
     </section>
   );
 };

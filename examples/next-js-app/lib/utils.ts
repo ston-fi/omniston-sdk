@@ -46,6 +46,7 @@ export function bigNumberToFloat(value: bigint | string, decimals: number) {
 
   display = display.padStart(decimals, "0");
 
+  // eslint-disable-next-line prefer-const
   let [integer, fraction] = [
     display.slice(0, display.length - decimals),
     display.slice(display.length - decimals),
@@ -55,4 +56,30 @@ export function bigNumberToFloat(value: bigint | string, decimals: number) {
   return `${negative ? "-" : ""}${integer || "0"}${
     fraction ? `.${fraction}` : ""
   }`;
+}
+
+/**
+ * Trims a string to keep a specified number of characters at the start and end,
+ * replacing the middle section with an ellipsis.
+ */
+export function trimStringWithEllipsis(
+  str: string,
+  start: number,
+  end?: number,
+) {
+  if (end === undefined) {
+    end = start;
+  }
+
+  return `${str.slice(0, start)}…${str.slice(-end)}`;
+}
+
+export function retrieveEnvVariable(key: string, defaultValue?: string) {
+  const value = process.env[key] ?? defaultValue;
+
+  if (!value) {
+    throw new Error(`${key} not configured`);
+  }
+
+  return value;
 }

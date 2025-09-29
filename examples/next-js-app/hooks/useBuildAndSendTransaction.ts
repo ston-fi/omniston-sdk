@@ -3,7 +3,8 @@ import { Cell } from "@ton/core";
 import { useTonConnectUI, useTonWallet } from "@tonconnect/ui-react";
 import { useMemo } from "react";
 
-import { useOmniston, useRfq } from "@/hooks";
+import { useOmniston } from "@/hooks/useOmniston";
+import { useRfq } from "@/hooks/useRfq";
 import { useSwapSettings } from "@/providers/swap-settings";
 
 export function useBuildAndSendTransaction() {

@@ -18,9 +18,9 @@
     "build:examples": "turbo run build --filter=./examples/*"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.1.2",
-    "lefthook": "1.12.2",
-    "turbo": "2.5.5",
-    "typescript": "5.8.3"
+    "@biomejs/biome": "2.2.4",
+    "lefthook": "1.13.5",
+    "turbo": "2.5.8",
+    "typescript": "5.9.2"
   }
 }
