@@ -22,8 +22,8 @@ export function Header() {
             height={60}
             alt="logo"
           />
-          <Badge className="absolute rotate-[-13deg] -right-6 bottom-1 scale-[0.8]">
-            beta
+          <Badge className="absolute rotate-[-13deg] -right-7 bottom-1 scale-[0.8]">
+            example
           </Badge>
         </a>
 
