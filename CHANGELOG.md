@@ -3,6 +3,7 @@
 ## 07-10-2025
 
 ### @ston-fi/omniston-sdk@0.7.5
+### @ston-fi/omniston-sdk-react@0.7.7
 
 - new `flexibleReferrerFee` parameter was added to the `rfq.settlementParams` to control whether the flexible referrer fee can be applied for the quote. This new parameter allows the swap to be performed with a lower referrerFee than specified via `rfq.referrerFeeBps` to provide a better swap rate for the end user
 
