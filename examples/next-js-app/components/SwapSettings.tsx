@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   DEFAULT_SLIPPAGE_TOLERANCE,
   SettlementMethod,
@@ -37,6 +38,7 @@ export function SwapSettings({
         <SlippageToleranceSection />
         <ReferrerSection />
         <SettlementMethodsSection />
+        <FlexibleReferrerFeeSection />
       </DialogContent>
     </Dialog>
   );
@@ -200,6 +202,23 @@ const SettlementMethodsSection = () => {
           </Button>
         ))}
       </div>
+    </section>
+  );
+};
+
+const FlexibleReferrerFeeSection = () => {
+  const { flexibleReferrerFee, setFlexibleReferrerFee } = useSwapSettings();
+
+  return (
+    <section className="flex gap-2 items-center">
+      <Label htmlFor="flexible-referrer-fee" className="flex-1">
+        Whether a flexible referrer fee can be applied for the quote
+      </Label>
+      <Switch
+        id="flexible-referrer-fee"
+        checked={flexibleReferrerFee}
+        onCheckedChange={(checked) => setFlexibleReferrerFee(checked)}
+      />
     </section>
   );
 };

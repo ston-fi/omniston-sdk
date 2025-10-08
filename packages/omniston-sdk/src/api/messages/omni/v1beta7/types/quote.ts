@@ -87,6 +87,8 @@ export interface RequestSettlementParams {
   maxOutgoingMessages: number;
   /** Gasless settlement parameters. */
   gaslessSettlement: GaslessSettlement;
+  /** Indicates whether a flexible referrer fee can be applied for the quote. */
+  flexibleReferrerFee?: boolean | undefined;
 }
 
 /** Settlement parameters specific to `SWAP` settlement method. */
@@ -227,6 +229,7 @@ function createBaseRequestSettlementParams(): RequestSettlementParams {
     maxPriceSlippageBps: 0,
     maxOutgoingMessages: 0,
     gaslessSettlement: GaslessSettlement.GASLESS_SETTLEMENT_PROHIBITED,
+    flexibleReferrerFee: undefined,
   };
 }
 
@@ -242,6 +245,9 @@ export const RequestSettlementParams = {
       gaslessSettlement: isSet(object.gasless_settlement)
         ? gaslessSettlementFromJSON(object.gasless_settlement)
         : GaslessSettlement.GASLESS_SETTLEMENT_PROHIBITED,
+      flexibleReferrerFee: isSet(object.flexible_referrer_fee)
+        ? globalThis.Boolean(object.flexible_referrer_fee)
+        : undefined,
     };
   },
 
@@ -257,6 +263,9 @@ export const RequestSettlementParams = {
       obj.gasless_settlement = gaslessSettlementToJSON(
         message.gaslessSettlement,
       );
+    }
+    if (message.flexibleReferrerFee !== undefined) {
+      obj.flexible_referrer_fee = message.flexibleReferrerFee;
     }
     return obj;
   },
@@ -275,6 +284,7 @@ export const RequestSettlementParams = {
     message.gaslessSettlement =
       object.gaslessSettlement ??
       GaslessSettlement.GASLESS_SETTLEMENT_PROHIBITED;
+    message.flexibleReferrerFee = object.flexibleReferrerFee ?? undefined;
     return message;
   },
 };

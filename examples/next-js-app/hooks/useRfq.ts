@@ -19,6 +19,7 @@ export const useRfq = () => {
     settlementMethods,
     referrerAddress,
     referrerFeeBps,
+    flexibleReferrerFee,
   } = useSwapSettings();
   const { quoteId } = useTrackingQuoteState();
   const { getAssetByAddress } = useAssets();
@@ -56,6 +57,7 @@ export const useRfq = () => {
         maxPriceSlippageBps: percentToPercentBps(slippageTolerance),
         maxOutgoingMessages: 4,
         gaslessSettlement: GaslessSettlement.GASLESS_SETTLEMENT_POSSIBLE,
+        flexibleReferrerFee: flexibleReferrerFee,
       },
     },
     300,

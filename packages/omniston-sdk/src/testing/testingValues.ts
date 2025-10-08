@@ -39,6 +39,7 @@ export const quoteRequestSwap: QuoteRequest = {
   settlementParams: {
     maxPriceSlippageBps: 0,
     gaslessSettlement: GaslessSettlement.GASLESS_SETTLEMENT_POSSIBLE,
+    flexibleReferrerFee: true,
   },
 };
 

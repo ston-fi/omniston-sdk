@@ -22,6 +22,7 @@ const SwapSettingsSchema = z.object({
   autoSlippageTolerance: z.boolean().catch(DEFAULT_AUTO_SLIPPAGE_TOLERANCE),
   referrerAddress: z.string().optional().catch(undefined),
   referrerFeeBps: z.number().min(0).max(100).optional().catch(undefined),
+  flexibleReferrerFee: z.boolean().default(false).catch(false),
   settlementMethods: z
     .array(z.enum(SettlementMethod))
     .catch([SettlementMethod.Swap]),
@@ -35,6 +36,7 @@ type SwapSettingsAction =
   | { type: "SET_SETTLEMENT_METHODS"; payload: SettlementMethod[] }
   | { type: "SET_REFERRER_ADDRESS"; payload: string | undefined }
   | { type: "SET_REFERRER_FEE_BPS"; payload: number | undefined }
+  | { type: "SET_FLEXIBLE_REFERRER_FEE"; payload: boolean }
   | { type: "INITIALIZE_FROM_STORAGE"; payload: SwapSettingsState };
 
 type SwapSettings = SwapSettingsState & {
@@ -43,6 +45,7 @@ type SwapSettings = SwapSettingsState & {
   setSettlementMethods: (settlementMethods: SettlementMethod[]) => void;
   setReferrerAddress: (referrerAddress: string | undefined) => void;
   setReferrerFeeBps: (referrerFeeBps: number | undefined) => void;
+  setFlexibleReferrerFee: (flexibleReferrerFee: boolean) => void;
 };
 
 const swapSettingsReducer = (
@@ -62,6 +65,8 @@ const swapSettingsReducer = (
       return { ...state, referrerAddress: action.payload };
     case "SET_REFERRER_FEE_BPS":
       return { ...state, referrerFeeBps: action.payload };
+    case "SET_FLEXIBLE_REFERRER_FEE":
+      return { ...state, flexibleReferrerFee: action.payload };
     default:
       return state;
   }
@@ -102,6 +107,13 @@ export const SwapSettingsProvider = ({
     dispatch({ type: "SET_REFERRER_FEE_BPS", payload: referrerFeeBps });
   };
 
+  const setFlexibleReferrerFee = (flexibleReferrerFee: boolean) => {
+    dispatch({
+      type: "SET_FLEXIBLE_REFERRER_FEE",
+      payload: flexibleReferrerFee,
+    });
+  };
+
   useEffect(() => {
     const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
 
@@ -126,6 +138,7 @@ export const SwapSettingsProvider = ({
         setSettlementMethods,
         setReferrerAddress,
         setReferrerFeeBps,
+        setFlexibleReferrerFee,
       }}
     >
       {children}

@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import type { ConnectionStatusEvent } from "../ApiClient/ConnectionStatus";
 import { FakeApiClient } from "../ApiClient/FakeApiClient";
 import type { Quote } from "../dto/Quote";
 import { QuoteEvent } from "../dto/QuoteEvent";
@@ -11,16 +12,6 @@ import { TradeStatus } from "../dto/TradeStatus";
 import { TransactionRequest } from "../dto/TransactionRequest";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { FakeTimer } from "../helpers/timer/FakeTimer";
-import { type ConnectionStatusEvent, OmnistonError } from "../omniston";
-import {
-  METHOD_BUILD_TRANSFER,
-  METHOD_QUOTE,
-  METHOD_QUOTE_EVENT,
-  METHOD_QUOTE_UNSUBSCRIBE,
-  METHOD_TRACK_TRADE,
-  METHOD_TRACK_TRADE_EVENT,
-  METHOD_TRACK_TRADE_UNSUBSCRIBE,
-} from "../omniston/rpcConstants";
 import {
   ackEvent,
   newQuoteEvent,
@@ -34,7 +25,18 @@ import {
   tradeStatusAwaitingTransfer,
   unsubscribedEvent,
 } from "../testing/testingValues";
+
 import { Omniston } from "./Omniston";
+import { OmnistonError } from "./OmnistonError";
+import {
+  METHOD_BUILD_TRANSFER,
+  METHOD_QUOTE,
+  METHOD_QUOTE_EVENT,
+  METHOD_QUOTE_UNSUBSCRIBE,
+  METHOD_TRACK_TRADE,
+  METHOD_TRACK_TRADE_EVENT,
+  METHOD_TRACK_TRADE_UNSUBSCRIBE,
+} from "./rpcConstants";
 
 describe("Omniston tests", () => {
   const testSubscriptionId = 1;

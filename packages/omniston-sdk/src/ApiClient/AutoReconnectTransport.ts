@@ -2,7 +2,8 @@ import type { Observable } from "rxjs";
 
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
-import type { Logger } from "../omniston";
+import type { Logger } from "../logger/Logger";
+
 import type {
   ConnectionErrorEvent,
   ConnectionStatusEvent,

@@ -6,23 +6,33 @@ export type QuoteResponseEvent =
   | QuoteResponseEvent_Unsubscribed
   | QuoteResponseEvent_Ack;
 
+export const QuoteResponseEventType = {
+  QuoteUpdated: "quoteUpdated",
+  NoQuote: "noQuote",
+  Unsubscribed: "unsubscribed",
+  Ack: "ack",
+} as const;
+
+export type QuoteResponseEventType =
+  (typeof QuoteResponseEventType)[keyof typeof QuoteResponseEventType];
+
 export type QuoteResponseEvent_QuoteUpdated = {
-  type: "quoteUpdated";
+  type: typeof QuoteResponseEventType.QuoteUpdated;
   quote: Quote;
   rfqId: string;
 };
 
 export type QuoteResponseEvent_NoQuote = {
-  type: "noQuote";
+  type: typeof QuoteResponseEventType.NoQuote;
   rfqId: string;
 };
 
 export type QuoteResponseEvent_Unsubscribed = {
-  type: "unsubscribed";
+  type: typeof QuoteResponseEventType.Unsubscribed;
   rfqId: string;
 };
 
 export type QuoteResponseEvent_Ack = {
-  type: "ack";
+  type: typeof QuoteResponseEventType.Ack;
   rfqId: string;
 };

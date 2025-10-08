@@ -33,6 +33,9 @@ message RequestSettlementParams {
 
   // Gasless settlement parameters.
   GaslessSettlement gasless_settlement = 3;
+
+  // Indicates whether a flexible referrer fee can be applied for the quote.
+  optional bool flexible_referrer_fee = 4;
 }
 
 // Settlement parameters specific to `SWAP` settlement method.
