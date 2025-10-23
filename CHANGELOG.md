@@ -3,6 +3,7 @@
 ## 23-10-2025
 
 ### @ston-fi/omniston-sdk@0.7.6
+### @ston-fi/omniston-sdk-react@0.7.8
 
 This is a technical release with the following improvements:
 
