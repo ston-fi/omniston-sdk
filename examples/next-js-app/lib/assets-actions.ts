@@ -28,29 +28,19 @@ export async function fetchAssets({
   unconditionalAssets?: string[];
   walletAddress?: string;
 }): Promise<AssetsQueryResponse> {
-  const searchParams = new URLSearchParams();
-
-  searchParams.append(
-    "condition",
-    condition
-      ? `${ASSET_QUERY_CONDITION} & ${condition}`
-      : ASSET_QUERY_CONDITION,
-  );
-
-  if (walletAddress) {
-    searchParams.append("wallet_address", walletAddress);
-  }
-
-  if (unconditionalAssets && unconditionalAssets.length > 0) {
-    unconditionalAssets.forEach((asset) => {
-      searchParams.append("unconditional_asset", asset);
-    });
-  }
-
-  const response = await fetch(
-    `${STON_API_URL}/v1/assets/query?${searchParams.toString()}`,
-    { method: "POST" },
-  );
+  const response = await fetch(`${STON_API_URL}/v1/assets/query`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      condition: condition
+        ? `${ASSET_QUERY_CONDITION} & ${condition}`
+        : ASSET_QUERY_CONDITION,
+      wallet_address: walletAddress,
+      unconditional_asset: unconditionalAssets,
+    }),
+  });
 
   if (!response.ok) {
     throw new Error("Failed to fetch assets metadata");

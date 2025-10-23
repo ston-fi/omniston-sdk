@@ -14,38 +14,37 @@
     "README.md"
   ],
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.cts",
   "sideEffects": false,
   "exports": {
-    "./package.json": "./package.json",
     ".": {
-      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "test": "CI=true pnpm run /^test:/",
-    "test:unit": "vitest",
-    "test:typecheck": "tsc --noEmit",
-    "prepublishOnly": "turbo run test && turbo run build"
+    "dev": "tsdown --sourcemap --watch ./src",
+    "build": "tsdown",
+    "lint": "tsc --noEmit --pretty",
+    "test": "vitest",
+    "prepublishOnly": "turbo run build --filter=@ston-fi/omniston-sdk && pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . && pnpm publint"
   },
   "dependencies": {
     "@ston-fi/omniston-sdk": "workspace:*",
-    "@tanstack/react-query": "^5.49.2",
-    "rxjs": "^7.8.1"
+    "@tanstack/react-query": "5.49.2",
+    "rxjs": "7.8.1"
   },
   "peerDependencies": {
     "react": "^18 || ^19"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
     "@types/react": "^19",
-    "esbuild-analyzer": "0.2.0",
-    "tsup": "^8.2.4",
-    "vitest": "3.2.4"
+    "publint": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   }
 }

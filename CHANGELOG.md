@@ -1,13 +1,24 @@
 # Changelog
 
-## 07-10-2025
+## 23-10-2025
+
+### @ston-fi/omniston-sdk@0.7.6
+
+This is a technical release with the following improvements:
+
+- the package manager was changed to pnpm@10, and workspace settings were configured to prevent installation of recently published packages. This change, along with explicitly fixed dependency versions, should minimize the risk of publishing packages that depend on a recently published newer version of a dependency
+- dependency package versions used for SDK packages were unified via pnpm workspace
+- the build tool was changed from [tsup](https://tsup.egoist.dev/) to [tsdown](https://tsdown.dev/)
+- dev scripts now build packages with source maps to simplify debugging during local development
+- a root-level `dev` script was added to provide a simpler local development setup. This command uses [Turbo](https://turborepo.com/) to run the chain of `next-js-app > omniston-sdk-react > omniston-sdk` in watch mode, enabling development with UI and HMR for all packages in this monorepo
+- improved `.d.ts` generation fo fix some missed type declarations
+
+## 08-10-2025
 
 ### @ston-fi/omniston-sdk@0.7.5
 ### @ston-fi/omniston-sdk-react@0.7.7
 
 - new `flexibleReferrerFee` parameter was added to the `rfq.settlementParams` to control whether the flexible referrer fee can be applied for the quote. This new parameter allows the swap to be performed with a lower referrerFee than specified via `rfq.referrerFeeBps` to provide a better swap rate for the end user
-
-- improved `.d.ts` generation fo fix some missed type declarations
 
 ## 09-09-2025
 

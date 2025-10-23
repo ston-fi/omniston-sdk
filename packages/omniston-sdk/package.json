@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "Typescript SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -16,40 +16,38 @@
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.cts",
   "sideEffects": false,
   "exports": {
-    "./package.json": "./package.json",
     ".": {
-      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "default": "./dist/index.cjs"
-    }
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
+    "dev": "tsdown --sourcemap --watch ./src",
+    "build": "tsdown",
+    "lint": "tsc --noEmit --pretty",
+    "test": "vitest",
     "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/api/messages --ts_proto_opt=outputEncodeMethods=false,snakeToCamel=keys,useNumericEnumForJson=true,stringEnums=true,emitDefaultValues=json-methods,outputServices=false,enumsAsLiterals=true -Isrc/api/proto src/api/proto/omni/v1beta7/**/*.proto",
-    "test": "CI=true pnpm run /^test:/",
-    "test:unit": "vitest",
-    "test:typecheck": "tsc --noEmit",
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "prepublishOnly": "turbo run test && turbo run build"
+    "prepublishOnly": "pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . && pnpm publint"
   },
   "dependencies": {
-    "isomorphic-ws": "^5.0.0",
-    "json-rpc-2.0": "^1.7.0",
-    "rxjs": "^7.8.1",
-    "ws": "^8.17.1"
+    "isomorphic-ws": "5.0.0",
+    "json-rpc-2.0": "1.7.0",
+    "rxjs": "7.8.1",
+    "type-fest": "5.0.1",
+    "ws": "8.17.1"
   },
   "devDependencies": {
-    "@protobuf-ts/protoc": "^2.9.4",
-    "@types/node": "^24.0.8",
-    "@types/ws": "^8.5.10",
-    "esbuild-analyzer": "0.2.0",
-    "ts-proto": "^1.180.0",
-    "tsup": "^8.2.4",
-    "type-fest": "^4.23.0",
-    "typescript": "5.8.3",
-    "vitest": "3.2.4"
+    "@arethetypeswrong/cli": "catalog:",
+    "@protobuf-ts/protoc": "2.9.4",
+    "@types/node": "24.0.8",
+    "@types/ws": "8.5.10",
+    "publint": "catalog:",
+    "ts-proto": "1.180.0",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
   }
 }

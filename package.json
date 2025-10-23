@@ -5,8 +5,7 @@
     "type": "git",
     "url": "git+https://github.com/ston-fi/omniston-sdk.git"
   },
-  "packageManager": "pnpm@9.0.0",
-  "type": "module",
+  "packageManager": "pnpm@10.18.3",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "cleanup": "rm -rf .turbo node_modules ./{examples,packages}/**/{.next,.turbo,node_modules,dist}",
@@ -14,13 +13,12 @@
     "format": "biome format ./*",
     "test": "turbo run test",
     "build": "turbo run build",
-    "build:packages": "turbo run build --filter=./packages/*",
-    "build:examples": "turbo run build --filter=./examples/*"
+    "dev": "turbo dev --filter=@ston-fi/omniston-example-next-js-app..."
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.4",
-    "lefthook": "1.13.5",
+    "@biomejs/biome": "2.2.6",
+    "lefthook": "2.0.0",
     "turbo": "2.5.8",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   }
 }
