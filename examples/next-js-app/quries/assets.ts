@@ -24,19 +24,21 @@ export const assetQueryFactory = {
       ],
       queryFn: () =>
         fetchAssets({
-          condition,
-          unconditionalAssets,
-          walletAddress,
+          condition: condition ? condition : undefined,
+          unconditionalAssets: unconditionalAssets?.length
+            ? unconditionalAssets
+            : undefined,
+          walletAddress: walletAddress ? walletAddress : undefined,
         }),
     });
   },
   search: ({
-    searchTerm,
+    searchTerms,
     condition,
     unconditionalAssets,
     walletAddress,
   }: {
-    searchTerm: string;
+    searchTerms: string[];
     condition?: string;
     unconditionalAssets?: string[];
     walletAddress?: string;
@@ -44,17 +46,19 @@ export const assetQueryFactory = {
     return queryOptions({
       queryKey: [
         ASSETS_SEARCH_QUERY_KEY,
-        searchTerm,
+        searchTerms,
         walletAddress,
         condition,
         unconditionalAssets,
       ],
       queryFn: () =>
         searchAssets({
-          searchTerm,
-          condition,
-          unconditionalAssets,
-          walletAddress,
+          searchTerms,
+          condition: condition ? condition : undefined,
+          unconditionalAssets: unconditionalAssets?.length
+            ? unconditionalAssets
+            : undefined,
+          walletAddress: walletAddress ? walletAddress : undefined,
         }),
     });
   },

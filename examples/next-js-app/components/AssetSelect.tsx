@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useTonAddress } from "@tonconnect/ui-react";
 import { ChevronDown } from "lucide-react";
 import { type FC, useEffect, useMemo, useState } from "react";
 
@@ -41,20 +42,23 @@ export const AssetSelect: FC<AssetSelectProps> = ({
   loading,
   className,
 }) => {
+  const walletAddress = useTonAddress();
+
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { insertAsset } = useAssets();
 
   const searchQuery = useQuery({
     ...assetQueryFactory.search({
-      searchTerm,
+      searchTerms: [searchTerm],
+      walletAddress,
     }),
     enabled: searchTerm.length > 0,
   });
 
   const displayAssets = useMemo(() => {
     if (searchTerm.length > 0 && searchQuery.data) {
-      return searchQuery.data.asset_list;
+      return searchQuery.data;
     }
 
     return assets;
@@ -62,7 +66,7 @@ export const AssetSelect: FC<AssetSelectProps> = ({
 
   const handleAssetSelect = (assetAddress: string) => {
     const asset = displayAssets.find(
-      (asset) => asset.contract_address === assetAddress,
+      (asset) => asset.contractAddress === assetAddress,
     );
 
     if (asset) {
@@ -101,9 +105,9 @@ export const AssetSelect: FC<AssetSelectProps> = ({
             <>
               <Avatar className="size-[20px] mr-2">
                 <AvatarImage
-                  src={selectedAsset.meta.image_url}
+                  src={selectedAsset.meta.imageUrl}
                   alt={
-                    selectedAsset.meta.display_name ?? selectedAsset.meta.symbol
+                    selectedAsset.meta.displayName ?? selectedAsset.meta.symbol
                   }
                 />
               </Avatar>
@@ -140,14 +144,14 @@ export const AssetSelect: FC<AssetSelectProps> = ({
               {displayAssets.map((asset) => (
                 <CommandItem
                   className="flex gap-2"
-                  key={asset.contract_address}
-                  value={asset.contract_address}
+                  key={asset.contractAddress}
+                  value={asset.contractAddress}
                   onSelect={handleAssetSelect}
                 >
                   <Avatar className="size-7 aspect-square">
                     <AvatarImage
-                      src={asset.meta.image_url}
-                      alt={asset.meta.display_name ?? asset.meta.symbol}
+                      src={asset.meta.imageUrl}
+                      alt={asset.meta.displayName ?? asset.meta.symbol}
                     />
                     <AvatarFallback>
                       <Skeleton className="rounded-full" />
@@ -166,11 +170,11 @@ export const AssetSelect: FC<AssetSelectProps> = ({
                       </span>
                     </div>
                     <AddressPreview
-                      address={asset.contract_address}
+                      address={asset.contractAddress}
                       onClick={(e) => e.stopPropagation()}
                       className="text-xs opacity-50 hover:opacity-100"
                     >
-                      {trimStringWithEllipsis(asset.contract_address, 4, 6)}
+                      {trimStringWithEllipsis(asset.contractAddress, 4, 6)}
                     </AddressPreview>
                   </div>
                 </CommandItem>

@@ -66,7 +66,7 @@ const OfferAssetSelect = (props: { className?: string }) => {
       onAssetSelect={(asset) => {
         dispatch({
           type: "SET_BID_ASSET",
-          payload: asset ? asset.contract_address : "",
+          payload: asset ? asset.contractAddress : "",
         });
       }}
       loading={assetsQuery.isLoading}
@@ -118,7 +118,7 @@ const AskAssetSelect = (props: { className?: string }) => {
   const bidAsset = getAssetByAddress(bidAddress);
 
   const assets = [...(assetsQuery.data ?? new Map()).values()].filter(
-    (asset) => asset.contract_address !== bidAsset?.contract_address,
+    (asset) => asset.contractAddress !== bidAsset?.contractAddress,
   );
 
   return (
@@ -129,7 +129,7 @@ const AskAssetSelect = (props: { className?: string }) => {
       onAssetSelect={(asset) => {
         dispatch({
           type: "SET_ASK_ASSET",
-          payload: asset ? asset.contract_address : "",
+          payload: asset ? asset.contractAddress : "",
         });
       }}
       loading={assetsQuery.isLoading}

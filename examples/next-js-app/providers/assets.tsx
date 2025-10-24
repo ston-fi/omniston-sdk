@@ -12,10 +12,10 @@ const UNCONDITIONAL_ASSETS_STORAGE_KEY = "unconditional_assets";
 
 type AssetsContextValue = {
   assetsQuery: ReturnType<
-    typeof useQuery<Map<AssetMetadata["contract_address"], AssetMetadata>>
+    typeof useQuery<Map<AssetMetadata["contractAddress"], AssetMetadata>>
   >;
   getAssetByAddress: (
-    address: AssetMetadata["contract_address"],
+    address: AssetMetadata["contractAddress"],
   ) => AssetMetadata | undefined;
   insertAsset: (asset: AssetMetadata) => void;
 };
@@ -59,33 +59,34 @@ export const AssetsProvider = ({ children }: { children: React.ReactNode }) => {
       walletAddress,
     }),
     select: (data) =>
-      new Map(
-        (data?.asset_list).map((asset) => [asset.contract_address, asset]),
-      ),
+      new Map(data.map((asset) => [asset.contractAddress, asset])),
     enabled: isConnectionRestored,
     refetchInterval: 1000 * 60 * 5, // Refetch every 5 minutes
     staleTime: Infinity, // Consider assets metadata as static data
   });
 
-  const getAssetByAddress = (address: AssetMetadata["contract_address"]) =>
+  const getAssetByAddress = (address: AssetMetadata["contractAddress"]) =>
     assetsQuery.data?.get(address);
 
   const insertAsset = (asset: AssetMetadata) => {
-    if (getAssetByAddress(asset.contract_address)) return;
+    if (getAssetByAddress(asset.contractAddress)) return;
 
-    setUnconditionalAssets((prev) => [...prev, asset.contract_address]);
+    setUnconditionalAssets((prev) => [...prev, asset.contractAddress]);
     queryClient.setQueryData(
       assetQueryFactory.fetch({
         unconditionalAssets,
         walletAddress,
       }).queryKey,
-      (old: { asset_list: AssetMetadata[] } | undefined) => {
-        if (!old) return { asset_list: [asset] };
-        const exists = old.asset_list.some(
-          (a) => a.contract_address === asset.contract_address,
+      (old: AssetMetadata[] | undefined) => {
+        if (!old) return [asset];
+
+        const exists = old.some(
+          (a) => a.contractAddress === asset.contractAddress,
         );
+
         if (exists) return old;
-        return { asset_list: [...old.asset_list, asset] };
+
+        return [...old, asset];
       },
     );
   };

@@ -1,23 +1,16 @@
 "use server";
 
-import { z } from "zod";
+import { type AssetMetadata, assetMetadataSchema } from "@/models/asset";
 
-import { assetMetadataSchema } from "@/models/asset";
+import { stonApiClient } from "./ston-api-client";
 import { retrieveEnvVariable } from "./utils";
 
-const STON_API_URL = retrieveEnvVariable("OMNIDEMO__STON_API");
 const ASSET_QUERY_CONDITION = retrieveEnvVariable(
   "OMNIDEMO__STON_API__ASSETS_QUERY_CONDITION",
 );
 const ASSET_SEARCH_CONDITION = retrieveEnvVariable(
   "OMNIDEMO__STON_API__ASSETS_SEARCH_CONDITION",
 );
-
-const assetsQueryResponseSchema = z.object({
-  asset_list: z.array(assetMetadataSchema),
-});
-
-export type AssetsQueryResponse = z.infer<typeof assetsQueryResponseSchema>;
 
 export async function fetchAssets({
   condition,
@@ -27,84 +20,60 @@ export async function fetchAssets({
   condition?: string;
   unconditionalAssets?: string[];
   walletAddress?: string;
-}): Promise<AssetsQueryResponse> {
-  const response = await fetch(`${STON_API_URL}/v1/assets/query`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      condition: condition
-        ? `${ASSET_QUERY_CONDITION} & ${condition}`
-        : ASSET_QUERY_CONDITION,
-      wallet_address: walletAddress,
-      unconditional_asset: unconditionalAssets,
-    }),
+}): Promise<AssetMetadata[]> {
+  const response = await stonApiClient.queryAssets({
+    condition: condition
+      ? `${ASSET_QUERY_CONDITION} & ${condition}`
+      : ASSET_QUERY_CONDITION,
+    walletAddress,
+    unconditionalAssets,
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch assets metadata");
-  }
+  const assets = response.reduce<AssetMetadata[]>((acc, asset) => {
+    const parsedData = assetMetadataSchema.safeParse(asset);
 
-  const rawData = await response.json();
-  const parsedData = assetsQueryResponseSchema.safeParse(rawData);
+    if (parsedData.success) {
+      acc.push(parsedData.data);
+    }
 
-  if (!parsedData.success) {
-    console.error("Parse error:", parsedData.error);
-    throw new Error("Invalid response data", { cause: parsedData.error });
-  }
+    return acc;
+  }, []);
 
-  return parsedData.data;
+  return assets;
 }
 
 export async function searchAssets({
-  searchTerm,
+  searchTerms,
   condition,
   unconditionalAssets,
   walletAddress,
+  limit = 50,
 }: {
-  searchTerm: string;
+  searchTerms: string[];
   condition?: string;
   unconditionalAssets?: string[];
   walletAddress?: string;
-}): Promise<AssetsQueryResponse> {
-  const searchParams = new URLSearchParams();
-
-  searchParams.append("limit", "50");
-  searchParams.append("search_string", searchTerm);
-  searchParams.append(
-    "condition",
-    condition
+  limit?: number;
+}): Promise<AssetMetadata[]> {
+  const response = await stonApiClient.queryAssets({
+    limit,
+    searchTerms,
+    condition: condition
       ? `${ASSET_SEARCH_CONDITION} & ${condition}`
       : ASSET_SEARCH_CONDITION,
-  );
+    walletAddress,
+    unconditionalAssets,
+  });
 
-  if (walletAddress) {
-    searchParams.append("wallet_address", walletAddress);
-  }
+  const assets = response.reduce<AssetMetadata[]>((acc, asset) => {
+    const parsedData = assetMetadataSchema.safeParse(asset);
 
-  if (unconditionalAssets && unconditionalAssets.length > 0) {
-    unconditionalAssets.forEach((asset) => {
-      searchParams.append("unconditional_asset", asset);
-    });
-  }
+    if (parsedData.success) {
+      acc.push(parsedData.data);
+    }
 
-  const response = await fetch(
-    `${STON_API_URL}/v1/assets/search?${searchParams.toString()}`,
-    { method: "POST" },
-  );
+    return acc;
+  }, []);
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch assets metadata");
-  }
-
-  const rawData = await response.json();
-  const parsedData = assetsQueryResponseSchema.safeParse(rawData);
-
-  if (!parsedData.success) {
-    console.error("Parse error:", parsedData.error);
-    throw new Error("Invalid response data", { cause: parsedData.error });
-  }
-
-  return parsedData.data;
+  return assets;
 }
