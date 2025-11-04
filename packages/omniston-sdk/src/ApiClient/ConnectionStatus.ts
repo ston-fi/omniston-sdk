@@ -32,6 +32,7 @@ export interface ConnectionClosedEvent {
 export interface ConnectionErrorEvent {
   status: "error";
   errorMessage: string;
+  isReconnecting?: boolean;
 }
 
 /**

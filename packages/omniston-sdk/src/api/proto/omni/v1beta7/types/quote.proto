@@ -35,6 +35,8 @@ message RequestSettlementParams {
   GaslessSettlement gasless_settlement = 3;
 
   // Indicates whether a flexible referrer fee can be applied for the quote.
+  //
+  // Allows inclusion of protocols that have limited support for referral fees.
   optional bool flexible_referrer_fee = 4;
 }
 

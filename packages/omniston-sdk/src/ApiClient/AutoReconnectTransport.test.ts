@@ -235,4 +235,24 @@ describe("AutoReconnectTransport tests", () => {
     expect(sendHasSettled).toBe(true);
     expect(`${sendError}`).toMatch("Cancelled by client");
   });
+
+  test("signals whether the reconnection process is ongoing", async () => {
+    const testTransport = setUp({ maxRetries: 1, reconnectDelayMs: 0 });
+
+    const receivedEvents: ConnectionStatusEvent[] = [];
+    testTransport.connectionStatusEvents.subscribe((event) => {
+      receivedEvents.push(event);
+    });
+
+    mockTransport.connectionStatusEvents.next(testConnectionError);
+    expect(receivedEvents).toEqual([
+      { ...testConnectionError, isReconnecting: true },
+    ]);
+
+    mockTransport.connectionStatusEvents.next(testConnectionError);
+    expect(receivedEvents).toEqual([
+      { ...testConnectionError, isReconnecting: true },
+      { ...testConnectionError, isReconnecting: false },
+    ]);
+  });
 });

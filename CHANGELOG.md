@@ -1,5 +1,23 @@
 # Changelog
 
+## 04-11-2025
+
+### @ston-fi/omniston-sdk@0.7.7
+
+### Fixed
+
+- `ApiClient` now properly reconnects after connection errors by detecting when the connection has failed
+- `ApiClient` now automatically closes all pending subscriptions when connections fail, preventing resource leaks
+- fixed potential memory leak in ApiClient.readStream()
+
+### Added
+
+- `AutoReconnectTransport` connection error events are enriched with an `isReconnecting` flag to indicate whether automatic reconnection is in progress. This allows distinguishing between recoverable errors (being retried) and permanent failures
+
+### Deprecated
+
+- the `TransactionRequest` type was renamed to `BuildTransferRequest`. Left for backward compatibility, but deprecated. It will be removed in the future
+
 ## 23-10-2025
 
 ### @ston-fi/omniston-sdk@0.7.6

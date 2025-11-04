@@ -36,7 +36,10 @@ export type {
 export { QuoteResponseEventType } from "./dto/QuoteResponseEvent";
 export type { TrackTradeRequest } from "./dto/TrackTradeRequest";
 export type { TradeStatus } from "./dto/TradeStatus";
-export type { TransactionRequest } from "./dto/TransactionRequest";
+export type {
+  BuildTransferRequest,
+  TransactionRequest,
+} from "./dto/TransactionBuilder";
 export type { TransactionResponse } from "./dto/TransactionResponse";
 export type { Logger } from "./logger/Logger";
 export {

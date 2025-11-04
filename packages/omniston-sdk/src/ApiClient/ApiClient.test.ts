@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import { OmnistonError } from "../omniston";
+
 import { ApiClient } from "./ApiClient";
-import type { ConnectionStatusEvent } from "./ConnectionStatus";
+import type {
+  ConnectionErrorEvent,
+  ConnectionStatusEvent,
+} from "./ConnectionStatus";
 import { MockTransport } from "./MockTransport";
 
 describe("ApiClient tests", () => {
@@ -9,6 +14,10 @@ describe("ApiClient tests", () => {
   const testPayload = { testKey: "testValue" };
   const testError = new Error("test error");
   const testSubscriptionId = 1;
+  const testConnectionError: ConnectionErrorEvent = {
+    status: "error",
+    errorMessage: "test error",
+  };
 
   let apiClient: ApiClient;
   let mockTransport: MockTransport;
@@ -17,6 +26,21 @@ describe("ApiClient tests", () => {
     mockTransport = new MockTransport();
     apiClient = new ApiClient({ transport: mockTransport });
   });
+
+  function setUpSimpleServer() {
+    // Make a simple server to respond on all methods
+    vi.spyOn(mockTransport, "send").mockImplementation(async (message) => {
+      const requestId = JSON.parse(message).id;
+      mockTransport.messages.next(
+        JSON.stringify(
+          jsonRpcPayload({
+            id: requestId,
+            result: "ok",
+          }),
+        ),
+      );
+    });
+  }
 
   test("method call", async () => {
     const sendSpy = vi.spyOn(mockTransport, "send");
@@ -214,18 +238,7 @@ describe("ApiClient tests", () => {
 
   test("calls connect before calling send", async () => {
     const connectSpy = vi.spyOn(mockTransport, "connect");
-    // Make a simple server to respond on all methods
-    vi.spyOn(mockTransport, "send").mockImplementation(async (message) => {
-      const requestId = JSON.parse(message).id;
-      mockTransport.messages.next(
-        JSON.stringify(
-          jsonRpcPayload({
-            id: requestId,
-            result: "ok",
-          }),
-        ),
-      );
-    });
+    setUpSimpleServer();
 
     await apiClient.send("test", testPayload);
     expect(connectSpy).toHaveBeenCalledTimes(1);
@@ -233,6 +246,67 @@ describe("ApiClient tests", () => {
     // Does not call connect the second time
     await apiClient.send("test2", testPayload);
     expect(connectSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("calls connect again after receiving a connection error", async () => {
+    const connectSpy = vi.spyOn(mockTransport, "connect");
+    setUpSimpleServer();
+
+    await apiClient.send("test", testPayload);
+    expect(connectSpy).toHaveBeenCalledTimes(1);
+
+    mockTransport.connectionStatusEvents.next(testConnectionError);
+    await apiClient.send("test2", testPayload);
+    expect(connectSpy).toHaveBeenCalledTimes(2);
+  });
+
+  test("does not call connect again after receiving a connection error with isReconnecting = true", async () => {
+    const connectSpy = vi.spyOn(mockTransport, "connect");
+    setUpSimpleServer();
+
+    await apiClient.send("test", testPayload);
+    expect(connectSpy).toHaveBeenCalledTimes(1);
+
+    mockTransport.connectionStatusEvents.next({
+      ...testConnectionError,
+      isReconnecting: true,
+    });
+    await apiClient.send("test2", testPayload);
+    expect(connectSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("closes pending subscriptions after closing manually", () => {
+    vi.spyOn(mockTransport, "close").mockImplementation(() => {
+      mockTransport.connectionStatusEvents.next({ status: "closed" });
+    });
+
+    const events = apiClient.readStream(testMethod, testSubscriptionId);
+    let receivedError: Error | undefined;
+    events.subscribe({
+      error: (err) => {
+        receivedError = err;
+      },
+    });
+    apiClient.close();
+    expect(receivedError).toBeInstanceOf(OmnistonError);
+    expect(receivedError?.message).toBe("Connection is closed");
+  });
+
+  test("closes pending subscriptions after connection closed by server", () => {
+    const events = apiClient.readStream(testMethod, testSubscriptionId);
+    let receivedError: Error | undefined;
+    events.subscribe({
+      error: (err) => {
+        receivedError = err;
+      },
+    });
+
+    mockTransport.connectionStatusEvents.next({
+      status: "error",
+      errorMessage: "some error",
+    });
+    expect(receivedError).toBeInstanceOf(OmnistonError);
+    expect(receivedError?.message).toBe("Connection is closed");
   });
 });
 

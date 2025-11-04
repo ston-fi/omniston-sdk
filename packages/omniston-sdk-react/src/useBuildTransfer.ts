@@ -1,6 +1,6 @@
 import type {
+  BuildTransferRequest,
   OmnistonError,
-  TransactionRequest,
   TransactionResponse,
 } from "@ston-fi/omniston-sdk";
 import {
@@ -15,7 +15,7 @@ import { useOmniston } from "./useOmniston";
  * Wrapper for {@link Omniston.buildTransfer} method to use with react-query.
  */
 export function useBuildTransfer(
-  request: TransactionRequest,
+  request: BuildTransferRequest,
   queryOptions?: Omit<
     UseQueryOptions<TransactionResponse, OmnistonError>,
     "queryKey" | "queryFn"

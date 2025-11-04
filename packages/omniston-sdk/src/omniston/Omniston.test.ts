@@ -9,7 +9,7 @@ import { QuoteRequest } from "../dto/QuoteRequest";
 import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";
 import { TrackTradeRequest } from "../dto/TrackTradeRequest";
 import { TradeStatus } from "../dto/TradeStatus";
-import { TransactionRequest } from "../dto/TransactionRequest";
+import { BuildTransferRequest } from "../dto/TransactionBuilder";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { FakeTimer } from "../helpers/timer/FakeTimer";
 import {
@@ -258,7 +258,7 @@ describe("Omniston tests", () => {
       const result = await omniston.buildTransfer(testTransactionRequest);
       expect(sendSpy).lastCalledWith(
         METHOD_BUILD_TRANSFER,
-        TransactionRequest.toJSON(testTransactionRequest),
+        BuildTransferRequest.toJSON(testTransactionRequest),
       );
       // Omniston translates payload from hex-encoded to base64-encoded.
       expect(result).toEqual(testTransactionResponseBase64);

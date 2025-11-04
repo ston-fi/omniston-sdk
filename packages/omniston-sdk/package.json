@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk",
-  "version": "0.7.6",
+  "version": "0.7.7",
   "description": "Typescript SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -34,7 +34,7 @@
     "lint:tsc": "tsc --noEmit --pretty",
     "lint:biome": "biome check",
     "test": "vitest",
-    "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/api/messages --ts_proto_opt=outputEncodeMethods=false,snakeToCamel=keys,useNumericEnumForJson=true,stringEnums=true,emitDefaultValues=json-methods,outputServices=false,enumsAsLiterals=true -Isrc/api/proto src/api/proto/omni/v1beta7/**/*.proto",
+    "proto:generate": "node scripts/generate-proto.js",
     "prepublishOnly": "pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . && pnpm publint"
   },
   "dependencies": {
@@ -46,11 +46,11 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
-    "@protobuf-ts/protoc": "2.9.4",
+    "@protobuf-ts/protoc": "2.11.1",
     "@types/node": "24.0.8",
     "@types/ws": "8.5.10",
     "publint": "catalog:",
-    "ts-proto": "1.180.0",
+    "ts-proto": "2.8.0",
     "tsdown": "catalog:",
     "vitest": "catalog:"
   }

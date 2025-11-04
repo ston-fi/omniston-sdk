@@ -6,7 +6,7 @@ import type { QuoteEvent } from "../dto/QuoteEvent";
 import type { QuoteRequest } from "../dto/QuoteRequest";
 import type { TrackTradeRequest } from "../dto/TrackTradeRequest";
 import type { TradeStatus } from "../dto/TradeStatus";
-import type { TransactionRequest } from "../dto/TransactionRequest";
+import type { BuildTransferRequest } from "../dto/TransactionBuilder";
 import type { TransactionResponse } from "../dto/TransactionResponse";
 
 export const assetTon: Address = {
@@ -152,7 +152,7 @@ export const testTransactionResponseBase64: TransactionResponse = {
   },
 };
 
-export const testTransactionRequest: TransactionRequest = {
+export const testTransactionRequest: BuildTransferRequest = {
   sourceAddress: {
     address: "0QCXSs2xZ2dhk9TAxzGzXra2EbG_S2SqyN8Tfi6fJ82EYsMs",
     blockchain: Blockchain.TON,

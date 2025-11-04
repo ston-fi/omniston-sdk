@@ -9,7 +9,7 @@ import { QuoteRequest } from "../dto/QuoteRequest";
 import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";
 import { TrackTradeRequest } from "../dto/TrackTradeRequest";
 import { TradeStatus } from "../dto/TradeStatus";
-import { TransactionRequest } from "../dto/TransactionRequest";
+import { BuildTransferRequest } from "../dto/TransactionBuilder";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
@@ -126,14 +126,14 @@ export class Omniston {
   /**
    * A request to generate unsigned transfer to initiate the trade.
    *
-   * @param request {@see TransactionRequest}
+   * @param request {@see BuildTransferRequest}
    * @returns {@see TransactionResponse}
    */
-  buildTransfer(request: TransactionRequest): Promise<TransactionResponse> {
+  buildTransfer(request: BuildTransferRequest): Promise<TransactionResponse> {
     return wrapErrorsAsync(async () => {
       const response = await this.apiClient.send(
         METHOD_BUILD_TRANSFER,
-        TransactionRequest.toJSON(request),
+        BuildTransferRequest.toJSON(request),
       );
 
       return TransactionResponse.fromJSON(response);

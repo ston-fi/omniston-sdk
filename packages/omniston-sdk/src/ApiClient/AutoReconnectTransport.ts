@@ -1,4 +1,4 @@
-import type { Observable } from "rxjs";
+import { type Observable, Subject } from "rxjs";
 
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
@@ -46,6 +46,8 @@ export class AutoReconnectTransport implements Transport {
 
   private reconnectingProcess: ReconnectingProcess | null = null;
 
+  private _connectionStatusEvents = new Subject<ConnectionStatusEvent>();
+
   constructor(options: AutoReconnectTransportOptions) {
     this.options = options;
     this.options.transport.connectionStatusEvents.subscribe((event) =>
@@ -64,7 +66,7 @@ export class AutoReconnectTransport implements Transport {
   }
 
   get connectionStatusEvents(): Observable<ConnectionStatusEvent> {
-    return this.options.transport.connectionStatusEvents;
+    return this._connectionStatusEvents;
   }
 
   get messages(): Observable<string> {
@@ -100,7 +102,10 @@ export class AutoReconnectTransport implements Transport {
           },
         );
       }
-      this.reconnectingProcess.signalError(event);
+      const isReconnecting = this.reconnectingProcess.signalError(event);
+      this._connectionStatusEvents.next({ ...event, isReconnecting });
+    } else {
+      this._connectionStatusEvents.next(event);
     }
   }
 }
@@ -134,17 +139,19 @@ class ReconnectingProcess {
     });
   }
 
-  signalError(errorEvent: ConnectionErrorEvent) {
+  // Returns whether the transport will try to reconnect after receiving the error
+  signalError(errorEvent: ConnectionErrorEvent): boolean {
     const retriesLeft = this.maxRetries - this.attempt;
     const reconnectAfter = this.getReconnectDelayMs(this.attempt + 1);
     const messageParts: string[] = [];
     messageParts.push(`Connection error: ${errorEvent.errorMessage}.`);
     messageParts.push(`Retries left: ${retriesLeft}.`);
-    if (retriesLeft > 0) {
+    if (retriesLeft > 0 && !this.isDone) {
       messageParts.push(`Will reconnect after ${reconnectAfter} ms.`);
     }
     this.logger?.warn(messageParts.join(" "));
     this.tryToReconnect(errorEvent.errorMessage);
+    return retriesLeft > 0 && !this.isDone;
   }
 
   waitForReconnection() {

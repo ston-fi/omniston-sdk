@@ -7,8 +7,11 @@ import {
 } from "json-rpc-2.0";
 import { Observable, Subject } from "rxjs";
 
+import { ErrorCode } from "../constants";
 import { isJSONRPCError } from "../helpers/isJSONRPCError";
 import type { Logger } from "../logger/Logger";
+import { OmnistonError } from "../omniston";
+
 import type { IApiClient } from "./ApiClient.types";
 import type {
   ConnectionStatus,
@@ -50,7 +53,7 @@ export class ApiClient implements IApiClient {
   // TODO: use abort controller to cancel requests and pass signal to transport
   private isClosed = false;
 
-  private _connectionStatus: ConnectionStatus = "ready";
+  private _lastConnectionStatusEvent: ConnectionStatusEvent | null = null;
 
   public readonly connectionStatusEvents = new Subject<ConnectionStatusEvent>();
 
@@ -72,13 +75,14 @@ export class ApiClient implements IApiClient {
 
     this.transport.connectionStatusEvents.subscribe((statusEvent) => {
       // TODO: log events?
-      this._connectionStatus = statusEvent.status;
+      this._lastConnectionStatusEvent = statusEvent;
+      this.handleConnectionEvent(statusEvent);
       this.connectionStatusEvents.next(statusEvent);
     });
   }
 
-  public get connectionStatus() {
-    return this._connectionStatus;
+  public get connectionStatus(): ConnectionStatus {
+    return this._lastConnectionStatusEvent?.status ?? "ready";
   }
 
   /**
@@ -90,7 +94,13 @@ export class ApiClient implements IApiClient {
     if (this.isClosed) {
       return Promise.reject(new Error("ApiClient is closed"));
     }
-    this.connection ??= this.transport.connect();
+    if (
+      !this.connection ||
+      (this._lastConnectionStatusEvent?.status === "error" &&
+        !this._lastConnectionStatusEvent.isReconnecting)
+    ) {
+      this.connection = this.transport.connect();
+    }
     return this.connection;
   }
 
@@ -157,6 +167,7 @@ export class ApiClient implements IApiClient {
     let result = this.streamConsumers.get(method);
     if (result) return result;
     result = new Map();
+    this.streamConsumers.set(method, result);
     this.serverAndClient.addMethod(method, (payload: StreamPayload) => {
       const consumer = result.get(payload.subscription);
       if ("error" in payload) {
@@ -176,5 +187,21 @@ export class ApiClient implements IApiClient {
       }
     });
     return result;
+  }
+
+  private handleConnectionEvent(event: ConnectionStatusEvent) {
+    if (event.status === "closed" || event.status === "error") {
+      // Close all pending subscriptions when connection is closed
+      const consumerMaps = [...this.streamConsumers.values()];
+      const consumers = consumerMaps.flatMap((consumerMap) => [
+        ...consumerMap.values(),
+      ]);
+      for (const consumer of consumers) {
+        consumer(
+          new OmnistonError(ErrorCode.UNKNOWN, "Connection is closed"),
+          undefined,
+        );
+      }
+    }
   }
 }
