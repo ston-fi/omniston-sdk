@@ -28,7 +28,11 @@
   "scripts": {
     "dev": "tsdown --sourcemap --watch ./src",
     "build": "tsdown",
-    "lint": "tsc --noEmit --pretty",
+    "format": "pnpm run /^format:.*/",
+    "format:biome": "biome format --write",
+    "lint": "pnpm run /^lint:.*/",
+    "lint:tsc": "tsc --noEmit --pretty",
+    "lint:biome": "biome check",
     "test": "vitest",
     "proto:generate": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/api/messages --ts_proto_opt=outputEncodeMethods=false,snakeToCamel=keys,useNumericEnumForJson=true,stringEnums=true,emitDefaultValues=json-methods,outputServices=false,enumsAsLiterals=true -Isrc/api/proto src/api/proto/omni/v1beta7/**/*.proto",
     "prepublishOnly": "pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . && pnpm publint"

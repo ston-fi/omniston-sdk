@@ -28,7 +28,11 @@
   "scripts": {
     "dev": "tsdown --sourcemap --watch ./src",
     "build": "tsdown",
-    "lint": "tsc --noEmit --pretty",
+    "format": "pnpm run /^format:.*/",
+    "format:biome": "biome format --write",
+    "lint": "pnpm run /^lint:.*/",
+    "lint:tsc": "tsc --noEmit --pretty",
+    "lint:biome": "biome check",
     "test": "vitest",
     "prepublishOnly": "turbo run build --filter=@ston-fi/omniston-sdk && pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . && pnpm publint"
   },

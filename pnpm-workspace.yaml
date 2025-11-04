@@ -8,8 +8,8 @@ onlyBuiltDependencies:
 - 'lefthook'
 
 packages:
-  - 'packages/*'
   - 'examples/*'
+  - 'packages/*'
 
 verifyDepsBeforeRun: 'install'
 
