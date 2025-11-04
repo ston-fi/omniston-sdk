@@ -4,7 +4,7 @@ import type { Quote, SwapSettlementParams } from "@ston-fi/omniston-sdk-react";
 import { ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-import { AddressPreview } from "@/components/AddressPreview";
+import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
 import {
   Collapsible,
   CollapsibleContent,
@@ -40,12 +40,14 @@ export const QuotePreview = (props: { className?: string }) => {
         <QuoteError errorMessage="Request timed out" />
       ) : quoteEvent?.type === "quoteUpdated" ? (
         <>
-          <QuoteDataPresenter
-            quote={quoteEvent.quote}
+          <QuoteIdPresenter
+            quoteId={quoteEvent.quote.quoteId}
             rfqId={quoteEvent.rfqId}
           />
           <hr />
-          <QuoteRouteVisualizer {...quoteEvent.quote} />
+          <QuoteDataPresenter quote={quoteEvent.quote} />
+          <hr />
+          <QuoteRouteVisualizer quote={quoteEvent.quote} />
         </>
       ) : (
         <QuoteLoading />
@@ -74,13 +76,34 @@ const QuoteLoading = () => {
   return <span>Waiting for a quote...</span>;
 };
 
-const QuoteDataPresenter = ({
-  quote,
+export const QuoteIdPresenter = ({
+  quoteId,
   rfqId,
 }: {
-  quote: Quote;
+  quoteId: Quote["quoteId"];
   rfqId: string;
 }) => {
+  return (
+    <ul
+      className={`
+        space-y-2
+        [&>li]:grid [&>li]:grid-cols-[max-content__1fr] [&>li]:gap-2
+        [&>li>*:nth-child(2)]:ml-auto [&>li>*:nth-child(2)]:font-mono [&>li>*:nth-child(2)]:truncate
+      `}
+    >
+      <li>
+        <span>RFQ ID:</span>
+        <Copy value={rfqId}>{trimStringWithEllipsis(rfqId, 6)}</Copy>
+      </li>
+      <li>
+        <span>Quote ID:</span>
+        <Copy value={quoteId}>{trimStringWithEllipsis(quoteId, 6)}</Copy>
+      </li>
+    </ul>
+  );
+};
+
+export const QuoteDataPresenter = ({ quote }: { quote: Quote }) => {
   const { getAssetByAddress } = useAssets();
 
   const askAsset = getAssetByAddress(quote.askAssetAddress.address);
@@ -101,22 +124,11 @@ const QuoteDataPresenter = ({
       `}
     >
       <li>
-        <span>RFQ ID:</span>
-        <Copy value={rfqId}>{trimStringWithEllipsis(rfqId, 6)}</Copy>
-      </li>
-      <li>
-        <span>Quote ID:</span>
-        <Copy value={quote.quoteId}>
-          {trimStringWithEllipsis(quote.quoteId, 6)}
-        </Copy>
-      </li>
-      <li>
         <span>Resolved by:</span>
-        <AddressPreview address={quote.resolverId}>
+        <ExplorerAddressPreview address={quote.resolverId}>
           {quote.resolverName}
-        </AddressPreview>
+        </ExplorerAddressPreview>
       </li>
-      <hr />
       <li>
         <span>Bid amount:</span>
         <span>
@@ -145,7 +157,7 @@ const QuoteDataPresenter = ({
   );
 };
 
-function QuoteRouteVisualizer(quote: Quote) {
+export function QuoteRouteVisualizer({ quote }: { quote: Quote }) {
   const [open, setOpen] = useState(false);
 
   return (

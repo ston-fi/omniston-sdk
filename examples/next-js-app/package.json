@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "pnpm run /^lint:/",
+    "lint:eslint": "next lint",
+    "lint:tsc": "tsc --noEmit --pretty"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "1.1.10",
@@ -17,10 +19,10 @@
     "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-slot": "1.2.3",
     "@radix-ui/react-switch": "1.2.6",
-    "@ston-fi/api": "0.27.1",
+    "@ston-fi/api": "0.28.0",
     "@ston-fi/omniston-sdk-react": "workspace:*",
     "@tanstack/react-query": "5.90.2",
-    "@ton/core": "0.61.0",
+    "@ton/core": "0.62.0",
     "@tonconnect/ui-react": "2.3.1",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",

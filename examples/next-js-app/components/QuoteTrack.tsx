@@ -84,12 +84,16 @@ export const QuoteTrack = withQuoteTrackProps(
         <TradeStatusContent status={tradeStatus.status} />
         <div className="flex gap-2 items-center">
           <span>Transfer timestamp:</span>
-          <pre>{new Date(tradeStatus.transferTimestamp).toLocaleString()}</pre>
+          <pre>
+            {new Date(tradeStatus.transferTimestamp * 1000).toLocaleString()}
+          </pre>
         </div>
         <div className="flex gap-2 items-center">
           <span>Estimated finish timestamp: </span>
           <pre>
-            {new Date(tradeStatus.estimatedFinishTimestamp).toLocaleString()}
+            {new Date(
+              tradeStatus.estimatedFinishTimestamp * 1000,
+            ).toLocaleString()}
           </pre>
         </div>
       </div>

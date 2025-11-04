@@ -25,15 +25,15 @@ export function useBuildAndSendTransaction() {
       const tx = await omniston.buildTransfer({
         quote,
         sourceAddress: {
-          address: wallet?.account.address.toString(),
+          address: wallet.account.address.toString(),
           blockchain: Blockchain.TON,
         },
         destinationAddress: {
-          address: wallet?.account.address.toString(),
+          address: wallet.account.address.toString(),
           blockchain: Blockchain.TON,
         },
         gasExcessAddress: {
-          address: wallet?.account.address.toString(),
+          address: wallet.account.address.toString(),
           blockchain: Blockchain.TON,
         },
         useRecommendedSlippage: autoSlippageTolerance,

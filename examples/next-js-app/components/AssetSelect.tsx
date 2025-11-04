@@ -25,7 +25,7 @@ import { bigNumberToFloat, cn, trimStringWithEllipsis } from "@/lib/utils";
 import type { AssetMetadata } from "@/models/asset";
 import { useAssets } from "@/providers/assets";
 import { assetQueryFactory } from "@/quries/assets";
-import { AddressPreview } from "./AddressPreview";
+import { ExplorerAddressPreview } from "./ExplorerAddressPreview";
 
 type AssetSelectProps = {
   assets?: AssetMetadata[];
@@ -169,13 +169,13 @@ export const AssetSelect: FC<AssetSelectProps> = ({
                           : null}
                       </span>
                     </div>
-                    <AddressPreview
+                    <ExplorerAddressPreview
                       address={asset.contractAddress}
                       onClick={(e) => e.stopPropagation()}
                       className="text-xs opacity-50 hover:opacity-100"
                     >
                       {trimStringWithEllipsis(asset.contractAddress, 4, 6)}
-                    </AddressPreview>
+                    </ExplorerAddressPreview>
                   </div>
                 </CommandItem>
               ))}

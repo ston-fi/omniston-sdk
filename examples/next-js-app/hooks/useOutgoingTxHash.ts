@@ -1,15 +1,9 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-interface TonApiSuccessResponse {
-  success: true;
-  transaction: {
-    hash: string;
-  };
-  emulated?: boolean;
-}
+import { stonApiClient } from "@/lib/ston-api-client";
 
-const REFETCH_DELAY = 5000;
+const REFETCH_DELAY = 1_000;
 
 export type UseOutgoingTxHashResult =
   | { status: "loading" }
@@ -25,29 +19,24 @@ export function useOutgoingTxHash(
 
   const result = useQuery({
     queryKey,
-    queryFn: async ({ signal }) => {
-      const response = await fetch(
-        `https://tonapi.io/v2/traces/${externalTxHash}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          signal,
-        },
-      );
-      const result = (await response.json()) as TonApiSuccessResponse;
-      if (!response.ok) {
-        throw new Error("Error fetching transaction", { cause: result });
-      }
-      if (result.emulated) {
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey });
-        }, REFETCH_DELAY);
-        return null;
-      }
-      return result.transaction.hash;
-    },
-    enabled: externalTxHash !== null,
+    queryFn: externalTxHash
+      ? async () => {
+          const response = await stonApiClient.queryTransactions({
+            extMsgHash: externalTxHash,
+          });
+
+          if (!response.txId) {
+            setTimeout(() => {
+              queryClient.invalidateQueries({ queryKey });
+            }, REFETCH_DELAY);
+
+            return null;
+          }
+
+          return response.txId.hash;
+        }
+      : skipToken,
+    enabled: !!externalTxHash,
     staleTime: Number.POSITIVE_INFINITY,
   });
 
