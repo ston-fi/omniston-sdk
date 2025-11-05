@@ -10,6 +10,14 @@
 - new `Omniston.buildWithdrawal` method for receiving tx payload to sign for a withdrawal operation (if allowed) to be performed
 - new types related to the Escrow orders (`EscrowOrderData`, `EscrowOrderListRequest`, `EscrowOrderListResponse`)
 
+### @ston-fi/omniston-sdk-react@0.7.10
+
+### Added
+
+- `@ston-fi/omniston-sdk` bumped to v`0.7.8`
+- new `useEscrowList` hook that wraps the `Omniston.escrowList` method
+- new `useBuildWithdrawal` hook that wraps the `Omniston.buildWithdrawal` method
+
 ## 04-11-2025
 
 ### @ston-fi/omniston-sdk@0.7.7
