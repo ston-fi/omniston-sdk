@@ -12,6 +12,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useOutgoingTxHash } from "@/hooks/useOutgoingTxHash";
 import { cn } from "@/lib/utils";
 import { useTrackingQuoteState } from "@/providers/tracking-quote";
+import { WithdrawButton } from "./WithdrawButton";
 
 type QuoteTrackProps = {
   quoteId: Quote["quoteId"];
@@ -81,7 +82,7 @@ export const QuoteTrack = withQuoteTrackProps(
 
     return (
       <div className={cn("p-4 border rounded-md spaced-y-2", props.className)}>
-        <TradeStatusContent status={tradeStatus.status} />
+        <TradeStatusContent quoteId={quoteId} status={tradeStatus.status} />
         <div className="flex gap-2 items-center">
           <span>Transfer timestamp:</span>
           <pre>
@@ -102,8 +103,10 @@ export const QuoteTrack = withQuoteTrackProps(
 );
 
 function TradeStatusContent({
+  quoteId,
   status,
 }: {
+  quoteId: string;
   status: NonNullable<TradeStatus["status"]>;
 }) {
   if (status.unsubscribed) {
@@ -128,6 +131,17 @@ function TradeStatusContent({
       <span className="inline-flex gap-2 items-center">
         <Spinner />
         <span>Waiting for trade to be filled...</span>
+      </span>
+    );
+  }
+
+  if (status.refundAvailable) {
+    return (
+      <span className="inline-flex gap-2 items-center">
+        <span>Refund available</span>
+        <WithdrawButton size="sm" quoteId={quoteId}>
+          Withdraw
+        </WithdrawButton>
       </span>
     );
   }

@@ -1,8 +1,10 @@
 "use client";
 
+import { useTonWallet } from "@tonconnect/ui-react";
 import { Settings } from "lucide-react";
 
 import { ConnectionStatus } from "@/components/ConnectionStatus";
+import { EscrowList } from "@/components/EscrowList";
 import { QuoteAction } from "@/components/QuoteAction";
 import { QuotePreview } from "@/components/QuotePreview";
 import { QuoteTrack } from "@/components/QuoteTrack";
@@ -11,6 +13,8 @@ import { SwapSettings } from "@/components/SwapSettings";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
+  const wallet = useTonWallet();
+
   return (
     <section className="mx-auto w-full max-w-[500px] pt-4 md:pt-12 flex flex-col gap-4">
       <div className="flex items-center gap-2">
@@ -31,6 +35,7 @@ export default function Home() {
       <QuotePreview />
       <QuoteAction className="w-full" />
       <QuoteTrack />
+      {wallet ? <EscrowList walletAddress={wallet.account.address} /> : null}
     </section>
   );
 }
