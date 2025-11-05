@@ -2,6 +2,16 @@
 
 ## 04-11-2025
 
+### @ston-fi/omniston-sdk@0.7.8
+
+### Added
+
+- new `Omniston.escrowList` method for fetching list of the pending escrow orders
+- new `Omniston.buildWithdrawal` method for receiving tx payload to sign for a withdrawal operation (if allowed) to be performed
+- new types related to the Escrow orders (`EscrowOrderData`, `EscrowOrderListRequest`, `EscrowOrderListResponse`)
+
+## 04-11-2025
+
 ### @ston-fi/omniston-sdk@0.7.7
 ### @ston-fi/omniston-sdk-react@0.7.9
 

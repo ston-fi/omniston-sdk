@@ -1,1 +1,32 @@
-// TODO: Interactions with escrow contracts: existing orders, balance in vaults, etc. (out of scope for prototype)
+syntax = "proto3";
+
+package omni.v1beta7;
+
+import "omni/v1beta7/types/common.proto";
+import "omni/v1beta7/types/quote.proto";
+
+message EscrowOrderListRequest {
+  // The address of trader's wallet that initiated transaction to create the orders
+  Address trader_wallet_address = 1;
+}
+
+message EscrowOrderList {
+  repeated EscrowOrderData orders = 1;
+}
+
+message EscrowOrderData {
+  Quote quote = 1;
+
+  Address escrow_item_address = 2;
+
+  // Hash of tx outgoing from the wallet to create the order
+  string outgoing_tx_hash = 3;
+}
+
+// Interactions with escrow contracts
+service EscrowGrpc {
+  // Get list of active user's orders
+  rpc List (EscrowOrderListRequest) returns (EscrowOrderList){}
+
+  // TODO: Interactions with escrow contracts: balance in vaults, etc. (out of scope for prototype)
+}

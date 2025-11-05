@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package omni.v1beta7;
+
+// TODO: unstable API
+// TODO: finalize when WalletW5 extension will be finalized
+message TonGaslessPayload {
+  // Base64 serialized cell for signing with TON Connect.
+  string cell = 1;
+  // TL-B schema of payload cell.
+  string schema = 2;
+}
+
+// TODO: unstable API
+// Payload of gasless order for signing
+message GaslessPayload {
+  message GaslessPayloadOneOf {
+    oneof gasless_payload {
+      TonGaslessPayload ton = 607;
+    }
+  }
+
+  GaslessPayloadOneOf gasless_payload = 10000;
+}
+
+// TODO: unstable API
+message TonGaslessOrder {
+  // Address of TON wallet that signed the message with signData method.
+  string wallet_address = 1;
+  // Timestamp of signing returned by TonConnect's signData method.
+  uint64 timestamp = 2;
+  // Domain returned by TonConnect's signData method.
+  string domain = 3;
+  // Base64 serialized cell signed with TonConnect's signData.
+  string payload = 4;
+  // Base64 signature returned by TonConnect's signData method.
+  string signature = 5;
+}
+
+// TODO: unstable API
+// Signed gasless order
+message GaslessOrder {
+  message GaslessOrderOneOf {
+    oneof gasless_order {
+      TonGaslessOrder ton = 607;
+    }
+  }
+
+  GaslessOrderOneOf gasless_order = 10000;
+}
+
+// TODO: unstable API
+// Contains text 'CANCEL <QUOTE-ID-HEX>' signed with TonConnect's signData method.
+message TonGaslessCancellation {
+  // Address of TON wallet that signed the cancellation message with signData method.
+  string wallet_address = 1;
+  // Timestamp of signing returned by TonConnect's signData method.
+  uint64 timestamp = 2;
+  // Domain returned by TonConnect's signData method.
+  string domain = 3;
+  // Contains text 'CANCEL <QUOTE-ID-HEX>'
+  string payload = 4;
+  // Base64 signature returned by TonConnect's signData method.
+  string signature = 5;
+}
+
+// TODO: unstable API
+// Signed cancellation of gasless order
+message GaslessCancellation {
+  message GaslessCancellationOneOf {
+    oneof gasless_cancellation {
+      TonGaslessCancellation ton = 607;
+    }
+  }
+
+  GaslessCancellationOneOf gasless_cancellation = 10000;
+}

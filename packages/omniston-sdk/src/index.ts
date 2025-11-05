@@ -20,6 +20,11 @@ export {
   SettlementMethod,
 } from "./constants";
 export type { Address } from "./dto/Address";
+export {
+  EscrowOrderData,
+  EscrowOrderListRequest,
+  EscrowOrderListResponse,
+} from "./dto/escrow";
 export type {
   HtlcSettlementParams,
   Quote,
@@ -38,6 +43,7 @@ export type { TrackTradeRequest } from "./dto/TrackTradeRequest";
 export type { TradeStatus } from "./dto/TradeStatus";
 export type {
   BuildTransferRequest,
+  BuildWithdrawalRequest,
   TransactionRequest,
 } from "./dto/TransactionBuilder";
 export type { TransactionResponse } from "./dto/TransactionResponse";

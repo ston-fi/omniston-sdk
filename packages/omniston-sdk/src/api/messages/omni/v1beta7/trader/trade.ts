@@ -145,6 +145,13 @@ export interface SwapRouteStatus {
   steps: SwapStepStatus[];
 }
 
+export interface EscrowOrderStatus {
+  targetAddress: Address | undefined;
+  askUnits: string;
+  /** Hash of the transaction that performs the payout */
+  txHash: string;
+}
+
 /** A request to track the status of specific trade */
 export interface TrackTradeRequest {
   /** ID of the quote */
@@ -217,6 +224,8 @@ export interface TradeSettled {
   result: TradeResult;
   /** Specific to `SWAP` settlement. Info about partial filling of the trade. */
   routes: SwapRouteStatus[];
+  /** Specific to `Escrow` settlement. Info about filling of the trade. */
+  escrowOrderStatus: EscrowOrderStatus | undefined;
 }
 
 export interface TradeStatus {
@@ -415,6 +424,56 @@ export const SwapRouteStatus: MessageFns<SwapRouteStatus> = {
     const message = createBaseSwapRouteStatus();
     message.steps =
       object.steps?.map((e) => SwapStepStatus.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseEscrowOrderStatus(): EscrowOrderStatus {
+  return { targetAddress: undefined, askUnits: "", txHash: "" };
+}
+
+export const EscrowOrderStatus: MessageFns<EscrowOrderStatus> = {
+  fromJSON(object: any): EscrowOrderStatus {
+    return {
+      targetAddress: isSet(object.target_address)
+        ? Address.fromJSON(object.target_address)
+        : undefined,
+      askUnits: isSet(object.ask_units)
+        ? globalThis.String(object.ask_units)
+        : "",
+      txHash: isSet(object.tx_hash) ? globalThis.String(object.tx_hash) : "",
+    };
+  },
+
+  toJSON(message: EscrowOrderStatus): unknown {
+    const obj: any = {};
+    if (message.targetAddress !== undefined) {
+      obj.target_address = Address.toJSON(message.targetAddress);
+    }
+    if (message.askUnits !== undefined) {
+      obj.ask_units = message.askUnits;
+    }
+    if (message.txHash !== undefined) {
+      obj.tx_hash = message.txHash;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<EscrowOrderStatus>, I>>(
+    base?: I,
+  ): EscrowOrderStatus {
+    return EscrowOrderStatus.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<EscrowOrderStatus>, I>>(
+    object: I,
+  ): EscrowOrderStatus {
+    const message = createBaseEscrowOrderStatus();
+    message.targetAddress =
+      object.targetAddress !== undefined && object.targetAddress !== null
+        ? Address.fromPartial(object.targetAddress)
+        : undefined;
+    message.askUnits = object.askUnits ?? "";
+    message.txHash = object.txHash ?? "";
     return message;
   },
 };
@@ -703,7 +762,11 @@ export const ReceivingFunds: MessageFns<ReceivingFunds> = {
 };
 
 function createBaseTradeSettled(): TradeSettled {
-  return { result: TradeResult.TRADE_RESULT_UNKNOWN, routes: [] };
+  return {
+    result: TradeResult.TRADE_RESULT_UNKNOWN,
+    routes: [],
+    escrowOrderStatus: undefined,
+  };
 }
 
 export const TradeSettled: MessageFns<TradeSettled> = {
@@ -715,6 +778,9 @@ export const TradeSettled: MessageFns<TradeSettled> = {
       routes: globalThis.Array.isArray(object?.routes)
         ? object.routes.map((e: any) => SwapRouteStatus.fromJSON(e))
         : [],
+      escrowOrderStatus: isSet(object.escrow_order_status)
+        ? EscrowOrderStatus.fromJSON(object.escrow_order_status)
+        : undefined,
     };
   },
 
@@ -725,6 +791,11 @@ export const TradeSettled: MessageFns<TradeSettled> = {
     }
     if (message.routes?.length) {
       obj.routes = message.routes.map((e) => SwapRouteStatus.toJSON(e));
+    }
+    if (message.escrowOrderStatus !== undefined) {
+      obj.escrow_order_status = EscrowOrderStatus.toJSON(
+        message.escrowOrderStatus,
+      );
     }
     return obj;
   },
@@ -741,6 +812,11 @@ export const TradeSettled: MessageFns<TradeSettled> = {
     message.result = object.result ?? TradeResult.TRADE_RESULT_UNKNOWN;
     message.routes =
       object.routes?.map((e) => SwapRouteStatus.fromPartial(e)) || [];
+    message.escrowOrderStatus =
+      object.escrowOrderStatus !== undefined &&
+      object.escrowOrderStatus !== null
+        ? EscrowOrderStatus.fromPartial(object.escrowOrderStatus)
+        : undefined;
     return message;
   },
 };

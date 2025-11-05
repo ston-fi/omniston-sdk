@@ -5,7 +5,9 @@ package omni.v1beta7;
 import "omni/v1beta7/types/common.proto";
 import "omni/v1beta7/types/order.proto";
 import "omni/v1beta7/types/quote.proto";
+import "omni/v1beta7/types/gasless.proto";
 
+// TODO: unstable API
 message BuildRequest {
   // The address on `bid_blockchain` that will send initial transaction to start the trade
   Address source_address = 1;
@@ -13,41 +15,53 @@ message BuildRequest {
   Quote quote = 10;
 }
 
+// TODO: unstable API
 message BuildResponse {
-  //payload to be signed by user
-  repeated uint32 payload = 11;
+  // Payload to be signed by user.
+  GaslessPayload payload = 10;
 }
 
+// TODO: unstable API
 message PlaceRequest {
-  //Data to be sent to the resolver to create a gasless transaction.
-  repeated uint32 message = 1;
-  //Signature of the message
-  repeated uint32 signature = 2;
+  // ID of the Quote that has been used to produce corresponding payload.
+  string quote_id = 1;
+  // Public key that has been used to sign the message.
+  // This key must be used to cancel the order.
+  repeated uint32 public_key = 2;
+  // Signed gasless order
+  GaslessOrder order = 10;
 }
 
+
+// TODO: unstable API
 message PlaceResponse {
+  // TODO: Replace with enum (or maybe just remove it)
   string status = 1;
 }
 
+// TODO: unstable API
 message ListRequest {
-  string wallet_address = 1;
-  //todo: Auth
+  Address source_address = 1;
 }
 
+// TODO: unstable API
 message OrderList {
   repeated OrderData orders = 1;
 }
 
+// TODO: unstable API
 message CancelRequest {
   string quote_id = 1;
-  //todo: Auth
+  GaslessCancellation cancellation = 10;
 }
 
+// TODO: unstable API
 message CancelResponse {
   string status = 1;
 }
 
 // Service for interactions with gasless orders
+// TODO: unstable API
 service GaslessGrpc {
 
   rpc Build (BuildRequest) returns (BuildResponse){}

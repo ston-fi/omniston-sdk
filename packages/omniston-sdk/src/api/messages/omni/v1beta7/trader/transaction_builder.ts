@@ -28,6 +28,18 @@ export interface BuildTransferRequest {
   useRecommendedSlippage: boolean;
 }
 
+export interface BuildWithdrawalRequest {
+  /**
+   * The address that will send initial transaction to withdrawal the deposit
+   * The deposit must be created also by this wallet
+   */
+  sourceAddress: Address | undefined;
+  /** The ID of quote received from `QuoteGrpc` */
+  quoteId: string;
+  /** The address that will receive the gas not spent by the trade. */
+  gasExcessAddress: Address | undefined;
+}
+
 function createBaseBuildTransferRequest(): BuildTransferRequest {
   return {
     sourceAddress: undefined,
@@ -115,6 +127,59 @@ export const BuildTransferRequest: MessageFns<BuildTransferRequest> = {
         ? Quote.fromPartial(object.quote)
         : undefined;
     message.useRecommendedSlippage = object.useRecommendedSlippage ?? false;
+    return message;
+  },
+};
+
+function createBaseBuildWithdrawalRequest(): BuildWithdrawalRequest {
+  return { sourceAddress: undefined, quoteId: "", gasExcessAddress: undefined };
+}
+
+export const BuildWithdrawalRequest: MessageFns<BuildWithdrawalRequest> = {
+  fromJSON(object: any): BuildWithdrawalRequest {
+    return {
+      sourceAddress: isSet(object.source_address)
+        ? Address.fromJSON(object.source_address)
+        : undefined,
+      quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
+      gasExcessAddress: isSet(object.gas_excess_address)
+        ? Address.fromJSON(object.gas_excess_address)
+        : undefined,
+    };
+  },
+
+  toJSON(message: BuildWithdrawalRequest): unknown {
+    const obj: any = {};
+    if (message.sourceAddress !== undefined) {
+      obj.source_address = Address.toJSON(message.sourceAddress);
+    }
+    if (message.quoteId !== undefined) {
+      obj.quote_id = message.quoteId;
+    }
+    if (message.gasExcessAddress !== undefined) {
+      obj.gas_excess_address = Address.toJSON(message.gasExcessAddress);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<BuildWithdrawalRequest>, I>>(
+    base?: I,
+  ): BuildWithdrawalRequest {
+    return BuildWithdrawalRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<BuildWithdrawalRequest>, I>>(
+    object: I,
+  ): BuildWithdrawalRequest {
+    const message = createBaseBuildWithdrawalRequest();
+    message.sourceAddress =
+      object.sourceAddress !== undefined && object.sourceAddress !== null
+        ? Address.fromPartial(object.sourceAddress)
+        : undefined;
+    message.quoteId = object.quoteId ?? "";
+    message.gasExcessAddress =
+      object.gasExcessAddress !== undefined && object.gasExcessAddress !== null
+        ? Address.fromPartial(object.gasExcessAddress)
+        : undefined;
     return message;
   },
 };

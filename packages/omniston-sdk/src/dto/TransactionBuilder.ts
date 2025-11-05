@@ -1,4 +1,7 @@
-import { BuildTransferRequest as ApiBuildTransferRequest } from "../api/messages/omni/v1beta7/trader/transaction_builder";
+import {
+  BuildTransferRequest as ApiBuildTransferRequest,
+  BuildWithdrawalRequest as ApiBuildWithdrawalRequest,
+} from "../api/messages/omni/v1beta7/trader/transaction_builder";
 import type { Converter, SetNonNullable, SetOptional } from "../types";
 
 export type BuildTransferRequest = SetOptional<
@@ -16,3 +19,11 @@ export type TransactionRequest = BuildTransferRequest;
 
 export const BuildTransferRequest =
   ApiBuildTransferRequest as Converter<BuildTransferRequest>;
+
+export type BuildWithdrawalRequest = SetOptional<
+  SetNonNullable<ApiBuildWithdrawalRequest, "sourceAddress" | "quoteId">,
+  "gasExcessAddress"
+>;
+
+export const BuildWithdrawalRequest =
+  ApiBuildWithdrawalRequest as Converter<BuildWithdrawalRequest>;

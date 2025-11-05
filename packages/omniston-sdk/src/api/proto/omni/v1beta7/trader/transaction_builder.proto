@@ -22,14 +22,26 @@ message BuildTransferRequest {
   bool use_recommended_slippage = 11;
 }
 
+message BuildWithdrawalRequest {
+  // The address that will send initial transaction to withdrawal the deposit
+  // The deposit must be created also by this wallet
+  Address source_address = 1;
+
+  // The ID of quote received from `QuoteGrpc`
+  string quote_id = 2;
+
+  // The address that will receive the gas not spent by the trade.
+  Address gas_excess_address = 3;
+}
+
 service TransactionBuilderGrpc {
   rpc BuildTransfer (BuildTransferRequest) returns (Transaction){}
 
+  // Build withdrawal transaction from escrow contract
+  rpc BuildWithdrawal (BuildWithdrawalRequest) returns (Transaction){}
+
   // TODO: Build transaction for gasless approvals/wallet extensions (out of scope for prototype)
   // rpc BuildApproval (BuildApprovalRequest) returns (Transaction){}
-
-  // TODO: Build refund transaction from escrow contract (out of scope for prototype)
-  // rpc BuildRefund (BuildRefundRequest) returns (Transaction){}
 
   // TODO
   // rpc BuildClaim(BuildClaimRequest) returns (Transaction){}

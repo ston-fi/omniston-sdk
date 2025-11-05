@@ -38,6 +38,19 @@ message SwapRouteStatus {
 }
 
 //////////////////////////////////////////////
+// Escrow settlement
+//////////////////////////////////////////////
+
+message EscrowOrderStatus {
+  Address target_address = 1;
+
+  string ask_units = 2;
+
+  // Hash of the transaction that performs the payout
+  string tx_hash = 3;
+}
+
+//////////////////////////////////////////////
 // Trade status
 //////////////////////////////////////////////
 
@@ -121,6 +134,9 @@ message TradeSettled {
 
   // Specific to `SWAP` settlement. Info about partial filling of the trade.
   repeated SwapRouteStatus routes = 2;
+
+  // Specific to `Escrow` settlement. Info about filling of the trade.
+  EscrowOrderStatus escrow_order_status = 3;
 }
 
 message TradeStatus {

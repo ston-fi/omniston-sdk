@@ -4,12 +4,16 @@ import { ApiClient } from "../ApiClient/ApiClient";
 import type { IApiClient } from "../ApiClient/ApiClient.types";
 import { AutoReconnectTransport } from "../ApiClient/AutoReconnectTransport";
 import { WebSocketTransport } from "../ApiClient/WebSocketTransport";
+import { EscrowOrderListRequest, EscrowOrderListResponse } from "../dto/escrow";
 import { QuoteEvent } from "../dto/QuoteEvent";
 import { QuoteRequest } from "../dto/QuoteRequest";
 import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";
 import { TrackTradeRequest } from "../dto/TrackTradeRequest";
 import { TradeStatus } from "../dto/TradeStatus";
-import { BuildTransferRequest } from "../dto/TransactionBuilder";
+import {
+  BuildTransferRequest,
+  BuildWithdrawalRequest,
+} from "../dto/TransactionBuilder";
 import { TransactionResponse } from "../dto/TransactionResponse";
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
@@ -19,6 +23,8 @@ import { wrapErrorsSync } from "../helpers/wrapErrorsSync";
 import type { Logger } from "../logger/Logger";
 import {
   METHOD_BUILD_TRANSFER,
+  METHOD_BUILD_WITHDRAWAL,
+  METHOD_ESCROW_LIST,
   METHOD_QUOTE,
   METHOD_QUOTE_EVENT,
   METHOD_QUOTE_UNSUBSCRIBE,
@@ -141,6 +147,25 @@ export class Omniston {
   }
 
   /**
+   * A request to generate unsigned withdrawal to withdraw funds from escrow.
+   *
+   * @param request {@see BuildWithdrawalRequest}
+   * @returns {@see TransactionResponse}
+   */
+  buildWithdrawal(
+    request: BuildWithdrawalRequest,
+  ): Promise<TransactionResponse> {
+    return wrapErrorsAsync(async () => {
+      const response = await this.apiClient.send(
+        METHOD_BUILD_WITHDRAWAL,
+        BuildWithdrawalRequest.toJSON(request),
+      );
+
+      return TransactionResponse.fromJSON(response);
+    });
+  }
+
+  /**
    * Request to track settling of the trade.
    *
    * The server immediately sends current status in response and then all updates to the status.
@@ -175,6 +200,25 @@ export class Omniston {
           ),
         ),
       );
+  }
+
+  /**
+   * Request to list escrow orders for the given trader wallet address.
+   *
+   * @param request {@see EscrowOrderListRequest}
+   * @returns {@see EscrowOrderListResponse}
+   */
+  public escrowList(
+    request: EscrowOrderListRequest,
+  ): Promise<EscrowOrderListResponse> {
+    return wrapErrorsAsync(async () => {
+      const response = await this.apiClient.send(
+        METHOD_ESCROW_LIST,
+        EscrowOrderListRequest.toJSON(request),
+      );
+
+      return EscrowOrderListResponse.fromJSON(response);
+    });
   }
 
   /**
