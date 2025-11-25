@@ -1,5 +1,18 @@
 # Changelog
 
+## 25-11-2025
+
+### @ston-fi/omniston-sdk-react@0.7.10
+
+#### Fixed
+- Fixed the `useObservableQuery` reaction to frequent stream events.
+
+  The `useObservableQuery` is an underlying mechanism for binding Omniston SDK streams to TanStack Query.
+  It is used by all query hooks that wrap streams (`useRfq`, `useTrackTrade`).
+  Due to [React's batching mechanism](https://react.dev/learn/queueing-a-series-of-state-updates#react-batches-state-updates), when the Omniston stream emits multiple synchronous updates in a short period, React batches these updates and only renders once. This could lead to intermediate events being "swallowed" when only the last event in a batch is processed.
+
+  This bug was specific to `@ston-fi/omniston-sdk-react` and was not present in `@ston-fi/omniston-sdk`.
+
 ## 04-11-2025
 
 ### @ston-fi/omniston-sdk@0.7.8

@@ -4,7 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useSyncExternalStore } from "react";
 
 import { ObservableRefCountCacheContext } from "./ObservableRefCountCacheContext";
 
@@ -19,6 +19,8 @@ export type UseObservableQueryOptions<TData> = Omit<
    */
   requestFn: () => Observable<TData>;
 };
+
+const forceUpdateEventName = "force-update";
 
 /**
  * A wrapper for data fetching functions that return an Observable to use with react-query.
@@ -37,6 +39,10 @@ export function useObservableQuery<TData>({
 
   const unsubscribeRef = useRef<() => void>(() => {});
 
+  // Prevents React from batching synchronous updates that would skip intermediate states.
+  // Event emitter to force React re-renders on each observable emission.
+  const updateEmitterRef = useRef(new EventTarget());
+
   useEffect(() => {
     if (enabled === false) return;
 
@@ -46,6 +52,21 @@ export function useObservableQuery<TData>({
       observableRefCount.decreaseRefCount();
     };
   }, [observableRefCount, enabled]);
+
+  // Use useSyncExternalStore to ensure React doesn't batch synchronous observable emissions
+  // This forces each emission to trigger a separate render
+  useSyncExternalStore(
+    (callback) => {
+      updateEmitterRef.current.addEventListener(forceUpdateEventName, callback);
+      return () =>
+        updateEmitterRef.current.removeEventListener(
+          forceUpdateEventName,
+          callback,
+        );
+    },
+    () => queryClient.getQueryData(queryKey),
+    () => queryClient.getQueryData(queryKey),
+  );
 
   return {
     ...useQuery({
@@ -59,6 +80,9 @@ export function useObservableQuery<TData>({
           const subscription = observableRefCount.subscribe({
             next: (data) => {
               queryClient.setQueryData(queryKey, data);
+              updateEmitterRef.current.dispatchEvent(
+                new Event(forceUpdateEventName),
+              );
             },
             error: (err) => {
               isRejected = true;
