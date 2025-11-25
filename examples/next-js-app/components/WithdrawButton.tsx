@@ -50,7 +50,7 @@ export function WithdrawButton(
     });
 
     return { externalTxHash: Cell.fromBase64(boc).hash().toString("hex") };
-  }, [omniston, sourceAddress, tonConnect, quoteId, sourceAddress]);
+  }, [omniston, sourceAddress, tonConnect, quoteId]);
 
   return (
     <Button {...rest} onClick={handleWithdrawClick}>
