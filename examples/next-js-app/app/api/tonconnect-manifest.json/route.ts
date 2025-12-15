@@ -3,7 +3,7 @@ import { retrieveEnvVariable } from "@/lib/utils";
 export async function GET() {
   const manifest = {
     url: retrieveEnvVariable("OMNIDEMO__TONCONNECT__MANIFEST_URL").replace(
-      "/api/tonconnect-manifest",
+      "/api/tonconnect-manifest.json",
       "",
     ),
     name: "Omniston (demo)",
