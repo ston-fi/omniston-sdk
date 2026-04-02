@@ -1,4 +1,8 @@
-import type { OmnistonErrorDetails } from "./OmnistonError.types";
+import type { OmnistonErrorInfo } from "./OmnistonError.types";
+
+export type OmnistonErrorDetails = {
+  error_info?: OmnistonErrorInfo;
+} & Record<string, unknown>;
 
 export class OmnistonError extends Error {
   public readonly code: number;

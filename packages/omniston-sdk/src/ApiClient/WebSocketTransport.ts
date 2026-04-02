@@ -41,11 +41,11 @@ export class WebSocketTransport implements Transport {
         });
       });
 
-      ws.addEventListener("message", (event) => {
+      ws.addEventListener("message", (event: WebSocket.MessageEvent) => {
         this.messages.next(event.data.toString());
       });
 
-      ws.addEventListener("close", (event) => {
+      ws.addEventListener("close", (event: WebSocket.CloseEvent) => {
         if (this.isClosing) {
           this.isClosing = false;
           reject(new Error("Closed by client"));

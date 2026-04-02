@@ -1,5 +1,13 @@
 # Changelog
 
+## 02-04-2026
+
+### @ston-fi/omniston-sdk@0.7.9
+
+### Added
+
+- `OmnistonErrorInfo` type declarations were refined to align with current API error payloads.
+
 ## 25-11-2025
 
 ### @ston-fi/omniston-sdk-react@0.7.10
