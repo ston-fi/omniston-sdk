@@ -5,7 +5,7 @@
 ### @ston-fi/omniston-sdk@0.7.9
 ### @ston-fi/omniston-sdk-react@0.7.12
 
-### Added
+#### Added
 
 - `OmnistonErrorInfo` type declarations were refined to align with current API error payloads.
 
@@ -26,7 +26,7 @@
 
 ### @ston-fi/omniston-sdk@0.7.8
 
-### Added
+#### Added
 
 - new `Omniston.escrowList` method for fetching list of the pending escrow orders
 - new `Omniston.buildWithdrawal` method for receiving tx payload to sign for a withdrawal operation (if allowed) to be performed
@@ -34,7 +34,7 @@
 
 ### @ston-fi/omniston-sdk-react@0.7.10
 
-### Added
+#### Added
 
 - `@ston-fi/omniston-sdk` bumped to v`0.7.8`
 - new `useEscrowList` hook that wraps the `Omniston.escrowList` method
@@ -45,17 +45,17 @@
 ### @ston-fi/omniston-sdk@0.7.7
 ### @ston-fi/omniston-sdk-react@0.7.9
 
-### Fixed
+#### Fixed
 
 - `ApiClient` now properly reconnects after connection errors by detecting when the connection has failed
 - `ApiClient` now automatically closes all pending subscriptions when connections fail, preventing resource leaks
 - fixed potential memory leak in ApiClient.readStream()
 
-### Added
+#### Added
 
 - `AutoReconnectTransport` connection error events are enriched with an `isReconnecting` flag to indicate whether automatic reconnection is in progress. This allows distinguishing between recoverable errors (being retried) and permanent failures
 
-### Deprecated
+#### Deprecated
 
 - the `TransactionRequest` type was renamed to `BuildTransferRequest`. Left for backward compatibility, but deprecated. It will be removed in the future
 
@@ -71,7 +71,7 @@ This is a technical release with the following improvements:
 - the build tool was changed from [tsup](https://tsup.egoist.dev/) to [tsdown](https://tsdown.dev/)
 - dev scripts now build packages with source maps to simplify debugging during local development
 - a root-level `dev` script was added to provide a simpler local development setup. This command uses [Turbo](https://turborepo.com/) to run the chain of `next-js-app > omniston-sdk-react > omniston-sdk` in watch mode, enabling development with UI and HMR for all packages in this monorepo
-- improved `.d.ts` generation fo fix some missed type declarations
+- improved `.d.ts` generation to fix some missed type declarations
 
 ## 08-10-2025
 
@@ -144,7 +144,7 @@ omniston.requestForQuote(quoteRequest).subscribe({
 
 | Name            | Type      | Description                                                       |
 |-----------------|-----------|-------------------------------------------------------------------|
-| `refundAddress` | `Address` | The address to which funds will be returned in case of an failure |
+| `refundAddress` | `Address` | The address to which funds will be returned in case of a failure |
 
 ## 30-07-2025
 
@@ -195,7 +195,7 @@ const omniston = new Omniston({
 
 ### @ston-fi/omniston-sdk-react@0.7.1
 
-- Fix Omniston call's from queries without observers
+- Fix Omniston calls from queries without observers
 
 ## 01-07-2025
 
@@ -244,7 +244,7 @@ Based on our integrators' feedback, the `v1beta6` was extended with more fields.
 
 ### @ston-fi/omniston-sdk-react@0.4.2
 
-- `queryClient` prom was removed from the `OmnistonProvider` component. The mismatch between `@tanstack/react-query` package version in `omniston-sdk-react` and consumer's apps lead to the TS error about mismatching `QueryClient` types. In future versions of the `omniston-sdk-react` package, we are targeting to get rid of `@tanstack/react-query` dependency completely.
+- `queryClient` prop was removed from the `OmnistonProvider` component. The mismatch between `@tanstack/react-query` package version in `omniston-sdk-react` and consumer apps led to the TS error about mismatching `QueryClient` types. In future versions of the `omniston-sdk-react` package, we are targeting to get rid of the `@tanstack/react-query` dependency completely.
 
   ```diff
       <OmnistonProvider
@@ -306,7 +306,7 @@ Starting from [this moment](https://github.com/ston-fi/omniston-api/commit/c2892
 ### @ston-fi/omniston-sdk@0.3.0
 
 - the return type of the `requestForQuote` method was changed. Now it will be an observable stream of events instead of `Quote | null` as it was before.
-- the return type of Omniston methods was changed from RxJS Observable to narrowed type to provide decuple Omniston SDK from a specific package interface. It is still comparable with the RxJS, so you can easily make an RxJS observable out of an observable returned from the SDK if you need the entire RxJS API. Otherwise, no changes are needed
+- the return type of Omniston methods was changed from RxJS Observable to narrowed type to provide decoupling of Omniston SDK from a specific package interface. It is still comparable with RxJS, so you can easily make an RxJS observable out of an observable returned from the SDK if you need the entire RxJS API. Otherwise, no changes are needed
 
 ### @ston-fi/omniston-sdk-react@0.3.0
 
