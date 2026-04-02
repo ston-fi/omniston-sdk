@@ -3,6 +3,7 @@
 ## 02-04-2026
 
 ### @ston-fi/omniston-sdk@0.7.9
+### @ston-fi/omniston-sdk-react@0.7.12
 
 ### Added
 
@@ -10,7 +11,7 @@
 
 ## 25-11-2025
 
-### @ston-fi/omniston-sdk-react@0.7.10
+### @ston-fi/omniston-sdk-react@0.7.11
 
 #### Fixed
 - Fixed the `useObservableQuery` reaction to frequent stream events.
