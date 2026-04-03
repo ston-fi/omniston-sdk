@@ -1,7 +1,7 @@
 # Omniston SDK
 
-[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org/)
-[![License](https://img.shields.io/npm/l/@ston-fi/omniston-sdk)](https://img.shields.io/npm/l/@ston-fi/omniston-sdk)
+[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://img.shields.io/npm/v/@ston-fi/omniston-sdk/latest.svg)](https://www.npmjs.com/package/@ston-fi/omniston-sdk/v/latest)
 
 This package acts as a typescript wrapper on top of the Ston.fi [Omniston protocol](https://github.com/ston-fi/omniston-api). It uses [RxJs](https://rxjs.dev) to provide observables on top of the WebSocket API connection

@@ -15,13 +15,13 @@ All SDKs can be found in the [`packages/`](https://github.com/ston-fi/omniston-s
 
 ### [@ston-fi/omniston-sdk](https://github.com/ston-fi/omniston-sdk/tree/main/packages/omniston-sdk)
 
-[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org/)
+[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://img.shields.io/npm/v/@ston-fi/omniston-sdk/latest.svg)](https://www.npmjs.com/package/@ston-fi/omniston-sdk/v/latest)
 
 ### [@ston-fi/omniston-sdk-react](https://github.com/ston-fi/omniston-sdk/tree/main/packages/omniston-sdk-react)
 
-[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org/)
+[![TON](https://img.shields.io/badge/based%20on-TON-blue)](https://ton.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![npm version](https://img.shields.io/npm/v/@ston-fi/omniston-sdk-react/latest.svg)](https://www.npmjs.com/package/@ston-fi/omniston-sdk-react/v/latest)
 
