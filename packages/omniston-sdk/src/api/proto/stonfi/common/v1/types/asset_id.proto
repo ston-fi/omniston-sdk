@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package stonfi.common.v1;
+
+import "google/protobuf/empty.proto";
+
+// Generic blockchain asset identifier
+message AssetId {
+  oneof chain {
+    //////////////////////////////////////////////////
+    // EVM
+    //////////////////////////////////////////////////
+
+    // Arbitrum (see [https://arbitrum.io/])
+    EvmAssetId arbitrum = 1;
+    // Avalanche C-Chain (see [https://www.avax.network/])
+    EvmAssetId avalanche = 2;
+    // Base (see [https://www.base.org/])
+    EvmAssetId base = 3;
+    // BNB Chain (see [https://www.bnbchain.org/])
+    EvmAssetId bnb = 4;
+    // Ethereum (see [https://ethereum.org/])
+    EvmAssetId ethereum = 5;
+    // Polygon (see [https://polygon.technology/])
+    EvmAssetId polygon = 6;
+
+    //////////////////////////////////////////////////
+    // TON
+    //////////////////////////////////////////////////
+
+    // TON (see [https://ton.org])
+    TonAssetId ton = 50;
+  }
+}
+
+// TON asset id (see [https://ton.org])
+message TonAssetId {
+  oneof kind {
+    // Toncoin
+    google.protobuf.Empty native = 1;
+    // Jetton contract address (see
+    // [https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md])
+    // in any valid TON string format (see
+    // [https://docs.ton.org/foundations/addresses/formats]).
+    string jetton = 2;
+  }
+}
+
+// EVM asset id (see [https://ethereum.org/developers/docs/evm/])
+message EvmAssetId {
+  oneof kind {
+    // Native EVM asset
+    google.protobuf.Empty native = 1;
+    // ERC-20 contract address (see
+    // [https://ethereum.org/developers/docs/standards/tokens/erc-20/])
+    // in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string erc20 = 2;
+    // ERC-1155 asset (see [https://eips.ethereum.org/EIPS/eip-1155])
+    Erc1155AssetId erc1155 = 3;
+  }
+}
+
+// ERC-1155 asset id (see [https://eips.ethereum.org/EIPS/eip-1155])
+message Erc1155AssetId {
+  // ERC-1155 contract address in valid EIP-55 string format (see
+  // [https://eips.ethereum.org/EIPS/eip-55])
+  string contract_address = 1;
+  // Token ID (uint256)
+  // Supports: Decimal ("42"), Hex ("0x2A"), Octal ("0o52"), or Binary
+  // ("0b101010").
+  string token_id = 2;
+}

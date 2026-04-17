@@ -7,8 +7,7 @@ export function useConnectionStatus(): ConnectionStatus {
 
   return useSyncExternalStore(
     (onStoreChange) => {
-      const subscription =
-        omniston.connectionStatusEvents.subscribe(onStoreChange);
+      const subscription = omniston.connectionStatusEvents.subscribe(onStoreChange);
 
       return () => subscription.unsubscribe();
     },

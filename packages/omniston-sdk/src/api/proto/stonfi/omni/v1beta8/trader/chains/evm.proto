@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+import "stonfi/common/v1/types/chain_address.proto";
+import "stonfi/omni/v1beta8/types/htlc.proto";
+
+// Input parameters for building an unsigned EVM signed-order payload.
+message BuildEvmOrderPayloadRequest {
+
+  string quote_id = 1;
+
+  // The address on **Source** blockchain that will own created position, can
+  // withdraw tokens and will receive withdrawn tokens.
+  stonfi.common.v1.ChainAddress owner_src_address = 2;
+
+  // The address on **Destination** blockchain that will receive result of the
+  // trade
+  optional stonfi.common.v1.ChainAddress trader_dst_address = 4;
+
+  // (HTLC-only) Allows to specify how the secrets for a multi-chunk HTLC
+  // position should be defined.
+  //
+  // This parameter should be omitted for intrachain swaps
+  optional HtlcSecrets htlc_secrets = 20;
+
+  // (HTLC-only) The address on **Destination blockchain** that can disclose the
+  // secret to claim the **Output position**.
+  //
+  // This address should be omitted when using public disclosure of the secret.
+  optional stonfi.common.v1.ChainAddress trader_dst_disclose_address = 21;
+}
+
+// Unsigned EVM order payload and companion data required for registration.
+message EvmOrderPayloadResponse {
+
+  // Json structure that contains TypedData param for signing with
+  // `eth_signTypedData` as specified by EIP-712.
+  //
+  // This message includes at least required `types`, `primaryType`, `domain`
+  // and `message` fields.
+  string typed_data = 1;
+
+  // Encoded extension data of the order.
+  //
+  // This data should be used when registering Intent.
+  bytes order_extension = 2;
+
+  // Off-chain **Order details** in protobuf-serialized form.
+  //
+  // This payload is the exact serialized `VersionedHtlcOrderDetails` whose
+  // hash is embedded into the order being built.
+  //
+  // The same bytes should later be passed to `RegisterSignedOrderRequest`.
+  // Resolvers can hash this payload and compare it with the hash committed in
+  // the signed order or escrow-backed position to verify that the trader signed
+  // this exact intent.
+  //
+  // The payload is returned in serialized form to avoid differences in binary
+  // representation after a deserialize-serialize cycle.
+  optional bytes serialized_order_details = 3;
+}
+
+// Input parameters for building an unsigned EVM order-cancellation payload.
+message BuildEvmOrderCancellationRequest {
+  // ID of the quote corresponding to the order being cancelled.
+  string quote_id = 1;
+
+  // The address on **Source** blockchain that will sign the cancellation.
+  //
+  // This address must match the wallet that signed the corresponding **Signed
+  // Order**.
+  stonfi.common.v1.ChainAddress owner_src_address = 2;
+}
+
+// Unsigned EVM cancellation payload ready for signing.
+message EvmOrderCancellationResponse {
+  // Json structure that contains TypedData param for signing with
+  // `eth_signTypedData` as specified by EIP-712.
+  //
+  // This message includes at least required `types`, `primaryType`, `domain`
+  // and `message` fields.
+  string typed_data = 1;
+}
+
+// EVM-specific functions
+service EvmRpc {
+
+  // Builds unsigned EIP-712 order data for signing and later registration.
+  rpc BuildOrderPayload(BuildEvmOrderPayloadRequest)
+      returns (EvmOrderPayloadResponse) {}
+
+  // Builds unsigned EIP-712 cancellation data for signing.
+  rpc BuildOrderCancellation(BuildEvmOrderCancellationRequest)
+      returns (EvmOrderCancellationResponse) {}
+}

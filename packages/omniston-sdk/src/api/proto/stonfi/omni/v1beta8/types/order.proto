@@ -1,0 +1,245 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+import "stonfi/common/v1/types/chain_address.proto";
+import "stonfi/omni/v1beta8/types/common.proto";
+
+//////////////////////////////////////////////
+// Execution details
+//////////////////////////////////////////////
+
+enum ExecutionPhase {
+  // The position has been created and is reserved for filling by the resolver
+  // that created the reservation.
+  //
+  // During this phase, the resolver that created the reservation can proceed
+  // with settlement.
+  EXECUTION_PHASE_CREATED = 0;
+
+  // (HTLC only) The creation transaction has reached on-chain finality and can
+  // no longer be reverted. The resolver that created the reservation may
+  // proceed with the successful completion flow of the execution.
+  EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION = 1;
+
+  // (HTLC only) Public completion is allowed: the private completion window for
+  // the resolver that created the reservation has ended, and any authorized
+  // resolver may proceed with completion according to protocol rules.
+  EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION = 2;
+
+  // The resolver that created the reservation may proceed with the private
+  // rollback flow of the execution.
+  EXECUTION_PHASE_READY_FOR_PRIVATE_ROLLBACK = 3;
+
+  // Public rollback is allowed. Any authorized resolver may proceed with
+  // rollback according to protocol rules. Only the **Input position** enters
+  // this phase.
+  EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK = 4;
+
+  // Final state: the execution completed successfully (funds unlocked as
+  // intended).
+  EXECUTION_PHASE_COMPLETED = 10;
+
+  // Final state: the execution has been rolled back according to protocol
+  // rules.
+  EXECUTION_PHASE_ROLLED_BACK = 11;
+}
+
+// Availability windows for completion and rollback of a position.
+message ExecutionPhaseTimestamps {
+  // (HTLC only) Timestamp (UTC seconds) after which the resolver that created
+  // the reservation may proceed with private completion of this position.
+  optional uint64 private_completion_available_timestamp = 1;
+
+  // (HTLC only) Timestamp (UTC seconds) after which this position becomes
+  // available for public completion.
+  //
+  // After this timestamp, any authorized resolver may proceed with completion
+  // according to protocol rules.
+  optional uint64 public_completion_available_timestamp = 2;
+
+  // Timestamp (UTC seconds) after which the resolver that created the
+  // reservation may proceed with private rollback of this position.
+  uint64 private_rollback_available_timestamp = 3;
+
+  // Timestamp (UTC seconds) after which any authorized resolver may proceed
+  // with public rollback.
+  //
+  // This field is only defined for the **Input position**.
+  optional uint64 public_rollback_available_timestamp = 4;
+}
+
+// Progress and state of a single order execution or fill fragment.
+message Execution {
+  // Index of execution for partial fills.
+  //
+  // This parameter contains 0 for single-fill trades.
+  uint64 index = 1;
+
+  // Amount of **Input asset** reserved for this execution.
+  string input_units = 2;
+
+  // The net amount of **Output asset** the trader will receive after all fees.
+  string output_units = 3;
+
+  // The total amount of **Output asset** the resolver should send, including
+  // protocol and integrator fees.
+  string resolver_sends_units = 4;
+
+  // (HTLC-Only) The hash of the secret that locks the position.
+  //
+  // This parameter is omitted for intrachain swaps.
+  optional bytes secret_hash = 5;
+
+  // ID of the resolver.
+  string resolver_id = 6;
+
+  // Name of the resolver.
+  string resolver_name = 7;
+
+  // Address of the **Input position** on **Source blockchain**.
+  stonfi.common.v1.ChainAddress input_position_address = 10;
+
+  // Current lifecycle phase of the **Input position** on **Source blockchain**.
+  //
+  // `ExecutionPhase` is tracked separately for the input position and, when a
+  // flow has an output position, for the output position as well.
+  ExecutionPhase input_position_phase = 11;
+
+  // Timestamps that define when completion or rollback becomes available for
+  // the **Input position** on **Source blockchain**.
+  ExecutionPhaseTimestamps input_position_phase_timestamps = 12;
+
+  // Address of the resolver on **Source blockchain** that is authorized to
+  // receive the **Input asset** upon successful completion of the execution.
+  stonfi.common.v1.ChainAddress src_resolver_address = 13;
+
+  // **[HTLC-Only]** Address of the **Output position** on **Destination
+  // blockchain**
+  //
+  // This parameter is present for HTLC flows and omitted for intrachain flows.
+  optional stonfi.common.v1.ChainAddress output_position_address = 20;
+
+  // **[HTLC-Only]** Current lifecycle phase of the **Output position** on
+  // **Destination blockchain**.
+  //
+  // This is a separate phase track from `input_position_phase`.
+  // This parameter is present for HTLC flows and omitted for intrachain flows.
+  optional ExecutionPhase output_position_phase = 21;
+
+  // **[HTLC-Only]** Timestamps that define when completion or rollback becomes
+  // available for the
+  // **Output position** on **Destination blockchain**.
+  //
+  // This parameter is present for HTLC flows and omitted for intrachain flows.
+  optional ExecutionPhaseTimestamps output_position_phase_timestamps = 22;
+}
+
+//////////////////////////////////////////////
+// Order
+//////////////////////////////////////////////
+
+enum OrderCancellationMode {
+  // The order cannot be cancelled by the trader in the current state.
+  ORDER_CANCELLATION_MODE_UNAVAILABLE = 0;
+
+  // The order can be cancelled by an off-chain request.
+  ORDER_CANCELLATION_MODE_OFFCHAIN = 1;
+
+  // The order can be cancelled only by sending an on-chain cancellation
+  // transaction.
+  ORDER_CANCELLATION_MODE_ONCHAIN = 2;
+}
+
+// Current aggregated state of an order together with its executions.
+message Order {
+  // Status of the trade
+  TradeStatus status = 1;
+
+  // Address of the protocol contract that executes the order.
+  //
+  // * For EVM: Address of limit order protocol contract
+  // * For TON: Address of escrow contract
+  stonfi.common.v1.ChainAddress protocol_contract_address = 2;
+
+  // The amount of **Input asset** of trader's position that remains to be
+  // settled.
+  //
+  // This amount includes both tokens residing on trader's wallet and tokens
+  // moved to escrow contract.
+  string remaining_input_units = 3;
+
+  // The amount of **Input asset** of trader's position that has been moved from
+  // trader's wallet to escrow contract.
+  string escrowed_input_units = 4;
+
+  // Cancellation mode currently available to the trader for this **Order**.
+  OrderCancellationMode cancellation_mode = 5;
+
+  // List of executions that attempt to fill the order
+  repeated Execution executions = 10;
+
+  // Estimated timestamp of settling.
+  //
+  // Empty if unknown (for example, for limit orders).
+  optional uint64 estimated_finish_timestamp = 20;
+}
+
+//////////////////////////////////////////////
+// Order events
+//////////////////////////////////////////////
+
+message OrderStatusEvent {
+  oneof event {
+    Order order = 1;
+
+    // The service message to keep connection alive
+    KeepAlive keep_alive = 100;
+  }
+}
+
+//////////////////////////////////////////////
+// Position of the Order
+//////////////////////////////////////////////
+
+message SignedOrderEvmV1 {
+  // The body of the order in EVM ABI encoding.
+  //
+  // This payload is produced by the trader's wallet from TypedData returned by
+  // `EvmRpc.BuildOrderPayload`, for example via `eth_signTypedData`.
+  bytes encoded_order = 1;
+
+  // Blockchain-specific signature of the order
+  bytes signature = 2;
+
+  // Encoded extension data of the order.
+  //
+  // This field must be copied as is from
+  // `EvmOrderPayloadResponse.order_extension`.
+  bytes order_extension = 3;
+}
+
+// Versioned wrapper for blockchain-specific signed orders.
+message SignedOrder {
+  oneof order { SignedOrderEvmV1 evm_v1 = 1; }
+}
+
+// EVM-specific signed cancellation payload for a previously signed order.
+message SignedOrderCancellationEvmV1 {
+  // The body of the cancellation in EVM ABI encoding.
+  //
+  // This payload is produced by the trader's wallet from TypedData returned by
+  // `EvmRpc.BuildOrderCancellation`, for example via `eth_signTypedData`.
+  bytes encoded_cancellation = 1;
+
+  // Blockchain-specific signature of the cancellation.
+  //
+  // The signature must be produced by the same wallet that signed the
+  // corresponding **Signed Order**.
+  bytes signature = 2;
+}
+
+// Versioned wrapper for blockchain-specific signed order cancellations.
+message SignedOrderCancellation {
+  oneof cancellation { SignedOrderCancellationEvmV1 evm_v1 = 1; }
+}

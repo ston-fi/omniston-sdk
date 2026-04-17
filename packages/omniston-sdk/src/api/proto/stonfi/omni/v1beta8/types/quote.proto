@@ -1,0 +1,272 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+import "stonfi/common/v1/types/asset_id.proto";
+import "stonfi/common/v1/types/chain_address.proto";
+import "stonfi/omni/v1beta8/types/common.proto";
+import "stonfi/omni/v1beta8/types/swap.proto";
+
+/////////////////////////////////////////////////////////////////
+// The set of types for `QuoteRpc.Quote` method.
+/////////////////////////////////////////////////////////////////
+
+// **UNSTABLE:** This is unstable API, it's subject to backward-incompatible
+// changes.
+enum GaslessSettlement {
+  // Gasless settlement either unsupported or prohibited by trader.
+  GASLESS_SETTLEMENT_PROHIBITED = 0;
+  // Gasless possible.
+  GASLESS_SETTLEMENT_POSSIBLE = 1;
+  // Gasless settlement required.
+  GASLESS_SETTLEMENT_REQUIRED = 2;
+}
+
+// Additional parameters of RFQ specific to the **Swap settlement**.
+//
+// Some parameters might be valid only in a subset of settlement methods on a
+// subset of supported blockchains. These parameters might be omitted if
+// corresponding settlement methods won't be used.
+message SwapSettlementParams {
+  // Max price slippage in percentage in points (1/1,000,000 or 0.0001%)
+  optional uint32 max_price_slippage_pips = 1;
+
+  // Max number of outgoing messages supported by the wallet.
+  //
+  // For TON blockchain defaults to 4 if omitted.
+  optional uint32 max_routes = 2;
+
+  // Indicates whether a flexible integrator fee can be applied for the quote.
+  //
+  // Allows inclusion of protocols that have limited support for integrator
+  // fees.
+  optional bool flexible_integrator_fee = 3;
+
+  // Indicates whether risky routes can be used for settling the quote.
+  //
+  // Using these routes increase the chance of spending gas tokens with failed
+  // swap attempts.
+  optional bool allow_risky_routes = 4;
+}
+
+// Additional parameters of RFQ specific to the **Order settlement**.
+message OrderSettlementParams {
+  // Additional order-settlement preferences.
+  //
+  // This message is intentionally minimal in the current version and is
+  // reserved for future order-specific controls such as partial-fill,
+  // expiration, or auction-related settings.
+}
+
+// Additional parameters of request specific to settlement methods.
+message SettlementParams {
+  oneof params {
+    // Enables swap-settlement-specific preferences for this RFQ.
+    SwapSettlementParams swap = 1;
+    // Enables order-settlement-specific preferences for this RFQ.
+    OrderSettlementParams order = 2;
+  }
+}
+
+// Additional data of the quote specific to swap settlement.
+message SwapSettlementData {
+  repeated SwapRoute routes = 1;
+  string min_output_amount = 50;
+  string recommended_min_output_amount = 51;
+  // in percentage in points (1/1,000,000 or 0.0001%)
+  uint32 recommended_slippage_pips = 52;
+}
+
+// Additional data of the quote specific to the **Order settlement**.
+message OrderSettlementData {
+
+  // Address of the protocol contract on **Source** blockchain that enforces the
+  // swap.
+  stonfi.common.v1.ChainAddress src_protocol_contract_address = 1;
+
+  // Address of the wrapper contract for native token (pTON, wETH, etc.) on
+  // **Source blockchain** that must be used to settle the trade.
+  //
+  // **Note:** some blockchains support multiple wrappers with different ABI.
+  // The mechanics of working with the wrapper should be selected based on its
+  // implementation.
+  //
+  // This parameter is omitted if **Input asset** is not native on corresponding
+  // blockchain.
+  optional stonfi.common.v1.ChainAddress src_wrapped_native_token_address = 2;
+
+  // Address of the resolver's wallet on the **Source blockchain** for which the
+  // position is initially reserved (exclusive fill during the reservation
+  // period).
+  //
+  // If omitted, the position is available for all authorized resolvers since
+  // the creation.
+  optional stonfi.common.v1.ChainAddress src_initial_resolver_address = 3;
+
+  // (HTLC-only) Asset used as the security deposit for HTLC settlement on
+  // **Source blockchain**.
+  //
+  // This parameter is omitted for intrachain trades.
+  optional stonfi.common.v1.AssetId src_htlc_security_deposit_asset = 4;
+
+  // (HTLC-only) Amount of the security deposit on **Source blockchain** (in
+  // units of `src_htlc_security_deposit_asset`).
+  //
+  // This parameter is omitted for intrachain trades.
+  optional string src_htlc_security_deposit_units = 5;
+
+  // (HTLC-only) Hashing function used to compute secret hashes for HTLC chunks.
+  //
+  // This parameter is omitted for intrachain trades.
+  optional HashingFunction htlc_hashing_function = 6;
+
+  // (HTLC-only) Address of the protocol contract on **Destination blockchain**
+  // that enforces the swap.
+  //
+  // This parameter is omitted for intrachain trades.
+  optional stonfi.common.v1.ChainAddress dst_protocol_contract_address = 10;
+
+  // The amount of **Output asset** that the resolver must use to fill the
+  // order, including all fees.
+  string resolver_sends_units = 11;
+
+  // Address of the wrapper contract for native token (pTON, wETH, etc.) that
+  // must be used to settle the trade.
+  //
+  // **Note:** some blockchains support multiple wrappers with different ABI.
+  // The mechanics of working with the wrapper should be selected based on its
+  // implementation.
+  //
+  // This parameter is omitted if **Output asset** is not native on
+  // corresponding blockchain.
+  optional stonfi.common.v1.ChainAddress dst_wrapped_native_token_address = 12;
+
+  // (HTLC-only) Asset used as the security deposit for HTLC settlement on
+  // **Destination blockchain**.
+  //
+  // This parameter is omitted for intrachain trades.
+  optional stonfi.common.v1.AssetId dst_security_deposit_asset = 13;
+
+  // (HTLC-only) Amount of the security deposit on **Destination blockchain**
+  // (in units of `dst_security_deposit_asset`).
+  //
+  // This parameter is omitted for intrachain trades.
+  optional string dst_security_deposit_units = 14;
+
+  // Max timestamp (UTC seconds) of start of the trade.
+  //
+  // The start of the trade is defined either as the timestamp of the reception
+  // of **Input asset** by the protocol smart contract or the timestamp of
+  // signing the order.
+  //
+  // The resolver may still settle the trades started after this deadline has
+  // passed at own discretion.
+  uint64 trade_start_deadline = 20;
+
+  // Maximum duration since the trader creates the position before the resolver
+  // must reserve the position by making the security deposit.
+  //
+  // At the end of this period trader's position becomes available for manual
+  // withdrawal and Dutch auction starts if specified by escrow condition.
+  uint64 exclusivity_timeout = 21;
+}
+
+// A request for quote (RFQ) sent by the trader
+message QuoteRequest {
+
+  // Blockchain-specific address of **Input asset**.
+  stonfi.common.v1.AssetId input_asset = 1;
+
+  // Blockchain-specific address of **Output asset**.
+  stonfi.common.v1.AssetId output_asset = 2;
+
+  // Either the amount of **Input asset** or **Output asset**.
+  //
+  // `input_units` means the trader fixes how much input asset they are willing
+  // to spend. `output_units` means the trader fixes the net amount of output
+  // asset they want to receive after all fees.
+  oneof amount {
+    // The amount of **Input asset** the trader wants to send, including all
+    // fees.
+    string input_units = 3;
+    // The amount of **Output asset** the trader wants to receive after all
+    // fees.
+    string output_units = 4;
+  }
+
+  // The address of integrator that will receive the fees on destination
+  // blockchain.
+  optional stonfi.common.v1.ChainAddress integrator_address = 5;
+
+  // The amount of fees required by the integrator in percentage in points
+  // (1/1,000,000 or 0.0001%)
+  optional uint32 integrator_fee_pips = 6;
+
+  // Parameters of supported methods of the settlement.
+  //
+  // The protocol limits settlement methods in quotes to specified methods.
+  // Different combinations of **Source** and **Destination** blockchains might
+  // support different methods.
+  repeated SettlementParams settlement_params = 7;
+}
+
+// A specific quote returned for an RFQ.
+message Quote {
+  // ID of the RFQ that initiated quote generation.
+  string rfq_id = 1;
+
+  // ID of the quote generated by the platform.
+  string quote_id = 2;
+
+  // ID of the resolver.
+  string resolver_id = 3;
+
+  // Name of the resolver.
+  string resolver_name = 4;
+
+  // Blockchain-specific address of **Input asset**.
+  stonfi.common.v1.AssetId input_asset = 10;
+
+  // Blockchain-specific address of **Output asset**.
+  stonfi.common.v1.AssetId output_asset = 11;
+
+  // The total amount of **Input asset** the trader will send, including all
+  // fees.
+  string input_units = 12;
+
+  // The net amount of **Output asset** the trader will receive after all fees.
+  string output_units = 13;
+
+  // The address of integrator that will receive the fees on destination
+  // blockchain.
+  optional stonfi.common.v1.ChainAddress integrator_address = 20;
+
+  // The amount of fees that the integrator will get in **Output asset**.
+  string integrator_fee_units = 21;
+
+  // The amount of fees charged by the protocol in **Output asset**.
+  string protocol_fee_units = 22;
+
+  // The timestamp (UTC seconds) of Quote sent by resolver.
+  uint64 quote_timestamp = 30;
+
+  // Additional settlement data.
+  //
+  // Swap settlement returns immediate routing data. Order settlement returns
+  // data needed to create and later fill an order or position.
+  oneof settlement_data {
+    SwapSettlementData swap = 40;
+    OrderSettlementData order = 41;
+  }
+
+  // Total gas budget on **Source blockchain** required to perform the trade.
+  //
+  // This parameter is omitted for gasless quotes.
+  optional string gas_budget = 50;
+
+  // Estimated amount of gas units that will be spent on **Source blockchain**
+  // to perform the trade.
+  //
+  // This parameter is omitted for gasless quotes.
+  optional string estimated_gas_consumption = 51;
+}

@@ -1,40 +1,88 @@
-import { filter, finalize, map, Observable, type Subscription } from "rxjs";
-
-import { ApiClient } from "../ApiClient/ApiClient";
-import type { IApiClient } from "../ApiClient/ApiClient.types";
-import { AutoReconnectTransport } from "../ApiClient/AutoReconnectTransport";
-import { WebSocketTransport } from "../ApiClient/WebSocketTransport";
-import { EscrowOrderListRequest, EscrowOrderListResponse } from "../dto/escrow";
-import { QuoteEvent } from "../dto/QuoteEvent";
-import { QuoteRequest } from "../dto/QuoteRequest";
-import type { QuoteResponseEvent } from "../dto/QuoteResponseEvent";
-import { TrackTradeRequest } from "../dto/TrackTradeRequest";
-import { TradeStatus } from "../dto/TradeStatus";
 import {
-  BuildTransferRequest,
-  BuildWithdrawalRequest,
-} from "../dto/TransactionBuilder";
-import { TransactionResponse } from "../dto/TransactionResponse";
+  filter,
+  finalize,
+  map,
+  mergeWith,
+  type OperatorFunction,
+  type Observable as RxObservable,
+} from "rxjs";
+import {
+  BuildEvmOrderCancellationRequest,
+  BuildEvmOrderPayloadRequest,
+  EvmOrderCancellationResponse,
+  EvmOrderPayloadResponse,
+} from "../api/messages/stonfi/omni/v1beta8/trader/chains/evm";
+import {
+  BuildTonEscrowCancellationRequest,
+  BuildTonEscrowTransferRequest,
+  BuildTonSwapRequest,
+  TonEscrowVaultBalancesRequest,
+  TonEscrowVaultBalancesResponse,
+} from "../api/messages/stonfi/omni/v1beta8/trader/chains/ton";
+import {
+  ActiveOrdersRequest,
+  ActiveOrdersResponse,
+  CancelSignedOrderRequest,
+  CancelSignedOrderResponse,
+  DiscloseHtlcSecretRequest,
+  RegisterSignedOrderRequest,
+  TrackOrderRequest,
+} from "../api/messages/stonfi/omni/v1beta8/trader/order";
+import { QuoteEvent } from "../api/messages/stonfi/omni/v1beta8/trader/quote";
+import { TrackSwapRequest } from "../api/messages/stonfi/omni/v1beta8/trader/swap";
+import { OrderStatusEvent } from "../api/messages/stonfi/omni/v1beta8/types/order";
+import { QuoteRequest } from "../api/messages/stonfi/omni/v1beta8/types/quote";
+import { SwapProgressEvent } from "../api/messages/stonfi/omni/v1beta8/types/swap";
+import { TonTransaction } from "../api/messages/stonfi/omni/v1beta8/types/ton";
+import { ApiClient } from "../api-client/ApiClient";
+import type { ApiStreamController } from "../api-client/ApiStreamController";
+import { AutoReconnectTransport } from "../api-client/AutoReconnectTransport";
+import type { Transport } from "../api-client/Transport";
+import { WebSocketTransport } from "../api-client/WebSocketTransport";
+import { ErrorCode } from "../constants";
 import { Timer } from "../helpers/timer/Timer";
-import type { ITimer } from "../helpers/timer/Timer.types";
-import { wrapError } from "../helpers/wrapError";
-import { wrapErrorsAsync } from "../helpers/wrapErrorsAsync";
-import { wrapErrorsSync } from "../helpers/wrapErrorsSync";
+import { toSimpleObservable } from "../helpers/toSimpleObservable";
+import { unwrapObservable } from "../helpers/unwrapObservable";
+import { wrapErrorsAsync } from "../helpers/wrapError";
 import type { Logger } from "../logger/Logger";
-import {
-  METHOD_BUILD_TRANSFER,
-  METHOD_BUILD_WITHDRAWAL,
-  METHOD_ESCROW_LIST,
-  METHOD_QUOTE,
-  METHOD_QUOTE_EVENT,
-  METHOD_QUOTE_UNSUBSCRIBE,
-  METHOD_TRACK_TRADE,
-  METHOD_TRACK_TRADE_EVENT,
-  METHOD_TRACK_TRADE_UNSUBSCRIBE,
-} from "../omniston/rpcConstants";
-import type { Observable as SimpleObservable } from "../types";
-import type { IOmnistonDependencies } from "./Omniston.types";
-import { QuoteResponseController } from "./QuoteResponseController";
+import type { Observable } from "../types/observable";
+import type { OneOf, OneOfValue } from "../types/oneOf";
+
+import { RPC } from "./constants";
+import { OmnistonError } from "./OmnistonError";
+
+export type UnsubscribeEvent = OneOf<"unsubscribed", undefined>;
+
+export type QuoteEventWithRfqId = QuoteEvent["event"] extends infer E
+  ? E extends { $case: "ack" }
+    ? E
+    : E & { rfqId: string }
+  : never;
+
+/**
+ * Dependencies used to construct an Omniston instance.
+ *
+ * {@see Omniston}
+ */
+export interface OmnistonDependencies {
+  /**
+   * Optional. Provide this if you want to override the default network transport.
+   * By default, this will be {@link AutoReconnectTransport} with underlying {@link WebSocketTransport}
+   */
+  readonly transport?: Transport;
+  /**
+   * Omniston WebSocket API URL.
+   *
+   * {@example `wss://omni-ws.ston.fi`}
+   */
+  readonly apiUrl: URL | string;
+  /**
+   * An optional {@link Logger} implementation. By default, no logs are produced.
+   *
+   * You can pass `console` here, it is compatible with Logger interface.
+   */
+  readonly logger?: Logger;
+}
 
 /**
  * The main class for the Omniston Trader SDK.
@@ -44,30 +92,37 @@ import { QuoteResponseController } from "./QuoteResponseController";
  * The class is closeable - use {@link Omniston.close} to close the underlying WebSocket connection.
  */
 export class Omniston {
-  private readonly apiClient: IApiClient;
-  private readonly logger?: Logger;
-  private timer: ITimer = new Timer();
+  private readonly _apiClient: ApiClient;
+  private readonly _transport: Transport;
+  private readonly _logger?: Logger;
 
   /**
    * Constructor.
-   * @param dependencies {@see IOmnistonDependencies}
+   *
+   * @param dependencies {@see OmnistonDependencies}
    */
-  constructor(dependencies: IOmnistonDependencies) {
-    const apiUrl = dependencies.apiUrl;
-    this.logger = dependencies.logger;
-    const transport =
+  constructor(dependencies: OmnistonDependencies) {
+    this._logger = dependencies.logger;
+    this._transport =
       dependencies.transport ??
       new AutoReconnectTransport({
-        transport: new WebSocketTransport(apiUrl),
-        timer: this.timer,
-        logger: this.logger,
+        transport: new WebSocketTransport(dependencies.apiUrl),
+        timer: new Timer(),
+        logger: this._logger,
       });
-    this.apiClient =
-      dependencies.client ??
-      new ApiClient({
-        transport,
-        logger: this.logger,
-      });
+    this._apiClient = new ApiClient({
+      transport: this._transport,
+      logger: this._logger,
+    });
+  }
+
+  /**
+   * Current transport.
+   *
+   * @see Transport
+   */
+  public get transport() {
+    return this._transport;
   }
 
   /**
@@ -76,17 +131,19 @@ export class Omniston {
    * @see ConnectionStatus
    */
   public get connectionStatus() {
-    return this.apiClient.connectionStatus;
+    return this._apiClient.connectionStatus;
   }
 
   /**
-   * A stream of connection status changes.
+   * A stream of connection status changes. Will always emit current status on new subscriptions.
    *
    * @see ConnectionStatusEvent
    */
   public get connectionStatusEvents() {
-    return this.apiClient.connectionStatusEvents;
+    return this._apiClient.connectionStatusEvents;
   }
+
+  /// --- Request for quote ----------------------------------------------------
 
   /**
    * Request for quote.
@@ -102,198 +159,244 @@ export class Omniston {
    * The client is responsible for unsubscribing from the Observable when not interested in further updates
    * (either after starting the trade or when cancelling the request).
    */
-  public readonly requestForQuote = unwrapObservable(this._requestForQuote);
-
-  private async _requestForQuote(
-    request: QuoteRequest,
-  ): Promise<Observable<QuoteResponseEvent>> {
-    const subscriptionId = (await this.apiClient.send(
-      METHOD_QUOTE,
-      QuoteRequest.toJSON(request),
-    )) as number;
-
-    const quoteEvents = this.apiClient
-      .readStream(METHOD_QUOTE_EVENT, subscriptionId)
-      .pipe(map(QuoteEvent.fromJSON));
-
-    const quoteController = new QuoteResponseController({
-      quoteEvents,
-    });
-
-    return quoteController.quote.pipe(
-      finalize(() => {
-        if (!quoteController.isServerUnsubscribed) {
-          this.unsubscribeFromStream(METHOD_QUOTE_UNSUBSCRIBE, subscriptionId);
-        }
-      }),
-    );
-  }
-
-  /**
-   * A request to generate unsigned transfer to initiate the trade.
-   *
-   * @param request {@see BuildTransferRequest}
-   * @returns {@see TransactionResponse}
-   */
-  buildTransfer(request: BuildTransferRequest): Promise<TransactionResponse> {
-    return wrapErrorsAsync(async () => {
-      const response = await this.apiClient.send(
-        METHOD_BUILD_TRANSFER,
-        BuildTransferRequest.toJSON(request),
-      );
-
-      return TransactionResponse.fromJSON(response);
-    });
-  }
-
-  /**
-   * A request to generate unsigned withdrawal to withdraw funds from escrow.
-   *
-   * @param request {@see BuildWithdrawalRequest}
-   * @returns {@see TransactionResponse}
-   */
-  buildWithdrawal(
-    request: BuildWithdrawalRequest,
-  ): Promise<TransactionResponse> {
-    return wrapErrorsAsync(async () => {
-      const response = await this.apiClient.send(
-        METHOD_BUILD_WITHDRAWAL,
-        BuildWithdrawalRequest.toJSON(request),
-      );
-
-      return TransactionResponse.fromJSON(response);
-    });
-  }
-
-  /**
-   * Request to track settling of the trade.
-   *
-   * The server immediately sends current status in response and then all updates to the status.
-   *
-   * The server only closes the stream in case of errors. If the stream is interrupted or closed by the server,
-   * the client might reconnect to get further updates.
-   *
-   * @param request Status tracking request. {@see TrackTradeRequest}
-   * @returns Observable representing the stream of trade status updates.
-   * The request to the API server is made after subscribing to the Observable.
-   * The client is responsible for unsubscribing from the Observable when not interested in further updates.
-   */
-  public trackTrade = unwrapObservable(this._trackTrade);
-
-  private async _trackTrade(
-    request: TrackTradeRequest,
-  ): Promise<Observable<TradeStatus>> {
-    const subscriptionId = (await this.apiClient.send(
-      METHOD_TRACK_TRADE,
-      TrackTradeRequest.toJSON(request),
-    )) as number;
-
-    return this.apiClient
-      .readStream(METHOD_TRACK_TRADE_EVENT, subscriptionId)
-      .pipe(
-        map((status) => TradeStatus.fromJSON(status)),
-        filter(({ status }) => !status?.keepAlive),
-        finalize(() =>
-          this.unsubscribeFromStream(
-            METHOD_TRACK_TRADE_UNSUBSCRIBE,
-            subscriptionId,
-          ),
-        ),
-      );
-  }
-
-  /**
-   * Request to list escrow orders for the given trader wallet address.
-   *
-   * @param request {@see EscrowOrderListRequest}
-   * @returns {@see EscrowOrderListResponse}
-   */
-  public escrowList(
-    request: EscrowOrderListRequest,
-  ): Promise<EscrowOrderListResponse> {
-    return wrapErrorsAsync(async () => {
-      const response = await this.apiClient.send(
-        METHOD_ESCROW_LIST,
-        EscrowOrderListRequest.toJSON(request),
-      );
-
-      return EscrowOrderListResponse.fromJSON(response);
-    });
-  }
-
-  /**
-   * Closes the underlying connection, no longer accepting requests.
-   */
-  public close() {
-    return wrapErrorsSync(() => {
-      this.apiClient.close();
-    });
-  }
-
-  private async unsubscribeFromStream(method: string, subscriptionId: number) {
-    const result = await this.apiClient.unsubscribeFromStream(
-      method,
-      subscriptionId,
-    );
-    if (result !== true) {
-      this.logger?.warn(
-        `Failed to unsubscribe with method ${method} and subscription ID ${subscriptionId}. Server returned ${result}`,
-      );
-    }
-  }
-}
-
-/**
- * Helper to unwrap return type from Promise<Observable<T>> to Observable<T>
- */
-function unwrapObservable<TArgs extends Array<unknown>, TReturn>(
-  originalMethod: (
+  public readonly requestForQuote = this._rxToSimpleObservable(async function (
     this: Omniston,
-    ...args: TArgs
-  ) => Promise<Observable<TReturn>>,
-) {
-  return function (this: Omniston, ...args: TArgs) {
-    const observable = new Observable<TReturn>((subscriber) => {
-      const result = originalMethod.apply(this, args);
+    request: QuoteRequest,
+  ) {
+    const quoteStream = this._apiClient.subscribeToStream(
+      RPC.QUOTE.QUOTE.SUBSCRIBE,
+      RPC.QUOTE.QUOTE.EVENT,
+      QuoteRequest.toJSON(request),
+    );
 
-      let unsubscribed = false;
-      let innerSubscription: Subscription | undefined;
+    let rfqId: OneOfValue<NonNullable<QuoteEvent["event"]>, "ack">["rfqId"] | undefined;
 
-      result.then(
-        (inner) => {
-          innerSubscription = inner.subscribe({
-            next: subscriber.next.bind(subscriber),
-            error: (err) => subscriber.error(wrapError(err)),
-            complete: subscriber.complete.bind(subscriber),
-          });
+    const quoteEvents = (await quoteStream.stream).pipe(
+      map((e) => QuoteEvent.fromJSON(e).event),
+      filter(
+        (quoteEvent) =>
+          quoteEvent?.$case === "ack" ||
+          quoteEvent?.$case === "quoteUpdated" ||
+          quoteEvent?.$case === "noQuote",
+      ),
+      map((quoteEvent) => {
+        if (quoteEvent.$case === "ack") {
+          rfqId = quoteEvent.value.rfqId;
 
-          if (unsubscribed) {
-            innerSubscription.unsubscribe();
-          }
-        },
-        (err) => {
-          subscriber.error(wrapError(err));
-        },
-      );
+          return quoteEvent;
+        }
 
-      return () => {
-        unsubscribed = true;
-        innerSubscription?.unsubscribe();
-      };
-    });
-
-    // Narrowing the RxJS Observable type to avoid exposing the whole RxJS API
-    // This will allow us to change the implementation without breaking the public API in the future
-    const simpleObservable: SimpleObservable<TReturn> = {
-      subscribe(cb) {
-        const subscription = observable.subscribe(cb);
+        if (!rfqId) {
+          throw new OmnistonError(
+            ErrorCode.UNKNOWN,
+            `Received "${quoteEvent.$case}" before "ack" event`,
+          );
+        }
 
         return {
-          unsubscribe: subscription.unsubscribe.bind(subscription),
+          ...quoteEvent,
+          rfqId,
         };
-      },
+      }),
+      this._rxTapUnsubscribeLifecycle(RPC.QUOTE.QUOTE.UNSUBSCRIBE, quoteStream),
+    );
+
+    return quoteEvents;
+  });
+
+  // --- TON -------------------------------------------------------------------
+
+  public tonGetEscrowVaultBalances = this._rpcMethodFactory({
+    method: RPC.TON.GET_ESCROW_VAULT_BALANCES,
+    requestSerializer: TonEscrowVaultBalancesRequest.toJSON,
+    responseDeserializer: TonEscrowVaultBalancesResponse.fromJSON,
+  });
+
+  public tonBuildSwap = this._rpcMethodFactory({
+    method: RPC.TON.BUILD_SWAP,
+    requestSerializer: BuildTonSwapRequest.toJSON,
+    responseDeserializer: TonTransaction.fromJSON,
+  });
+
+  public tonBuildEscrowTransfer = this._rpcMethodFactory({
+    method: RPC.TON.BUILD_ESCROW_TRANSFER,
+    requestSerializer: BuildTonEscrowTransferRequest.toJSON,
+    responseDeserializer: TonTransaction.fromJSON,
+  });
+
+  public tonBuildEscrowCancellation = this._rpcMethodFactory({
+    method: RPC.TON.BUILD_ESCROW_CANCELLATION,
+    requestSerializer: BuildTonEscrowCancellationRequest.toJSON,
+    responseDeserializer: TonTransaction.fromJSON,
+  });
+
+  // --- EVM -------------------------------------------------------------------
+
+  public evmBuildOrderPayload = this._rpcMethodFactory({
+    method: RPC.EVM.BUILD_ORDER_PAYLOAD,
+    requestSerializer: BuildEvmOrderPayloadRequest.toJSON,
+    responseDeserializer: EvmOrderPayloadResponse.fromJSON,
+  });
+
+  public evmBuildOrderCancellation = this._rpcMethodFactory({
+    method: RPC.EVM.BUILD_ORDER_CANCELLATION,
+    requestSerializer: BuildEvmOrderCancellationRequest.toJSON,
+    responseDeserializer: EvmOrderCancellationResponse.fromJSON,
+  });
+
+  // --- Swap ------------------------------------------------------------------
+
+  public swapTrack = this._rxToSimpleObservable(async function (
+    this: Omniston,
+    request: TrackSwapRequest,
+  ) {
+    const swapTrackStream = this._apiClient.subscribeToStream(
+      RPC.SWAP.TRACK.SUBSCRIBE,
+      RPC.SWAP.TRACK.EVENT,
+      TrackSwapRequest.toJSON(request),
+    );
+
+    const swapTrackEvents = (await swapTrackStream.stream).pipe(
+      map((e) => SwapProgressEvent.fromJSON(e).event),
+      filter(
+        (swapEvent) => swapEvent?.$case === "awaitingTransfer" || swapEvent?.$case === "progress",
+      ),
+      this._rxTapUnsubscribeLifecycle(RPC.SWAP.TRACK.UNSUBSCRIBE, swapTrackStream),
+    );
+
+    return swapTrackEvents;
+  });
+
+  // --- Order ------------------------------------------------------------------
+
+  /**
+   * Request to list active orders for the given trader wallet address.
+   *
+   * @param request {@see ActiveOrdersRequest}
+   * @returns {@see ActiveOrdersResponse}
+   */
+  public orderGetActive = this._rpcMethodFactory({
+    method: RPC.ORDER.GET_ACTIVE,
+    requestSerializer: ActiveOrdersRequest.toJSON,
+    responseDeserializer: ActiveOrdersResponse.fromJSON,
+  });
+
+  public orderTrack = this._rxToSimpleObservable(async function (
+    this: Omniston,
+    request: TrackOrderRequest,
+  ) {
+    const orderTrackStream = this._apiClient.subscribeToStream(
+      RPC.ORDER.TRACK.SUBSCRIBE,
+      RPC.ORDER.TRACK.EVENT,
+      TrackOrderRequest.toJSON(request),
+    );
+
+    const orderTrackEvents = (await orderTrackStream.stream).pipe(
+      map((e) => OrderStatusEvent.fromJSON(e).event),
+      filter((orderEvent) => orderEvent?.$case === "order"),
+      this._rxTapUnsubscribeLifecycle(RPC.ORDER.TRACK.UNSUBSCRIBE, orderTrackStream),
+    );
+
+    return orderTrackEvents;
+  });
+
+  public orderRegisterSignedOrder = this._rpcMethodFactory({
+    method: RPC.ORDER.REGISTER_SIGNED_ORDER,
+    requestSerializer: RegisterSignedOrderRequest.toJSON,
+    responseDeserializer: () => {},
+  });
+
+  public orderCancelSignedOrder = this._rpcMethodFactory({
+    method: RPC.ORDER.CANCEL_SIGNED_ORDER,
+    requestSerializer: CancelSignedOrderRequest.toJSON,
+    responseDeserializer: CancelSignedOrderResponse.fromJSON,
+  });
+
+  public orderDiscloseHtlcSecret = this._rpcMethodFactory({
+    method: RPC.ORDER.DISCLOSE_HTLC_SECRET,
+    requestSerializer: DiscloseHtlcSecretRequest.toJSON,
+    responseDeserializer: () => {},
+  });
+
+  // --- Helpers ---------------------------------------------------------------
+
+  private _rpcMethodFactory<TRequest, TResponse>({
+    method,
+    requestSerializer,
+    responseDeserializer,
+  }: {
+    method: string;
+    requestSerializer: (request: TRequest) => unknown;
+    responseDeserializer: (response: unknown) => TResponse;
+  }): (request: TRequest) => Promise<TResponse> {
+    return (request: TRequest) =>
+      wrapErrorsAsync(async () => {
+        const response = await this._apiClient.send(method, requestSerializer(request));
+
+        return responseDeserializer(response);
+      });
+  }
+
+  /**
+   * Helper to convert Promise<RxObservable<T>> method return type to Observable<T>
+   */
+  private _rxToSimpleObservable<TArgs extends Array<unknown>, TReturn>(
+    originalMethod: (this: Omniston, ...args: TArgs) => Promise<RxObservable<TReturn>>,
+  ): (this: Omniston, ...args: TArgs) => Observable<TReturn> {
+    return toSimpleObservable(unwrapObservable(originalMethod));
+  }
+
+  /**
+   * Helper to unsubscribe once stream finalizes.
+   * On server-closed notifications, emits synthetic `unsubscribed` event and marks lifecycle as already unsubscribed.
+   */
+  private _rxTapUnsubscribeLifecycle<TEvent>(
+    method: string,
+    streamController: ApiStreamController,
+  ): OperatorFunction<TEvent, TEvent | UnsubscribeEvent> {
+    let isUnsubscribed = false;
+
+    const unsubscribe = () => {
+      if (isUnsubscribed) {
+        return;
+      }
+
+      isUnsubscribed = true;
+
+      void streamController
+        .unsubscribeFromStream(method)
+        .then((result) => {
+          if (result !== true) {
+            this._logger?.warn(
+              `Failed to unsubscribe with method ${method} and subscription ID ${streamController.subscriptionId}. Server returned ${result}`,
+            );
+          }
+        })
+        .catch((error: unknown) => {
+          this._logger?.warn(
+            `Failed to unsubscribe with method ${method} and subscription ID ${streamController.subscriptionId}. Error: ${String(error)}`,
+          );
+        });
     };
 
-    return simpleObservable;
-  };
+    return (source) =>
+      source.pipe(
+        mergeWith(
+          streamController.streamClosedByServer.pipe(
+            map((): UnsubscribeEvent => {
+              // no need to call `unsubscribe` function here,
+              // because ApiStreamController already closed the stream on server notification
+              // and we just need to mark lifecycle as unsubscribed to prevent double-unsubscribe in `finalize`
+              isUnsubscribed = true;
+
+              return {
+                $case: "unsubscribed",
+                value: undefined,
+              };
+            }),
+          ),
+        ),
+        finalize(unsubscribe),
+      );
+  }
 }

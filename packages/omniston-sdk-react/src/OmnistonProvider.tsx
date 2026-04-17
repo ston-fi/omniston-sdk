@@ -1,41 +1,46 @@
-"use client";
-
 import type { Omniston } from "@ston-fi/omniston-sdk";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import * as React from "react";
+import { createContext, type PropsWithChildren, useRef } from "react";
 
-import { ObservableRefCountCache } from "./ObservableRefCountCache";
-import { ObservableRefCountCacheContext } from "./ObservableRefCountCacheContext";
+export const OmnistonContext = createContext<Omniston | null>(null);
 
-export const OmnistonContext = React.createContext<Omniston | null>(null);
-
-interface OmnistonProviderProps {
+export interface OmnistonProviderProps {
+  /**
+   * Omniston instance
+   *
+   * Will be exposed via `useOmniston()` hook
+   */
   omniston: Omniston;
-  children: React.ReactNode;
+  /**
+   * Optional app-level TanStack Query client
+   *
+   * When set, OmnistonProvider will not create its own QueryClient and will use the provided one instead
+   */
+  queryClient?: QueryClient;
 }
 
-/**
- * Place it at the root of your app to use {@link useOmniston()}
- */
-export const OmnistonProvider: React.FC<OmnistonProviderProps> =
-  function OmnistonProvider({ children, omniston }) {
-    // biome-ignore lint/correctness/useExhaustiveDependencies: need to recreate for each Omniston instance
-    const observableRefCountCache = React.useMemo(
-      () => new ObservableRefCountCache(),
-      [omniston],
-    );
+export const OmnistonProvider = ({
+  children,
+  omniston,
+  queryClient,
+}: PropsWithChildren<OmnistonProviderProps>) => {
+  const internalQueryClientRef = useRef<QueryClient | null>(null);
 
-    const queryClient = React.useMemo(() => new QueryClient(), []);
+  const getInternalQueryClient = () => {
+    if (!internalQueryClientRef.current) {
+      internalQueryClientRef.current = new QueryClient();
+    }
 
-    return (
-      <OmnistonContext.Provider value={omniston}>
-        <QueryClientProvider client={queryClient}>
-          <ObservableRefCountCacheContext.Provider
-            value={observableRefCountCache}
-          >
-            {children}
-          </ObservableRefCountCacheContext.Provider>
-        </QueryClientProvider>
-      </OmnistonContext.Provider>
-    );
+    return internalQueryClientRef.current;
   };
+
+  if (queryClient) {
+    return <OmnistonContext.Provider value={omniston}>{children}</OmnistonContext.Provider>;
+  }
+
+  return (
+    <OmnistonContext.Provider value={omniston}>
+      <QueryClientProvider client={getInternalQueryClient()}>{children}</QueryClientProvider>
+    </OmnistonContext.Provider>
+  );
+};

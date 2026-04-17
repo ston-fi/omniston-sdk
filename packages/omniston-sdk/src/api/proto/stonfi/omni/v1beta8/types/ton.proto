@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+// A single outbound message to be sent on TON blockchain as part of a
+// transaction.
+//
+// The payload is typically a BoC-serialized cell represented as a hex string.
+// For jetton transfers, `jetton_wallet_state_init` may be provided to allow
+// deploying the jetton wallet on first use.
+message TonMessage {
+  // Target contract address that should receive this message.
+  string target_address = 1;
+
+  // Amount of TON (in nanotons) to attach as the send value.
+  //
+  // This amount usually covers gas and, when applicable, forwarded TON for
+  // inner calls.
+  string send_amount = 2;
+
+  // Message body payload (BoC), encoded as a hex string.
+  string payload = 3;
+
+  // Optional state init for the jetton wallet contract (BoC), encoded as a hex
+  // string.
+  //
+  // If provided, the wallet can be deployed along with the first transfer.
+  optional string jetton_wallet_state_init = 4;
+}
+
+// A TON transaction composed of one or more outbound messages.
+//
+// Messages are expected to be sent by the same sender wallet in the given
+// order.
+message TonTransaction {
+  // Ordered list of outbound messages to execute within a single wallet
+  // transaction.
+  repeated TonMessage messages = 1;
+}

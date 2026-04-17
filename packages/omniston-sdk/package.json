@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk",
-  "version": "0.7.9",
+  "version": "0.8.0-rc.0",
   "description": "Typescript SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -14,10 +14,10 @@
     "README.md"
   ],
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.cts",
-  "sideEffects": false,
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -28,29 +28,27 @@
   "scripts": {
     "dev": "tsdown --sourcemap --watch ./src",
     "build": "tsdown",
-    "format": "pnpm run /^format:.*/",
-    "format:biome": "biome format --write",
-    "lint": "pnpm run /^lint:.*/",
-    "lint:tsc": "tsc --noEmit --pretty",
-    "lint:biome": "biome check",
+    "lint": "oxlint .",
+    "format": "oxfmt .",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
     "proto:generate": "node scripts/generate-proto.js",
-    "prepublishOnly": "pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . && pnpm publint"
+    "prepublishOnly": "turbo run build && pnpm run lint && pnpm run test --run"
   },
   "dependencies": {
     "isomorphic-ws": "5.0.0",
-    "json-rpc-2.0": "1.7.0",
-    "rxjs": "7.8.1",
-    "type-fest": "5.0.1",
-    "ws": "8.17.1"
+    "json-rpc-2.0": "1.7.1",
+    "rxjs": "catalog:",
+    "ws": "8.20.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
     "@protobuf-ts/protoc": "2.11.1",
-    "@types/node": "24.0.8",
-    "@types/ws": "8.5.10",
+    "@types/node": "25.6.0",
+    "@types/ws": "8.18.1",
+    "protobufjs": "8.0.1",
     "publint": "catalog:",
-    "ts-proto": "2.8.0",
+    "ts-proto": "2.11.6",
     "tsdown": "catalog:",
     "vitest": "catalog:"
   }

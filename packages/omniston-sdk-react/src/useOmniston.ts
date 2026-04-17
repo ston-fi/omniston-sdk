@@ -1,5 +1,4 @@
-"use client";
-
+import type { Omniston } from "@ston-fi/omniston-sdk";
 import { useContext } from "react";
 
 import { OmnistonContext } from "./OmnistonProvider";
@@ -7,7 +6,7 @@ import { OmnistonContext } from "./OmnistonProvider";
 /**
  * @returns an {@link Omniston} instance.
  */
-export function useOmniston() {
+export function useOmniston(): Omniston {
   const Omniston = useContext(OmnistonContext);
 
   if (!Omniston) {

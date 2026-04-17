@@ -27,11 +27,11 @@ All SDKs can be found in the [`packages/`](https://github.com/ston-fi/omniston-s
 
 ## Next steps
 
-### Take a look at the demo app
+### Take a look at the example app
 
-We provide a fully functional demo application showcasing SDK usage in a Next.js environment. The source code is open-source and available [here](https://github.com/ston-fi/omniston-sdk/tree/main/examples/next-js-app).
+We provide a fully functional example application showcasing SDK usage in react app. The source code is open-source and available [here](https://github.com/ston-fi/omniston-sdk/tree/main/examples/react-app).
 
-Try the demo app at https://omniston.ston.fi
+Try the app at https://omniston.ston.fi
 
 ### Explore the documentation
 

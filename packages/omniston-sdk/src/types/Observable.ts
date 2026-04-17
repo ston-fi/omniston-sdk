@@ -13,3 +13,6 @@ export interface Observable<T> {
   subscribe(cb?: FnSubscriber<T>): Unsubscribable;
   subscribe(cb?: ObjSubscriber<T> | FnSubscriber<T>): Unsubscribable;
 }
+
+export type InferObservableData<T extends Observable<unknown>> =
+  T extends Observable<infer U> ? U : never;

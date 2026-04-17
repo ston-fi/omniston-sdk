@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+import "stonfi/common/v1/types/asset_id.proto";
+import "stonfi/common/v1/types/chain_address.proto";
+import "stonfi/omni/v1beta8/types/htlc.proto";
+import "stonfi/omni/v1beta8/types/ton.proto";
+
+//////////////////////////////////////////////
+// Escrow vaults
+//////////////////////////////////////////////
+
+message TonEscrowVaultBalancesRequest {
+  // Address of the owner.
+  stonfi.common.v1.ChainAddress owner_address = 1;
+
+  // Optional address of **Escrow factory** .
+  //
+  // If omitted, return vault balance for all factories.
+  optional stonfi.common.v1.ChainAddress escrow_factory_address = 2;
+
+  // Optional address of the asset.
+  //
+  // If omitted, return vault balance for all assets.
+  optional stonfi.common.v1.AssetId asset_address = 3;
+}
+
+// Balance information for one owner / factory / asset vault entry.
+message TonVaultBalance {
+  stonfi.common.v1.ChainAddress factory_address = 1;
+  stonfi.common.v1.AssetId asset_address = 2;
+  string amount_units = 3;
+}
+
+// Vault balances grouped for a specific owner.
+message TonEscrowVaultBalancesResponse {
+  stonfi.common.v1.ChainAddress owner_address = 1;
+  repeated TonVaultBalance balances = 2;
+}
+
+//////////////////////////////////////////////
+// Swap tx construction
+//////////////////////////////////////////////
+
+// A request to generate unsigned transfer to initiate the swap.
+message BuildTonSwapRequest {
+
+  // The ID of quote received from `QuoteRpc`
+  string quote_id = 1;
+
+  // The address on **Source** blockchain that will send initial transaction to
+  // start the trade
+  stonfi.common.v1.ChainAddress transfer_src_address = 2;
+
+  // The address on **Destination** blockchain that will receive result of the
+  // trade
+  //
+  // If omitted, use transfer_src_address
+  optional stonfi.common.v1.ChainAddress trader_dst_address = 3;
+
+  // The address on **Source** blockchain that will receive the gas not spent by
+  // the trade.
+  //
+  // If omitted, use transfer_src_address
+  optional stonfi.common.v1.ChainAddress gas_excess_address = 4;
+
+  // The address on **Source** blockchain to which funds will be returned in
+  // case of an failure.
+  //
+  // If omitted, use transfer_src_address
+  optional stonfi.common.v1.ChainAddress refund_src_address = 5;
+
+  // Use the slippage recommended by Omniston instead of slippage provided by
+  // trader in QuoteRequest.
+  optional bool use_recommended_slippage = 10;
+}
+
+//////////////////////////////////////////////
+// Escrow transactions construction
+//////////////////////////////////////////////
+
+// A request to generate unsigned transfer to create a position on escrow
+// contract for specified quote.
+message BuildTonEscrowTransferRequest {
+
+  // The ID of quote received from `QuoteRpc`
+  string quote_id = 1;
+
+  // The address on **Source** blockchain that will own created position, can
+  // withdraw tokens and will receive withdrawn tokens.
+  stonfi.common.v1.ChainAddress owner_src_address = 2;
+
+  // The address on **Destination** blockchain that will receive result of the
+  // trade
+  optional stonfi.common.v1.ChainAddress trader_dst_address = 3;
+
+  // The address on **Source** blockchain that will send initial transaction to
+  // create the escrow position.
+  //
+  // If omitted, `owner_src_address` will be used.
+  optional stonfi.common.v1.ChainAddress transfer_src_address = 4;
+
+  // The address that will receive the gas not spent by the trade.
+  //
+  // If omitted, `owner_src_address` will be used.
+  optional stonfi.common.v1.ChainAddress gas_excess_address = 5;
+
+  // The address to which funds will be returned in case of an failed creation
+  // of the position.
+  //
+  // If omitted, `owner_src_address` will be used.
+  optional stonfi.common.v1.ChainAddress refund_src_address = 6;
+
+  // Specifies whether the **Input asset** will be deposited from the vault of
+  // escrow contract.
+  //
+  // False by default
+  optional bool deposit_via_vault = 10;
+
+  // Specifies whether the **Input asset** will be refunded to the vault of
+  // escrow contract in case of error.
+  //
+  // False by default
+  optional bool refund_to_vault = 11;
+
+  // (HTLC-only) Allows to specify how the secrets for a multi-chunk HTLC
+  // position should be defined.
+  //
+  // This parameter should be omitted for intrachain swaps
+  optional HtlcSecrets htlc_secrets = 20;
+
+  // (HTLC-only) The address on **Destination blockchain** that can disclose the
+  // secret to claim the **Output position**.
+  //
+  // This address should be omitted when using public disclosure of the secret.
+  optional stonfi.common.v1.ChainAddress trader_dst_disclose_address = 21;
+}
+
+// Input parameters for building a TON escrow-cancellation transaction.
+message BuildTonEscrowCancellationRequest {
+  // The ID of quote received from `QuoteRpc`
+  string quote_id = 1;
+
+  // The address that will send the cancellation transaction.
+  //
+  // The **Escrow position** must be created by the same wallet.
+  stonfi.common.v1.ChainAddress owner_address = 2;
+
+  // The address that will receive the gas not spent by the cancellation.
+  //
+  // If omitted, use owner_address
+  optional stonfi.common.v1.ChainAddress gas_excess_address = 3;
+}
+
+// TON-specific functions
+service TonRpc {
+
+  // Get owner's positions in one or multiple vaults.
+  rpc GetEscrowVaultBalances(TonEscrowVaultBalancesRequest)
+      returns (TonEscrowVaultBalancesResponse) {}
+
+  // Build a transaction body to perform the swap.
+  rpc BuildSwap(BuildTonSwapRequest) returns (TonTransaction) {}
+
+  // Build transaction to create an **Escrow position**.
+  rpc BuildEscrowTransfer(BuildTonEscrowTransferRequest)
+      returns (TonTransaction) {}
+
+  // Build a transaction to cancel the **Order** on the **Escrow position**
+  // contract.
+  rpc BuildEscrowCancellation(BuildTonEscrowCancellationRequest)
+      returns (TonTransaction) {}
+}

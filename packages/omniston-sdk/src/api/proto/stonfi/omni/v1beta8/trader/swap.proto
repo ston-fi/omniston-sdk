@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+import "stonfi/common/v1/types/chain_address.proto";
+import "stonfi/omni/v1beta8/types/swap.proto";
+
+//////////////////////////////////////////////
+// Swap tracking
+//////////////////////////////////////////////
+
+// A request to track the progress of specific trade
+message TrackSwapRequest {
+  // ID of the quote
+  string quote_id = 1;
+
+  // The address of trader's wallet that initiated transaction
+  stonfi.common.v1.ChainAddress trader_address = 2;
+
+  // Identifier that allows to find outgoing transaction.
+  //
+  // This field can contain one of the following:
+  // * Hex-serialized hash of outgoing transaction
+  // * Hex-serialized hash of outgoing external message (Original or normalized,
+  // TON-only)
+  // * Base-64 serialized body of outgoing external message (TON-only)
+  string outgoing_tx_query = 3;
+}
+
+// Trader-facing API for tracking swap settlement progress.
+service SwapRpc {
+
+  // Request to track the settling of the trade
+  //
+  // The server immediately sends the current progress in response and then all
+  // progress updates.
+  //
+  // The server only closes the stream in case of errors. If the stream is
+  // interrupted or closed by the server, the client might reconnect to get
+  // further updates.
+  //
+  // The client should close the stream if it's not interested in further
+  // updates.
+
+  rpc Track(TrackSwapRequest) returns (stream SwapProgressEvent) {}
+}

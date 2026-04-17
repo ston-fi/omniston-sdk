@@ -1,13 +1,17 @@
-export { SettlementMethod } from "./api/messages/omni/v1beta7/types/common";
-export { GaslessSettlement } from "./api/messages/omni/v1beta7/types/quote";
+export * from "./api/constants";
 
-export enum Blockchain {
-  UNKNOWN_BLOCKCHAIN = 0,
-  TRON = 195,
-  TON = 607,
-  UNRECOGNIZED = -1,
-}
+export const SettlementMethod = {
+  SWAP: "swap",
+  ORDER: "order",
+} as const;
 
-export enum ErrorCode {
-  UNKNOWN = -1,
-}
+export type SettlementMethod = (typeof SettlementMethod)[keyof typeof SettlementMethod];
+
+export const ErrorCode = {
+  /**
+   * The omniston-api use numeric error codes.
+   * The -1 code is reserved for unknown errors,
+   * which means that the error code is not recognized or defined in the API documentation.
+   */
+  UNKNOWN: -1,
+} as const;

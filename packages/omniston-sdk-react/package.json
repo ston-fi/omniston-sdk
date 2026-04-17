@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk-react",
-  "version": "0.7.12",
+  "version": "0.8.0-rc.0",
   "description": "React SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
@@ -14,10 +14,10 @@
     "README.md"
   ],
   "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.cts",
-  "sideEffects": false,
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -28,21 +28,16 @@
   "scripts": {
     "dev": "tsdown --sourcemap --watch ./src",
     "build": "tsdown",
-    "format": "pnpm run /^format:.*/",
-    "format:biome": "biome format --write",
-    "lint": "pnpm run /^lint:.*/",
-    "lint:tsc": "tsc --noEmit --pretty",
-    "lint:biome": "biome check",
+    "lint": "oxlint .",
+    "format": "oxfmt .",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "prepublishOnly": "turbo run build --filter=@ston-fi/omniston-sdk && pnpm run lint && pnpm run test --run && pnpm run build && pnpm attw --pack . && pnpm publint"
+    "prepublishOnly": "turbo run build && pnpm run lint && pnpm run test --run"
   },
   "dependencies": {
     "@ston-fi/omniston-sdk": "workspace:*",
-    "@tanstack/react-query": "5.49.2",
-    "rxjs": "7.8.1"
-  },
-  "peerDependencies": {
-    "react": "^18 || ^19"
+    "@tanstack/react-query": "5.96.0",
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
@@ -50,5 +45,8 @@
     "publint": "catalog:",
     "tsdown": "catalog:",
     "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19"
   }
 }

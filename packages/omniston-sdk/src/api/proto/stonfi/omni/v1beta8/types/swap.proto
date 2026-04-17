@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+import "stonfi/common/v1/types/asset_id.proto";
+import "stonfi/common/v1/types/chain_address.proto";
+import "stonfi/omni/v1beta8/types/common.proto";
+
+//////////////////////////////////////////////
+// Swap routing
+//////////////////////////////////////////////
+
+// Represents route of swapping assets: `TON -> USDT`, `TON -> USDC -> USDT`,
+// etc.
+message SwapRoute { repeated SwapStep steps = 1; }
+
+// Represents a single step in a route: `TON -> USDC -> USDT` route consists of
+// `TON -> USDC` & `USDC -> USDT` steps.
+message SwapStep {
+  stonfi.common.v1.AssetId input_asset = 1;
+  stonfi.common.v1.AssetId output_asset = 2;
+  repeated SwapChunk chunks = 3;
+}
+
+// Represents a single swap tx in a step: `TON -> USDT` swap might consist of
+// two chunks utilizing different protocols.
+message SwapChunk {
+  string protocol = 1;
+  string input_units = 2;
+  string output_units = 3;
+}
+
+//////////////////////////////////////////////
+// Swap progress details
+//////////////////////////////////////////////
+
+// Result of a single swap chunk execution.
+enum SwapChunkResult {
+  SWAP_CHUNK_RESULT_PROCESSING = 0;
+  SWAP_CHUNK_RESULT_FILLED = 1;
+  SWAP_CHUNK_RESULT_ABORTED = 2;
+}
+
+// Progress details of a single swap chunk.
+message SwapChunkProgress {
+  string protocol = 1;
+  // Address of the contract that processes this chunk.
+  //
+  // Generally, this address receives input tokens.
+  // More specifically, it might be the address of a protocol or liquidity pool.
+  stonfi.common.v1.ChainAddress target_address = 2;
+  string input_units = 3;
+  string expected_output_units = 4;
+  string actual_output_units = 5;
+  SwapChunkResult result = 6;
+  // Hash of the transaction that performs swapping of the chunk.
+  string tx_hash = 7;
+}
+
+// Progress details of a single swap step.
+message SwapStepProgress { repeated SwapChunkProgress chunks = 1; }
+
+// Progress details of an entire swap route.
+message SwapRouteProgress { repeated SwapStepProgress steps = 1; }
+
+// Aggregated progress of the whole swap.
+message SwapProgress {
+  // Status of the trade
+  TradeStatus status = 1;
+
+  string outgoing_tx_hash = 2;
+
+  repeated SwapRouteProgress routes = 10;
+
+  optional uint64 transfer_timestamp = 20;
+
+  optional uint64 estimated_finish_timestamp = 21;
+}
+
+//////////////////////////////////////////////
+// Swap progress events
+//////////////////////////////////////////////
+
+message AwaitingTransfer {}
+
+// One event in the swap-progress stream.
+message SwapProgressEvent {
+  oneof event {
+    AwaitingTransfer awaiting_transfer = 1;
+
+    SwapProgress progress = 2;
+
+    // The service message to keep connection alive
+    KeepAlive keep_alive = 100;
+  }
+}

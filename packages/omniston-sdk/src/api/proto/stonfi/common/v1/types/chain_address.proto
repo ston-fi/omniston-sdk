@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package stonfi.common.v1;
+
+// Generic blockchain address
+message ChainAddress {
+  oneof chain {
+    //////////////////////////////////////////////////
+    // EVM
+    //////////////////////////////////////////////////
+
+    // Arbitrum address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string arbitrum = 1;
+    // Avalanche C-Chain address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string avalanche = 2;
+    // Base address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string base = 3;
+    // BNB Chain address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string bnb = 4;
+    // Ethereum address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string ethereum = 5;
+    // Polygon address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string polygon = 6;
+
+    //////////////////////////////////////////////////
+    // TON
+    //////////////////////////////////////////////////
+
+    // Any valid TON address string format (see
+    // [https://docs.ton.org/foundations/addresses/formats]).
+    string ton = 50;
+  }
+}

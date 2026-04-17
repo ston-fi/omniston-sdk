@@ -1,7 +1,8 @@
+export type * from "./api/types";
 export {
   AutoReconnectTransport,
   type AutoReconnectTransportOptions,
-} from "./ApiClient/AutoReconnectTransport";
+} from "./api-client/AutoReconnectTransport";
 export type {
   ConnectionClosedEvent,
   ConnectionClosingEvent,
@@ -10,49 +11,41 @@ export type {
   ConnectionErrorEvent,
   ConnectionStatus,
   ConnectionStatusEvent,
-} from "./ApiClient/ConnectionStatus";
-export type { Transport } from "./ApiClient/Transport";
-export { WebSocketTransport } from "./ApiClient/WebSocketTransport";
+} from "./api-client/ConnectionStatus";
+export type { Transport } from "./api-client/Transport";
+export { WebSocketTransport } from "./api-client/WebSocketTransport";
 export {
-  Blockchain,
   ErrorCode,
+  ExecutionPhase,
   GaslessSettlement,
+  HashingFunction,
+  OrderCancellationMode,
   SettlementMethod,
+  SwapChunkResult,
+  TradeStatus,
 } from "./constants";
-export type { Address } from "./dto/Address";
 export {
-  EscrowOrderData,
-  EscrowOrderListRequest,
-  EscrowOrderListResponse,
-} from "./dto/escrow";
-export type {
-  HtlcSettlementParams,
-  Quote,
-  SwapSettlementParams,
-} from "./dto/Quote";
-export type { QuoteRequest } from "./dto/QuoteRequest";
-export type {
-  QuoteResponseEvent,
-  QuoteResponseEvent_Ack,
-  QuoteResponseEvent_NoQuote,
-  QuoteResponseEvent_QuoteUpdated,
-  QuoteResponseEvent_Unsubscribed,
-} from "./dto/QuoteResponseEvent";
-export { QuoteResponseEventType } from "./dto/QuoteResponseEvent";
-export type { TrackTradeRequest } from "./dto/TrackTradeRequest";
-export type { TradeStatus } from "./dto/TradeStatus";
-export type {
-  BuildTransferRequest,
-  BuildWithdrawalRequest,
-  TransactionRequest,
-} from "./dto/TransactionBuilder";
-export type { TransactionResponse } from "./dto/TransactionResponse";
+  isHtlcOrderQuote,
+  isOrderQuote,
+  isQuoteOfType,
+  isSwapQuote,
+  matchQuoteByType,
+} from "./helpers/quote";
+
 export type { Logger } from "./logger/Logger";
+
 export {
-  type IOmnistonDependencies,
   Omniston,
+  type OmnistonDependencies,
+  type QuoteEventWithRfqId,
+  type UnsubscribeEvent,
+} from "./omniston/Omniston";
+export {
   OmnistonError,
   type OmnistonErrorDetails,
   type OmnistonErrorInfo,
-} from "./omniston";
-export type { Observable } from "./types";
+} from "./omniston/OmnistonError";
+
+export type { InferObservableData, Observable } from "./types/observable";
+export type { OneOf, OneOfCase, OneOfCases, OneOfValue, OneOfValues } from "./types/oneOf";
+export type { QuoteOfType } from "./types/quote";

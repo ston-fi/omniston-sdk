@@ -1,5 +1,21 @@
 # Changelog
 
+## 17-04-2026
+
+**Omniston v1beta8 API release**
+
+The `v1beta8` Omniston API release introduces refined terminology and cross-chain exchange capabilities.
+Here are some useful links for the new API:
+- [v1beta8 Glossary](https://github.com/ston-fi/stonfi-proto/blob/main/proto/stonfi/omni/GLOSSARY.md)
+- [v1beta8 API proto files](https://github.com/ston-fi/stonfi-proto/tree/main/proto/stonfi/omni)
+- [v1beta7 to v1beta8 migration guide](https://github.com/ston-fi/stonfi-proto/blob/main/proto/stonfi/omni/v1beta8/v1beta7-to-v1beta8-migration-guide.md)
+
+> [!WARNING]
+> Breaking changes. The API is currently available only at `wss://omni-ws-sandbox.ston.fi`
+
+### @ston-fi/omniston-sdk@0.8.0-rc.0
+### @ston-fi/omniston-sdk-react@0.8.0-rc.0
+
 ## 02-04-2026
 
 ### @ston-fi/omniston-sdk@0.7.9

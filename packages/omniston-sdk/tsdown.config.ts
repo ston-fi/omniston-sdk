@@ -6,4 +6,6 @@ export default defineConfig({
   format: ["cjs", "esm"],
   dts: true,
   exports: true,
+  publint: true,
+  attw: true,
 });

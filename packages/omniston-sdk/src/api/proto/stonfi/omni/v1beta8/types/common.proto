@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+// The server periodically emits `KeepAlive` message to keep the connection
+// alive.
+message KeepAlive {}
+
+// Hashing functions supported by HTLC-related flows.
+enum HashingFunction {
+  HASHING_FUNCTION_KECCAK256 = 0;
+  HASHING_FUNCTION_SHA256 = 1;
+}
+
+// High-level status of a trade, order, or swap lifecycle.
+enum TradeStatus {
+  // The trade has been created and may still be settled successfully.
+  TRADE_STATUS_IN_PROGRESS = 0;
+
+  // The trade has been settled successfully in full.
+  TRADE_STATUS_FULLY_FILLED = 1;
+
+  // The trade has been settled successfully only for part of the requested
+  // amount.
+  TRADE_STATUS_PARTIALLY_FILLED = 2;
+
+  // The trade has been terminated by an explicit cancellation operation
+  // (for example, by the trader cancelling the order).
+  TRADE_STATUS_CANCELLED = 3;
+
+  // The trade could not be settled successfully because of a market,
+  // protocol, routing, timeout, or other execution failure.
+  TRADE_STATUS_FAILED = 4;
+}

@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package stonfi.omni.v1beta8;
+
+import "google/protobuf/empty.proto";
+
+import "stonfi/common/v1/types/asset_id.proto";
+import "stonfi/common/v1/types/chain_address.proto";
+import "stonfi/omni/v1beta8/types/order.proto";
+import "stonfi/omni/v1beta8/types/quote.proto";
+
+// **UNSTABLE** A request for Limit Order quote (RFQ) sent by the trader
+message LimitOrderCreateRequest {
+
+  // Blockchain-specific address of **Input asset**.
+  stonfi.common.v1.AssetId input_asset = 1;
+
+  // Blockchain-specific address of **Output asset**.
+  stonfi.common.v1.AssetId output_asset = 2;
+
+  // The amount of **Input asset** the trader wants to exchange, including all
+  // fees.
+  string input_units = 3;
+
+  // The amount of **Output asset** the trader wants to get after all fees.
+  string output_units = 4;
+
+  // The address of integrator that will receive the fees.
+  stonfi.common.v1.ChainAddress integrator_address = 5;
+
+  // The amount of fees required by the integrator in percentage in points
+  // (1/1,000,000 or 0.0001%)
+  optional uint32 integrator_fee_pips = 6;
+
+  // Parameters specific to order settlement.
+  OrderSettlementParams settlement_params = 7;
+}
+
+// **UNSTABLE** A request for Limit Order quote (RFQ) sent by the trader
+message LimitOrderResponse { Quote quote = 1; }
+
+// Requests the list of currently active orders for a trader.
+message ActiveOrdersRequest {
+  // The address of trader's wallet that has initiated the order
+  stonfi.common.v1.ChainAddress trader_address = 1;
+}
+
+// Describes active Order together with the Quote.
+message ActiveOrder {
+  Order order = 1;
+
+  Quote quote = 2;
+}
+
+// Response containing all currently active orders for a trader.
+message ActiveOrdersResponse { repeated ActiveOrder active_orders = 1; }
+
+// A request to track the execution of specific order
+message TrackOrderRequest {
+  // ID of the quote
+  string quote_id = 1;
+
+  // The address of trader's wallet that initiated transaction
+  stonfi.common.v1.ChainAddress trader_address = 2;
+}
+
+// Registers a signed gasless order with the protocol.
+message RegisterSignedOrderRequest {
+  // ID of the quote
+  string quote_id = 1;
+
+  // The address on **Source** blockchain that has signed the order.
+  stonfi.common.v1.ChainAddress owner_src_address = 2;
+
+  // The body of the order in blockchain-specific encoding.
+  SignedOrder signed_order = 3;
+
+  // Off-chain **Order details** in protobuf-serialized form.
+  //
+  // This payload must contain exactly the same serialized
+  // `VersionedHtlcOrderDetails` that was produced when the order payload was
+  // built, and whose hash is embedded into the signed order.
+  //
+  // It is transferred in serialized form to avoid differences in binary
+  // representation after a deserialize-serialize cycle.
+  optional bytes serialized_order_details = 4;
+}
+
+// Requests cancellation of a previously registered signed order.
+message CancelSignedOrderRequest {
+  // ID of the quote corresponding to the order being cancelled.
+  string quote_id = 1;
+
+  // The address on **Source** blockchain that signed the order cancellation.
+  //
+  // This address must match the wallet that signed the corresponding **Signed
+  // Order**.
+  stonfi.common.v1.ChainAddress owner_src_address = 2;
+
+  // The blockchain-specific signed cancellation payload.
+  SignedOrderCancellation signed_cancellation = 3;
+}
+
+// Indicates that the signed order was cancelled using the off-chain path.
+message SignedOrderCancelledOffchain {}
+
+// Indicates that off-chain cancellation is insufficient and on-chain
+// cancellation is required.
+message SignedOrderOnchainCancellationRequired {
+  // The current state of the order, indicating that the trader must use an
+  // on-chain cancellation flow.
+  Order order = 1;
+}
+
+// Result of attempting to cancel a signed order.
+message CancelSignedOrderResponse {
+  oneof result {
+    // The order has been successfully cancelled using the submitted off-chain
+    // payload.
+    SignedOrderCancelledOffchain cancelled_offchain = 1;
+
+    // Off-chain cancellation is not sufficient and the order requires an
+    // on-chain cancellation flow.
+    SignedOrderOnchainCancellationRequired requires_onchain = 2;
+  }
+}
+
+// Discloses the HTLC secret for a specific execution, allowing the
+// **Output position** on **Destination blockchain** to be claimed or redeemed.
+message DiscloseHtlcSecretRequest {
+  string quote_id = 1;
+
+  // Index of the execution, used for tracking partial fills.
+  //
+  // This parameter should contain 0 for single-execution trades.
+  uint64 execution_index = 2;
+
+  // The 256-bit value of the secret that should be used to redeem the **Output
+  // position**.
+  bytes secret = 3;
+}
+
+// Interactions with escrow contracts.
+service OrderRpc {
+
+  // Creates an artificial quote representing a limit order.
+  rpc Create(LimitOrderCreateRequest) returns (LimitOrderResponse) {}
+
+  // Get list of active user's orders.
+  rpc GetActive(ActiveOrdersRequest) returns (ActiveOrdersResponse) {}
+
+  // Streams updates for a specific order until the client disconnects or the
+  // order reaches the final state.
+  rpc Track(TrackOrderRequest) returns (stream OrderStatusEvent) {}
+
+  // Registers a signed order together with its serialized off-chain details.
+  rpc RegisterSignedOrder(RegisterSignedOrderRequest)
+      returns (google.protobuf.Empty) {}
+
+  // Attempts to cancel a **Signed Order** by submitting an off-chain
+  // cancellation payload signed by the same wallet that signed the order.
+  //
+  // The response explicitly indicates whether the order was cancelled off-chain
+  // or whether the trader must use an on-chain cancellation flow instead.
+  rpc CancelSignedOrder(CancelSignedOrderRequest)
+      returns (CancelSignedOrderResponse) {}
+
+  // Discloses the HTLC secret for a specific execution.
+  rpc DiscloseHtlcSecret(DiscloseHtlcSecretRequest)
+      returns (google.protobuf.Empty) {}
+}

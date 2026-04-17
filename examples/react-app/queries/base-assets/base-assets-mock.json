@@ -1,0 +1,47 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "ETH",
+      "displayName": "Ether",
+      "imageUrl": "https://basescan.org/assets/base/images/svg/logos/chain-light.svg"
+    }
+  },
+  {
+    "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDC",
+      "displayName": "USDC",
+      "imageUrl": "https://basescan.org/token/images/centre-usdc_28.png"
+    }
+  },
+  {
+    "address": "0xafCF681272AF10959736f45616eeCBC22D7095E2",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "RED",
+      "displayName": "RED test token",
+      "imageUrl": "https://www.solidbackgrounds.com/images/125x125/125x125-ferrari-red-solid-color-background.jpg"
+    }
+  },
+  {
+    "address": "0xd602079AFa5c38F550510a2a988CbFa698Fa0189",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "BLUE",
+      "displayName": "BLUE test token",
+      "imageUrl": "https://basescan.org/assets/base/images/svg/logos/chain-light.svg"
+    }
+  },
+  {
+    "address": "0x4200000000000000000000000000000000000006",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "wETH",
+      "displayName": "Wrapped Ether",
+      "imageUrl": "https://basescan.org/token/images/weth_28.png"
+    }
+  }
+]
