@@ -86,6 +86,10 @@ export const QuoteTrack = withQuoteTrackProps(
       const subscription = omniston.trackTrade(trackTradeParams).subscribe({
         next: (status) => {
           setTradeStatuses((prevStatuses) => [...prevStatuses, status]);
+
+          if (status.status?.tradeSettled) {
+            subscription.unsubscribe();
+          }
         },
         error: (error) => {
           //
