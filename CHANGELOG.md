@@ -4,17 +4,238 @@
 
 **Omniston v1beta8 API release**
 
+> [!WARNING]
+> Breaking changes. The API is currently available only at `wss://omni-ws-sandbox.ston.fi`
+
 The `v1beta8` Omniston API release introduces refined terminology and cross-chain exchange capabilities.
+This release also includes a fully working example app in this repository that demonstrates the new SDK APIs end to end.
+It can serve as a reference implementation when migrating real applications to `v1beta8`.
+
 Here are some useful links for the new API:
 - [v1beta8 Glossary](https://github.com/ston-fi/stonfi-proto/blob/main/proto/stonfi/omni/GLOSSARY.md)
 - [v1beta8 API proto files](https://github.com/ston-fi/stonfi-proto/tree/main/proto/stonfi/omni)
 - [v1beta7 to v1beta8 migration guide](https://github.com/ston-fi/stonfi-proto/blob/main/proto/stonfi/omni/v1beta8/v1beta7-to-v1beta8-migration-guide.md)
 
-> [!WARNING]
-> Breaking changes. The API is currently available only at `wss://omni-ws-sandbox.ston.fi`
+The main idea of the `v1beta7` to `v1beta8` migration is:
+
+- move from generic trade-oriented APIs to explicit settlement-specific APIs
+- branch on typed oneof fields such as `quote.settlementData`
+- treat `Quote` as the main structure that drives building and tracking flows
+- use chain-specific builders for TON and EVM where settlement requires different payloads
+
+```diff
+- const tx = await omniston.buildTransfer({ quoteId, traderWalletAddress });
+- const stream = await omniston.trackTrade({ quoteId, traderWalletAddress, txHash });
++ switch (quote.settlementData?.$case) {
++   case "swap":
++     await omniston.tonBuildSwap({ /** */ });
++     await omniston.swapTrack({ /** */ });
++     break;
++   case "order":
++     await omniston.tonBuildEscrowTransfer({ /** */ });
++     await omniston.orderTrack({ /** */ });
++     break;
++   default:
++     throw new Error("Unsupported settlement method");
++ }
+```
+
+v1beta8 relies heavily on oneof-style payloads with `$case` and `value`. This makes the SDK more type-safe, because mutually exclusive variants are modeled explicitly, and more LLM-friendly, because the schema describes each branch in a uniform, self-describing shape. The SDK exports `OneOf`, `OneOfCase`, `OneOfCases`, `OneOfValue`, and `OneOfValues` to help you type these unions and extract case-specific payload types:
+
+```ts
+import type {
+  Quote,
+  OneOf,
+  OneOfCase,
+  OneOfCases,
+  OneOfValue,
+  OneOfValues,
+} from "@ston-fi/omniston-sdk";
+```
+
+```ts
+type SettlementData = NonNullable<Quote["settlementData"]>;
+
+type SettlementKind = OneOfCases<SettlementData>;
+// "swap" | "order"
+
+type SwapSettlement = OneOfCase<SettlementData, "swap">;
+// { $case: "swap"; value: SwapSettlementData }
+
+type SwapPayload = OneOfValue<SettlementData, "swap">;
+// SwapSettlementData
+
+type AnySettlementPayload = OneOfValues<SettlementData>;
+// SwapSettlementData | OrderSettlementData
+```
+
+Since `Quote` is now the main structure that drives RFQ handling, settlement branching, and transaction building, the SDK exports a few helpers to make quote handling less repetitive: `isSwapQuote`, `isOrderQuote`, `isHtlcOrderQuote`, `matchQuoteByType`, and `QuoteOfType`.
+
+```ts
+matchQuoteByType(quote, {
+  swap: (swapQuote) => {
+    // ^ quote type and settlementData are narrowed for a swap quote
+  },
+  order: (orderQuote) => {
+    // ^ quote type and settlementData are narrowed for an order quote
+  },
+});
+```
 
 ### @ston-fi/omniston-sdk@0.8.0-rc.0
+
+#### Migration guide
+
+```diff
+- import type { QuoteRequest, QuoteResponseEvent, TrackTradeRequest } from "@ston-fi/omniston-sdk";
++ import type { QuoteRequest, TrackSwapRequest, TrackOrderRequest } from "@ston-fi/omniston-sdk";
+```
+
+When you receive a quote, branch on `quote.settlementData?.$case` and call the settlement-specific method:
+
+```diff
+- const tx = await omniston.buildTransfer({
+-   quoteId: quote.quoteId,
+-   traderWalletAddress,
+- });
++ let tx;
++
++ switch (quote.settlementData?.$case) {
++   case "swap":
++     tx = await omniston.tonBuildSwap({ /** */ });
++     break;
++   case "order":
++     tx = await omniston.tonBuildEscrowTransfer({ /** */ });
++     break;
++   default:
++     throw new Error("Unsupported settlement method");
++ }
+```
+
+For EVM order settlement, building the payload is no longer the last step. You must build the order payload, sign it, and then register the signed order:
+
+```diff
+- const tx = await omniston.buildTransfer({ quoteId, traderWalletAddress });
++ const payload = await omniston.evmBuildOrderPayload({ /** */ });
++
++ const signedOrder = signPayloadSomehow(payload);
++
++ await omniston.orderRegisterSignedOrder({
++   /** */
++   signedOrder,
++ });
+```
+
+Tracking is now split the same way:
+
+```diff
+- const stream = await omniston.trackTrade({
+-   quoteId,
+-   traderWalletAddress,
+-   txHash,
+- });
++ let stream;
++
++ switch (quote.settlementData?.$case) {
++   case "swap":
++     stream = await omniston.swapTrack({ /** */ });
++     break;
++   case "order":
++     stream = await omniston.orderTrack({ /** */ });
++     break;
++   default:
++     throw new Error("Unsupported settlement method");
++ }
+```
+
+Order management also moved to dedicated APIs:
+
+```diff
+- const orders = await omniston.escrowList({ traderWalletAddress });
++ const orders = await omniston.orderGetActive({ traderAddress });
+```
+
+#### Removed
+
+- Removed deprecated `client` from `Omniston` constructor. Use `transport` instead.
+
+```diff
+- new Omniston({ apiUrl, client, logger });
++ new Omniston({ apiUrl, transport, logger });
+```
+
+- Removed deprecated `Omniston.close()`. Close the SDK through its transport instead.
+
+```diff
+- omniston.close();
++ omniston.transport.close();
+```
+
 ### @ston-fi/omniston-sdk-react@0.8.0-rc.0
+
+#### Migration guide
+
+Start by replacing removed hooks with settlement-specific hooks:
+
+```diff
+- const transfer = useBuildTransfer(request);
+- const withdrawal = useBuildWithdrawal(request);
+- const trade = useTrackTrade(request);
+- const escrows = useEscrowList(request);
++ const tonSwap = useTonBuildSwap(request);
++ const tonEscrowTransfer = useTonBuildEscrowTransfer(request);
++ const tonEscrowCancellation = useTonBuildEscrowCancellation(request);
++ const evmOrderPayload = useEvmBuildOrderPayload(request);
++ const orderTrack = useOrderTrack(request);
++ const swapTrack = useSwapTrack(request);
++ const activeOrders = useActiveOrders(request);
++ const escrowVaultBalances = useTonEscrowVaultBalances(request);
+```
+
+`useRfq()` now returns the new SDK event shape, so React code should switch from `type` checks to `$case` checks:
+
+```diff
+ const { data: quoteEvent } = useRfq(request);
+ 
+- const quote = quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : undefined;
++ const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
+```
+
+If you previously tracked all trades through one hook, split by settlement method:
+
+```diff
+- const { data: tradeEvent } = useTrackTrade(trackRequest, { enabled });
++ const isSwap = quote?.settlementData?.$case === "swap";
++
++ const { data: swapEvent } = useSwapTrack(swapRequest, { enabled: enabled && isSwap });
++ const { data: orderEvent } = useOrderTrack(orderRequest, { enabled: enabled && !isSwap });
+```
+
+For order flows, v1beta8 adds dedicated hooks for the extra lifecycle steps:
+
+```diff
+- // no equivalent hooks in v1beta7
++ const registerSignedOrder = useRegisterSignedOrder(request);
++ const cancelSignedOrder = useCancelSignedOrder(request);
++ const discloseHtlcSecret = useDiscloseHtlcSecret(request);
+```
+
+#### Added
+
+`OmnistonProvider` can now reuse your application `QueryClient` instead of always creating its own:
+
+```diff
+ <QueryClientProvider client={queryClient}>
+-  <OmnistonProvider omniston={omniston}>
++  <OmnistonProvider omniston={omniston} queryClient={queryClient}>
+     {children}
+   </OmnistonProvider>
+ </QueryClientProvider>
+```
+
+#### Removed
+
+Stream hooks built on `useObservableQuery` no longer expose an imperative `unsubscribe` function. If you need manual control over subscription lifetime, use `enabled`/unmounting or subscribe to the underlying SDK observable directly.
 
 ## 02-04-2026
 
