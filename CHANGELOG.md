@@ -5,7 +5,7 @@
 **Omniston v1beta8 API release**
 
 > [!WARNING]
-> Breaking changes. The API is currently available only at `wss://omni-ws-sandbox.ston.fi`
+> Breaking changes
 
 The `v1beta8` Omniston API release introduces refined terminology and cross-chain exchange capabilities.
 This release also includes a fully working example app in this repository that demonstrates the new SDK APIs end to end.
@@ -138,7 +138,10 @@ Tracking is now split the same way:
 +
 + switch (quote.settlementData?.$case) {
 +   case "swap":
-+     stream = await omniston.swapTrack({ /** */ });
++     stream = await omniston.swapTrack({ 
++       /** */
++       outgoingTxQuery // you can pass external message hash/sighed BOC/tx hash here directly
++     });
 +     break;
 +   case "order":
 +     stream = await omniston.orderTrack({ /** */ });
