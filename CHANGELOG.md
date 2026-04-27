@@ -1,5 +1,11 @@
 # Changelog
 
+## 27-04-2026
+
+### @ston-fi/omniston-sdk@0.8.0
+
+- re-tag `0.8.0-rc.0` release as stable
+
 ## 17-04-2026
 
 **Omniston v1beta8 API release**
