@@ -15,11 +15,17 @@ export const addressSchema = z.object({
       $case: z.literal(Chain.BASE),
       value: z.string().nonempty(),
     }),
+    z.object({
+      $case: z.literal(Chain.POLYGON),
+      value: z.string().nonempty(),
+    }),
   ]),
 }) satisfies z.ZodType<ChainAddress>;
 
 export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
-  switch (assetId.chain.$case) {
+  const chainCase = assetId.chain.$case;
+
+  switch (chainCase) {
     case Chain.TON: {
       switch (assetId.chain.value.kind.$case) {
         case "jetton": {
@@ -50,8 +56,23 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
+    case Chain.POLYGON: {
+      switch (assetId.chain.value.kind.$case) {
+        case "erc20": {
+          return {
+            chain: {
+              $case: Chain.POLYGON,
+              value: assetId.chain.value.kind.value,
+            },
+          };
+        }
+        default: {
+          return null;
+        }
+      }
+    }
     default: {
-      throw new Error(`Unexpected chain: ${assetId.chain.$case}`);
+      throw new Error(`Unexpected chain: ${chainCase}`);
     }
   }
 }
@@ -59,7 +80,9 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
 export function truncateAddress(address: ChainAddress): string {
   let fullAddress: string;
 
-  switch (address.chain.$case) {
+  const chainCase = address.chain.$case;
+
+  switch (chainCase) {
     case Chain.TON: {
       fullAddress = address.chain.value;
       break;
@@ -68,8 +91,12 @@ export function truncateAddress(address: ChainAddress): string {
       fullAddress = address.chain.value;
       break;
     }
+    case Chain.POLYGON: {
+      fullAddress = address.chain.value;
+      break;
+    }
     default: {
-      throw new Error(`Unexpected chain: ${address.chain.$case}`);
+      throw new Error(`Unexpected chain: ${chainCase}`);
     }
   }
 

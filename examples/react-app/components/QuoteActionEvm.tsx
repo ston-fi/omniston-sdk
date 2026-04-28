@@ -11,7 +11,7 @@ import { useEvmTransaction } from "@/hooks/useEvmTransaction";
 import { useRfq } from "@/hooks/useRfq";
 import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
 import { cn } from "@/lib/utils";
-import { Chain } from "@/models/chain";
+import { EVM_CHAINS } from "@/models/chain";
 import { useTradeTrackState } from "@/providers/trade-track";
 import { CopyJsonCard } from "@/components/ui/copy-json-card";
 
@@ -95,7 +95,7 @@ function withEvmWalletGuard(Component: React.ComponentType<Omit<ButtonProps, "ch
     const { open: openAppKit } = useAppKit();
     const connectedWallets = useConnectedWallets();
 
-    if (!connectedWallets[Chain.BASE]) {
+    if (EVM_CHAINS.some((chain) => !connectedWallets[chain])) {
       return (
         <Button
           {...props}

@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useRfq } from "@/hooks/useRfq";
 import { useTradeTrackState } from "@/providers/trade-track";
 import { useSwapForm } from "@/providers/swap-form";
-import { Chain } from "@/models/chain";
+import { Chain, isEvmChain } from "@/models/chain";
 import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
 
 export const QuoteAction = (props: { className?: string }) => {
@@ -66,7 +66,7 @@ export const QuoteAction = (props: { className?: string }) => {
   // action buttons for known quote
   else if (quote.inputAsset.chain.$case === Chain.TON) {
     return <QuoteActionTon {...props} />;
-  } else if (quote.inputAsset.chain.$case === Chain.BASE) {
+  } else if (isEvmChain(quote.inputAsset.chain.$case)) {
     return <QuoteActionEvm {...props} />;
   }
 };

@@ -3,22 +3,22 @@
     "address": "native",
     "metadata": {
       "decimals": 18,
-      "symbol": "ETH",
-      "displayName": "Ether",
-      "imageUrl": "https://basescan.org/assets/base/images/svg/logos/chain-light.svg"
+      "symbol": "POL",
+      "displayName": "Polygon",
+      "imageUrl": "https://assets.coingecko.com/asset_platforms/images/15/small/polygon_pos.png"
     }
   },
   {
-    "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "address": "0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB",
     "metadata": {
       "decimals": 6,
-      "symbol": "USDC",
-      "displayName": "USD Coin",
-      "imageUrl": "https://basescan.org/token/images/centre-usdc_28.png"
+      "symbol": "pUSD",
+      "displayName": "Polymarket USD",
+      "imageUrl": "https://assets.coingecko.com/coins/images/16762/standard/PUSD-purple-200.png?1696516335"
     }
   },
   {
-    "address": "0xafCF681272AF10959736f45616eeCBC22D7095E2",
+    "address": "0x8c91313bf3ad99fAFEE8e6DB6f87c408F797Cccb",
     "metadata": {
       "decimals": 18,
       "symbol": "RED",
@@ -27,7 +27,7 @@
     }
   },
   {
-    "address": "0xd602079AFa5c38F550510a2a988CbFa698Fa0189",
+    "address": "0xe2B1C5724Fc6f13B0bf9ba6524f761483d0b6aD4",
     "metadata": {
       "decimals": 18,
       "symbol": "BLUE",

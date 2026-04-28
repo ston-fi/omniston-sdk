@@ -4,7 +4,7 @@ import { useId } from "react";
 import { SettlementMethod } from "@ston-fi/omniston-sdk-react";
 
 import { isValidAddress } from "@/lib/address";
-import { Chain } from "@/models/chain";
+import { Chain, EVM_CHAINS } from "@/models/chain";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -175,7 +175,7 @@ const SwapIntegratorFeeSection = () => {
   const isIntegratorAddressValid =
     !integratorAddress ||
     isValidAddress(Chain.TON, integratorAddress) ||
-    isValidAddress(Chain.BASE, integratorAddress);
+    isValidAddress(EVM_CHAINS[0], integratorAddress);
 
   return (
     <section className="flex flex-col space-y-2">

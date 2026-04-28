@@ -11,6 +11,7 @@ import { serializeAssetId, isAssetIdEqual } from "@/models/asset-id";
 import type { Asset } from "@/models/asset";
 import { tonAssetQueryFactory } from "@/queries/ton-assets";
 import { baseAssetQueryFactory } from "@/queries/base-assets";
+import { polygonAssetQueryFactory } from "@/queries/polygon-assets";
 import { useConnectedWallets } from "@/hooks/useConnectedWallets";
 
 type AssetsContextValue = {
@@ -26,14 +27,21 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
 
   const wagmiConfig = useWagmiConfig();
   const isTonConnectRestored = useIsConnectionRestored();
-  const { ton: tonWalletAddress, base: baseWalletAddress } = useConnectedWallets();
+  const {
+    ton: tonWalletAddress,
+    base: baseWalletAddress,
+    polygon: polygonWalletAddress,
+  } = useConnectedWallets();
 
   // In-memory unconditional assets per blockchain — assets manually added by the user
   // that must survive query refetches. Session-only (not persisted).
   const [unconditionalTonAssetIdList, setUnconditionalTonAssetIdList] = useState<AssetId[]>([]);
   const [unconditionalBaseAssetIdList, setUnconditionalBaseAssetIdList] = useState<AssetId[]>([]);
+  const [unconditionalPolygonAssetIdList, setUnconditionalPolygonAssetIdList] = useState<AssetId[]>(
+    [],
+  );
 
-  const isWalletConnected = !!tonWalletAddress || !!baseWalletAddress;
+  const isWalletConnected = !!tonWalletAddress || !!baseWalletAddress || !!polygonWalletAddress;
   const refetchInterval = isWalletConnected ? 1000 * 60 : 1000 * 60 * 5;
 
   const tonAssetsQuery = useQuery({
@@ -57,12 +65,26 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     staleTime: Infinity,
   });
 
+  const polygonAssetsQuery = useQuery({
+    ...polygonAssetQueryFactory.fetch({
+      wagmiConfig,
+      walletAddress: polygonWalletAddress,
+    }),
+    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
+    refetchInterval,
+    staleTime: Infinity,
+  });
+
   const getAssetById = (assetId: AssetId): Asset | undefined => {
-    switch (assetId.chain.$case) {
+    const chainCase = assetId.chain.$case;
+
+    switch (chainCase) {
       case Chain.TON:
         return tonAssetsQuery.data?.get(serializeAssetId(assetId));
       case Chain.BASE:
         return baseAssetsQuery.data?.get(serializeAssetId(assetId));
+      case Chain.POLYGON:
+        return polygonAssetsQuery.data?.get(serializeAssetId(assetId));
       default:
         return undefined;
     }
@@ -78,7 +100,9 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
       return [...old, asset];
     };
 
-    switch (asset.id.chain.$case) {
+    const chainCase = asset.id.chain.$case;
+
+    switch (chainCase) {
       case Chain.TON: {
         const unconditionalAddresses = [...unconditionalTonAssetIdList, asset.id];
         setUnconditionalTonAssetIdList(unconditionalAddresses);
@@ -105,6 +129,23 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
         );
         break;
       }
+      case Chain.POLYGON: {
+        const unconditionalAddresses = [...unconditionalPolygonAssetIdList, asset.id];
+        setUnconditionalPolygonAssetIdList(unconditionalAddresses);
+
+        queryClient.setQueryData(
+          polygonAssetQueryFactory.fetch({
+            wagmiConfig,
+            walletAddress: polygonWalletAddress,
+          }).queryKey,
+          assetQueryUpdater,
+        );
+        break;
+      }
+      default: {
+        chainCase satisfies never;
+        throw new Error(`Unexpected chain: ${chainCase}`);
+      }
     }
   };
 
@@ -129,11 +170,20 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
               },
             }),
           );
+        case Chain.POLYGON:
+          return polygonAssetsQuery.data?.get(
+            serializeAssetId({
+              chain: {
+                $case: chainId,
+                value: { kind: { $case: "native", value: {} } },
+              },
+            }),
+          );
         default:
           return undefined;
       }
     },
-    [tonAssetsQuery.data, baseAssetsQuery.data],
+    [tonAssetsQuery.data, baseAssetsQuery.data, polygonAssetsQuery.data],
   );
 
   return (

@@ -26,6 +26,9 @@ export const ExplorerAddressPreview = ({
       case Chain.BASE: {
         return `https://basescan.org/address/${address.chain.value}`;
       }
+      case Chain.POLYGON: {
+        return `https://polygonscan.com/address/${address.chain.value}`;
+      }
       default: {
         throw new Error(`Unexpected chain: ${address.chain.$case}`);
       }

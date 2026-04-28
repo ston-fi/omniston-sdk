@@ -10,11 +10,16 @@ import { Chain } from "@/models/chain";
 import { useSwapForm, useSwapFormDispatch } from "@/providers/swap-form";
 import { tonAssetQueryFactory } from "@/queries/ton-assets";
 import { baseAssetQueryFactory } from "@/queries/base-assets";
+import { polygonAssetQueryFactory } from "@/queries/polygon-assets";
 import { useAssets } from "@/providers/assets";
 import { useConnectedWallets } from "@/hooks/useConnectedWallets";
 
 const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
-  const { ton: tonWalletAddress, base: baseWalletAddress } = useConnectedWallets();
+  const {
+    ton: tonWalletAddress,
+    base: baseWalletAddress,
+    polygon: polygonWalletAddress,
+  } = useConnectedWallets();
 
   const wagmiConfig = useWagmiConfig();
 
@@ -40,6 +45,19 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
         baseAssetQueryFactory.search({
           searchTerm,
           walletAddress: baseWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.POLYGON,
+      fetchQueryOptions: polygonAssetQueryFactory.fetch({
+        walletAddress: polygonWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        polygonAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: polygonWalletAddress,
           wagmiConfig,
         }),
     },
