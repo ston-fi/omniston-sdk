@@ -16,9 +16,9 @@ import { isHtlcOrderQuote, matchQuoteByType } from "@ston-fi/omniston-sdk-react"
 import { useOmniston } from "@/hooks/useOmniston";
 import { useRfq } from "@/hooks/useRfq";
 import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
-import { INFINITE_ALLOWANCE_THRESHOLD } from "@/lib/evm/allowance";
 import { generateHashlock, generateHtlcSecret } from "@/lib/utils/htlc";
 import { useSwapSettings } from "@/providers/swap-settings";
+import { isEvmChain } from "@/models/chain";
 
 export function useEvmTransaction() {
   const omniston = useOmniston();
@@ -80,7 +80,7 @@ export function useEvmTransaction() {
       };
 
       const isAllowanceRequired =
-        quote.inputAsset.chain.$case === "base" &&
+        isEvmChain(quote.inputAsset.chain.$case) &&
         quote.inputAsset.chain.value.kind.$case !== "native";
 
       if (isAllowanceRequired) {

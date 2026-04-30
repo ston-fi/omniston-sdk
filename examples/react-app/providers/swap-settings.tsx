@@ -22,7 +22,9 @@ const SwapSettingsSchema = z.object({
   integratorFeePips: z.number().min(0).max(MAX_INTEGRATOR_FEE_PIPS).optional().catch(undefined),
   flexibleIntegratorFee: z.boolean().default(false).catch(false),
   htlcMaxExecutions: z.number().int().positive().catch(1),
-  settlementMethods: z.array(z.enum(SettlementMethod)).catch([SettlementMethod.SWAP]),
+  settlementMethods: z
+    .array(z.enum(SettlementMethod))
+    .catch([SettlementMethod.SWAP, SettlementMethod.ORDER]),
 });
 
 export type SwapSettingsState = z.infer<typeof SwapSettingsSchema>;
