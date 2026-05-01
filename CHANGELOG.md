@@ -3,6 +3,7 @@
 ## 01-05-2026
 
 ### @ston-fi/omniston-sdk@0.8.1
+### @ston-fi/omniston-sdk-react@0.8.1
 
 #### Added
 - the `OrderSettlementData` type extended with 3 new fields (integratorFeePips, protocolFeePips, protocolFeeRecipientAddress)
