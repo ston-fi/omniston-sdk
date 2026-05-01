@@ -233,6 +233,28 @@ export interface OrderSettlementData {
    * withdrawal and Dutch auction starts if specified by escrow condition.
    */
   exclusivityTimeout: number;
+  /**
+   * Integrator fee in percentage points (1/1,000,000 or 0.0001%).
+   *
+   * This field is copied from `QuoteRequest`.
+   */
+  integratorFeePips: number;
+  /**
+   * Protocol fee for the corresponding settlement method in percentage points
+   * (1/1,000,000 or 0.0001%). The protocol fee is always collected in
+   * **Output asset**.
+   *
+   * This field is copied from `ProtocolParams` of `QuoteRequestedEvent`.
+   */
+  protocolFeePips: number;
+  /**
+   * Address of the wallet on **Destination blockchain** that will receive the
+   * protocol fees.
+   *
+   * If specified, this address must be used when building the destination-side
+   * transaction.
+   */
+  protocolFeeRecipientAddress?: ChainAddress | undefined;
 }
 
 /** A request for quote (RFQ) sent by the trader */
@@ -271,10 +293,7 @@ export interface QuoteRequest {
    * blockchain.
    */
   integratorAddress?: ChainAddress | undefined;
-  /**
-   * The amount of fees required by the integrator in percentage in points
-   * (1/1,000,000 or 0.0001%)
-   */
+  /** Integrator fee in percentage points (1/1,000,000 or 0.0001%). */
   integratorFeePips?: number | undefined;
   /**
    * Parameters of supported methods of the settlement.
@@ -554,6 +573,9 @@ function createBaseOrderSettlementData(): OrderSettlementData {
     dstSecurityDepositUnits: undefined,
     tradeStartDeadline: 0,
     exclusivityTimeout: 0,
+    integratorFeePips: 0,
+    protocolFeePips: 0,
+    protocolFeeRecipientAddress: undefined,
   };
 }
 
@@ -599,6 +621,15 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
       exclusivityTimeout: isSet(object.exclusivity_timeout)
         ? globalThis.Number(object.exclusivity_timeout)
         : 0,
+      integratorFeePips: isSet(object.integrator_fee_pips)
+        ? globalThis.Number(object.integrator_fee_pips)
+        : 0,
+      protocolFeePips: isSet(object.protocol_fee_pips)
+        ? globalThis.Number(object.protocol_fee_pips)
+        : 0,
+      protocolFeeRecipientAddress: isSet(object.protocol_fee_recipient_address)
+        ? ChainAddress.fromJSON(object.protocol_fee_recipient_address)
+        : undefined,
     };
   },
 
@@ -647,6 +678,15 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
     if (message.exclusivityTimeout !== undefined) {
       obj.exclusivity_timeout = Math.round(message.exclusivityTimeout);
     }
+    if (message.integratorFeePips !== undefined) {
+      obj.integrator_fee_pips = Math.round(message.integratorFeePips);
+    }
+    if (message.protocolFeePips !== undefined) {
+      obj.protocol_fee_pips = Math.round(message.protocolFeePips);
+    }
+    if (message.protocolFeeRecipientAddress !== undefined) {
+      obj.protocol_fee_recipient_address = ChainAddress.toJSON(message.protocolFeeRecipientAddress);
+    }
     return obj;
   },
 
@@ -694,6 +734,13 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
     message.dstSecurityDepositUnits = object.dstSecurityDepositUnits ?? undefined;
     message.tradeStartDeadline = object.tradeStartDeadline ?? 0;
     message.exclusivityTimeout = object.exclusivityTimeout ?? 0;
+    message.integratorFeePips = object.integratorFeePips ?? 0;
+    message.protocolFeePips = object.protocolFeePips ?? 0;
+    message.protocolFeeRecipientAddress =
+      object.protocolFeeRecipientAddress !== undefined &&
+      object.protocolFeeRecipientAddress !== null
+        ? ChainAddress.fromPartial(object.protocolFeeRecipientAddress)
+        : undefined;
     return message;
   },
 };

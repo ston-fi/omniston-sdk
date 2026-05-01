@@ -158,6 +158,22 @@ function OrderSettlementDataPresenter({
         <span>exclusivityTimeout:</span>
         <pre>{orderSettlementData.exclusivityTimeout}</pre>
       </li>
+      <li>
+        <span>integratorFeePips:</span>
+        <pre>{orderSettlementData.integratorFeePips}</pre>
+      </li>
+      <li>
+        <span>protocolFeePips:</span>
+        <pre>{orderSettlementData.protocolFeePips}</pre>
+      </li>
+      {orderSettlementData.protocolFeeRecipientAddress ? (
+        <li>
+          <span>protocolFeeRecipientAddress:</span>
+          <ExplorerAddressPreview address={orderSettlementData.protocolFeeRecipientAddress}>
+            {trimStringWithEllipsis(orderSettlementData.protocolFeeRecipientAddress.chain.value, 6)}
+          </ExplorerAddressPreview>
+        </li>
+      ) : null}
     </DescriptionList>
   );
 }

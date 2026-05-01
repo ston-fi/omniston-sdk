@@ -169,6 +169,25 @@ message OrderSettlementData {
   // At the end of this period trader's position becomes available for manual
   // withdrawal and Dutch auction starts if specified by escrow condition.
   uint64 exclusivity_timeout = 21;
+
+  // Integrator fee in percentage points (1/1,000,000 or 0.0001%).
+  //
+  // This field is copied from `QuoteRequest`.
+  uint32 integrator_fee_pips = 30;
+
+  // Protocol fee for the corresponding settlement method in percentage points
+  // (1/1,000,000 or 0.0001%). The protocol fee is always collected in
+  // **Output asset**.
+  //
+  // This field is copied from `ProtocolParams` of `QuoteRequestedEvent`.
+  uint32 protocol_fee_pips = 31;
+
+  // Address of the wallet on **Destination blockchain** that will receive the
+  // protocol fees.
+  //
+  // If specified, this address must be used when building the destination-side
+  // transaction.
+  optional stonfi.common.v1.ChainAddress protocol_fee_recipient_address = 32;
 }
 
 // A request for quote (RFQ) sent by the trader
@@ -198,8 +217,7 @@ message QuoteRequest {
   // blockchain.
   optional stonfi.common.v1.ChainAddress integrator_address = 5;
 
-  // The amount of fees required by the integrator in percentage in points
-  // (1/1,000,000 or 0.0001%)
+  // Integrator fee in percentage points (1/1,000,000 or 0.0001%).
   optional uint32 integrator_fee_pips = 6;
 
   // Parameters of supported methods of the settlement.
