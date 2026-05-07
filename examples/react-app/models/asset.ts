@@ -15,10 +15,13 @@ type BaseAssetExtra = {};
 
 type PolygonAssetExtra = {};
 
+type EthereumAssetExtra = {};
+
 type BlockchainExtraMap = {
   [Chain.TON]: TonAssetExtra;
   [Chain.BASE]: BaseAssetExtra;
   [Chain.POLYGON]: PolygonAssetExtra;
+  [Chain.ETHEREUM]: EthereumAssetExtra;
 };
 
 export type Asset = {

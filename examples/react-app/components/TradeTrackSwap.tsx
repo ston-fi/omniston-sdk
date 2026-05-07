@@ -310,7 +310,7 @@ function SwapChunkResultPresenter({ result }: { result: SwapChunkResult }) {
     return (
       <p className="inline-flex items-center gap-2">
         <Spinner />
-        <span>In progress...</span>
+        <span>In progress…</span>
       </p>
     );
   } else if (result === "SWAP_CHUNK_RESULT_FILLED") {

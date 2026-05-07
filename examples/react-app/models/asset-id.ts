@@ -53,6 +53,21 @@ export const assetIdSchema = z.object({
         ]),
       }),
     }),
+    z.object({
+      $case: z.literal(Chain.ETHEREUM),
+      value: z.object({
+        kind: z.discriminatedUnion("$case", [
+          z.object({
+            $case: z.literal("native"),
+            value: z.object({}),
+          }),
+          z.object({
+            $case: z.literal("erc20"),
+            value: z.string().nonempty(),
+          }),
+        ]),
+      }),
+    }),
   ]),
 }) satisfies z.ZodType<AssetId>;
 

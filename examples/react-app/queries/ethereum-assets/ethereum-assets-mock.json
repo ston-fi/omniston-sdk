@@ -9,16 +9,16 @@
     }
   },
   {
-    "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
     "metadata": {
       "decimals": 6,
-      "symbol": "USDC",
-      "displayName": "USD Coin",
-      "imageUrl": "https://basescan.org/token/images/centre-usdc_28.png"
+      "symbol": "USDT",
+      "displayName": "Tether USD",
+      "imageUrl": "https://assets.coingecko.com/coins/images/325/standard/Tether.png"
     }
   },
   {
-    "address": "0xafCF681272AF10959736f45616eeCBC22D7095E2",
+    "address": "0x62cc1521b6902Fe1CEd7C898b07FF21a450a69cD",
     "metadata": {
       "decimals": 18,
       "symbol": "RED",
@@ -27,7 +27,7 @@
     }
   },
   {
-    "address": "0xd602079AFa5c38F550510a2a988CbFa698Fa0189",
+    "address": "0x9C9DDB72DB12a5B3F61B0A93a87AC19Bbd986F3f",
     "metadata": {
       "decimals": 18,
       "symbol": "BLUE",

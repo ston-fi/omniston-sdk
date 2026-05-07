@@ -19,6 +19,10 @@ export const addressSchema = z.object({
       $case: z.literal(Chain.POLYGON),
       value: z.string().nonempty(),
     }),
+    z.object({
+      $case: z.literal(Chain.ETHEREUM),
+      value: z.string().nonempty(),
+    }),
   ]),
 }) satisfies z.ZodType<ChainAddress>;
 
@@ -71,6 +75,21 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
+    case Chain.ETHEREUM: {
+      switch (assetId.chain.value.kind.$case) {
+        case "erc20": {
+          return {
+            chain: {
+              $case: Chain.ETHEREUM,
+              value: assetId.chain.value.kind.value,
+            },
+          };
+        }
+        default: {
+          return null;
+        }
+      }
+    }
     default: {
       throw new Error(`Unexpected chain: ${chainCase}`);
     }
@@ -92,6 +111,10 @@ export function truncateAddress(address: ChainAddress): string {
       break;
     }
     case Chain.POLYGON: {
+      fullAddress = address.chain.value;
+      break;
+    }
+    case Chain.ETHEREUM: {
       fullAddress = address.chain.value;
       break;
     }

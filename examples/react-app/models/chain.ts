@@ -4,6 +4,7 @@ export const Chain = {
   TON: "ton",
   BASE: "base",
   POLYGON: "polygon",
+  ETHEREUM: "ethereum",
 } as const;
 
 export type Chain = (typeof Chain)[keyof typeof Chain];
@@ -28,9 +29,13 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
     label: "POLYGON",
     imageUrl: "https://assets.coingecko.com/asset_platforms/images/15/small/polygon_pos.png",
   },
+  [Chain.ETHEREUM]: {
+    label: "ETHEREUM",
+    imageUrl: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+  },
 };
 
-export const EVM_CHAINS = [Chain.BASE, Chain.POLYGON] as const;
+export const EVM_CHAINS = [Chain.BASE, Chain.POLYGON, Chain.ETHEREUM] as const;
 
 export function isEvmChain(
   // this type allows for string literals that are not in the Chain enum,

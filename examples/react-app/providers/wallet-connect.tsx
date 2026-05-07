@@ -1,12 +1,14 @@
 "use client";
 
 import { createAppKit } from "@reown/appkit/react";
-import { base, polygon } from "@reown/appkit/networks";
+import { base, mainnet, polygon, type AppKitNetwork } from "@reown/appkit/networks";
 import React, { useEffect, useRef } from "react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { WagmiProvider } from "wagmi";
 
 let isAppKitCreated = false;
+
+const networks = [mainnet, base, polygon] satisfies [AppKitNetwork, ...AppKitNetwork[]];
 
 export function WalletConnectProvider({
   children,
@@ -17,7 +19,7 @@ export function WalletConnectProvider({
 }) {
   const wagmiAdapter = useRef(
     new WagmiAdapter({
-      networks: [base, polygon],
+      networks,
       projectId,
     }),
   );
@@ -27,7 +29,7 @@ export function WalletConnectProvider({
 
     createAppKit({
       adapters: [wagmiAdapter.current],
-      networks: [base, polygon],
+      networks,
       projectId,
       showWallets: true,
       defaultNetwork: base,

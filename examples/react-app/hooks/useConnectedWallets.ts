@@ -16,6 +16,7 @@ const walletNamespaceByChain: Record<Chain, WalletNamespace> = {
   [Chain.TON]: WalletNamespace.TON,
   [Chain.BASE]: WalletNamespace.EVM,
   [Chain.POLYGON]: WalletNamespace.EVM,
+  [Chain.ETHEREUM]: WalletNamespace.EVM,
 };
 
 function createChainAddress(chain: Chain, value: string): ChainAddress {
@@ -44,6 +45,7 @@ export function useConnectedWallets() {
     const tonWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.TON]];
     const baseWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.BASE]];
     const polygonWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.POLYGON]];
+    const ethereumWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.ETHEREUM]];
 
     return {
       [Chain.TON]: tonWalletAddressString
@@ -54,6 +56,9 @@ export function useConnectedWallets() {
         : undefined,
       [Chain.POLYGON]: polygonWalletAddressString
         ? createChainAddress(Chain.POLYGON, polygonWalletAddressString)
+        : undefined,
+      [Chain.ETHEREUM]: ethereumWalletAddressString
+        ? createChainAddress(Chain.ETHEREUM, ethereumWalletAddressString)
         : undefined,
     } satisfies Record<Chain, ChainAddress | undefined>;
   }, [addressByNamespace]);

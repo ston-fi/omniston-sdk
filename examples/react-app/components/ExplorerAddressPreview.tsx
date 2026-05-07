@@ -19,7 +19,15 @@ export const ExplorerAddressPreview = ({
   ...props
 }: ExplorerAddressPreviewProps) => {
   const previewLink = useMemo(() => {
-    switch (address.chain.$case) {
+    const isExpectedChain = Object.values(Chain).includes(address.chain.$case);
+
+    if (!isExpectedChain) {
+      throw new Error(`Unexpected chain: ${address.chain.$case}`);
+    }
+
+    const chainCase = address.chain.$case as Chain;
+
+    switch (chainCase) {
       case Chain.TON: {
         return `https://tonviewer.com/address/${address.chain.value}`;
       }
@@ -29,8 +37,12 @@ export const ExplorerAddressPreview = ({
       case Chain.POLYGON: {
         return `https://polygonscan.com/address/${address.chain.value}`;
       }
+      case Chain.ETHEREUM: {
+        return `https://etherscan.io/address/${address.chain.value}`;
+      }
       default: {
-        throw new Error(`Unexpected chain: ${address.chain.$case}`);
+        chainCase satisfies never;
+        throw new Error(`Unexpected chain: ${chainCase}`);
       }
     }
   }, [address]);

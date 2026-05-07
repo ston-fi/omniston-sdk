@@ -7,7 +7,7 @@ export function TradeTrackStatusPresenter({ status }: { status: TradeStatus }) {
     return (
       <span className="inline-flex items-center gap-2">
         <Spinner />
-        <span>In progress...</span>
+        <span>In progress…</span>
       </span>
     );
   } else if (status === "TRADE_STATUS_FULLY_FILLED") {

@@ -8,7 +8,7 @@ import {
   signatureToCompactSignature,
   type Address as EvmAddress,
 } from "viem";
-import { useConfig, useSignTypedData, useWriteContract } from "wagmi";
+import { useConfig, useSignTypedData, useSwitchChain, useWriteContract } from "wagmi";
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { useMemo } from "react";
 import { isHtlcOrderQuote, matchQuoteByType } from "@ston-fi/omniston-sdk-react";
@@ -25,6 +25,7 @@ export function useEvmTransaction() {
 
   const wagmiConfig = useConfig();
   const { mutateAsync: signTypedData } = useSignTypedData();
+  const { mutateAsync: switchChainAsync } = useSwitchChain();
   const { mutateAsync: writeContractAsync } = useWriteContract();
 
   const { data: quoteEvent } = useRfq();
@@ -78,6 +79,9 @@ export function useEvmTransaction() {
       const typedData = rawTypedData as Omit<TypedData, "domain"> & {
         domain: Required<NonNullable<TypedData["domain"]>>;
       };
+      const typedDataChainId = Number(typedData.domain.chainId);
+
+      await switchChainAsync({ chainId: typedDataChainId });
 
       const isAllowanceRequired =
         isEvmChain(quote.inputAsset.chain.$case) &&
@@ -93,6 +97,7 @@ export function useEvmTransaction() {
           abi: erc20Abi,
           functionName: "allowance",
           args: [ownerAddress, spenderAddress],
+          chainId: typedDataChainId,
         });
 
         const isAllowanceSufficient = currentAllowance >= BigInt(quote.inputUnits);
@@ -103,13 +108,21 @@ export function useEvmTransaction() {
             abi: erc20Abi,
             functionName: "approve",
             args: [spenderAddress, maxUint256],
+            chainId: typedDataChainId,
+            account: ownerAddress,
           });
 
-          await waitForTransactionReceipt(wagmiConfig, { hash: approveHash });
+          await waitForTransactionReceipt(wagmiConfig, {
+            hash: approveHash,
+            chainId: typedDataChainId,
+          });
         }
       }
 
-      const serializedSignature = await signTypedData(typedData);
+      const serializedSignature = await signTypedData({
+        ...typedData,
+        account: inputWalletAddress.chain.value as EvmAddress,
+      });
 
       const signature = parseSignature(serializedSignature);
       const compactSignature = signatureToCompactSignature(signature);
@@ -142,7 +155,17 @@ export function useEvmTransaction() {
         htlcSecrets,
       };
     };
-  }, [inputWalletAddress, outputWalletAddress, quote?.quoteId]);
+  }, [
+    htlcMaxExecutions,
+    inputWalletAddress,
+    omniston,
+    outputWalletAddress,
+    quote,
+    signTypedData,
+    switchChainAsync,
+    wagmiConfig,
+    writeContractAsync,
+  ]);
 
   return buildAndSendTransaction;
 }
