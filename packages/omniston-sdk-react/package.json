@@ -1,6 +1,6 @@
 {
   "name": "@ston-fi/omniston-sdk-react",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "React SDK for the STON.fi Omniston protocol",
   "license": "MIT",
   "repository": {
