@@ -5,6 +5,7 @@ import type { ConnectionStatusEvent } from "./ConnectionStatus";
 
 describe("ApiStreamController tests", () => {
   const testMethod = "testMethod";
+  const testUnsubscribeMethod = "testUnsubscribeMethod";
   const testEventMethod = "testEventMethod";
   const testPayload = { test: "payload" };
   type SendFn = ApiClientWrapper["send"];
@@ -148,5 +149,52 @@ describe("ApiStreamController tests", () => {
     expect(isCompleted).toBe(true);
     expect(received).toEqual(["before-close"]);
     expect(sendSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("queues unsubscribe requested before subscription id and flushes it after stream init", async () => {
+    let resolveSubscribe: ((value: unknown) => void) | undefined;
+
+    // Simulate slow subscribe RPC: subscription id is not available until we manually resolve it.
+    sendSpy = vi.fn<SendFn>((method: string, payload) => {
+      if (method === testMethod) {
+        return new Promise((resolve) => {
+          resolveSubscribe = resolve;
+        });
+      }
+
+      if (method === testUnsubscribeMethod) {
+        expect(payload).toEqual([1]);
+      }
+
+      return Promise.resolve(true);
+    });
+
+    apiClient = {
+      send: sendSpy,
+      readStream: (method, subscriptionId) => getStream(method, subscriptionId).asObservable(),
+    };
+
+    streamController = new ApiStreamController({
+      apiClient,
+      connectionStatusEvents,
+      method: testMethod,
+      eventMethod: testEventMethod,
+      payload: testPayload,
+    });
+
+    const streamPromise = streamController.stream;
+
+    // Request unsubscribe before subscribe RPC resolves. This should be queued, not dropped.
+    await expect(streamController.unsubscribeFromStream(testUnsubscribeMethod)).resolves.toBe(true);
+    expect(sendSpy).toHaveBeenCalledTimes(1);
+    expect(sendSpy).toHaveBeenCalledWith(testMethod, testPayload);
+
+    // Subscribe RPC resolves with subscription id; queued unsubscribe should be flushed with that id.
+    resolveSubscribe?.(1);
+    await streamPromise;
+    await Promise.resolve();
+
+    expect(sendSpy).toHaveBeenCalledTimes(2);
+    expect(sendSpy).toHaveBeenLastCalledWith(testUnsubscribeMethod, [1]);
   });
 });

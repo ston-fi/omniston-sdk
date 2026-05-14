@@ -1,4 +1,4 @@
-import { catchError, from, type Observable, switchMap, throwError } from "rxjs";
+import { catchError, Observable, type Subscription, throwError } from "rxjs";
 
 import { wrapError } from "./wrapError";
 
@@ -14,12 +14,38 @@ export function unwrapObservable<T, TArgs extends Array<unknown>, TReturn>(
   originalMethod: (this: T, ...args: TArgs) => Promise<Observable<TReturn>>,
 ): (this: T, ...args: TArgs) => Observable<TReturn> {
   return function (this: T, ...args: TArgs): Observable<TReturn> {
-    // Convert promise to observable, then flatten the inner observable
-    return from(originalMethod.apply(this, args)).pipe(
-      // Wrap promise rejection errors
-      catchError((err) => throwError(() => wrapError(err))),
-      // Flatten the inner observable and wrap its errors
-      switchMap((inner) => inner.pipe(catchError((err) => throwError(() => wrapError(err))))),
-    );
+    return new Observable((subscriber) => {
+      let isClosed = false;
+      let innerSubscription: Subscription | undefined;
+
+      void originalMethod.apply(this, args).then(
+        (inner) => {
+          const wrappedInner = inner.pipe(catchError((err) => throwError(() => wrapError(err))));
+
+          if (isClosed) {
+            // Preserve inner teardown side effects for early unsubscriptions.
+            const cleanupSubscription = wrappedInner.subscribe({
+              error: () => undefined,
+            });
+            cleanupSubscription.unsubscribe();
+            return;
+          }
+
+          innerSubscription = wrappedInner.subscribe(subscriber);
+        },
+        (err) => {
+          if (isClosed) {
+            return;
+          }
+
+          subscriber.error(wrapError(err));
+        },
+      );
+
+      return () => {
+        isClosed = true;
+        innerSubscription?.unsubscribe();
+      };
+    });
   };
 }

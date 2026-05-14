@@ -63,6 +63,8 @@ export class ApiStreamController {
   private outStream = this.createOutStream();
   private outStreamInitializationPromise: Promise<void> | undefined;
 
+  private pendingUnsubscribeMethod: string | undefined;
+
   constructor(options: ApiStreamControllerOptions) {
     this.options = options;
   }
@@ -88,15 +90,26 @@ export class ApiStreamController {
   }
 
   public async unsubscribeFromStream(method: string): Promise<unknown> {
-    if (
-      this.inStreamLastConnectionStatusEvent?.status !== "connected" ||
-      this.subscriptionId === undefined
-    ) {
+    const subscriptionId = this.subscriptionId;
+    const connectionStatus = this.inStreamLastConnectionStatusEvent?.status;
+
+    if (connectionStatus === "closing" || connectionStatus === "closed") {
       // Do not try to unsubscribe if not already connected.
       return true;
     }
 
-    return await this.apiClient.send(method, [this.subscriptionId]);
+    if (subscriptionId === undefined) {
+      // Stream is still initializing; flush unsubscribe after subscription id is known.
+      this.pendingUnsubscribeMethod = method;
+      return true;
+    }
+
+    this.pendingUnsubscribeMethod = undefined;
+
+    // Mark as locally unsubscribed before network call to prevent duplicate requests.
+    this.inStreamSubscriptionId = undefined;
+
+    return await this.apiClient.send(method, [subscriptionId]);
   }
 
   private createOutStream() {
@@ -110,7 +123,6 @@ export class ApiStreamController {
         subscription.unsubscribe();
         connectionEventSubscription.unsubscribe();
         this.resetInStreamSubscriptions();
-        this.inStreamSubscriptionId = undefined;
       };
     });
   }
@@ -136,6 +148,12 @@ export class ApiStreamController {
     this.inStreamSubscriptions.add(
       inStreamClosedByServer.subscribe(() => this.handleInStreamClosedByServer()),
     );
+
+    if (this.pendingUnsubscribeMethod) {
+      const pendingMethod = this.pendingUnsubscribeMethod;
+      this.pendingUnsubscribeMethod = undefined;
+      void this.unsubscribeFromStream(pendingMethod);
+    }
   }
 
   private handleConnectionEvent(event: ConnectionStatusEvent) {

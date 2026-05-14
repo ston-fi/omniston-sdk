@@ -1,5 +1,12 @@
 # Changelog
 
+## 07-05-2026
+
+### @ston-fi/omniston-sdk@0.8.2
+
+#### Fixed
+- Fixed a bug in early unsubscribe handling for SDK streams caused by the async stream-to-observable conversion path. This could happen when consumers send RFQs frequently and cancel them while the RPC subscribe promise is still pending: the local consumer was already unsubscribed, so it did not keep receiving events, but the cancel message was not sent properly and the server-side subscription could remain open. The SDK now sends the pending unsubscribe as soon as the stream is initialized so the server can drop the connection correctly.
+
 ## 01-05-2026
 
 ### @ston-fi/omniston-sdk@0.8.1
