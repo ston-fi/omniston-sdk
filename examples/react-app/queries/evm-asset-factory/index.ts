@@ -8,6 +8,8 @@ import { erc20AddressSchema } from "@/lib/evm/address";
 import type { Asset } from "@/models/asset";
 import { EVM_CHAINS } from "@/models/chain";
 
+import { getEvmAssetsMock } from "./get-evm-assets-mock";
+
 export const evmAssetMockSchema = z.object({
   address: z.union([erc20AddressSchema, z.literal("native")]),
   metadata: z.object({
@@ -21,6 +23,13 @@ export const evmAssetMockSchema = z.object({
 
 export type EvmAssetMock = z.infer<typeof evmAssetMockSchema>;
 
+export async function resolveEvmAssetsMock(chain: (typeof EVM_CHAINS)[number], fallback: unknown) {
+  const envOverride = await getEvmAssetsMock(chain);
+  const mock = envOverride ?? fallback;
+
+  return evmAssetMockSchema.array().parse(mock);
+}
+
 type EvmAssetQueryArgs = {
   wagmiConfig: Config;
   walletAddress?: ChainAddress;
@@ -31,7 +40,7 @@ type CreateEvmAssetQueryFactoryParams = {
   wagmiChainId: number;
   queryKey: string;
   searchQueryKey: string;
-  getAssets: () => Asset[];
+  getAssets: () => Promise<Asset[]>;
 };
 
 export function createEvmAssetQueryFactory({
@@ -106,7 +115,7 @@ export function createEvmAssetQueryFactory({
       return queryOptions({
         queryKey: ["assets", queryKey, walletAddress],
         queryFn: async () => {
-          let assets = getAssets();
+          let assets = await getAssets();
 
           if (walletAddress?.chain.$case === chain) {
             assets = await fetchBalances(assets, wagmiConfig, walletAddress.chain.value as Address);
@@ -128,7 +137,7 @@ export function createEvmAssetQueryFactory({
         queryFn: async () => {
           if (walletAddress?.chain.$case !== chain) return [];
 
-          let assets = getAssets();
+          let assets = await getAssets();
           const term = searchTerm.toLowerCase();
 
           const filteredAssets = assets.filter((asset) =>

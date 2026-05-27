@@ -2,11 +2,11 @@
 
 import type { Quote } from "@ston-fi/omniston-sdk-react";
 
-import { bigNumberToFloat, trimStringWithEllipsis } from "@/lib/utils";
-import { DescriptionList } from "@/components/ui/description-list";
-import { useAssets } from "@/providers/assets";
 import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
+import { DescriptionList } from "@/components/ui/description-list";
+import { bigNumberToFloat, trimStringWithEllipsis } from "@/lib/utils";
 import { Chain } from "@/models/chain";
+import { useQuoteAssets } from "@/hooks/useQuoteAssets";
 
 export function QuotePresenter({
   quote,
@@ -14,15 +14,7 @@ export function QuotePresenter({
 }: React.ComponentProps<typeof DescriptionList> & {
   quote: Quote;
 }) {
-  const { getAssetById, getNativeAsset } = useAssets();
-
-  const inputAsset = getAssetById(quote.inputAsset);
-  const inputNativeAsset = getNativeAsset(quote.inputAsset.chain.$case);
-  const outputAsset = getAssetById(quote.outputAsset);
-
-  if (!outputAsset || !inputAsset || !inputNativeAsset) {
-    return null;
-  }
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
 
   const {
     rfqId,

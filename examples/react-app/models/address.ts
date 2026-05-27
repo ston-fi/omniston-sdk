@@ -2,8 +2,10 @@ import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk";
 import z from "zod";
 
 import { trimStringWithEllipsis } from "@/lib/utils";
+import { isTonAddress } from "@/lib/ton/address";
+import { isErc20Address } from "@/lib/evm/address";
 
-import { Chain } from "./chain";
+import { Chain, EVM_CHAINS } from "./chain";
 
 export const addressSchema = z.object({
   chain: z.discriminatedUnion("$case", [
@@ -12,15 +14,7 @@ export const addressSchema = z.object({
       value: z.string().nonempty(),
     }),
     z.object({
-      $case: z.literal(Chain.BASE),
-      value: z.string().nonempty(),
-    }),
-    z.object({
-      $case: z.literal(Chain.POLYGON),
-      value: z.string().nonempty(),
-    }),
-    z.object({
-      $case: z.literal(Chain.ETHEREUM),
+      $case: z.literal(EVM_CHAINS),
       value: z.string().nonempty(),
     }),
   ]),
@@ -45,42 +39,14 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
-    case Chain.BASE: {
-      switch (assetId.chain.value.kind.$case) {
-        case "erc20": {
-          return {
-            chain: {
-              $case: Chain.BASE,
-              value: assetId.chain.value.kind.value,
-            },
-          };
-        }
-        default: {
-          return null;
-        }
-      }
-    }
-    case Chain.POLYGON: {
-      switch (assetId.chain.value.kind.$case) {
-        case "erc20": {
-          return {
-            chain: {
-              $case: Chain.POLYGON,
-              value: assetId.chain.value.kind.value,
-            },
-          };
-        }
-        default: {
-          return null;
-        }
-      }
-    }
+    case Chain.BASE:
+    case Chain.POLYGON:
     case Chain.ETHEREUM: {
       switch (assetId.chain.value.kind.$case) {
         case "erc20": {
           return {
             chain: {
-              $case: Chain.ETHEREUM,
+              $case: chainCase,
               value: assetId.chain.value.kind.value,
             },
           };
@@ -96,32 +62,23 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
   }
 }
 
-export function truncateAddress(address: ChainAddress): string {
-  let fullAddress: string;
-
-  const chainCase = address.chain.$case;
-
-  switch (chainCase) {
+export function isValidAddress(chain: Chain, src: string) {
+  switch (chain) {
     case Chain.TON: {
-      fullAddress = address.chain.value;
-      break;
+      return isTonAddress(src);
     }
-    case Chain.BASE: {
-      fullAddress = address.chain.value;
-      break;
-    }
-    case Chain.POLYGON: {
-      fullAddress = address.chain.value;
-      break;
-    }
+    case Chain.BASE:
+    case Chain.POLYGON:
     case Chain.ETHEREUM: {
-      fullAddress = address.chain.value;
-      break;
+      return isErc20Address(src);
     }
     default: {
-      throw new Error(`Unexpected chain: ${chainCase}`);
+      chain satisfies never;
+      throw new Error(`Unexpected chain: ${chain}`);
     }
   }
+}
 
-  return trimStringWithEllipsis(fullAddress, 6, 4);
+export function truncateAddress(address: ChainAddress): string {
+  return trimStringWithEllipsis(address.chain.value, 6, 4);
 }

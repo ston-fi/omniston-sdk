@@ -10,7 +10,7 @@ import {
 } from "@ston-fi/omniston-sdk-react";
 
 import { useDebounce } from "@/hooks/useDebounce";
-import { isValidAddress } from "@/lib/utils/address";
+import { isValidAddress } from "@/models/address";
 import { floatToBigNumber } from "@/lib/utils";
 import { percentToPips } from "@/lib/utils/percent";
 import { useAssets } from "@/providers/assets";

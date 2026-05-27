@@ -1,25 +1,19 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import type { QuoteOfType } from "@ston-fi/omniston-sdk-react";
+import { ChevronDown } from "lucide-react";
 
-import { bigNumberToFloat, cn } from "@/lib/utils";
-import { useAssets } from "@/providers/assets";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { QuotePresenter } from "@/components/QuotePresenter";
-import { DescriptionList } from "@/components/ui/description-list";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { CopyJsonCard } from "@/components/ui/copy-json-card";
+import { DescriptionList } from "@/components/ui/description-list";
+import { bigNumberToFloat, cn } from "@/lib/utils";
+import { serializeAssetId } from "@/models/asset-id";
+import { useAssets } from "@/providers/assets";
 
 type SwapQuote = QuoteOfType<"swap">;
 
 export const QuotePreviewSwap = ({ quote }: { quote: SwapQuote }) => {
-  const { getAssetById } = useAssets();
-
-  const inputAsset = getAssetById(quote.inputAsset);
-  const outputAsset = getAssetById(quote.outputAsset);
-
-  if (!inputAsset || !outputAsset) return null;
-
   const swapSettlementData = quote.settlementData.value;
 
   return (
@@ -101,11 +95,22 @@ function SwapChunkItem({
 }) {
   const { getAssetById } = useAssets();
 
-  const inputAsset = getAssetById(step.inputAsset);
-  const outputAsset = getAssetById(step.outputAsset);
+  const inputAssetId = step.inputAsset;
+  const inputAsset = getAssetById(inputAssetId);
 
-  if (!inputAsset || !outputAsset) {
-    return null;
+  if (!inputAsset) {
+    throw new Error(
+      `Can't display the swap chunk. ${serializeAssetId(inputAssetId)} is missing in store`,
+    );
+  }
+
+  const outputAssetId = step.outputAsset;
+  const outputAsset = getAssetById(outputAssetId);
+
+  if (!outputAsset) {
+    throw new Error(
+      `Can't display the swap chunk. ${serializeAssetId(outputAssetId)} is missing in store`,
+    );
   }
 
   return (

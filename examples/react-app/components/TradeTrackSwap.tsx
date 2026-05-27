@@ -20,6 +20,7 @@ import { Skeleton } from "./ui/skeleton";
 import { Chain } from "@/models/chain";
 import { CopyJsonCard } from "./ui/copy-json-card";
 import { useTradeTrackState } from "@/providers/trade-track";
+import { serializeAssetId } from "@/models/asset-id";
 
 export function TradeTrackSwap(props: { className?: string }) {
   const { quote: trackingQuote, tradeEvent: tradeTrackProgress } = useTradeTrackState();
@@ -253,11 +254,22 @@ function SwapChunkItem({
 
   const { getAssetById } = useAssets();
 
-  const inputAsset = getAssetById(swapSettlementData.inputAsset);
-  const outputAsset = getAssetById(swapSettlementData.outputAsset);
+  const inputAssetId = swapSettlementData.inputAsset;
+  const inputAsset = getAssetById(inputAssetId);
 
-  if (!inputAsset || !outputAsset) {
-    return null;
+  if (!inputAsset) {
+    throw new Error(
+      `Can't display the swap chunk. ${serializeAssetId(inputAssetId)} is missing in store`,
+    );
+  }
+
+  const outputAssetId = swapSettlementData.outputAsset;
+  const outputAsset = getAssetById(outputAssetId);
+
+  if (!outputAsset) {
+    throw new Error(
+      `Can't display the swap chunk. ${serializeAssetId(outputAssetId)} is missing in store`,
+    );
   }
 
   return (

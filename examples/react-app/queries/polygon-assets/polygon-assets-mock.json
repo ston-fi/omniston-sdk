@@ -16,23 +16,5 @@
       "displayName": "Polymarket USD",
       "imageUrl": "https://assets.coingecko.com/coins/images/16762/standard/PUSD-purple-200.png?1696516335"
     }
-  },
-  {
-    "address": "0x8c91313bf3ad99fAFEE8e6DB6f87c408F797Cccb",
-    "metadata": {
-      "decimals": 18,
-      "symbol": "RED",
-      "displayName": "Red",
-      "imageUrl": "https://dummyimage.com/125x125/d30000/ffffff.png?text=RED"
-    }
-  },
-  {
-    "address": "0xe2B1C5724Fc6f13B0bf9ba6524f761483d0b6aD4",
-    "metadata": {
-      "decimals": 18,
-      "symbol": "BLUE",
-      "displayName": "Blue",
-      "imageUrl": "https://dummyimage.com/125x125/1d4ed8/ffffff.png?text=BLUE"
-    }
   }
 ]

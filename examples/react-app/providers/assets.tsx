@@ -2,7 +2,7 @@
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useIsConnectionRestored } from "@tonconnect/ui-react";
-import { createContext, useCallback, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { useConfig as useWagmiConfig } from "wagmi";
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
@@ -16,9 +16,9 @@ import { ethereumAssetQueryFactory } from "@/queries/ethereum-assets";
 import { useConnectedWallets } from "@/hooks/useConnectedWallets";
 
 type AssetsContextValue = {
-  getNativeAsset: (chainId: AssetId["chain"]["$case"]) => Asset | undefined;
   getAssetById: (assetId: AssetId) => Asset | undefined;
   insertAsset: (asset: Asset) => void;
+  populateAssets: (assetIds: AssetId[]) => Promise<void>;
 };
 
 const AssetsContext = createContext<AssetsContextValue | undefined>(undefined);
@@ -180,58 +180,34 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     }
   };
 
-  const getNativeAsset = useCallback(
-    (chainId: AssetId["chain"]["$case"]): Asset | undefined => {
-      switch (chainId) {
-        case Chain.TON:
-          return tonAssetsQuery.data?.get(
-            serializeAssetId({
-              chain: {
-                $case: chainId,
-                value: { kind: { $case: "native", value: {} } },
-              },
-            }),
-          );
-        case Chain.BASE:
-          return baseAssetsQuery.data?.get(
-            serializeAssetId({
-              chain: {
-                $case: chainId,
-                value: { kind: { $case: "native", value: {} } },
-              },
-            }),
-          );
-        case Chain.POLYGON:
-          return polygonAssetsQuery.data?.get(
-            serializeAssetId({
-              chain: {
-                $case: chainId,
-                value: { kind: { $case: "native", value: {} } },
-              },
-            }),
-          );
-        case Chain.ETHEREUM:
-          return ethereumAssetsQuery.data?.get(
-            serializeAssetId({
-              chain: {
-                $case: chainId,
-                value: { kind: { $case: "native", value: {} } },
-              },
-            }),
-          );
-        default:
-          return undefined;
+  const populateAssets = async (assetIds: AssetId[]) => {
+    assetIds.forEach((assetId) => {
+      const existingAsset = getAssetById(assetId);
+
+      if (existingAsset) return;
+
+      const chainCase = assetId.chain.$case;
+
+      switch (chainCase) {
+        case Chain.TON: {
+          unconditionalTonAssetIdList.push(assetId);
+          break;
+        }
+        default: {
+          throw new Error(`Unsupported chain for populateAssets call: ${chainCase}`);
+        }
       }
-    },
-    [tonAssetsQuery.data, baseAssetsQuery.data, polygonAssetsQuery.data, ethereumAssetsQuery.data],
-  );
+    });
+
+    await tonAssetsQuery.refetch();
+  };
 
   return (
     <AssetsContext.Provider
       value={{
-        getNativeAsset,
         getAssetById,
         insertAsset,
+        populateAssets,
       }}
     >
       {children}

@@ -16,23 +16,5 @@
       "displayName": "USD Coin",
       "imageUrl": "https://basescan.org/token/images/centre-usdc_28.png"
     }
-  },
-  {
-    "address": "0xafCF681272AF10959736f45616eeCBC22D7095E2",
-    "metadata": {
-      "decimals": 18,
-      "symbol": "RED",
-      "displayName": "Red",
-      "imageUrl": "https://dummyimage.com/125x125/d30000/ffffff.png?text=RED"
-    }
-  },
-  {
-    "address": "0xd602079AFa5c38F550510a2a988CbFa698Fa0189",
-    "metadata": {
-      "decimals": 18,
-      "symbol": "BLUE",
-      "displayName": "Blue",
-      "imageUrl": "https://dummyimage.com/125x125/1d4ed8/ffffff.png?text=BLUE"
-    }
   }
 ]

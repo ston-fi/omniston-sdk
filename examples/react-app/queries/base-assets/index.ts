@@ -4,9 +4,10 @@ import type { Asset } from "@/models/asset";
 import { Chain } from "@/models/chain";
 import {
   createEvmAssetQueryFactory,
-  evmAssetMockSchema,
+  resolveEvmAssetsMock,
   type EvmAssetMock,
 } from "@/queries/evm-asset-factory";
+import { memoizePromise } from "@/lib/utils/promise";
 
 import BASE_ASSETS_MOCK from "./base-assets-mock.json";
 
@@ -18,7 +19,9 @@ export const baseAssetQueryFactory = createEvmAssetQueryFactory({
   wagmiChainId: base.id,
   queryKey: BASE_ASSETS_QUERY_KEY,
   searchQueryKey: BASE_ASSETS_SEARCH_QUERY_KEY,
-  getAssets: () => evmAssetMockSchema.array().parse(BASE_ASSETS_MOCK).map(transformToAsset),
+  getAssets: memoizePromise(async () =>
+    (await resolveEvmAssetsMock(Chain.BASE, BASE_ASSETS_MOCK)).map(transformToAsset),
+  ),
 });
 
 function transformToAsset(baseAsset: EvmAssetMock): Asset {

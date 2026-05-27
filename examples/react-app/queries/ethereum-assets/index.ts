@@ -4,9 +4,10 @@ import type { Asset } from "@/models/asset";
 import { Chain } from "@/models/chain";
 import {
   createEvmAssetQueryFactory,
-  evmAssetMockSchema,
+  resolveEvmAssetsMock,
   type EvmAssetMock,
 } from "@/queries/evm-asset-factory";
+import { memoizePromise } from "@/lib/utils/promise";
 
 import ETHEREUM_ASSETS_MOCK from "./ethereum-assets-mock.json";
 
@@ -18,7 +19,9 @@ export const ethereumAssetQueryFactory = createEvmAssetQueryFactory({
   wagmiChainId: mainnet.id,
   queryKey: ETHEREUM_ASSETS_QUERY_KEY,
   searchQueryKey: ETHEREUM_ASSETS_SEARCH_QUERY_KEY,
-  getAssets: () => evmAssetMockSchema.array().parse(ETHEREUM_ASSETS_MOCK).map(transformToAsset),
+  getAssets: memoizePromise(async () =>
+    (await resolveEvmAssetsMock(Chain.ETHEREUM, ETHEREUM_ASSETS_MOCK)).map(transformToAsset),
+  ),
 });
 
 function transformToAsset(ethereumAsset: EvmAssetMock): Asset {

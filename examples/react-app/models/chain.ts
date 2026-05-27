@@ -37,6 +37,8 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
 
 export const EVM_CHAINS = [Chain.BASE, Chain.POLYGON, Chain.ETHEREUM] as const;
 
+export type EvmChain = (typeof EVM_CHAINS)[number];
+
 export function isEvmChain(
   // this type allows for string literals that are not in the Chain enum,
   //  which is useful for passing unknown/unsupported chains without TypeScript errors

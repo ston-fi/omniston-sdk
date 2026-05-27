@@ -1,6 +1,6 @@
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
-import { Chain } from "./chain";
+import { Chain, type EvmChain } from "./chain";
 
 type AssetMeta = {
   decimals: number;
@@ -11,18 +11,11 @@ type AssetMeta = {
 
 type TonAssetExtra = {};
 
-type BaseAssetExtra = {};
-
-type PolygonAssetExtra = {};
-
-type EthereumAssetExtra = {};
+type EvmAssetExtra = {};
 
 type BlockchainExtraMap = {
   [Chain.TON]: TonAssetExtra;
-  [Chain.BASE]: BaseAssetExtra;
-  [Chain.POLYGON]: PolygonAssetExtra;
-  [Chain.ETHEREUM]: EthereumAssetExtra;
-};
+} & Record<EvmChain, EvmAssetExtra>;
 
 export type Asset = {
   [K in Chain]: {

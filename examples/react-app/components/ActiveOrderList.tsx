@@ -1,19 +1,23 @@
-import { type ActiveOrder, type ChainAddress } from "@ston-fi/omniston-sdk-react";
-import { useQueries } from "@tanstack/react-query";
+import type { ActiveOrder, ChainAddress } from "@ston-fi/omniston-sdk-react";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useMemo } from "react";
 
 import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
 import { QuoteDataPresenter } from "@/components/QuotePreview";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { bigNumberToFloat, cn } from "@/lib/utils";
-import { useOmniston } from "@/hooks/useOmniston";
 import { useAssets } from "@/providers/assets";
+import { bigNumberToFloat, cn } from "@/lib/utils";
+import { collectQuoteAssets } from "@/lib/utils/quote";
+import { useOmniston } from "@/hooks/useOmniston";
 import { useConnectedWallets } from "@/hooks/useConnectedWallets";
 import { truncateAddress } from "@/models/address";
+import { serializeAssetId } from "@/models/asset-id";
+import { useQuoteAssets } from "@/hooks/useQuoteAssets";
 
 export const ActiveOrderList = ({ className }: { className?: string }) => {
   const omniston = useOmniston();
+  const { populateAssets } = useAssets();
   const connectedWallets = useConnectedWallets();
 
   const walletAddresses = useMemo(
@@ -44,9 +48,34 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
     [activeOrdersQueryResults],
   );
 
+  const activeOrderAssetIds = useMemo(
+    () =>
+      new Map(
+        activeOrders
+          .flatMap(({ order }) => collectQuoteAssets(order.quote))
+          .map((assetId) => [serializeAssetId(assetId), assetId]),
+      ),
+    [activeOrders],
+  );
+
   const isLoading = activeOrdersQueryResults.some((queryResult) => queryResult.isLoading);
+  const shouldLoadActiveOrderAssets = !isLoading && activeOrders.length > 0;
+
+  const activeOrderAssetsQuery = useQuery({
+    queryKey: ["activeOrderAssets", ...activeOrderAssetIds.keys()],
+    queryFn: () => populateAssets(Array.from(activeOrderAssetIds.values())),
+    enabled: shouldLoadActiveOrderAssets,
+  });
 
   if (!isLoading && activeOrders.length === 0) return null;
+  if (
+    shouldLoadActiveOrderAssets &&
+    (activeOrderAssetsQuery.isPending ||
+      activeOrderAssetsQuery.isFetching ||
+      activeOrderAssetsQuery.status !== "success")
+  ) {
+    return null;
+  }
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
@@ -72,14 +101,9 @@ function ActiveOrderListItem({
   order: ActiveOrder;
   traderAddress: ChainAddress;
 }) {
-  const { getAssetById } = useAssets();
-
-  const inputAsset = getAssetById(order.quote.inputAsset);
-  const outputAsset = getAssetById(order.quote.outputAsset);
-
-  if (!inputAsset || !outputAsset) {
-    return null;
-  }
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(
+    order.quote,
+  );
 
   return (
     <li className="flex flex-col gap-2 rounded-md border p-4">

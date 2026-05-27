@@ -5,12 +5,12 @@ import type { QuoteOfType } from "@ston-fi/omniston-sdk-react";
 
 import { bigNumberToFloat, trimStringWithEllipsis } from "@/lib/utils";
 import { DescriptionList } from "@/components/ui/description-list";
-import { useAssets } from "@/providers/assets";
 import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { QuotePresenter } from "@/components/QuotePresenter";
 import { CopyJsonCard } from "@/components/ui/copy-json-card";
 import { addressFromAssetId } from "@/models/address";
+import { useQuoteAssets } from "@/hooks/useQuoteAssets";
 
 type OrderQuote = QuoteOfType<"order">;
 
@@ -49,12 +49,7 @@ function OrderSettlementDataPresenter({
 }: React.ComponentProps<typeof DescriptionList> & {
   quote: OrderQuote;
 }) {
-  const { getAssetById } = useAssets();
-
-  const outputAsset = getAssetById(quote.outputAsset);
-  const inputAsset = getAssetById(quote.inputAsset);
-
-  if (!outputAsset || !inputAsset) return null;
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
 
   const orderSettlementData = quote.settlementData.value;
 

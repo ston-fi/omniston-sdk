@@ -11,7 +11,6 @@ import {
 } from "@ston-fi/omniston-sdk-react";
 
 import { bigNumberToFloat, cn, trimStringWithEllipsis } from "@/lib/utils";
-import { useAssets } from "@/providers/assets";
 import { Copy } from "@/components/ui/copy";
 import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
 import { TradeTrackStatusPresenter } from "@/components/TradeTrackStatusPresenter";
@@ -20,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Chain } from "@/models/chain";
 import { CopyJsonCard } from "@/components/ui/copy-json-card";
 import { useTradeTrackState } from "@/providers/trade-track";
+import { useQuoteAssets } from "@/hooks/useQuoteAssets";
 
 export function TradeTrackOrder(props: { className?: string }) {
   const { quote: trackingQuote, tradeEvent: tradeTrackProgress } = useTradeTrackState();
@@ -78,11 +78,7 @@ function OrderEventView({
   order: Order;
   className?: string;
 }) {
-  const { getAssetById } = useAssets();
-
-  const inputAsset = getAssetById(quote.inputAsset);
-
-  if (!inputAsset) return null;
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
 
   const {
     status,
@@ -141,16 +137,11 @@ function EscrowExecution({
   executions,
   execution,
 }: {
-  quote: Pick<Quote, "inputAsset" | "outputAsset">;
+  quote: Quote;
   executions: Execution[];
   execution: Execution;
 }) {
-  const { getAssetById } = useAssets();
-
-  const inputAsset = getAssetById(quote.inputAsset);
-  const outputAsset = getAssetById(quote.outputAsset);
-
-  if (!inputAsset || !outputAsset) return null;
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
 
   const {
     index,

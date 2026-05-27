@@ -3,7 +3,7 @@
 import { useId } from "react";
 import { SettlementMethod } from "@ston-fi/omniston-sdk-react";
 
-import { isValidAddress } from "@/lib/utils/address";
+import { isValidAddress } from "@/models/address";
 import { Chain, EVM_CHAINS } from "@/models/chain";
 import { Button } from "@/components/ui/button";
 import {

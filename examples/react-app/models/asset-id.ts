@@ -1,10 +1,9 @@
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
-
 import { z } from "zod";
 
 import type { Brand } from "@/lib/types";
 
-import { Chain } from "./chain";
+import { Chain, EVM_CHAINS } from "./chain";
 
 export const assetIdSchema = z.object({
   chain: z.discriminatedUnion("$case", [
@@ -24,37 +23,7 @@ export const assetIdSchema = z.object({
       }),
     }),
     z.object({
-      $case: z.literal(Chain.BASE),
-      value: z.object({
-        kind: z.discriminatedUnion("$case", [
-          z.object({
-            $case: z.literal("native"),
-            value: z.object({}),
-          }),
-          z.object({
-            $case: z.literal("erc20"),
-            value: z.string().nonempty(),
-          }),
-        ]),
-      }),
-    }),
-    z.object({
-      $case: z.literal(Chain.POLYGON),
-      value: z.object({
-        kind: z.discriminatedUnion("$case", [
-          z.object({
-            $case: z.literal("native"),
-            value: z.object({}),
-          }),
-          z.object({
-            $case: z.literal("erc20"),
-            value: z.string().nonempty(),
-          }),
-        ]),
-      }),
-    }),
-    z.object({
-      $case: z.literal(Chain.ETHEREUM),
+      $case: z.literal(EVM_CHAINS),
       value: z.object({
         kind: z.discriminatedUnion("$case", [
           z.object({
@@ -87,4 +56,13 @@ export function isAssetIdEqual(
 ): boolean {
   if (!a || !b) return false;
   return serializeAssetId(a) === serializeAssetId(b);
+}
+
+export function getNativeAssetIdForChain(chainId: AssetId["chain"]["$case"]): AssetId {
+  return {
+    chain: {
+      $case: chainId,
+      value: { kind: { $case: "native", value: {} } },
+    },
+  };
 }
