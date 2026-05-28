@@ -5,7 +5,7 @@ export function generateHtlcSecret() {
   return crypto.getRandomValues(new Uint8Array(32));
 }
 
-export function generateHashlock(
+export function generateHtlcHashlock(
   secret: Uint8Array,
   hashingFunction: OrderSettlementData["htlcHashingFunction"],
 ) {
@@ -14,7 +14,11 @@ export function generateHashlock(
       return keccak256(secret, "bytes");
     case "HASHING_FUNCTION_SHA256":
       return sha256(secret, "bytes");
+    case "UNRECOGNIZED":
+    case undefined:
+      throw new Error("Unrecognized hashing function");
     default:
+      hashingFunction satisfies never;
       throw new Error(`Unsupported hashing function ${hashingFunction}`);
   }
 }

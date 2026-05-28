@@ -1,19 +1,17 @@
-import type { ActiveOrder, ChainAddress } from "@ston-fi/omniston-sdk-react";
+import type { ActiveOrder } from "@ston-fi/omniston-sdk-react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useMemo } from "react";
 
-import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
 import { QuoteDataPresenter } from "@/components/QuotePreview";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useAssets } from "@/providers/assets";
-import { bigNumberToFloat, cn } from "@/lib/utils";
-import { collectQuoteAssets } from "@/lib/utils/quote";
-import { useOmniston } from "@/hooks/useOmniston";
 import { useConnectedWallets } from "@/hooks/useConnectedWallets";
-import { truncateAddress } from "@/models/address";
-import { serializeAssetId } from "@/models/asset-id";
+import { useOmniston } from "@/hooks/useOmniston";
 import { useQuoteAssets } from "@/hooks/useQuoteAssets";
+import { collectQuoteAssets } from "@/lib/omniston/quote";
+import { bigNumberToFloat, cn } from "@/lib/utils";
+import { serializeAssetId } from "@/models/asset-id";
+import { useAssets } from "@/providers/assets";
 
 export const ActiveOrderList = ({ className }: { className?: string }) => {
   const omniston = useOmniston();
@@ -25,7 +23,7 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
     [connectedWallets],
   );
 
-  const activeOrdersQueryResults = useQueries({
+  const activeOrdersQuery = useQueries({
     queries: walletAddresses.map((walletAddress) => ({
       queryKey: ["orderGetActive", { traderAddress: walletAddress }],
       queryFn: async () => ({
@@ -37,45 +35,36 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
 
   const activeOrders = useMemo(
     () =>
-      activeOrdersQueryResults.flatMap((queryResult) => {
+      activeOrdersQuery.flatMap((queryResult) => {
         if (!queryResult.data) return [];
 
-        return queryResult.data.orders.map((order) => ({
-          order,
-          traderAddress: queryResult.data.traderAddress,
-        }));
+        return queryResult.data.orders;
       }),
-    [activeOrdersQueryResults],
+    [activeOrdersQuery],
   );
 
-  const activeOrderAssetIds = useMemo(
+  const activeOrdersAssetIds = useMemo(
     () =>
       new Map(
         activeOrders
-          .flatMap(({ order }) => collectQuoteAssets(order.quote))
+          .flatMap((order) => collectQuoteAssets(order.quote))
           .map((assetId) => [serializeAssetId(assetId), assetId]),
       ),
     [activeOrders],
   );
 
-  const isLoading = activeOrdersQueryResults.some((queryResult) => queryResult.isLoading);
-  const shouldLoadActiveOrderAssets = !isLoading && activeOrders.length > 0;
+  const isActiveOrdersQueryLoading = activeOrdersQuery.some((queryResult) => queryResult.isLoading);
+  const shouldLoadActiveOrderAssets = !isActiveOrdersQueryLoading && activeOrders.length > 0;
 
   const activeOrderAssetsQuery = useQuery({
-    queryKey: ["activeOrderAssets", ...activeOrderAssetIds.keys()],
-    queryFn: () => populateAssets(Array.from(activeOrderAssetIds.values())),
+    queryKey: ["activeOrderAssets", ...activeOrdersAssetIds.keys()],
+    queryFn: () => populateAssets(Array.from(activeOrdersAssetIds.values())).then(() => null),
     enabled: shouldLoadActiveOrderAssets,
   });
 
-  if (!isLoading && activeOrders.length === 0) return null;
-  if (
-    shouldLoadActiveOrderAssets &&
-    (activeOrderAssetsQuery.isPending ||
-      activeOrderAssetsQuery.isFetching ||
-      activeOrderAssetsQuery.status !== "success")
-  ) {
-    return null;
-  }
+  if (isActiveOrdersQueryLoading) return null;
+  if (activeOrders.length === 0) return null;
+  if (activeOrderAssetsQuery.status !== "success") return null;
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
@@ -83,24 +72,14 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
 
       <ul className="flex flex-col gap-1">
         {activeOrders.map((activeOrder) => (
-          <ActiveOrderListItem
-            key={activeOrder.order.quote.quoteId}
-            order={activeOrder.order}
-            traderAddress={activeOrder.traderAddress}
-          />
+          <ActiveOrderListItem key={activeOrder.quote.quoteId} order={activeOrder} />
         ))}
       </ul>
     </div>
   );
 };
 
-function ActiveOrderListItem({
-  order,
-  traderAddress,
-}: {
-  order: ActiveOrder;
-  traderAddress: ChainAddress;
-}) {
+function ActiveOrderListItem({ order }: { order: ActiveOrder }) {
   const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(
     order.quote,
   );
@@ -108,15 +87,16 @@ function ActiveOrderListItem({
   return (
     <li className="flex flex-col gap-2 rounded-md border p-4">
       <Collapsible className="group">
-        <CollapsibleTrigger className="inline-flex w-full items-center gap-1">
-          <span className="font-mono">{`${bigNumberToFloat(order.quote.inputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol} > ${bigNumberToFloat(order.quote.outputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol} from`}</span>
-          <ExplorerAddressPreview address={traderAddress}>
-            {truncateAddress(traderAddress)}
-          </ExplorerAddressPreview>
+        <CollapsibleTrigger className="flex w-full flex-row items-center gap-1">
+          <p className="flex flex-wrap items-baseline gap-x-1 font-mono">
+            <span className="whitespace-nowrap">{`${bigNumberToFloat(order.quote.inputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol} (${inputAsset.id.chain.$case.toLocaleUpperCase()})`}</span>
+            <span className="text-muted-foreground">→</span>
+            <span className="whitespace-nowrap">{`${bigNumberToFloat(order.quote.outputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol} (${outputAsset.id.chain.$case.toLocaleUpperCase()})`}</span>
+          </p>
 
           <ChevronDown
             size={16}
-            className="ml-auto transition-transform group-data-[state=open]:rotate-180"
+            className="ml-auto shrink-0 transition-transform group-data-[state=open]:rotate-180"
           />
         </CollapsibleTrigger>
         <CollapsibleContent>

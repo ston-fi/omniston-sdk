@@ -180,17 +180,18 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     }
   };
 
+  // TODO(refactor): the assets injection flow needed to be improved and support non-TON chains as well
   const populateAssets = async (assetIds: AssetId[]) => {
-    assetIds.forEach((assetId) => {
-      const existingAsset = getAssetById(assetId);
+    const tonAssetIdsToPopulate: AssetId[] = [];
 
-      if (existingAsset) return;
+    assetIds.forEach((assetId) => {
+      if (getAssetById(assetId)) return;
 
       const chainCase = assetId.chain.$case;
 
       switch (chainCase) {
         case Chain.TON: {
-          unconditionalTonAssetIdList.push(assetId);
+          tonAssetIdsToPopulate.push(assetId);
           break;
         }
         default: {
@@ -199,7 +200,28 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
       }
     });
 
-    await tonAssetsQuery.refetch();
+    if (tonAssetIdsToPopulate.length === 0) return;
+
+    const nextUnconditionalTonAssetIdList = [...unconditionalTonAssetIdList];
+
+    tonAssetIdsToPopulate.forEach((assetId) => {
+      const exists = nextUnconditionalTonAssetIdList.some((existingAssetId) =>
+        isAssetIdEqual(existingAssetId, assetId),
+      );
+
+      if (!exists) {
+        nextUnconditionalTonAssetIdList.push(assetId);
+      }
+    });
+
+    setUnconditionalTonAssetIdList(nextUnconditionalTonAssetIdList);
+
+    await queryClient.fetchQuery(
+      tonAssetQueryFactory.fetch({
+        unconditionalAssets: nextUnconditionalTonAssetIdList,
+        walletAddress: tonWalletAddress,
+      }),
+    );
   };
 
   return (

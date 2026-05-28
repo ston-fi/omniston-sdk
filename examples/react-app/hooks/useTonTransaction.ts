@@ -7,7 +7,7 @@ import { useRfq } from "@/hooks/useRfq";
 import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
 import { hexToBase64 } from "@/lib/utils";
 import { useSwapSettings } from "@/providers/swap-settings";
-import { generateHashlock, generateHtlcSecret } from "@/lib/utils/htlc";
+import { generateHtlcHashlock, generateHtlcSecret } from "@/lib/omniston/htlc";
 
 export function useTonTransaction() {
   const [tonConnect] = useTonConnectUI();
@@ -45,7 +45,7 @@ export function useTonTransaction() {
           if (isHtlcOrderQuote(orderQuote)) {
             const secrets = Array.from({ length: htlcMaxExecutions }, generateHtlcSecret);
             const hashlocks = secrets.map((secret) =>
-              generateHashlock(secret, orderQuote.settlementData.value.htlcHashingFunction),
+              generateHtlcHashlock(secret, orderQuote.settlementData.value.htlcHashingFunction),
             );
 
             htlcSecrets = secrets;
