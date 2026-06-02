@@ -18,6 +18,32 @@ message BuildEvmOrderPayloadRequest {
   // trade
   optional stonfi.common.v1.ChainAddress trader_dst_address = 4;
 
+  // ABI-encoded permit data produced by the client for the selected token
+  // authorization flow.
+  //
+  // This field should be omitted when the input token allowance is already
+  // available through a regular on-chain approval.
+  //
+  // When set, `permit_signature` must also be set. The exact ABI layout is
+  // selected by `use_permit2`.
+  optional bytes encoded_permit_data = 10;
+
+  // Signature produced by the owner's EVM wallet for `encoded_permit_data`.
+  //
+  // This field should be omitted together with `encoded_permit_data` when no
+  // permit-based authorization is used.
+  optional bytes permit_signature = 11;
+
+  // Selects the permit authorization format.
+  //
+  // If true, `encoded_permit_data` and `permit_signature` are interpreted as a
+  // Permit2 authorization. If false or omitted, they are interpreted as a
+  // token-native permit authorization.
+  //
+  // This field has no effect when `encoded_permit_data` and `permit_signature`
+  // are omitted.
+  optional bool use_permit2 = 12;
+
   // (HTLC-only) Allows to specify how the secrets for a multi-chunk HTLC
   // position should be defined.
   //

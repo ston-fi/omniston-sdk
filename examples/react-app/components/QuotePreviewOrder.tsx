@@ -92,9 +92,7 @@ function OrderSettlementDataPresenter({
       {orderSettlementData.srcHtlcSecurityDepositUnits ? (
         <li>
           <span>srcHtlcSecurityDepositUnits</span>
-          <span>
-            {`${bigNumberToFloat(orderSettlementData.srcHtlcSecurityDepositUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol}`}
-          </span>
+          <span>{orderSettlementData.srcHtlcSecurityDepositUnits}</span>
         </li>
       ) : null}
       {orderSettlementData.htlcHashingFunction ? (
@@ -140,9 +138,7 @@ function OrderSettlementDataPresenter({
       {orderSettlementData.dstSecurityDepositUnits ? (
         <li>
           <span>dstSecurityDepositUnits</span>
-          <span>
-            {`${bigNumberToFloat(orderSettlementData.dstSecurityDepositUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol}`}
-          </span>
+          <span>{orderSettlementData.dstSecurityDepositUnits}</span>
         </li>
       ) : null}
       <li>

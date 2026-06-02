@@ -1,5 +1,18 @@
 # Changelog
 
+## 02-06-2026
+
+### @ston-fi/omniston-sdk@0.8.3
+
+#### Added
+
+- the `BuildEvmOrderPayloadRequest` type was extended with three optional fields:
+  - `encodedPermitData`
+  - `permitSignature`
+  - `usePermit2`
+
+  The new fields enable EVM HTLC orders with EIP-2612 and Permit2. The example app now includes EIP-2612 for pUSD (POL) orders and Permit2 for USDC (BASE) orders. Ston.fi Docs were extended with a dedicated EVM permits guide: [Ston.fi Docs / EVM Permits](https://docs.ston.fi/developer-section/omniston/sdk/evm-permits)
+
 ## 07-05-2026
 
 ### @ston-fi/omniston-sdk@0.8.2

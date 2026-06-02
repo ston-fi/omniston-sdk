@@ -18,8 +18,17 @@ import { useRfq } from "@/hooks/useRfq";
 import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
 import { generateHtlcHashlock, generateHtlcSecret } from "@/lib/omniston/htlc";
 import { mapChainToChainId } from "@/lib/evm/chain";
+import {
+  PERMIT2_ADDRESS,
+  buildEip2612PermitTypedData,
+  buildPermit2PermitTypedData,
+  encodeEip2612PermitData,
+  encodePermit2PermitData,
+  resolveEvmPermitConfig,
+} from "@/lib/evm/permits";
 import { useSwapSettings } from "@/providers/swap-settings";
 import { isEvmChain } from "@/models/chain";
+import { getContractNonce, getPermit2Nonce } from "@/lib/evm/on-chain";
 
 type TypedData = Parameters<ReturnType<typeof useSignTypedData>["mutateAsync"]>[0];
 
@@ -59,6 +68,123 @@ export function useEvmTransaction() {
 
       await switchChainAsync({ chainId: inputChainId });
 
+      // --- permit
+
+      let permitData:
+        | Required<
+            Pick<
+              BuildEvmOrderPayloadRequest,
+              "encodedPermitData" | "permitSignature" | "usePermit2"
+            >
+          >
+        | undefined;
+
+      // TODO: move to the setting for granular control over when to use Permit vs allowance?
+      let shouldUsePermit = true;
+      const permitConfig = resolveEvmPermitConfig(quote.inputAsset);
+
+      if (shouldUsePermit && permitConfig) {
+        const ownerAddress = inputWalletAddress.chain.value as EvmAddress;
+        const tokenAddress = quote.inputAsset.chain.value.kind.value as EvmAddress;
+        const spenderAddress = quote.settlementData.value.srcProtocolContractAddress.chain
+          .value as EvmAddress;
+
+        if (permitConfig.kind === "eip2612") {
+          const nonce = await getContractNonce(wagmiConfig, {
+            ownerAddress,
+            contractAddress: tokenAddress,
+          });
+
+          const now = Math.floor(Date.now() / 1000);
+          const deadline = BigInt(now + 3600);
+          const permitMessage = {
+            owner: ownerAddress,
+            spender: spenderAddress,
+            value: BigInt(quote.inputUnits),
+            nonce,
+            deadline,
+          };
+
+          const permitTypedData = buildEip2612PermitTypedData({
+            domain: permitConfig.domain,
+            message: permitMessage,
+          });
+
+          const permitSignature = await signTypedData({
+            ...permitTypedData,
+            account: ownerAddress,
+          });
+
+          permitData = {
+            usePermit2: false,
+            permitSignature: encodeRawSignature(permitSignature),
+            encodedPermitData: encodeEip2612PermitData(permitMessage),
+          };
+        } else if (permitConfig.kind === "permit2") {
+          const currentAllowance = await readContract(wagmiConfig, {
+            address: tokenAddress,
+            abi: erc20Abi,
+            functionName: "allowance",
+            args: [ownerAddress, PERMIT2_ADDRESS],
+            chainId: inputChainId,
+          });
+
+          const isAllowanceSufficient = currentAllowance >= BigInt(quote.inputUnits);
+
+          if (!isAllowanceSufficient) {
+            const approveHash = await writeContractAsync({
+              address: tokenAddress,
+              abi: erc20Abi,
+              functionName: "approve",
+              args: [PERMIT2_ADDRESS, maxUint256],
+              chainId: inputChainId,
+              account: ownerAddress,
+            });
+
+            await waitForTransactionReceipt(wagmiConfig, {
+              hash: approveHash,
+              chainId: inputChainId,
+            });
+          }
+
+          const nonce = await getPermit2Nonce(wagmiConfig, {
+            ownerAddress,
+            permit2Address: permitConfig.domain.verifyingContract,
+            tokenAddress,
+            spenderAddress,
+          });
+
+          const now = Math.floor(Date.now() / 1000);
+          const sigDeadline = BigInt(now + 3600);
+          const permitMessage = {
+            details: {
+              token: tokenAddress,
+              amount: BigInt(quote.inputUnits),
+              expiration: now + 3600,
+              nonce: Number(nonce),
+            },
+            spender: spenderAddress,
+            sigDeadline,
+          };
+
+          const permitTypedData = buildPermit2PermitTypedData({
+            domain: permitConfig.domain,
+            message: permitMessage,
+          });
+
+          const permitSignature = await signTypedData({
+            ...permitTypedData,
+            account: ownerAddress,
+          });
+
+          permitData = {
+            usePermit2: true,
+            permitSignature: encodeRawSignature(permitSignature),
+            encodedPermitData: encodePermit2PermitData(permitMessage),
+          };
+        }
+      }
+
       // --- htlc
 
       let htlcSecrets: Uint8Array[] | undefined;
@@ -90,6 +216,7 @@ export function useEvmTransaction() {
         traderDstAddress: outputWalletAddress,
         traderDstDiscloseAddress: outputWalletAddress,
         ...htlcSecretsData,
+        ...permitData,
       });
 
       const orderTypedData = JSON.parse(evmOrderPayload.typedData) as Omit<TypedData, "domain"> & {
@@ -101,11 +228,12 @@ export function useEvmTransaction() {
       const spenderAddress = orderTypedData.domain.verifyingContract;
       const chainId = Number(orderTypedData.domain.chainId);
 
-      // --- approval check + request (if needed)
+      // --- approval check + request if needed
 
-      const isAllowanceRequired =
-        isEvmChain(quote.inputAsset.chain.$case) &&
-        quote.inputAsset.chain.value.kind.$case !== "native";
+      const isAllowanceRequired = permitData
+        ? false
+        : isEvmChain(quote.inputAsset.chain.$case) &&
+          quote.inputAsset.chain.value.kind.$case !== "native";
 
       if (isAllowanceRequired) {
         const currentAllowance = await readContract(wagmiConfig, {
@@ -184,6 +312,10 @@ function encodeCompactSignature(serializedSignature: SignTypedDataResult) {
   const bytes = hexToBytes(serializedCompactSignature);
 
   return bytes;
+}
+
+function encodeRawSignature(serializedSignature: SignTypedDataResult) {
+  return hexToBytes(serializedSignature);
 }
 
 function encodeTypedData(typedData: any) {

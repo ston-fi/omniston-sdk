@@ -24,6 +24,35 @@ export interface BuildEvmOrderPayloadRequest {
    */
   traderDstAddress?: ChainAddress | undefined;
   /**
+   * ABI-encoded permit data produced by the client for the selected token
+   * authorization flow.
+   *
+   * This field should be omitted when the input token allowance is already
+   * available through a regular on-chain approval.
+   *
+   * When set, `permit_signature` must also be set. The exact ABI layout is
+   * selected by `use_permit2`.
+   */
+  encodedPermitData?: Uint8Array | undefined;
+  /**
+   * Signature produced by the owner's EVM wallet for `encoded_permit_data`.
+   *
+   * This field should be omitted together with `encoded_permit_data` when no
+   * permit-based authorization is used.
+   */
+  permitSignature?: Uint8Array | undefined;
+  /**
+   * Selects the permit authorization format.
+   *
+   * If true, `encoded_permit_data` and `permit_signature` are interpreted as a
+   * Permit2 authorization. If false or omitted, they are interpreted as a
+   * token-native permit authorization.
+   *
+   * This field has no effect when `encoded_permit_data` and `permit_signature`
+   * are omitted.
+   */
+  usePermit2?: boolean | undefined;
+  /**
    * (HTLC-only) Allows to specify how the secrets for a multi-chunk HTLC
    * position should be defined.
    *
@@ -102,6 +131,9 @@ function createBaseBuildEvmOrderPayloadRequest(): BuildEvmOrderPayloadRequest {
     quoteId: "",
     ownerSrcAddress: undefined,
     traderDstAddress: undefined,
+    encodedPermitData: undefined,
+    permitSignature: undefined,
+    usePermit2: undefined,
     htlcSecrets: undefined,
     traderDstDiscloseAddress: undefined,
   };
@@ -117,6 +149,13 @@ export const BuildEvmOrderPayloadRequest: MessageFns<BuildEvmOrderPayloadRequest
       traderDstAddress: isSet(object.trader_dst_address)
         ? ChainAddress.fromJSON(object.trader_dst_address)
         : undefined,
+      encodedPermitData: isSet(object.encoded_permit_data)
+        ? bytesFromBase64(object.encoded_permit_data)
+        : undefined,
+      permitSignature: isSet(object.permit_signature)
+        ? bytesFromBase64(object.permit_signature)
+        : undefined,
+      usePermit2: isSet(object.use_permit2) ? globalThis.Boolean(object.use_permit2) : undefined,
       htlcSecrets: isSet(object.htlc_secrets)
         ? HtlcSecrets.fromJSON(object.htlc_secrets)
         : undefined,
@@ -136,6 +175,15 @@ export const BuildEvmOrderPayloadRequest: MessageFns<BuildEvmOrderPayloadRequest
     }
     if (message.traderDstAddress !== undefined) {
       obj.trader_dst_address = ChainAddress.toJSON(message.traderDstAddress);
+    }
+    if (message.encodedPermitData !== undefined) {
+      obj.encoded_permit_data = base64FromBytes(message.encodedPermitData);
+    }
+    if (message.permitSignature !== undefined) {
+      obj.permit_signature = base64FromBytes(message.permitSignature);
+    }
+    if (message.usePermit2 !== undefined) {
+      obj.use_permit2 = message.usePermit2;
     }
     if (message.htlcSecrets !== undefined) {
       obj.htlc_secrets = HtlcSecrets.toJSON(message.htlcSecrets);
@@ -164,6 +212,9 @@ export const BuildEvmOrderPayloadRequest: MessageFns<BuildEvmOrderPayloadRequest
       object.traderDstAddress !== undefined && object.traderDstAddress !== null
         ? ChainAddress.fromPartial(object.traderDstAddress)
         : undefined;
+    message.encodedPermitData = object.encodedPermitData ?? undefined;
+    message.permitSignature = object.permitSignature ?? undefined;
+    message.usePermit2 = object.usePermit2 ?? undefined;
     message.htlcSecrets =
       object.htlcSecrets !== undefined && object.htlcSecrets !== null
         ? HtlcSecrets.fromPartial(object.htlcSecrets)
