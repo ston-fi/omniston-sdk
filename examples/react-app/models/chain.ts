@@ -5,6 +5,7 @@ export const Chain = {
   BASE: "base",
   POLYGON: "polygon",
   ETHEREUM: "ethereum",
+  BNB: "bnb",
 } as const;
 
 export type Chain = (typeof Chain)[keyof typeof Chain];
@@ -33,9 +34,13 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
     label: "ETHEREUM",
     imageUrl: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
   },
+  [Chain.BNB]: {
+    label: "BNB",
+    imageUrl: "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png",
+  },
 };
 
-export const EVM_CHAINS = [Chain.BASE, Chain.POLYGON, Chain.ETHEREUM] as const;
+export const EVM_CHAINS = [Chain.BASE, Chain.POLYGON, Chain.ETHEREUM, Chain.BNB] as const;
 
 export type EvmChain = (typeof EVM_CHAINS)[number];
 

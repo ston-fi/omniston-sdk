@@ -40,6 +40,9 @@ export const ExplorerAddressPreview = ({
       case Chain.ETHEREUM: {
         return `https://etherscan.io/address/${address.chain.value}`;
       }
+      case Chain.BNB: {
+        return `https://bscscan.com/address/${address.chain.value}`;
+      }
       default: {
         chainCase satisfies never;
         throw new Error(`Unexpected chain: ${chainCase}`);

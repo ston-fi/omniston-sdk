@@ -1,0 +1,20 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "BNB",
+      "displayName": "BNB",
+      "imageUrl": "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png?1696501970"
+    }
+  },
+  {
+    "address": "0x55d398326f99059fF775485246999027B3197955",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "USDT",
+      "displayName": "Tether USD",
+      "imageUrl": "https://assets.coingecko.com/coins/images/35021/standard/USDT.png"
+    }
+  }
+]

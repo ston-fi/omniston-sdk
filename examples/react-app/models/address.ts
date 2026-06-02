@@ -41,7 +41,8 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
     }
     case Chain.BASE:
     case Chain.POLYGON:
-    case Chain.ETHEREUM: {
+    case Chain.ETHEREUM:
+    case Chain.BNB: {
       switch (assetId.chain.value.kind.$case) {
         case "erc20": {
           return {
@@ -69,7 +70,8 @@ export function isValidAddress(chain: Chain, src: string) {
     }
     case Chain.BASE:
     case Chain.POLYGON:
-    case Chain.ETHEREUM: {
+    case Chain.ETHEREUM:
+    case Chain.BNB: {
       return isErc20Address(src);
     }
     default: {
