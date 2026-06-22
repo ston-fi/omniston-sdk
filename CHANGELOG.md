@@ -12,7 +12,7 @@
   - `permitSignature`
   - `usePermit2`
 
-  The new fields enable EVM HTLC orders with EIP-2612 and Permit2. The example app now includes EIP-2612 for pUSD (POL) orders and Permit2 for USDC (BASE) orders. Ston.fi Docs were extended with a dedicated EVM permits guide: [Ston.fi Docs / EVM Permits](https://docs.ston.fi/developer-section/omniston/sdk/evm-permits)
+  The new fields enable EVM HTLC orders with EIP-2612 and Permit2. The example app now includes EIP-2612 for pUSD (POL) orders and Permit2 for USDC (BASE) orders. Ston.fi Docs were extended with a dedicated EVM permits guide: [Ston.fi Docs / EVM allowance](https://docs.ston.fi/developer-section/omniston/sdk/evm/evm-allowance)
 
 ## 07-05-2026
 
