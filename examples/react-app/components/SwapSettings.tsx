@@ -156,22 +156,13 @@ const SwapSlippageToleranceSection = () => {
 };
 
 const SwapIntegratorFeeSection = () => {
-  const {
-    settlementMethods,
-    integratorAddress,
-    setIntegratorAddress,
-    integratorFeePips,
-    setIntegratorFeePips,
-  } = useSwapSettings();
+  const { integratorAddress, setIntegratorAddress, integratorFeePips, setIntegratorFeePips } =
+    useSwapSettings();
 
   const addressInputId = useId();
   const feeInputId = useId();
 
-  const isSwapSettlementMethod = !!settlementMethods.find(
-    (method) => method === SettlementMethod.SWAP,
-  );
-
-  const disabled = !isSwapSettlementMethod;
+  const disabled = false;
   const isIntegratorAddressValid =
     !integratorAddress ||
     isValidAddress(Chain.TON, integratorAddress) ||
