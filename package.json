@@ -1,6 +1,11 @@
 {
   "name": "root",
   "private": true,
+  "contributors": [
+    "Egor Guscha @pxbuffer",
+    "Pavel Rakhmanov <p.rakhmanov@ston.fi>",
+    "Psevkin Andrey <a.psevkin@ston.fi>"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ston-fi/omniston-sdk.git"
