@@ -5,7 +5,7 @@
       "decimals": 18,
       "symbol": "BNB",
       "displayName": "BNB",
-      "imageUrl": "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png?1696501970"
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png"
     }
   },
   {
@@ -14,7 +14,7 @@
       "decimals": 18,
       "symbol": "USDT",
       "displayName": "Tether USD",
-      "imageUrl": "https://assets.coingecko.com/coins/images/35021/standard/USDT.png"
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
     }
   }
 ]

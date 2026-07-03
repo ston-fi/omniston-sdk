@@ -4,8 +4,8 @@
     "metadata": {
       "decimals": 18,
       "symbol": "ETH",
-      "displayName": "Ether",
-      "imageUrl": "https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+      "displayName": "Ethereum",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png"
     }
   },
   {
@@ -14,7 +14,7 @@
       "decimals": 6,
       "symbol": "USDT",
       "displayName": "Tether USD",
-      "imageUrl": "https://assets.coingecko.com/coins/images/325/standard/Tether.png"
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
     }
   }
 ]

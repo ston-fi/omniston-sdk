@@ -12,11 +12,13 @@ interface ExplorerTransactionPreviewProps extends Omit<
 }
 
 const transactionPreviewLinkByChain = {
-  [Chain.TON]: (txId) => `https://tonviewer.com/transaction/${txId}`,
+  [Chain.ARBITRUM]: (txId) => `https://arbiscan.io/tx/${txId}`,
+  [Chain.AVALANCHE]: (txId) => `https://snowtrace.io/tx/${txId}`,
   [Chain.BASE]: (txId) => `https://basescan.org/tx/${txId}`,
-  [Chain.POLYGON]: (txId) => `https://polygonscan.com/tx/${txId}`,
-  [Chain.ETHEREUM]: (txId) => `https://etherscan.io/tx/${txId}`,
   [Chain.BNB]: (txId) => `https://bscscan.com/tx/${txId}`,
+  [Chain.ETHEREUM]: (txId) => `https://etherscan.io/tx/${txId}`,
+  [Chain.POLYGON]: (txId) => `https://polygonscan.com/tx/${txId}`,
+  [Chain.TON]: (txId) => `https://tonviewer.com/transaction/${txId}`,
 } satisfies Record<Chain, (txId: string) => string>;
 
 export const ExplorerTransactionPreview = ({

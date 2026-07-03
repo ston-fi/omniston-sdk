@@ -5,7 +5,7 @@
       "decimals": 18,
       "symbol": "POL",
       "displayName": "Polygon",
-      "imageUrl": "https://assets.coingecko.com/asset_platforms/images/15/small/polygon_pos.png"
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/28321.png"
     }
   },
   {
@@ -14,7 +14,7 @@
       "decimals": 6,
       "symbol": "pUSD",
       "displayName": "Polymarket USD",
-      "imageUrl": "https://assets.coingecko.com/coins/images/16762/standard/PUSD-purple-200.png?1696516335"
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/39925.png"
     }
   }
 ]

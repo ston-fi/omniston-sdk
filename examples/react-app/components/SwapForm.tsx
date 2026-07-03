@@ -15,28 +15,47 @@ import { ethereumAssetQueryFactory } from "@/queries/ethereum-assets";
 import { bnbAssetQueryFactory } from "@/queries/bnb-assets";
 import { useAssets } from "@/providers/assets";
 import { useConnectedWallets } from "@/hooks/useConnectedWallets";
+import { avalancheAssetQueryFactory } from "@/queries/avalanche-assets";
+import { arbitrumAssetQueryFactory } from "@/queries/arbitrum-assets";
 
 const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
   const {
-    ton: tonWalletAddress,
+    arbitrum: arbitrumWalletAddress,
+    avalanche: avalancheWalletAddress,
     base: baseWalletAddress,
-    polygon: polygonWalletAddress,
-    ethereum: ethereumWalletAddress,
     bnb: bnbWalletAddress,
+    ethereum: ethereumWalletAddress,
+    polygon: polygonWalletAddress,
+    ton: tonWalletAddress,
   } = useConnectedWallets();
 
   const wagmiConfig = useWagmiConfig();
 
   return [
     {
-      chain: Chain.TON,
-      fetchQueryOptions: tonAssetQueryFactory.fetch({
-        walletAddress: tonWalletAddress,
+      chain: Chain.ARBITRUM,
+      fetchQueryOptions: arbitrumAssetQueryFactory.fetch({
+        walletAddress: arbitrumWalletAddress,
+        wagmiConfig,
       }),
       searchQueryOptions: (searchTerm) =>
-        tonAssetQueryFactory.search({
-          searchTerms: [searchTerm],
-          walletAddress: tonWalletAddress,
+        arbitrumAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: arbitrumWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.AVALANCHE,
+      fetchQueryOptions: avalancheAssetQueryFactory.fetch({
+        walletAddress: avalancheWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        avalancheAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: avalancheWalletAddress,
+          wagmiConfig,
         }),
     },
     {
@@ -49,6 +68,33 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
         baseAssetQueryFactory.search({
           searchTerm,
           walletAddress: baseWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.BNB,
+      fetchQueryOptions: bnbAssetQueryFactory.fetch({
+        walletAddress: bnbWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        bnbAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: bnbWalletAddress,
+          wagmiConfig,
+        }),
+    },
+
+    {
+      chain: Chain.ETHEREUM,
+      fetchQueryOptions: ethereumAssetQueryFactory.fetch({
+        walletAddress: ethereumWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        ethereumAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: ethereumWalletAddress,
           wagmiConfig,
         }),
     },
@@ -66,29 +112,14 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
         }),
     },
     {
-      chain: Chain.ETHEREUM,
-      fetchQueryOptions: ethereumAssetQueryFactory.fetch({
-        walletAddress: ethereumWalletAddress,
-        wagmiConfig,
+      chain: Chain.TON,
+      fetchQueryOptions: tonAssetQueryFactory.fetch({
+        walletAddress: tonWalletAddress,
       }),
       searchQueryOptions: (searchTerm) =>
-        ethereumAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: ethereumWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.BNB,
-      fetchQueryOptions: bnbAssetQueryFactory.fetch({
-        walletAddress: bnbWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        bnbAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: bnbWalletAddress,
-          wagmiConfig,
+        tonAssetQueryFactory.search({
+          searchTerms: [searchTerm],
+          walletAddress: tonWalletAddress,
         }),
     },
   ];

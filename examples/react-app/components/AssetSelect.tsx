@@ -126,8 +126,8 @@ export const AssetSelect = ({
         <AssetSelectTrigger selectedAsset={selectedAsset} className={className} />
       </PopoverTrigger>
       <PopoverContent className="w-full min-w-[300px] p-0">
-        <BlockchainTab
-          className="border-b"
+        <BlockchainSelector
+          className="p-2 pb-0"
           chains={chains}
           selectedChain={selectedChain}
           onChainSelect={setSelectedChain}
@@ -225,16 +225,29 @@ const AssetSelectTrigger = React.forwardRef<
       {...props}
       variant="outline"
       role="combobox"
-      className={cn("w-full justify-start group data-[state=open]:border-foreground/50", className)}
+      className={cn(
+        "w-full justify-start group data-[state=open]:border-foreground/50 py-0.5",
+        className,
+      )}
     >
       {selectedAsset ? (
         <>
-          <Avatar className="mr-2 size-[20px] shrink-0">
-            <AvatarImage
-              src={selectedAsset.metadata.imageUrl}
-              alt={selectedAsset.metadata.symbol}
-            />
-          </Avatar>
+          <span className="relative mr-2 size-6 shrink-0">
+            <Avatar className="size-full">
+              <AvatarImage
+                src={selectedAsset.metadata.imageUrl}
+                alt={selectedAsset.metadata.symbol}
+              />
+            </Avatar>
+            <span className="bg-background absolute -right-1 -bottom-1 flex size-3 rounded-full p-px">
+              <Avatar className="size-full">
+                <AvatarImage
+                  src={CHAIN_METADATA[selectedAsset.id.chain.$case].imageUrl}
+                  alt={CHAIN_METADATA[selectedAsset.id.chain.$case].label}
+                />
+              </Avatar>
+            </span>
+          </span>
           <span className="truncate">{selectedAsset.metadata.symbol}</span>
         </>
       ) : (
@@ -246,15 +259,20 @@ const AssetSelectTrigger = React.forwardRef<
   );
 });
 
-interface BlockchainTabProps extends Omit<React.ComponentProps<"div">, "children"> {
+interface BlockchainSelectorProps extends Omit<React.ComponentProps<"div">, "children"> {
   selectedChain: Chain;
   chains: ChainTabConfig[];
   onChainSelect: (chain: Chain) => void;
 }
 
-function BlockchainTab({ chains, selectedChain, onChainSelect, ...props }: BlockchainTabProps) {
+function BlockchainSelector({
+  chains,
+  selectedChain,
+  onChainSelect,
+  ...props
+}: BlockchainSelectorProps) {
   return (
-    <div className={cn("flex flex-1", props.className)}>
+    <div className={cn("flex flex-1 border-b", props.className)}>
       {chains.map(({ chain }) => {
         const { label, imageUrl } = CHAIN_METADATA[chain];
 
@@ -264,17 +282,15 @@ function BlockchainTab({ chains, selectedChain, onChainSelect, ...props }: Block
             type="button"
             onClick={() => onChainSelect(chain)}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors",
+              "flex items-center gap-1.5 px-2 py-1 text-sm font-medium border-b-2 -mb-px transition-colors",
               selectedChain === chain
                 ? "border-primary text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
-            <Avatar className="size-4 shrink-0">
+            <Avatar className="size-6 shrink-0">
               <AvatarImage src={imageUrl} alt={label} />
             </Avatar>
-
-            <span>{label}</span>
           </button>
         );
       })}

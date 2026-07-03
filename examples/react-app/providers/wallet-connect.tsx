@@ -1,14 +1,25 @@
 "use client";
 
 import { createAppKit } from "@reown/appkit/react";
-import { base, bsc, mainnet, polygon, type AppKitNetwork } from "@reown/appkit/networks";
+import {
+  arbitrum,
+  avalanche,
+  base,
+  bsc,
+  mainnet,
+  polygon,
+  type AppKitNetwork,
+} from "@reown/appkit/networks";
 import React, { useEffect, useRef } from "react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { WagmiProvider } from "wagmi";
 
 let isAppKitCreated = false;
 
-const networks = [mainnet, base, polygon, bsc] satisfies [AppKitNetwork, ...AppKitNetwork[]];
+const networks = [arbitrum, avalanche, mainnet, base, polygon, bsc] satisfies [
+  AppKitNetwork,
+  ...AppKitNetwork[],
+];
 
 export function WalletConnectProvider({
   children,

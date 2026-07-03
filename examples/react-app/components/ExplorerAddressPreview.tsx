@@ -28,20 +28,26 @@ export const ExplorerAddressPreview = ({
     const chainCase = address.chain.$case as Chain;
 
     switch (chainCase) {
-      case Chain.TON: {
-        return `https://tonviewer.com/address/${address.chain.value}`;
+      case Chain.ARBITRUM: {
+        return `https://arbiscan.io/address/${address.chain.value}`;
+      }
+      case Chain.AVALANCHE: {
+        return `https://snowtrace.io/address/${address.chain.value}`;
       }
       case Chain.BASE: {
         return `https://basescan.org/address/${address.chain.value}`;
       }
-      case Chain.POLYGON: {
-        return `https://polygonscan.com/address/${address.chain.value}`;
+      case Chain.BNB: {
+        return `https://bscscan.com/address/${address.chain.value}`;
       }
       case Chain.ETHEREUM: {
         return `https://etherscan.io/address/${address.chain.value}`;
       }
-      case Chain.BNB: {
-        return `https://bscscan.com/address/${address.chain.value}`;
+      case Chain.POLYGON: {
+        return `https://polygonscan.com/address/${address.chain.value}`;
+      }
+      case Chain.TON: {
+        return `https://tonviewer.com/address/${address.chain.value}`;
       }
       default: {
         chainCase satisfies never;

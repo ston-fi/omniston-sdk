@@ -2,9 +2,10 @@ import { bsc } from "@reown/appkit/networks";
 
 import type { Asset } from "@/models/asset";
 import { Chain } from "@/models/chain";
+import { resolveAssetsMock } from "@/queries/assets-mock";
 import {
   createEvmAssetQueryFactory,
-  resolveEvmAssetsMock,
+  evmAssetMockSchema,
   type EvmAssetMock,
 } from "@/queries/evm-asset-factory";
 
@@ -19,7 +20,7 @@ export const bnbAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: BNB_ASSETS_QUERY_KEY,
   searchQueryKey: BNB_ASSETS_SEARCH_QUERY_KEY,
   getAssets: async () =>
-    (await resolveEvmAssetsMock(Chain.BNB, BNB_ASSETS_MOCK)).map(transformToAsset),
+    (await resolveAssetsMock(Chain.BNB, BNB_ASSETS_MOCK, evmAssetMockSchema)).map(transformToAsset),
 });
 
 function transformToAsset(bnbAsset: EvmAssetMock): Asset {

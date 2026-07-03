@@ -39,10 +39,12 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
+    case Chain.ARBITRUM:
+    case Chain.AVALANCHE:
     case Chain.BASE:
-    case Chain.POLYGON:
+    case Chain.BNB:
     case Chain.ETHEREUM:
-    case Chain.BNB: {
+    case Chain.POLYGON: {
       switch (assetId.chain.value.kind.$case) {
         case "erc20": {
           return {
@@ -68,10 +70,12 @@ export function isValidAddress(chain: Chain, src: string) {
     case Chain.TON: {
       return isTonAddress(src);
     }
+    case Chain.ARBITRUM:
+    case Chain.AVALANCHE:
     case Chain.BASE:
-    case Chain.POLYGON:
+    case Chain.BNB:
     case Chain.ETHEREUM:
-    case Chain.BNB: {
+    case Chain.POLYGON: {
       return isErc20Address(src);
     }
     default: {

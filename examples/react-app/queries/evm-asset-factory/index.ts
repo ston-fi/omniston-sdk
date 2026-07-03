@@ -1,14 +1,12 @@
+import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
 import { queryOptions } from "@tanstack/react-query";
 import { getBalance, multicall, type Config } from "@wagmi/core";
-import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
 import { erc20Abi, type Address } from "viem";
 import { z } from "zod";
 
 import { erc20AddressSchema } from "@/lib/evm/address";
 import type { Asset } from "@/models/asset";
 import { EVM_CHAINS } from "@/models/chain";
-
-import { getEvmAssetsMock } from "./get-evm-assets-mock";
 
 export const evmAssetMockSchema = z.object({
   address: z.union([erc20AddressSchema, z.literal("native")]),
@@ -22,13 +20,6 @@ export const evmAssetMockSchema = z.object({
 });
 
 export type EvmAssetMock = z.infer<typeof evmAssetMockSchema>;
-
-export async function resolveEvmAssetsMock(chain: (typeof EVM_CHAINS)[number], fallback: unknown) {
-  const envOverride = await getEvmAssetsMock(chain);
-  const mock = envOverride ?? fallback;
-
-  return evmAssetMockSchema.array().parse(mock);
-}
 
 type EvmAssetQueryArgs = {
   wagmiConfig: Config;
@@ -141,10 +132,10 @@ export function createEvmAssetQueryFactory({
           const term = searchTerm.toLowerCase();
 
           const filteredAssets = assets.filter((asset) =>
-            asset.id.chain.$case === chain && asset.id.chain.value.kind.$case === "erc20"
-              ? asset.id.chain.value.kind.value === term
-              : asset.metadata.symbol?.toLowerCase().includes(term) ||
-                asset.metadata.displayName?.toLowerCase().includes(term),
+            asset.id.chain.$case === chain
+              ? asset.metadata.symbol?.toLowerCase().includes(term) ||
+                asset.metadata.displayName?.toLowerCase().includes(term)
+              : false,
           );
 
           assets = await fetchBalances(

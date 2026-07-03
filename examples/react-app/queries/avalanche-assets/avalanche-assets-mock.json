@@ -1,0 +1,29 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "AVAX",
+      "displayName": "Avalanche",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5805.png"
+    }
+  },
+  {
+    "address": "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDt",
+      "displayName": "TetherToken",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+    }
+  },
+  {
+    "address": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDC",
+      "displayName": "USD Coin",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
+  }
+]

@@ -9,11 +9,13 @@ import type { AssetId } from "@ston-fi/omniston-sdk-react";
 import { Chain } from "@/models/chain";
 import { serializeAssetId, isAssetIdEqual } from "@/models/asset-id";
 import type { Asset } from "@/models/asset";
-import { tonAssetQueryFactory } from "@/queries/ton-assets";
+import { arbitrumAssetQueryFactory } from "@/queries/arbitrum-assets";
+import { avalancheAssetQueryFactory } from "@/queries/avalanche-assets";
 import { baseAssetQueryFactory } from "@/queries/base-assets";
-import { polygonAssetQueryFactory } from "@/queries/polygon-assets";
-import { ethereumAssetQueryFactory } from "@/queries/ethereum-assets";
 import { bnbAssetQueryFactory } from "@/queries/bnb-assets";
+import { ethereumAssetQueryFactory } from "@/queries/ethereum-assets";
+import { polygonAssetQueryFactory } from "@/queries/polygon-assets";
+import { tonAssetQueryFactory } from "@/queries/ton-assets";
 import { useConnectedWallets } from "@/hooks/useConnectedWallets";
 
 type AssetsContextValue = {
@@ -30,15 +32,23 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   const wagmiConfig = useWagmiConfig();
   const isTonConnectRestored = useIsConnectionRestored();
   const {
-    ton: tonWalletAddress,
+    arbitrum: arbitrumWalletAddress,
+    avalanche: avalancheWalletAddress,
     base: baseWalletAddress,
-    polygon: polygonWalletAddress,
-    ethereum: ethereumWalletAddress,
     bnb: bnbWalletAddress,
+    ethereum: ethereumWalletAddress,
+    polygon: polygonWalletAddress,
+    ton: tonWalletAddress,
   } = useConnectedWallets();
 
   // In-memory unconditional assets per blockchain — assets manually added by the user
   // that must survive query refetches. Session-only (not persisted).
+  const [unconditionalArbitrumAssetIdList, setUnconditionalArbitrumAssetIdList] = useState<
+    AssetId[]
+  >([]);
+  const [unconditionalAvalancheAssetIdList, setUnconditionalAvalancheAssetIdList] = useState<
+    AssetId[]
+  >([]);
   const [unconditionalTonAssetIdList, setUnconditionalTonAssetIdList] = useState<AssetId[]>([]);
   const [unconditionalBaseAssetIdList, setUnconditionalBaseAssetIdList] = useState<AssetId[]>([]);
   const [unconditionalPolygonAssetIdList, setUnconditionalPolygonAssetIdList] = useState<AssetId[]>(
@@ -50,12 +60,35 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   const [unconditionalBnbAssetIdList, setUnconditionalBnbAssetIdList] = useState<AssetId[]>([]);
 
   const isWalletConnected =
-    !!tonWalletAddress ||
+    !!arbitrumWalletAddress ||
+    !!avalancheWalletAddress ||
     !!baseWalletAddress ||
-    !!polygonWalletAddress ||
+    !!bnbWalletAddress ||
     !!ethereumWalletAddress ||
-    !!bnbWalletAddress;
+    !!polygonWalletAddress ||
+    !!tonWalletAddress;
+
   const refetchInterval = isWalletConnected ? 1000 * 60 : 1000 * 60 * 5;
+
+  const arbitrumAssetsQuery = useQuery({
+    ...arbitrumAssetQueryFactory.fetch({
+      wagmiConfig,
+      walletAddress: arbitrumWalletAddress,
+    }),
+    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
+    refetchInterval,
+    staleTime: Infinity,
+  });
+
+  const avalancheAssetsQuery = useQuery({
+    ...avalancheAssetQueryFactory.fetch({
+      wagmiConfig,
+      walletAddress: avalancheWalletAddress,
+    }),
+    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
+    refetchInterval,
+    staleTime: Infinity,
+  });
 
   const tonAssetsQuery = useQuery({
     ...tonAssetQueryFactory.fetch({
@@ -112,18 +145,24 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     const chainCase = assetId.chain.$case;
 
     switch (chainCase) {
-      case Chain.TON:
-        return tonAssetsQuery.data?.get(serializeAssetId(assetId));
+      case Chain.ARBITRUM:
+        return arbitrumAssetsQuery.data?.get(serializeAssetId(assetId));
+      case Chain.AVALANCHE:
+        return avalancheAssetsQuery.data?.get(serializeAssetId(assetId));
       case Chain.BASE:
         return baseAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.POLYGON:
-        return polygonAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.ETHEREUM:
-        return ethereumAssetsQuery.data?.get(serializeAssetId(assetId));
       case Chain.BNB:
         return bnbAssetsQuery.data?.get(serializeAssetId(assetId));
-      default:
-        return undefined;
+      case Chain.ETHEREUM:
+        return ethereumAssetsQuery.data?.get(serializeAssetId(assetId));
+      case Chain.POLYGON:
+        return polygonAssetsQuery.data?.get(serializeAssetId(assetId));
+      case Chain.TON:
+        return tonAssetsQuery.data?.get(serializeAssetId(assetId));
+      default: {
+        chainCase satisfies never;
+        throw new Error(`Unexpected chain: ${chainCase}`);
+      }
     }
   };
 
@@ -140,6 +179,32 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     const chainCase = asset.id.chain.$case;
 
     switch (chainCase) {
+      case Chain.ARBITRUM: {
+        const unconditionalAddresses = [...unconditionalArbitrumAssetIdList, asset.id];
+        setUnconditionalArbitrumAssetIdList(unconditionalAddresses);
+
+        queryClient.setQueryData(
+          arbitrumAssetQueryFactory.fetch({
+            wagmiConfig,
+            walletAddress: arbitrumWalletAddress,
+          }).queryKey,
+          assetQueryUpdater,
+        );
+        break;
+      }
+      case Chain.AVALANCHE: {
+        const unconditionalAddresses = [...unconditionalAvalancheAssetIdList, asset.id];
+        setUnconditionalAvalancheAssetIdList(unconditionalAddresses);
+
+        queryClient.setQueryData(
+          avalancheAssetQueryFactory.fetch({
+            wagmiConfig,
+            walletAddress: avalancheWalletAddress,
+          }).queryKey,
+          assetQueryUpdater,
+        );
+        break;
+      }
       case Chain.TON: {
         const unconditionalAddresses = [...unconditionalTonAssetIdList, asset.id];
         setUnconditionalTonAssetIdList(unconditionalAddresses);

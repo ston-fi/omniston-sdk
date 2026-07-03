@@ -1,13 +1,14 @@
 import { polygon } from "@reown/appkit/networks";
 
+import { memoizePromise } from "@/lib/utils/promise";
 import type { Asset } from "@/models/asset";
 import { Chain } from "@/models/chain";
+import { resolveAssetsMock } from "@/queries/assets-mock";
 import {
   createEvmAssetQueryFactory,
-  resolveEvmAssetsMock,
+  evmAssetMockSchema,
   type EvmAssetMock,
 } from "@/queries/evm-asset-factory";
-import { memoizePromise } from "@/lib/utils/promise";
 
 import POLYGON_ASSETS_MOCK from "./polygon-assets-mock.json";
 
@@ -20,7 +21,9 @@ export const polygonAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: POLYGON_ASSETS_QUERY_KEY,
   searchQueryKey: POLYGON_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveEvmAssetsMock(Chain.POLYGON, POLYGON_ASSETS_MOCK)).map(transformToAsset),
+    (await resolveAssetsMock(Chain.POLYGON, POLYGON_ASSETS_MOCK, evmAssetMockSchema)).map(
+      transformToAsset,
+    ),
   ),
 });
 

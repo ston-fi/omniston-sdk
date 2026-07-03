@@ -1,13 +1,14 @@
 import { base } from "@reown/appkit/networks";
 
+import { memoizePromise } from "@/lib/utils/promise";
 import type { Asset } from "@/models/asset";
 import { Chain } from "@/models/chain";
+import { resolveAssetsMock } from "@/queries/assets-mock";
 import {
   createEvmAssetQueryFactory,
-  resolveEvmAssetsMock,
+  evmAssetMockSchema,
   type EvmAssetMock,
 } from "@/queries/evm-asset-factory";
-import { memoizePromise } from "@/lib/utils/promise";
 
 import BASE_ASSETS_MOCK from "./base-assets-mock.json";
 
@@ -20,7 +21,9 @@ export const baseAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: BASE_ASSETS_QUERY_KEY,
   searchQueryKey: BASE_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveEvmAssetsMock(Chain.BASE, BASE_ASSETS_MOCK)).map(transformToAsset),
+    (await resolveAssetsMock(Chain.BASE, BASE_ASSETS_MOCK, evmAssetMockSchema)).map(
+      transformToAsset,
+    ),
   ),
 });
 

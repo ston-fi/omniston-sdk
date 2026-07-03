@@ -13,11 +13,13 @@ const WalletNamespace = {
 type WalletNamespace = (typeof WalletNamespace)[keyof typeof WalletNamespace];
 
 const walletNamespaceByChain: Record<Chain, WalletNamespace> = {
-  [Chain.TON]: WalletNamespace.TON,
+  [Chain.ARBITRUM]: WalletNamespace.EVM,
+  [Chain.AVALANCHE]: WalletNamespace.EVM,
   [Chain.BASE]: WalletNamespace.EVM,
-  [Chain.POLYGON]: WalletNamespace.EVM,
-  [Chain.ETHEREUM]: WalletNamespace.EVM,
   [Chain.BNB]: WalletNamespace.EVM,
+  [Chain.ETHEREUM]: WalletNamespace.EVM,
+  [Chain.POLYGON]: WalletNamespace.EVM,
+  [Chain.TON]: WalletNamespace.TON,
 };
 
 function createChainAddress(chain: Chain, value: string): ChainAddress {
@@ -43,27 +45,36 @@ export function useConnectedWallets() {
   );
 
   const connectedWallets = useMemo<Record<Chain, ChainAddress | undefined>>(() => {
-    const tonWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.TON]];
+    const arbitrumWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.ARBITRUM]];
+    const avalancheWalletAddressString =
+      addressByNamespace[walletNamespaceByChain[Chain.AVALANCHE]];
     const baseWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.BASE]];
-    const polygonWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.POLYGON]];
-    const ethereumWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.ETHEREUM]];
     const bnbWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.BNB]];
+    const ethereumWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.ETHEREUM]];
+    const polygonWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.POLYGON]];
+    const tonWalletAddressString = addressByNamespace[walletNamespaceByChain[Chain.TON]];
 
     return {
-      [Chain.TON]: tonWalletAddressString
-        ? createChainAddress(Chain.TON, tonWalletAddressString)
+      [Chain.ARBITRUM]: arbitrumWalletAddressString
+        ? createChainAddress(Chain.ARBITRUM, arbitrumWalletAddressString)
+        : undefined,
+      [Chain.AVALANCHE]: avalancheWalletAddressString
+        ? createChainAddress(Chain.AVALANCHE, avalancheWalletAddressString)
         : undefined,
       [Chain.BASE]: baseWalletAddressString
         ? createChainAddress(Chain.BASE, baseWalletAddressString)
         : undefined,
-      [Chain.POLYGON]: polygonWalletAddressString
-        ? createChainAddress(Chain.POLYGON, polygonWalletAddressString)
+      [Chain.BNB]: bnbWalletAddressString
+        ? createChainAddress(Chain.BNB, bnbWalletAddressString)
         : undefined,
       [Chain.ETHEREUM]: ethereumWalletAddressString
         ? createChainAddress(Chain.ETHEREUM, ethereumWalletAddressString)
         : undefined,
-      [Chain.BNB]: bnbWalletAddressString
-        ? createChainAddress(Chain.BNB, bnbWalletAddressString)
+      [Chain.POLYGON]: polygonWalletAddressString
+        ? createChainAddress(Chain.POLYGON, polygonWalletAddressString)
+        : undefined,
+      [Chain.TON]: tonWalletAddressString
+        ? createChainAddress(Chain.TON, tonWalletAddressString)
         : undefined,
     } satisfies Record<Chain, ChainAddress | undefined>;
   }, [addressByNamespace]);

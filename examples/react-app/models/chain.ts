@@ -1,11 +1,13 @@
 import { z } from "zod";
 
 export const Chain = {
-  TON: "ton",
+  ARBITRUM: "arbitrum",
+  AVALANCHE: "avalanche",
   BASE: "base",
-  POLYGON: "polygon",
-  ETHEREUM: "ethereum",
   BNB: "bnb",
+  ETHEREUM: "ethereum",
+  POLYGON: "polygon",
+  TON: "ton",
 } as const;
 
 export type Chain = (typeof Chain)[keyof typeof Chain];
@@ -18,29 +20,44 @@ type ChainMetadata = {
 };
 
 export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
-  [Chain.TON]: {
-    label: "TON",
-    imageUrl: "https://asset.ston.fi/img/EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c",
+  [Chain.ARBITRUM]: {
+    label: "ARBITRUM",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png",
+  },
+  [Chain.AVALANCHE]: {
+    label: "AVALANCHE",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/5805.png",
   },
   [Chain.BASE]: {
     label: "BASE",
-    imageUrl: "https://assets.coingecko.com/asset_platforms/images/131/small/base.png",
-  },
-  [Chain.POLYGON]: {
-    label: "POLYGON",
-    imageUrl: "https://assets.coingecko.com/asset_platforms/images/15/small/polygon_pos.png",
-  },
-  [Chain.ETHEREUM]: {
-    label: "ETHEREUM",
-    imageUrl: "https://assets.coingecko.com/coins/images/279/standard/ethereum.png",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/27716.png",
   },
   [Chain.BNB]: {
     label: "BNB",
-    imageUrl: "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png",
+  },
+  [Chain.ETHEREUM]: {
+    label: "ETHEREUM",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+  },
+  [Chain.POLYGON]: {
+    label: "POLYGON",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/28321.png",
+  },
+  [Chain.TON]: {
+    label: "TON",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
   },
 };
 
-export const EVM_CHAINS = [Chain.BASE, Chain.POLYGON, Chain.ETHEREUM, Chain.BNB] as const;
+export const EVM_CHAINS = [
+  Chain.ARBITRUM,
+  Chain.AVALANCHE,
+  Chain.BASE,
+  Chain.BNB,
+  Chain.ETHEREUM,
+  Chain.POLYGON,
+] as const;
 
 export type EvmChain = (typeof EVM_CHAINS)[number];
 
