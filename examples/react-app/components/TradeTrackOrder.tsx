@@ -83,6 +83,7 @@ function OrderEventView({
   const {
     status,
     estimatedFinishTimestamp,
+    maximumFinishTimestamp,
     executions,
     protocolContractAddress,
     remainingInputUnits,
@@ -102,6 +103,12 @@ function OrderEventView({
           <li>
             <span>Estimated finish timestamp:</span>
             <span>{new Date(estimatedFinishTimestamp * 1000).toLocaleString()}</span>
+          </li>
+        ) : null}
+        {maximumFinishTimestamp ? (
+          <li>
+            <span>Maximum finish timestamp:</span>
+            <span>{new Date(maximumFinishTimestamp * 1000).toLocaleString()}</span>
           </li>
         ) : null}
         <li>

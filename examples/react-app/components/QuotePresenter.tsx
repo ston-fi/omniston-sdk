@@ -25,6 +25,7 @@ export function QuotePresenter({
     outputUnits,
     protocolFeeUnits,
     estimatedGasConsumption,
+    estimatedSettlementDuration,
     gasBudget,
     integratorFeeUnits,
     integratorAddress,
@@ -90,6 +91,12 @@ export function QuotePresenter({
         <li>
           <span>Estimated gas consumption:</span>
           <span>{`${bigNumberToFloat(estimatedGasConsumption, inputNativeAsset.metadata.decimals)} ${inputNativeAsset.metadata.symbol}`}</span>
+        </li>
+      ) : null}
+      {estimatedSettlementDuration ? (
+        <li>
+          <span>Estimated settlement duration:</span>
+          <span>{`${estimatedSettlementDuration}s`}</span>
         </li>
       ) : null}
     </DescriptionList>
