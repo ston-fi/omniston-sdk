@@ -311,11 +311,31 @@ export interface Order {
   /** List of executions that attempt to fill the order */
   executions: Execution[];
   /**
-   * Estimated timestamp of settling.
+   * Estimated timestamp for the trade to reach a final state.
+   *
+   * The estimate is based on the average settlement time for the corresponding
+   * **Source blockchain** and **Destination blockchain**.
+   * The trade is not guaranteed to reach a final state before this timestamp.
    *
    * Empty if unknown (for example, for limit orders).
    */
   estimatedFinishTimestamp?: number | undefined;
+  /**
+   * Maximum expected timestamp for the trade to reach a final state.
+   *
+   * This is the latest timestamp at which the trade is expected to either
+   * settle successfully or roll back.
+   * When present, this timestamp is not earlier than the
+   * `public_rollback_available_timestamp` of the **Execution** with the greatest
+   * `index`.
+   *
+   * An **Order** may remain in a non-final state after this timestamp only in
+   * exceptional conditions, such as the **Source blockchain** not producing
+   * blocks for an extended period.
+   *
+   * Empty if unknown (for example, for limit orders).
+   */
+  maximumFinishTimestamp?: number | undefined;
 }
 
 export interface OrderStatusEvent {
@@ -611,6 +631,7 @@ function createBaseOrder(): Order {
     cancellationMode: OrderCancellationMode.ORDER_CANCELLATION_MODE_UNAVAILABLE,
     executions: [],
     estimatedFinishTimestamp: undefined,
+    maximumFinishTimestamp: undefined,
   };
 }
 
@@ -638,6 +659,9 @@ export const Order: MessageFns<Order> = {
       estimatedFinishTimestamp: isSet(object.estimated_finish_timestamp)
         ? globalThis.Number(object.estimated_finish_timestamp)
         : undefined,
+      maximumFinishTimestamp: isSet(object.maximum_finish_timestamp)
+        ? globalThis.Number(object.maximum_finish_timestamp)
+        : undefined,
     };
   },
 
@@ -664,6 +688,9 @@ export const Order: MessageFns<Order> = {
     if (message.estimatedFinishTimestamp !== undefined) {
       obj.estimated_finish_timestamp = Math.round(message.estimatedFinishTimestamp);
     }
+    if (message.maximumFinishTimestamp !== undefined) {
+      obj.maximum_finish_timestamp = Math.round(message.maximumFinishTimestamp);
+    }
     return obj;
   },
 
@@ -683,6 +710,7 @@ export const Order: MessageFns<Order> = {
       object.cancellationMode ?? OrderCancellationMode.ORDER_CANCELLATION_MODE_UNAVAILABLE;
     message.executions = object.executions?.map((e) => Execution.fromPartial(e)) || [];
     message.estimatedFinishTimestamp = object.estimatedFinishTimestamp ?? undefined;
+    message.maximumFinishTimestamp = object.maximumFinishTimestamp ?? undefined;
     return message;
   },
 };

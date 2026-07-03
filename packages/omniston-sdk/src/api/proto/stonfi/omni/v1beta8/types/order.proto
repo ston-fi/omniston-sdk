@@ -179,10 +179,29 @@ message Order {
   // List of executions that attempt to fill the order
   repeated Execution executions = 10;
 
-  // Estimated timestamp of settling.
+  // Estimated timestamp for the trade to reach a final state.
+  //
+  // The estimate is based on the average settlement time for the corresponding
+  // **Source blockchain** and **Destination blockchain**.
+  // The trade is not guaranteed to reach a final state before this timestamp.
   //
   // Empty if unknown (for example, for limit orders).
   optional uint64 estimated_finish_timestamp = 20;
+
+  // Maximum expected timestamp for the trade to reach a final state.
+  //
+  // This is the latest timestamp at which the trade is expected to either
+  // settle successfully or roll back.
+  // When present, this timestamp is not earlier than the
+  // `public_rollback_available_timestamp` of the **Execution** with the greatest
+  // `index`.
+  //
+  // An **Order** may remain in a non-final state after this timestamp only in
+  // exceptional conditions, such as the **Source blockchain** not producing
+  // blocks for an extended period.
+  //
+  // Empty if unknown (for example, for limit orders).
+  optional uint64 maximum_finish_timestamp = 21;
 }
 
 //////////////////////////////////////////////

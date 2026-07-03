@@ -70,14 +70,39 @@ message SettlementParams {
 
 // Additional data of the quote specific to swap settlement.
 message SwapSettlementData {
+  // Routes that should be executed to perform the swap.
+  //
+  // Each route contains ordered swap steps and chunks. Together, these routes
+  // define how the **Input asset** is converted into the **Output asset**.
   repeated SwapRoute routes = 1;
+
+  // Minimum amount of **Output asset** that must be received when the swap is
+  // built with trader-provided slippage.
+  //
+  // For `BuildTonSwapRequest`, this value is used as slippage protection when
+  // `use_recommended_slippage` is omitted or false.
   string min_output_amount = 50;
+
+  // Minimum amount of **Output asset** recommended by Omniston.
+  //
+  // For `BuildTonSwapRequest`, this value is used as slippage protection when
+  // `use_recommended_slippage` is true.
   string recommended_min_output_amount = 51;
-  // in percentage in points (1/1,000,000 or 0.0001%)
+
+  // Omniston-recommended slippage in percentage points (1/1,000,000 or
+  // 0.0001%).
+  //
+  // This is the slippage used to compute `recommended_min_output_amount`.
   uint32 recommended_slippage_pips = 52;
 }
 
 // Additional data of the quote specific to the **Order settlement**.
+//
+// TODO: In the next version of API this structure should be refactored.
+// Chain-specific parameters, common to all quotes, like `src_wrapped_native_token_address`
+// should be extracted into a separate structure, and the hash of this structure should
+// be included in `OrderSettlementData`. This would allow to reduce size of quotes,
+// still retaining these parameters a part of signed trader's intent.
 message OrderSettlementData {
 
   // Address of the protocol contract on **Source** blockchain that enforces the
@@ -267,6 +292,16 @@ message Quote {
 
   // The timestamp (UTC seconds) of Quote sent by resolver.
   uint64 quote_timestamp = 30;
+
+  // Estimated duration of settlement in seconds.
+  //
+  // The duration is measured from the start of the settlement flow until the
+  // trade is expected to reach a final state. For swap settlement, this starts
+  // when the trader sends the swap transaction. For order settlement, this
+  // starts when the order or position is created.
+  //
+  // Empty if unknown.
+  optional uint64 estimated_settlement_duration = 31;
 
   // Additional settlement data.
   //

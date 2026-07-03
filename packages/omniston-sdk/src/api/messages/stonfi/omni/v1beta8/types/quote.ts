@@ -121,14 +121,46 @@ export interface SettlementParams {
 
 /** Additional data of the quote specific to swap settlement. */
 export interface SwapSettlementData {
+  /**
+   * Routes that should be executed to perform the swap.
+   *
+   * Each route contains ordered swap steps and chunks. Together, these routes
+   * define how the **Input asset** is converted into the **Output asset**.
+   */
   routes: SwapRoute[];
+  /**
+   * Minimum amount of **Output asset** that must be received when the swap is
+   * built with trader-provided slippage.
+   *
+   * For `BuildTonSwapRequest`, this value is used as slippage protection when
+   * `use_recommended_slippage` is omitted or false.
+   */
   minOutputAmount: string;
+  /**
+   * Minimum amount of **Output asset** recommended by Omniston.
+   *
+   * For `BuildTonSwapRequest`, this value is used as slippage protection when
+   * `use_recommended_slippage` is true.
+   */
   recommendedMinOutputAmount: string;
-  /** in percentage in points (1/1,000,000 or 0.0001%) */
+  /**
+   * Omniston-recommended slippage in percentage points (1/1,000,000 or
+   * 0.0001%).
+   *
+   * This is the slippage used to compute `recommended_min_output_amount`.
+   */
   recommendedSlippagePips: number;
 }
 
-/** Additional data of the quote specific to the **Order settlement**. */
+/**
+ * Additional data of the quote specific to the **Order settlement**.
+ *
+ * TODO: In the next version of API this structure should be refactored.
+ * Chain-specific parameters, common to all quotes, like `src_wrapped_native_token_address`
+ * should be extracted into a separate structure, and the hash of this structure should
+ * be included in `OrderSettlementData`. This would allow to reduce size of quotes,
+ * still retaining these parameters a part of signed trader's intent.
+ */
 export interface OrderSettlementData {
   /**
    * Address of the protocol contract on **Source** blockchain that enforces the
@@ -337,6 +369,17 @@ export interface Quote {
   protocolFeeUnits: string;
   /** The timestamp (UTC seconds) of Quote sent by resolver. */
   quoteTimestamp: number;
+  /**
+   * Estimated duration of settlement in seconds.
+   *
+   * The duration is measured from the start of the settlement flow until the
+   * trade is expected to reach a final state. For swap settlement, this starts
+   * when the trader sends the swap transaction. For order settlement, this
+   * starts when the order or position is created.
+   *
+   * Empty if unknown.
+   */
+  estimatedSettlementDuration?: number | undefined;
   /**
    * Additional settlement data.
    *
@@ -855,6 +898,7 @@ function createBaseQuote(): Quote {
     integratorFeeUnits: "",
     protocolFeeUnits: "",
     quoteTimestamp: 0,
+    estimatedSettlementDuration: undefined,
     settlementData: undefined,
     gasBudget: undefined,
     estimatedGasConsumption: undefined,
@@ -882,6 +926,9 @@ export const Quote: MessageFns<Quote> = {
         ? globalThis.String(object.protocol_fee_units)
         : "",
       quoteTimestamp: isSet(object.quote_timestamp) ? globalThis.Number(object.quote_timestamp) : 0,
+      estimatedSettlementDuration: isSet(object.estimated_settlement_duration)
+        ? globalThis.Number(object.estimated_settlement_duration)
+        : undefined,
       settlementData: isSet(object.swap)
         ? { $case: "swap", value: SwapSettlementData.fromJSON(object.swap) }
         : isSet(object.order)
@@ -932,6 +979,9 @@ export const Quote: MessageFns<Quote> = {
     if (message.quoteTimestamp !== undefined) {
       obj.quote_timestamp = Math.round(message.quoteTimestamp);
     }
+    if (message.estimatedSettlementDuration !== undefined) {
+      obj.estimated_settlement_duration = Math.round(message.estimatedSettlementDuration);
+    }
     if (message.settlementData?.$case === "swap") {
       obj.swap = SwapSettlementData.toJSON(message.settlementData.value);
     } else if (message.settlementData?.$case === "order") {
@@ -972,6 +1022,7 @@ export const Quote: MessageFns<Quote> = {
     message.integratorFeeUnits = object.integratorFeeUnits ?? "";
     message.protocolFeeUnits = object.protocolFeeUnits ?? "";
     message.quoteTimestamp = object.quoteTimestamp ?? 0;
+    message.estimatedSettlementDuration = object.estimatedSettlementDuration ?? undefined;
     switch (object.settlementData?.$case) {
       case "swap": {
         if (object.settlementData?.value !== undefined && object.settlementData?.value !== null) {

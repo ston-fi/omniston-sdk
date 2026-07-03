@@ -74,6 +74,10 @@ export interface BuildTonSwapRequest {
   /**
    * Use the slippage recommended by Omniston instead of slippage provided by
    * trader in QuoteRequest.
+   *
+   * If true, the swap is built with
+   * `SwapSettlementData.recommended_min_output_amount`; otherwise it is built
+   * with `SwapSettlementData.min_output_amount`.
    */
   useRecommendedSlippage?: boolean | undefined;
 }

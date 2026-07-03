@@ -1,5 +1,17 @@
 # Changelog
 
+## 03-07-2026
+
+### @ston-fi/omniston-sdk@0.8.4
+
+This release adds optional timing fields that help integrators show estimated settlement and order completion times in their apps, improving UX for swap flows where timing expectations matter.
+
+#### Added
+
+- the `Quote` type was extended with the new `estimated_settlement_duration` field
+- the `Order` type was extended with the 2 new fields `estimated_finish_timestamp` & `maximum_finish_timestamp`
+- in-code documentation comments for `Quote`, `Order`, and a few more types were improved
+
 ## 02-06-2026
 
 ### @ston-fi/omniston-sdk@0.8.3
