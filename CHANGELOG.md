@@ -3,6 +3,7 @@
 ## 03-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.4
+### @ston-fi/omniston-sdk-react@0.8.4
 
 This release adds optional timing fields that help integrators show estimated settlement and order completion times in their apps, improving UX for swap flows where timing expectations matter.
 
