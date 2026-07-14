@@ -23,7 +23,12 @@ export type OmnistonErrorInfo =
         object_id: string;
       }
     >
-  | GenericError<"UNSUPPORTED", EmptyMetadata>
+  | GenericError<
+      "UNSUPPORTED",
+      {
+        type: "UNSUPPORTED_OPERATION" | "UNSUPPORTED_ROUTE";
+      }
+    >
   | GenericError<
       "SWAP_LIMIT_EXCEEDED",
       {

@@ -150,6 +150,15 @@ export interface SwapSettlementData {
    * This is the slippage used to compute `recommended_min_output_amount`.
    */
   recommendedSlippagePips: number;
+  /**
+   * Estimated relative difference between the swap execution price and the
+   * mid-market price immediately before the swap. It reflects the effect of
+   * the trade size and available liquidity on the execution price.
+   *
+   * Expressed in percentage points (1/1,000,000 or 0.0001%). Omitted when the
+   * price impact cannot be estimated.
+   */
+  priceImpactPips?: number | undefined;
 }
 
 /**
@@ -550,6 +559,7 @@ function createBaseSwapSettlementData(): SwapSettlementData {
     minOutputAmount: "",
     recommendedMinOutputAmount: "",
     recommendedSlippagePips: 0,
+    priceImpactPips: undefined,
   };
 }
 
@@ -568,6 +578,9 @@ export const SwapSettlementData: MessageFns<SwapSettlementData> = {
       recommendedSlippagePips: isSet(object.recommended_slippage_pips)
         ? globalThis.Number(object.recommended_slippage_pips)
         : 0,
+      priceImpactPips: isSet(object.price_impact_pips)
+        ? globalThis.Number(object.price_impact_pips)
+        : undefined,
     };
   },
 
@@ -585,6 +598,9 @@ export const SwapSettlementData: MessageFns<SwapSettlementData> = {
     if (message.recommendedSlippagePips !== undefined) {
       obj.recommended_slippage_pips = Math.round(message.recommendedSlippagePips);
     }
+    if (message.priceImpactPips !== undefined) {
+      obj.price_impact_pips = Math.round(message.priceImpactPips);
+    }
     return obj;
   },
 
@@ -597,6 +613,7 @@ export const SwapSettlementData: MessageFns<SwapSettlementData> = {
     message.minOutputAmount = object.minOutputAmount ?? "";
     message.recommendedMinOutputAmount = object.recommendedMinOutputAmount ?? "";
     message.recommendedSlippagePips = object.recommendedSlippagePips ?? 0;
+    message.priceImpactPips = object.priceImpactPips ?? undefined;
     return message;
   },
 };

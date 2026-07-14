@@ -94,6 +94,14 @@ message SwapSettlementData {
   //
   // This is the slippage used to compute `recommended_min_output_amount`.
   uint32 recommended_slippage_pips = 52;
+
+  // Estimated relative difference between the swap execution price and the
+  // mid-market price immediately before the swap. It reflects the effect of
+  // the trade size and available liquidity on the execution price.
+  //
+  // Expressed in percentage points (1/1,000,000 or 0.0001%). Omitted when the
+  // price impact cannot be estimated.
+  optional uint32 price_impact_pips = 53;
 }
 
 // Additional data of the quote specific to the **Order settlement**.

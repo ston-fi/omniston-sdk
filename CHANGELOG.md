@@ -1,5 +1,14 @@
 # Changelog
 
+## 14-07-2026
+
+### @ston-fi/omniston-sdk@0.8.5
+
+#### Added
+
+- The `SwapSettlementData` type was extended with the new `price_impact_pips` field.
+- `OmnistonError` instances with reason `UNSUPPORTED` now include a metadata `type`, which can be `"UNSUPPORTED_OPERATION"` or `"UNSUPPORTED_ROUTE"`.
+
 ## 03-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.4

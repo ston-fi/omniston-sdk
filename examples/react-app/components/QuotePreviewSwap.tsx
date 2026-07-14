@@ -8,6 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { CopyJsonCard } from "@/components/ui/copy-json-card";
 import { DescriptionList } from "@/components/ui/description-list";
 import { bigNumberToFloat, cn } from "@/lib/utils";
+import { pipsToPercent } from "@/lib/utils/percent";
 import { serializeAssetId } from "@/models/asset-id";
 import { useAssets } from "@/providers/assets";
 
@@ -32,6 +33,17 @@ export const QuotePreviewSwap = ({ quote }: { quote: SwapQuote }) => {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <CopyJsonCard title="" className="mt-2" value={swapSettlementData}>
+            {swapSettlementData.priceImpactPips ? (
+              <DescriptionList className="mb-2">
+                <li>
+                  <span>priceImpactPips:</span>
+                  <span>
+                    {swapSettlementData.priceImpactPips}{" "}
+                    {`(${pipsToPercent(swapSettlementData.priceImpactPips)})%`}
+                  </span>
+                </li>
+              </DescriptionList>
+            ) : null}
             {swapSettlementData.routes.map((route, i) => (
               <SwapRouteItem key={i} swapSettlementData={swapSettlementData} route={route} />
             ))}
