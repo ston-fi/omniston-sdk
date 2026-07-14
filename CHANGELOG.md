@@ -7,8 +7,10 @@
 
 #### Added
 
-- The `SwapSettlementData` type was extended with the new `price_impact_pips` field.
-- `OmnistonError` instances with reason `UNSUPPORTED` now include a metadata `type`, which can be `"UNSUPPORTED_OPERATION"` or `"UNSUPPORTED_ROUTE"`.
+- The `SwapSettlementData` type was extended with the new `price_impact_pips` field. It represents the estimated relative difference between the swap execution price and the pre-swap mid-market price, expressed in pips (1/1,000,000 or 0.0001%); it is omitted when price impact cannot be estimated.
+- `OmnistonError` instances with reason `UNSUPPORTED` now include `metadata.type` to distinguish between unsupported cases:
+  - `UNSUPPORTED_OPERATION` indicates that an operation, method, or request is not supported, for example attempting a swap through an unsupported blockchain.
+  - `UNSUPPORTED_ROUTE` indicates that the requested exchange route itself is not supported.
 
 ## 03-07-2026
 
