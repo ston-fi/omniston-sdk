@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import type { Chain } from "@/models/chain";
+import type { Chain } from "~/models/chain";
 
 import { getAssetsMock } from "./get-assets-mock";
 

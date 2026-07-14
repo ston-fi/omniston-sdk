@@ -4,14 +4,14 @@ import { useTonConnectModal, useTonWallet } from "@tonconnect/ui-react";
 import { useCallback, useState } from "react";
 import { matchQuoteByType } from "@ston-fi/omniston-sdk-react";
 
-import { cn } from "@/lib/utils";
-import { Button, type ButtonProps } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { useTonTransaction } from "@/hooks/useTonTransaction";
-import { useRfq } from "@/hooks/useRfq";
-import { useTradeTrackState } from "@/providers/trade-track";
-import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
-import { CopyJsonCard } from "@/components/ui/copy-json-card";
+import { cn } from "~/lib/utils";
+import { Button, type ButtonProps } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
+import { useTonTransaction } from "~/hooks/useTonTransaction";
+import { useRfq } from "~/hooks/useRfq";
+import { useTradeTrackState } from "~/providers/trade-track";
+import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
+import { CopyJsonCard } from "~/components/ui/copy-json-card";
 
 const _QuoteActionTon = (props: Omit<ButtonProps, "children">) => {
   const [isClicked, setIsClicked] = useState(false);

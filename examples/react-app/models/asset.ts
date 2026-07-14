@@ -1,6 +1,7 @@
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
-import { Chain, type EvmChain } from "./chain";
+import { Chain } from "./chain";
+import type { EvmChain } from "./chain-family";
 
 type AssetMeta = {
   decimals: number;

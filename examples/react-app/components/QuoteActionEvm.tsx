@@ -4,16 +4,16 @@ import { useAppKit } from "@reown/appkit/react";
 import { useCallback, useState } from "react";
 import { matchQuoteByType } from "@ston-fi/omniston-sdk-react";
 
-import { Button, type ButtonProps } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { useConnectedWallets } from "@/hooks/useConnectedWallets";
-import { useEvmTransaction } from "@/hooks/useEvmTransaction";
-import { useRfq } from "@/hooks/useRfq";
-import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
-import { cn } from "@/lib/utils";
-import { EVM_CHAINS } from "@/models/chain";
-import { useTradeTrackState } from "@/providers/trade-track";
-import { CopyJsonCard } from "@/components/ui/copy-json-card";
+import { Button, type ButtonProps } from "~/components/ui/button";
+import { Spinner } from "~/components/ui/spinner";
+import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { useEvmTransaction } from "~/hooks/useEvmTransaction";
+import { useRfq } from "~/hooks/useRfq";
+import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
+import { cn } from "~/lib/utils";
+import { ChainFamily, chainsByFamily } from "~/models/chain-family";
+import { useTradeTrackState } from "~/providers/trade-track";
+import { CopyJsonCard } from "~/components/ui/copy-json-card";
 
 const _QuoteActionEvm = (props: Omit<ButtonProps, "children">) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -95,12 +95,12 @@ function withEvmWalletGuard(Component: React.ComponentType<Omit<ButtonProps, "ch
     const { open: openAppKit } = useAppKit();
     const connectedWallets = useConnectedWallets();
 
-    if (EVM_CHAINS.some((chain) => !connectedWallets[chain])) {
+    if (chainsByFamily[ChainFamily.EVM].some((chain) => !connectedWallets[chain])) {
       return (
         <Button
           {...props}
           onClick={(e) => {
-            openAppKit({ view: "Connect" });
+            openAppKit({ view: "Connect", namespace: "eip155" });
             props.onClick?.(e);
           }}
         >

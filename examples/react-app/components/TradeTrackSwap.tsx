@@ -9,18 +9,18 @@ import {
   isSwapQuote,
 } from "@ston-fi/omniston-sdk-react";
 
-import { bigNumberToFloat, cn, trimStringWithEllipsis } from "@/lib/utils";
-import { useAssets } from "@/providers/assets";
+import { bigNumberToFloat, cn, trimStringWithEllipsis } from "~/lib/utils";
+import { useAssets } from "~/providers/assets";
 import { Spinner } from "./ui/spinner";
 import { ExplorerTransactionPreview } from "./ExplorerTransactionPreview";
 import { ExplorerAddressPreview } from "./ExplorerAddressPreview";
 import { TradeTrackStatusPresenter } from "./TradeTrackStatusPresenter";
 import { DescriptionList } from "./ui/description-list";
 import { Skeleton } from "./ui/skeleton";
-import { Chain } from "@/models/chain";
+import { Chain } from "~/models/chain";
 import { CopyJsonCard } from "./ui/copy-json-card";
-import { useTradeTrackState } from "@/providers/trade-track";
-import { serializeAssetId } from "@/models/asset-id";
+import { useTradeTrackState } from "~/providers/trade-track";
+import { serializeAssetId } from "~/models/asset-id";
 
 export function TradeTrackSwap(props: { className?: string }) {
   const { quote: trackingQuote, tradeEvent: tradeTrackProgress } = useTradeTrackState();

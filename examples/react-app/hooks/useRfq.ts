@@ -9,14 +9,14 @@ import {
   SettlementMethod,
 } from "@ston-fi/omniston-sdk-react";
 
-import { useDebounce } from "@/hooks/useDebounce";
-import { isValidAddress } from "@/models/address";
-import { floatToBigNumber } from "@/lib/utils";
-import { percentToPips } from "@/lib/utils/percent";
-import { useAssets } from "@/providers/assets";
-import { useSwapForm } from "@/providers/swap-form";
-import { useSwapSettings } from "@/providers/swap-settings";
-import { useTradeTrackState } from "@/providers/trade-track";
+import { useDebounce } from "~/hooks/useDebounce";
+import { isValidAddress } from "~/models/address";
+import { floatToBigNumber } from "~/lib/utils";
+import { percentToPips } from "~/lib/utils/percent";
+import { useAssets } from "~/providers/assets";
+import { useSwapForm } from "~/providers/swap-form";
+import { useSwapSettings } from "~/providers/swap-settings";
+import { useTradeTrackState } from "~/providers/trade-track";
 
 export const useRfq = () => {
   const { getAssetById } = useAssets();

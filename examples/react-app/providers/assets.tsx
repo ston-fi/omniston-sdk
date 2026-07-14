@@ -6,317 +6,216 @@ import { createContext, useContext, useState } from "react";
 import { useConfig as useWagmiConfig } from "wagmi";
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
-import { Chain } from "@/models/chain";
-import { serializeAssetId, isAssetIdEqual } from "@/models/asset-id";
-import type { Asset } from "@/models/asset";
-import { arbitrumAssetQueryFactory } from "@/queries/arbitrum-assets";
-import { avalancheAssetQueryFactory } from "@/queries/avalanche-assets";
-import { baseAssetQueryFactory } from "@/queries/base-assets";
-import { bnbAssetQueryFactory } from "@/queries/bnb-assets";
-import { ethereumAssetQueryFactory } from "@/queries/ethereum-assets";
-import { polygonAssetQueryFactory } from "@/queries/polygon-assets";
-import { tonAssetQueryFactory } from "@/queries/ton-assets";
-import { useConnectedWallets } from "@/hooks/useConnectedWallets";
+import { Chain } from "~/models/chain";
+import { ChainFamily, isChainInFamily, type EvmChain } from "~/models/chain-family";
+import { serializeAssetId, isAssetIdEqual } from "~/models/asset-id";
+import type { Asset } from "~/models/asset";
+import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
+import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
+import { baseAssetQueryFactory } from "~/queries/base-assets";
+import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
+import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
+import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
+import { tonAssetQueryFactory } from "~/queries/ton-assets";
+import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 
 type AssetsContextValue = {
   getAssetById: (assetId: AssetId) => Asset | undefined;
+  getAssetsByChain: (chain: Chain) => Asset[];
   insertAsset: (asset: Asset) => void;
   populateAssets: (assetIds: AssetId[]) => Promise<void>;
 };
 
+const ASSET_QUERY_FACTORIES = {
+  [Chain.ARBITRUM]: arbitrumAssetQueryFactory,
+  [Chain.AVALANCHE]: avalancheAssetQueryFactory,
+  [Chain.BASE]: baseAssetQueryFactory,
+  [Chain.BNB]: bnbAssetQueryFactory,
+  [Chain.ETHEREUM]: ethereumAssetQueryFactory,
+  [Chain.POLYGON]: polygonAssetQueryFactory,
+  [Chain.TON]: tonAssetQueryFactory,
+} satisfies Record<Chain, unknown>;
+
 const AssetsContext = createContext<AssetsContextValue | undefined>(undefined);
+
+const appendMissingAssetIds = (assetIds: AssetId[], assetIdsToAppend: AssetId[]) => {
+  const nextAssetIds = [...assetIds];
+
+  assetIdsToAppend.forEach((assetId) => {
+    const exists = nextAssetIds.some((existingAssetId) => isAssetIdEqual(existingAssetId, assetId));
+
+    if (!exists) {
+      nextAssetIds.push(assetId);
+    }
+  });
+
+  return nextAssetIds;
+};
 
 export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   const queryClient = useQueryClient();
 
   const wagmiConfig = useWagmiConfig();
   const isTonConnectRestored = useIsConnectionRestored();
-  const {
-    arbitrum: arbitrumWalletAddress,
-    avalanche: avalancheWalletAddress,
-    base: baseWalletAddress,
-    bnb: bnbWalletAddress,
-    ethereum: ethereumWalletAddress,
-    polygon: polygonWalletAddress,
-    ton: tonWalletAddress,
-  } = useConnectedWallets();
+  const walletAddresses = useConnectedWallets();
 
   // In-memory unconditional assets per blockchain — assets manually added by the user
   // that must survive query refetches. Session-only (not persisted).
-  const [unconditionalArbitrumAssetIdList, setUnconditionalArbitrumAssetIdList] = useState<
-    AssetId[]
-  >([]);
-  const [unconditionalAvalancheAssetIdList, setUnconditionalAvalancheAssetIdList] = useState<
-    AssetId[]
-  >([]);
-  const [unconditionalTonAssetIdList, setUnconditionalTonAssetIdList] = useState<AssetId[]>([]);
-  const [unconditionalBaseAssetIdList, setUnconditionalBaseAssetIdList] = useState<AssetId[]>([]);
-  const [unconditionalPolygonAssetIdList, setUnconditionalPolygonAssetIdList] = useState<AssetId[]>(
-    [],
-  );
-  const [unconditionalEthereumAssetIdList, setUnconditionalEthereumAssetIdList] = useState<
-    AssetId[]
-  >([]);
-  const [unconditionalBnbAssetIdList, setUnconditionalBnbAssetIdList] = useState<AssetId[]>([]);
+  const [unconditionalAssetsByChain, setUnconditionalAssetsByChain] = useState<
+    Partial<Record<Chain, AssetId[]>>
+  >({});
 
-  const isWalletConnected =
-    !!arbitrumWalletAddress ||
-    !!avalancheWalletAddress ||
-    !!baseWalletAddress ||
-    !!bnbWalletAddress ||
-    !!ethereumWalletAddress ||
-    !!polygonWalletAddress ||
-    !!tonWalletAddress;
-
+  const isWalletConnected = Object.values(walletAddresses).some(Boolean);
   const refetchInterval = isWalletConnected ? 1000 * 60 : 1000 * 60 * 5;
 
-  const arbitrumAssetsQuery = useQuery({
-    ...arbitrumAssetQueryFactory.fetch({
+  const getUnconditionalAssets = (chain: Chain) => unconditionalAssetsByChain[chain] ?? [];
+
+  const setUnconditionalAssets = (chain: Chain, assetIds: AssetId[]) => {
+    setUnconditionalAssetsByChain((prev) => ({
+      ...prev,
+      [chain]: assetIds,
+    }));
+  };
+
+  const getEvmAssetFetchOptions = (chain: EvmChain) =>
+    ASSET_QUERY_FACTORIES[chain].fetch({
       wagmiConfig,
-      walletAddress: arbitrumWalletAddress,
-    }),
-    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
+      walletAddress: walletAddresses[chain],
+    });
+
+  const getAssetFetchOptions = (
+    chain: Chain,
+    unconditionalAssets = getUnconditionalAssets(chain),
+  ) => {
+    if (isChainInFamily(chain, ChainFamily.EVM)) {
+      return getEvmAssetFetchOptions(chain);
+    }
+
+    switch (chain) {
+      case Chain.TON:
+        return ASSET_QUERY_FACTORIES[Chain.TON].fetch({
+          unconditionalAssets,
+          walletAddress: walletAddresses[Chain.TON],
+        });
+      default: {
+        chain satisfies never;
+        throw new Error(`Unexpected chain: ${chain}`);
+      }
+    }
+  };
+
+  const commonQueryOptions = {
+    select: (assets: Asset[]) =>
+      new Map(assets.map((asset) => [serializeAssetId(asset.id), asset])),
     refetchInterval,
     staleTime: Infinity,
+  };
+
+  const arbitrumAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.ARBITRUM),
+    ...commonQueryOptions,
   });
 
   const avalancheAssetsQuery = useQuery({
-    ...avalancheAssetQueryFactory.fetch({
-      wagmiConfig,
-      walletAddress: avalancheWalletAddress,
-    }),
-    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
-    refetchInterval,
-    staleTime: Infinity,
-  });
-
-  const tonAssetsQuery = useQuery({
-    ...tonAssetQueryFactory.fetch({
-      unconditionalAssets: unconditionalTonAssetIdList,
-      walletAddress: tonWalletAddress,
-    }),
-    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
-    enabled: isTonConnectRestored,
-    refetchInterval,
-    staleTime: Infinity,
+    ...getEvmAssetFetchOptions(Chain.AVALANCHE),
+    ...commonQueryOptions,
   });
 
   const baseAssetsQuery = useQuery({
-    ...baseAssetQueryFactory.fetch({
-      wagmiConfig,
-      walletAddress: baseWalletAddress,
-    }),
-    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
-    refetchInterval,
-    staleTime: Infinity,
-  });
-
-  const polygonAssetsQuery = useQuery({
-    ...polygonAssetQueryFactory.fetch({
-      wagmiConfig,
-      walletAddress: polygonWalletAddress,
-    }),
-    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
-    refetchInterval,
-    staleTime: Infinity,
-  });
-
-  const ethereumAssetsQuery = useQuery({
-    ...ethereumAssetQueryFactory.fetch({
-      wagmiConfig,
-      walletAddress: ethereumWalletAddress,
-    }),
-    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
-    refetchInterval,
-    staleTime: Infinity,
+    ...getEvmAssetFetchOptions(Chain.BASE),
+    ...commonQueryOptions,
   });
 
   const bnbAssetsQuery = useQuery({
-    ...bnbAssetQueryFactory.fetch({
-      wagmiConfig,
-      walletAddress: bnbWalletAddress,
-    }),
-    select: (data) => new Map(data.map((asset) => [serializeAssetId(asset.id), asset])),
-    refetchInterval,
-    staleTime: Infinity,
+    ...getEvmAssetFetchOptions(Chain.BNB),
+    ...commonQueryOptions,
   });
 
-  const getAssetById = (assetId: AssetId): Asset | undefined => {
-    const chainCase = assetId.chain.$case;
+  const ethereumAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.ETHEREUM),
+    ...commonQueryOptions,
+  });
 
-    switch (chainCase) {
-      case Chain.ARBITRUM:
-        return arbitrumAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.AVALANCHE:
-        return avalancheAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.BASE:
-        return baseAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.BNB:
-        return bnbAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.ETHEREUM:
-        return ethereumAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.POLYGON:
-        return polygonAssetsQuery.data?.get(serializeAssetId(assetId));
-      case Chain.TON:
-        return tonAssetsQuery.data?.get(serializeAssetId(assetId));
-      default: {
-        chainCase satisfies never;
-        throw new Error(`Unexpected chain: ${chainCase}`);
-      }
-    }
+  const polygonAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.POLYGON),
+    ...commonQueryOptions,
+  });
+
+  const tonAssetsQuery = useQuery({
+    ...ASSET_QUERY_FACTORIES[Chain.TON].fetch({
+      unconditionalAssets: getUnconditionalAssets(Chain.TON),
+      walletAddress: walletAddresses[Chain.TON],
+    }),
+    ...commonQueryOptions,
+    enabled: isTonConnectRestored,
+  });
+
+  const assetsQueries = {
+    [Chain.ARBITRUM]: arbitrumAssetsQuery,
+    [Chain.AVALANCHE]: avalancheAssetsQuery,
+    [Chain.BASE]: baseAssetsQuery,
+    [Chain.BNB]: bnbAssetsQuery,
+    [Chain.ETHEREUM]: ethereumAssetsQuery,
+    [Chain.POLYGON]: polygonAssetsQuery,
+    [Chain.TON]: tonAssetsQuery,
+  } satisfies Record<Chain, unknown>;
+
+  const getAssetById = (assetId: AssetId): Asset | undefined => {
+    return assetsQueries[assetId.chain.$case].data?.get(serializeAssetId(assetId));
+  };
+
+  const getAssetsByChain = (chain: Chain): Asset[] => {
+    return Array.from(assetsQueries[chain].data?.values() ?? []);
   };
 
   const insertAsset = (asset: Asset) => {
     if (getAssetById(asset.id)) return;
 
-    const assetQueryUpdater = (old: Asset[] | undefined) => {
-      if (!old) return [asset];
-      const exists = old.some((a) => isAssetIdEqual(a.id, asset.id));
-      if (exists) return old;
-      return [...old, asset];
-    };
+    const chain = asset.id.chain.$case;
+    const nextUnconditionalAssets = appendMissingAssetIds(getUnconditionalAssets(chain), [
+      asset.id,
+    ]);
 
-    const chainCase = asset.id.chain.$case;
+    setUnconditionalAssets(chain, nextUnconditionalAssets);
 
-    switch (chainCase) {
-      case Chain.ARBITRUM: {
-        const unconditionalAddresses = [...unconditionalArbitrumAssetIdList, asset.id];
-        setUnconditionalArbitrumAssetIdList(unconditionalAddresses);
+    queryClient.setQueryData(
+      getAssetFetchOptions(chain, nextUnconditionalAssets).queryKey,
+      (old: Asset[] | undefined) => {
+        if (!old) return [asset];
 
-        queryClient.setQueryData(
-          arbitrumAssetQueryFactory.fetch({
-            wagmiConfig,
-            walletAddress: arbitrumWalletAddress,
-          }).queryKey,
-          assetQueryUpdater,
-        );
-        break;
-      }
-      case Chain.AVALANCHE: {
-        const unconditionalAddresses = [...unconditionalAvalancheAssetIdList, asset.id];
-        setUnconditionalAvalancheAssetIdList(unconditionalAddresses);
+        const exists = old.some((existingAsset) => isAssetIdEqual(existingAsset.id, asset.id));
+        if (exists) return old;
 
-        queryClient.setQueryData(
-          avalancheAssetQueryFactory.fetch({
-            wagmiConfig,
-            walletAddress: avalancheWalletAddress,
-          }).queryKey,
-          assetQueryUpdater,
-        );
-        break;
-      }
-      case Chain.TON: {
-        const unconditionalAddresses = [...unconditionalTonAssetIdList, asset.id];
-        setUnconditionalTonAssetIdList(unconditionalAddresses);
-
-        queryClient.setQueryData(
-          tonAssetQueryFactory.fetch({
-            unconditionalAssets: unconditionalAddresses,
-            walletAddress: tonWalletAddress,
-          }).queryKey,
-          assetQueryUpdater,
-        );
-        break;
-      }
-      case Chain.BASE: {
-        const unconditionalAddresses = [...unconditionalBaseAssetIdList, asset.id];
-        setUnconditionalBaseAssetIdList(unconditionalAddresses);
-
-        queryClient.setQueryData(
-          baseAssetQueryFactory.fetch({
-            wagmiConfig,
-            walletAddress: baseWalletAddress,
-          }).queryKey,
-          assetQueryUpdater,
-        );
-        break;
-      }
-      case Chain.POLYGON: {
-        const unconditionalAddresses = [...unconditionalPolygonAssetIdList, asset.id];
-        setUnconditionalPolygonAssetIdList(unconditionalAddresses);
-
-        queryClient.setQueryData(
-          polygonAssetQueryFactory.fetch({
-            wagmiConfig,
-            walletAddress: polygonWalletAddress,
-          }).queryKey,
-          assetQueryUpdater,
-        );
-        break;
-      }
-      case Chain.ETHEREUM: {
-        const unconditionalAddresses = [...unconditionalEthereumAssetIdList, asset.id];
-        setUnconditionalEthereumAssetIdList(unconditionalAddresses);
-
-        queryClient.setQueryData(
-          ethereumAssetQueryFactory.fetch({
-            wagmiConfig,
-            walletAddress: ethereumWalletAddress,
-          }).queryKey,
-          assetQueryUpdater,
-        );
-        break;
-      }
-      case Chain.BNB: {
-        const unconditionalAddresses = [...unconditionalBnbAssetIdList, asset.id];
-        setUnconditionalBnbAssetIdList(unconditionalAddresses);
-
-        queryClient.setQueryData(
-          bnbAssetQueryFactory.fetch({
-            wagmiConfig,
-            walletAddress: bnbWalletAddress,
-          }).queryKey,
-          assetQueryUpdater,
-        );
-        break;
-      }
-      default: {
-        chainCase satisfies never;
-        throw new Error(`Unexpected chain: ${chainCase}`);
-      }
-    }
+        return [...old, asset];
+      },
+    );
   };
 
-  // TODO(refactor): the assets injection flow needed to be improved and support non-TON chains as well
   const populateAssets = async (assetIds: AssetId[]) => {
-    const tonAssetIdsToPopulate: AssetId[] = [];
+    if (assetIds.some((assetId) => assetId.chain.$case !== Chain.TON)) {
+      throw new Error("populateAssets only supports TON assets");
+    }
 
-    assetIds.forEach((assetId) => {
-      if (getAssetById(assetId)) return;
+    const tonAssetIdsToPopulate = assetIds.filter((assetId) => {
+      if (getAssetById(assetId)) return false;
+      if (assetId.chain.$case !== Chain.TON) return false;
 
-      const chainCase = assetId.chain.$case;
-
-      switch (chainCase) {
-        case Chain.TON: {
-          tonAssetIdsToPopulate.push(assetId);
-          break;
-        }
-        default: {
-          throw new Error(`Unsupported chain for populateAssets call: ${chainCase}`);
-        }
-      }
+      return true;
     });
 
     if (tonAssetIdsToPopulate.length === 0) return;
 
-    const nextUnconditionalTonAssetIdList = [...unconditionalTonAssetIdList];
+    const nextUnconditionalAssets = appendMissingAssetIds(
+      getUnconditionalAssets(Chain.TON),
+      tonAssetIdsToPopulate,
+    );
 
-    tonAssetIdsToPopulate.forEach((assetId) => {
-      const exists = nextUnconditionalTonAssetIdList.some((existingAssetId) =>
-        isAssetIdEqual(existingAssetId, assetId),
-      );
-
-      if (!exists) {
-        nextUnconditionalTonAssetIdList.push(assetId);
-      }
-    });
-
-    setUnconditionalTonAssetIdList(nextUnconditionalTonAssetIdList);
+    setUnconditionalAssets(Chain.TON, nextUnconditionalAssets);
 
     await queryClient.fetchQuery(
-      tonAssetQueryFactory.fetch({
-        unconditionalAssets: nextUnconditionalTonAssetIdList,
-        walletAddress: tonWalletAddress,
+      ASSET_QUERY_FACTORIES[Chain.TON].fetch({
+        unconditionalAssets: nextUnconditionalAssets,
+        walletAddress: walletAddresses[Chain.TON],
       }),
     );
   };
@@ -325,6 +224,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     <AssetsContext.Provider
       value={{
         getAssetById,
+        getAssetsByChain,
         insertAsset,
         populateAssets,
       }}

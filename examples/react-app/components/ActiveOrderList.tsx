@@ -3,15 +3,15 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useMemo } from "react";
 
-import { QuoteDataPresenter } from "@/components/QuotePreview";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { useConnectedWallets } from "@/hooks/useConnectedWallets";
-import { useOmniston } from "@/hooks/useOmniston";
-import { useQuoteAssets } from "@/hooks/useQuoteAssets";
-import { collectQuoteAssets } from "@/lib/omniston/quote";
-import { bigNumberToFloat, cn } from "@/lib/utils";
-import { serializeAssetId } from "@/models/asset-id";
-import { useAssets } from "@/providers/assets";
+import { QuoteDataPresenter } from "~/components/QuotePreview";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
+import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { useOmniston } from "~/hooks/useOmniston";
+import { useQuoteAssets } from "~/hooks/useQuoteAssets";
+import { collectQuoteAssets } from "~/lib/omniston/quote";
+import { bigNumberToFloat, cn } from "~/lib/utils";
+import { serializeAssetId } from "~/models/asset-id";
+import { useAssets } from "~/providers/assets";
 
 export const ActiveOrderList = ({ className }: { className?: string }) => {
   const omniston = useOmniston();

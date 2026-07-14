@@ -2,15 +2,15 @@
 
 import { UnplugIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { QuoteActionTon } from "@/components/QuoteActionTon";
+import { Button } from "~/components/ui/button";
+import { QuoteActionTon } from "~/components/QuoteActionTon";
 import { QuoteActionEvm } from "./QuoteActionEvm";
-import { Spinner } from "@/components/ui/spinner";
-import { useRfq } from "@/hooks/useRfq";
-import { useTradeTrackState } from "@/providers/trade-track";
-import { useSwapForm } from "@/providers/swap-form";
-import { Chain, isEvmChain } from "@/models/chain";
-import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
+import { Spinner } from "~/components/ui/spinner";
+import { useRfq } from "~/hooks/useRfq";
+import { useTradeTrackState } from "~/providers/trade-track";
+import { useSwapForm } from "~/providers/swap-form";
+import { ChainFamily, isChainInFamily } from "~/models/chain-family";
+import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
 
 export const QuoteAction = (props: { className?: string }) => {
   const swapForm = useSwapForm();
@@ -64,9 +64,9 @@ export const QuoteAction = (props: { className?: string }) => {
     return <QuoteActionButton disabled>Connect output wallet.</QuoteActionButton>;
   }
   // action buttons for known quote
-  else if (quote.inputAsset.chain.$case === Chain.TON) {
+  else if (isChainInFamily(quote.inputAsset.chain.$case, ChainFamily.TON)) {
     return <QuoteActionTon {...props} />;
-  } else if (isEvmChain(quote.inputAsset.chain.$case)) {
+  } else if (isChainInFamily(quote.inputAsset.chain.$case, ChainFamily.EVM)) {
     return <QuoteActionEvm {...props} />;
   }
 };

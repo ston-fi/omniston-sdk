@@ -2,14 +2,14 @@
 
 import { Settings } from "lucide-react";
 
-import { ActiveOrderList } from "@/components/ActiveOrderList";
-import { ConnectionStatus } from "@/components/ConnectionStatus";
-import { QuoteAction } from "@/components/QuoteAction";
-import { QuotePreview } from "@/components/QuotePreview";
-import { QuoteTrackTrade } from "@/components/QuoteTrackTrade";
-import { SwapForm } from "@/components/SwapForm";
-import { SwapSettings } from "@/components/SwapSettings";
-import { Button } from "@/components/ui/button";
+import { ActiveOrderList } from "~/components/ActiveOrderList";
+import { ConnectionStatus } from "~/components/ConnectionStatus";
+import { QuoteAction } from "~/components/QuoteAction";
+import { QuotePreview } from "~/components/QuotePreview";
+import { QuoteTrackTrade } from "~/components/QuoteTrackTrade";
+import { SwapForm } from "~/components/SwapForm";
+import { SwapSettings } from "~/components/SwapSettings";
+import { Button } from "~/components/ui/button";
 
 export default function Home() {
   return (
@@ -21,7 +21,10 @@ export default function Home() {
 
         <SwapSettings
           trigger={
-            <Button variant="outline" className="data-[state=open]:border-foreground/50 size-8 p-0">
+            <Button
+              variant="outline"
+              className="data-[state=open]:border-foreground/50 data-[popup-open]:border-foreground/50 size-8 p-0"
+            >
               <Settings size={16} />
             </Button>
           }

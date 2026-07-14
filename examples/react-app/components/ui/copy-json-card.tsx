@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Copy } from "@/components/ui/copy";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cn } from "~/lib/utils";
+import { Copy } from "~/components/ui/copy";
+import { Card, CardContent, CardHeader } from "~/components/ui/card";
 
 type CopyJsonCardProps<T extends unknown> = Omit<React.ComponentProps<typeof Card>, "title"> & {
   title: React.ComponentProps<typeof CardHeader>["children"];

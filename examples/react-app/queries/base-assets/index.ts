@@ -1,14 +1,14 @@
 import { base } from "@reown/appkit/networks";
 
-import { memoizePromise } from "@/lib/utils/promise";
-import type { Asset } from "@/models/asset";
-import { Chain } from "@/models/chain";
-import { resolveAssetsMock } from "@/queries/assets-mock";
+import { memoizePromise } from "~/lib/utils/promise";
+import type { Asset } from "~/models/asset";
+import { Chain } from "~/models/chain";
+import { resolveAssetsMock } from "~/queries/assets-mock";
 import {
   createEvmAssetQueryFactory,
   evmAssetMockSchema,
   type EvmAssetMock,
-} from "@/queries/evm-asset-factory";
+} from "~/queries/evm-asset-factory";
 
 import BASE_ASSETS_MOCK from "./base-assets-mock.json";
 

@@ -4,7 +4,7 @@ import {
   useOmniston,
 } from "@ston-fi/omniston-sdk-react";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "~/components/ui/badge";
 
 export function ConnectionStatus() {
   const connectionStatus = useConnectionStatus();

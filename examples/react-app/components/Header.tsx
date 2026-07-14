@@ -1,12 +1,11 @@
 "use client";
 
-import { TonConnectButton } from "@tonconnect/ui-react";
-import { AppKitButton } from "@reown/appkit/react";
 import Image from "next/image";
 
-import { Badge } from "@/components/ui/badge";
-import GitBookIcon from "@/public/icons/gitbook.svg";
-import GitHubIcon from "@/public/icons/github.svg";
+import { Badge } from "~/components/ui/badge";
+import { WalletManager } from "~/components/WalletManager";
+import GitBookIcon from "~/public/icons/gitbook.svg";
+import GitHubIcon from "~/public/icons/github.svg";
 
 export function Header() {
   return (
@@ -26,8 +25,7 @@ export function Header() {
           <Badge className="absolute -right-7 bottom-1 scale-[0.8] rotate-[-13deg]">example</Badge>
         </a>
 
-        <AppKitButton size="md" balance="hide" />
-        <TonConnectButton />
+        <WalletManager />
         <a
           href="https://github.com/ston-fi/omniston-sdk"
           target="_blank noopener noreferrer"

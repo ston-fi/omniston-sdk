@@ -1,9 +1,10 @@
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 import { z } from "zod";
 
-import type { Brand } from "@/lib/types";
+import type { Brand } from "~/lib/types";
 
-import { Chain, EVM_CHAINS } from "./chain";
+import { Chain } from "./chain";
+import { ChainFamily, chainsByFamily } from "./chain-family";
 
 export const assetIdSchema = z.object({
   chain: z.discriminatedUnion("$case", [
@@ -23,7 +24,7 @@ export const assetIdSchema = z.object({
       }),
     }),
     z.object({
-      $case: z.literal(EVM_CHAINS),
+      $case: z.literal(chainsByFamily[ChainFamily.EVM]),
       value: z.object({
         kind: z.discriminatedUnion("$case", [
           z.object({

@@ -2,11 +2,11 @@
 
 import type { Quote } from "@ston-fi/omniston-sdk-react";
 
-import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
-import { DescriptionList } from "@/components/ui/description-list";
-import { bigNumberToFloat, trimStringWithEllipsis } from "@/lib/utils";
-import { Chain } from "@/models/chain";
-import { useQuoteAssets } from "@/hooks/useQuoteAssets";
+import { ExplorerAddressPreview } from "~/components/ExplorerAddressPreview";
+import { DescriptionList } from "~/components/ui/description-list";
+import { bigNumberToFloat, trimStringWithEllipsis } from "~/lib/utils";
+import { Chain } from "~/models/chain";
+import { useQuoteAssets } from "~/hooks/useQuoteAssets";
 
 export function QuotePresenter({
   quote,

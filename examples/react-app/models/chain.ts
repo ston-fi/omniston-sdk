@@ -49,22 +49,3 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
   },
 };
-
-export const EVM_CHAINS = [
-  Chain.ARBITRUM,
-  Chain.AVALANCHE,
-  Chain.BASE,
-  Chain.BNB,
-  Chain.ETHEREUM,
-  Chain.POLYGON,
-] as const;
-
-export type EvmChain = (typeof EVM_CHAINS)[number];
-
-export function isEvmChain(
-  // this type allows for string literals that are not in the Chain enum,
-  //  which is useful for passing unknown/unsupported chains without TypeScript errors
-  chain: Chain | (string & {}),
-): chain is EvmChain {
-  return EVM_CHAINS.includes(chain);
-}

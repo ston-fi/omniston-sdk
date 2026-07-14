@@ -10,16 +10,16 @@ import {
   isOrderQuote,
 } from "@ston-fi/omniston-sdk-react";
 
-import { bigNumberToFloat, cn, trimStringWithEllipsis } from "@/lib/utils";
-import { Copy } from "@/components/ui/copy";
-import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
-import { TradeTrackStatusPresenter } from "@/components/TradeTrackStatusPresenter";
-import { DescriptionList } from "@/components/ui/description-list";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Chain } from "@/models/chain";
-import { CopyJsonCard } from "@/components/ui/copy-json-card";
-import { useTradeTrackState } from "@/providers/trade-track";
-import { useQuoteAssets } from "@/hooks/useQuoteAssets";
+import { bigNumberToFloat, cn, trimStringWithEllipsis } from "~/lib/utils";
+import { Copy } from "~/components/ui/copy";
+import { ExplorerAddressPreview } from "~/components/ExplorerAddressPreview";
+import { TradeTrackStatusPresenter } from "~/components/TradeTrackStatusPresenter";
+import { DescriptionList } from "~/components/ui/description-list";
+import { Skeleton } from "~/components/ui/skeleton";
+import { Chain } from "~/models/chain";
+import { CopyJsonCard } from "~/components/ui/copy-json-card";
+import { useTradeTrackState } from "~/providers/trade-track";
+import { useQuoteAssets } from "~/hooks/useQuoteAssets";
 
 export function TradeTrackOrder(props: { className?: string }) {
   const { quote: trackingQuote, tradeEvent: tradeTrackProgress } = useTradeTrackState();

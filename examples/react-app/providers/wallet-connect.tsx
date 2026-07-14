@@ -10,16 +10,11 @@ import {
   polygon,
   type AppKitNetwork,
 } from "@reown/appkit/networks";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { WagmiProvider } from "wagmi";
 
 let isAppKitCreated = false;
-
-const networks = [arbitrum, avalanche, mainnet, base, polygon, bsc] satisfies [
-  AppKitNetwork,
-  ...AppKitNetwork[],
-];
 
 export function WalletConnectProvider({
   children,
@@ -28,27 +23,45 @@ export function WalletConnectProvider({
   children: React.ReactNode;
   projectId: string;
 }) {
+  const evmNetworks = useMemo(
+    () =>
+      [arbitrum, avalanche, mainnet, base, polygon, bsc] satisfies [
+        AppKitNetwork,
+        ...AppKitNetwork[],
+      ],
+    [],
+  );
+
   const wagmiAdapter = useRef(
     new WagmiAdapter({
-      networks,
+      networks: evmNetworks,
       projectId,
+      ssr: true,
     }),
   );
 
+  const [isAppKitReady, setIsAppKitReady] = useState(isAppKitCreated);
+
   useEffect(() => {
-    if (isAppKitCreated) return;
+    if (!isAppKitCreated) {
+      createAppKit({
+        adapters: [wagmiAdapter.current],
+        networks: evmNetworks,
+        projectId,
+        showWallets: true,
+        defaultNetwork: base,
+        themeMode: "light",
+      });
 
-    createAppKit({
-      adapters: [wagmiAdapter.current],
-      networks,
-      projectId,
-      showWallets: true,
-      defaultNetwork: base,
-      themeMode: "light",
-    });
+      isAppKitCreated = true;
+    }
 
-    isAppKitCreated = true;
-  }, [projectId]);
+    setIsAppKitReady(true);
+  }, [evmNetworks, projectId]);
 
-  return <WagmiProvider config={wagmiAdapter.current.wagmiConfig}>{children}</WagmiProvider>;
+  return (
+    <WagmiProvider config={wagmiAdapter.current.wagmiConfig}>
+      {isAppKitReady ? children : null}
+    </WagmiProvider>
+  );
 }

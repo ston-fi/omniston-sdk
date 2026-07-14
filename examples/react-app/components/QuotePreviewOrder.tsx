@@ -3,14 +3,14 @@
 import { ChevronDown } from "lucide-react";
 import type { QuoteOfType } from "@ston-fi/omniston-sdk-react";
 
-import { bigNumberToFloat, trimStringWithEllipsis } from "@/lib/utils";
-import { DescriptionList } from "@/components/ui/description-list";
-import { ExplorerAddressPreview } from "@/components/ExplorerAddressPreview";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { QuotePresenter } from "@/components/QuotePresenter";
-import { CopyJsonCard } from "@/components/ui/copy-json-card";
-import { addressFromAssetId } from "@/models/address";
-import { useQuoteAssets } from "@/hooks/useQuoteAssets";
+import { bigNumberToFloat, trimStringWithEllipsis } from "~/lib/utils";
+import { DescriptionList } from "~/components/ui/description-list";
+import { ExplorerAddressPreview } from "~/components/ExplorerAddressPreview";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
+import { QuotePresenter } from "~/components/QuotePresenter";
+import { CopyJsonCard } from "~/components/ui/copy-json-card";
+import { addressFromAssetId } from "~/models/address";
+import { useQuoteAssets } from "~/hooks/useQuoteAssets";
 
 type OrderQuote = QuoteOfType<"order">;
 

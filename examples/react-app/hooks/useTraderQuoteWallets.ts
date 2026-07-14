@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import type { Quote } from "@ston-fi/omniston-sdk";
 
-import { useConnectedWallets } from "@/hooks/useConnectedWallets";
-import { Chain } from "@/models/chain";
+import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { Chain } from "~/models/chain";
 
 export function useQuoteWallets(quote?: Pick<Quote, "inputAsset" | "outputAsset">) {
   const connectedWallets = useConnectedWallets();

@@ -3,7 +3,7 @@
 import { Check as CheckIcon, Copy as CopyIcon } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "~/lib/utils";
 
 export interface CopyProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;

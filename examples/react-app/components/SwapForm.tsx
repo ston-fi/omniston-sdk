@@ -2,21 +2,21 @@
 
 import { useConfig as useWagmiConfig } from "wagmi";
 
-import { AssetSelect, type ChainTabConfig } from "@/components/AssetSelect";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { Chain } from "@/models/chain";
-import { useSwapForm, useSwapFormDispatch } from "@/providers/swap-form";
-import { tonAssetQueryFactory } from "@/queries/ton-assets";
-import { baseAssetQueryFactory } from "@/queries/base-assets";
-import { polygonAssetQueryFactory } from "@/queries/polygon-assets";
-import { ethereumAssetQueryFactory } from "@/queries/ethereum-assets";
-import { bnbAssetQueryFactory } from "@/queries/bnb-assets";
-import { useAssets } from "@/providers/assets";
-import { useConnectedWallets } from "@/hooks/useConnectedWallets";
-import { avalancheAssetQueryFactory } from "@/queries/avalanche-assets";
-import { arbitrumAssetQueryFactory } from "@/queries/arbitrum-assets";
+import { AssetSelect, type ChainTabConfig } from "~/components/AssetSelect";
+import { Card, CardContent } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { cn } from "~/lib/utils";
+import { Chain } from "~/models/chain";
+import { useSwapForm, useSwapFormDispatch } from "~/providers/swap-form";
+import { tonAssetQueryFactory } from "~/queries/ton-assets";
+import { baseAssetQueryFactory } from "~/queries/base-assets";
+import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
+import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
+import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
+import { useAssets } from "~/providers/assets";
+import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
+import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
 
 const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
   const {
@@ -30,7 +30,6 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
   } = useConnectedWallets();
 
   const wagmiConfig = useWagmiConfig();
-
   return [
     {
       chain: Chain.ARBITRUM,

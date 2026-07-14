@@ -1,9 +1,9 @@
 "use server";
 
-import type { Asset } from "@/models/asset";
+import type { Asset } from "~/models/asset";
 
-import { stonApiClient } from "@/lib/ston-api-client";
-import { retrieveEnvVariable } from "@/lib/utils";
+import { stonApiClient } from "~/lib/ston-api-client";
+import { retrieveEnvVariable } from "~/lib/utils";
 
 import { tonAssetSchema, transformToAsset } from "./ton-asset-schema";
 

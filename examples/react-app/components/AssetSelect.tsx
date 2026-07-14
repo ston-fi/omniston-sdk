@@ -4,8 +4,8 @@ import { useQuery, useQueries, type UseQueryOptions } from "@tanstack/react-quer
 import { ChevronDown } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -13,17 +13,17 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
-import { bigNumberToFloat, cn } from "@/lib/utils";
-import type { Asset } from "@/models/asset";
-import { isAssetIdEqual, deserializeAssetId, serializeAssetId } from "@/models/asset-id";
-import { truncateAddress, addressFromAssetId } from "@/models/address";
+} from "~/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { Skeleton } from "~/components/ui/skeleton";
+import { bigNumberToFloat, cn } from "~/lib/utils";
+import type { Asset } from "~/models/asset";
+import { isAssetIdEqual, deserializeAssetId, serializeAssetId } from "~/models/asset-id";
+import { truncateAddress, addressFromAssetId } from "~/models/address";
 
 import { ExplorerAddressPreview } from "./ExplorerAddressPreview";
-import { CHAIN_METADATA, Chain, chainSchema } from "@/models/chain";
-import { useAssets } from "@/providers/assets";
+import { CHAIN_METADATA, Chain, chainSchema } from "~/models/chain";
+import { useAssets } from "~/providers/assets";
 
 type AssetQueryOptions = UseQueryOptions<Asset[], Error, Asset[], any[]>;
 
@@ -226,7 +226,7 @@ const AssetSelectTrigger = React.forwardRef<
       variant="outline"
       role="combobox"
       className={cn(
-        "w-full justify-start group data-[state=open]:border-foreground/50 py-0.5",
+        "w-full justify-start group data-[state=open]:border-foreground/50 data-[popup-open]:border-foreground/50 py-0.5",
         className,
       )}
     >
@@ -254,7 +254,7 @@ const AssetSelectTrigger = React.forwardRef<
         <span className="truncate">Select asset…</span>
       )}
 
-      <ChevronDown className="ml-auto h-4 w-4 shrink-0 opacity-50 transition-transform group-data-[state=open]:rotate-180" />
+      <ChevronDown className="ml-auto h-4 w-4 shrink-0 opacity-50 transition-transform group-data-[popup-open]:rotate-180 group-data-[state=open]:rotate-180" />
     </Button>
   );
 });

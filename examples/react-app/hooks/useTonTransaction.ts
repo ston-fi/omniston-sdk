@@ -2,12 +2,12 @@ import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useMemo } from "react";
 import { matchQuoteByType, isHtlcOrderQuote } from "@ston-fi/omniston-sdk-react";
 
-import { useOmniston } from "@/hooks/useOmniston";
-import { useRfq } from "@/hooks/useRfq";
-import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
-import { hexToBase64 } from "@/lib/utils";
-import { useSwapSettings } from "@/providers/swap-settings";
-import { generateHtlcHashlock, generateHtlcSecret } from "@/lib/omniston/htlc";
+import { useOmniston } from "~/hooks/useOmniston";
+import { useRfq } from "~/hooks/useRfq";
+import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
+import { hexToBase64 } from "~/lib/utils";
+import { useSwapSettings } from "~/providers/swap-settings";
+import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
 
 export function useTonTransaction() {
   const [tonConnect] = useTonConnectUI();

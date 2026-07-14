@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { useRfq } from "@/hooks/useRfq";
+import { useRfq } from "~/hooks/useRfq";
 
 type RfqEvent = NonNullable<ReturnType<typeof useRfq>["data"]>;
 

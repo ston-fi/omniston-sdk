@@ -10,6 +10,7 @@ import { SwapSettingsProvider } from "./swap-settings";
 import { TonConnectProvider } from "./ton-connect";
 import { TradeTrackProvider } from "./trade-track";
 import { WalletConnectProvider } from "./wallet-connect";
+import { AppConfigProvider } from "./config";
 
 export function Providers({
   children,
@@ -33,19 +34,21 @@ export function Providers({
 
   return (
     <QueryClientProvider client={queryClient.current}>
-      <TonConnectProvider manifestUrl={tonConnectManifestUrl}>
-        <WalletConnectProvider projectId={walletConnectProjectId}>
-          <OmnistonProvider omniston={omniston.current}>
-            <AssetsProvider>
-              <SwapSettingsProvider>
-                <SwapFormProvider>
-                  <TradeTrackProvider>{children}</TradeTrackProvider>
-                </SwapFormProvider>
-              </SwapSettingsProvider>
-            </AssetsProvider>
-          </OmnistonProvider>
-        </WalletConnectProvider>
-      </TonConnectProvider>
+      <AppConfigProvider>
+        <TonConnectProvider manifestUrl={tonConnectManifestUrl}>
+          <WalletConnectProvider projectId={walletConnectProjectId}>
+            <OmnistonProvider omniston={omniston.current}>
+              <AssetsProvider>
+                <SwapSettingsProvider>
+                  <SwapFormProvider>
+                    <TradeTrackProvider>{children}</TradeTrackProvider>
+                  </SwapFormProvider>
+                </SwapSettingsProvider>
+              </AssetsProvider>
+            </OmnistonProvider>
+          </WalletConnectProvider>
+        </TonConnectProvider>
+      </AppConfigProvider>
     </QueryClientProvider>
   );
 }

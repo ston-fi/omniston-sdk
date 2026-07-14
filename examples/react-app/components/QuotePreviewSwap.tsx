@@ -3,14 +3,14 @@
 import type { QuoteOfType } from "@ston-fi/omniston-sdk-react";
 import { ChevronDown } from "lucide-react";
 
-import { QuotePresenter } from "@/components/QuotePresenter";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { CopyJsonCard } from "@/components/ui/copy-json-card";
-import { DescriptionList } from "@/components/ui/description-list";
-import { bigNumberToFloat, cn } from "@/lib/utils";
-import { pipsToPercent } from "@/lib/utils/percent";
-import { serializeAssetId } from "@/models/asset-id";
-import { useAssets } from "@/providers/assets";
+import { QuotePresenter } from "~/components/QuotePresenter";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
+import { CopyJsonCard } from "~/components/ui/copy-json-card";
+import { DescriptionList } from "~/components/ui/description-list";
+import { bigNumberToFloat, cn } from "~/lib/utils";
+import { pipsToPercent } from "~/lib/utils/percent";
+import { serializeAssetId } from "~/models/asset-id";
+import { useAssets } from "~/providers/assets";
 
 type SwapQuote = QuoteOfType<"swap">;
 
@@ -33,7 +33,7 @@ export const QuotePreviewSwap = ({ quote }: { quote: SwapQuote }) => {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <CopyJsonCard title="" className="mt-2" value={swapSettlementData}>
-            {swapSettlementData.priceImpactPips ? (
+            {swapSettlementData.priceImpactPips !== undefined ? (
               <DescriptionList className="mb-2">
                 <li>
                   <span>priceImpactPips:</span>

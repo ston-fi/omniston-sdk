@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./*"]
+      "~/*": ["./*"]
     },
     "lib": ["es2022", "DOM", "DOM.Iterable"],
     "plugins": [

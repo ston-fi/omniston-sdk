@@ -1,7 +1,8 @@
+import { useMemo } from "react";
 import { ExternalLink } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { Chain } from "@/models/chain";
+import { cn } from "~/lib/utils";
+import { Chain } from "~/models/chain";
 
 interface ExplorerTransactionPreviewProps extends Omit<
   React.ComponentProps<"a">,
@@ -11,16 +12,6 @@ interface ExplorerTransactionPreviewProps extends Omit<
   txId: string;
 }
 
-const transactionPreviewLinkByChain = {
-  [Chain.ARBITRUM]: (txId) => `https://arbiscan.io/tx/${txId}`,
-  [Chain.AVALANCHE]: (txId) => `https://snowtrace.io/tx/${txId}`,
-  [Chain.BASE]: (txId) => `https://basescan.org/tx/${txId}`,
-  [Chain.BNB]: (txId) => `https://bscscan.com/tx/${txId}`,
-  [Chain.ETHEREUM]: (txId) => `https://etherscan.io/tx/${txId}`,
-  [Chain.POLYGON]: (txId) => `https://polygonscan.com/tx/${txId}`,
-  [Chain.TON]: (txId) => `https://tonviewer.com/transaction/${txId}`,
-} satisfies Record<Chain, (txId: string) => string>;
-
 export const ExplorerTransactionPreview = ({
   txId,
   chain,
@@ -28,16 +19,46 @@ export const ExplorerTransactionPreview = ({
   children,
   ...props
 }: ExplorerTransactionPreviewProps) => {
+  const link = useMemo(() => {
+    switch (chain) {
+      case Chain.ARBITRUM: {
+        return `https://arbiscan.io/tx/${txId}`;
+      }
+      case Chain.AVALANCHE: {
+        return `https://snowtrace.io/tx/${txId}`;
+      }
+      case Chain.BASE: {
+        return `https://basescan.org/tx/${txId}`;
+      }
+      case Chain.BNB: {
+        return `https://bscscan.com/tx/${txId}`;
+      }
+      case Chain.ETHEREUM: {
+        return `https://etherscan.io/tx/${txId}`;
+      }
+      case Chain.POLYGON: {
+        return `https://polygonscan.com/tx/${txId}`;
+      }
+      case Chain.TON: {
+        return `https://tonviewer.com/transaction/${txId}`;
+      }
+      default: {
+        chain satisfies never;
+        throw new Error(`Unexpected chain: ${chain}`);
+      }
+    }
+  }, [chain, txId]);
+
   return (
     <a
       target="_blank"
       rel="noopener noreferrer"
       {...props}
-      href={transactionPreviewLinkByChain[chain](txId)}
+      href={link}
       className={cn("flex gap-1 items-center hover:text-primary", className)}
     >
       {children}
-      <ExternalLink size={16} className="size-[16px] shrink-0" />
+      <ExternalLink className="size-4 shrink-0" />
     </a>
   );
 };

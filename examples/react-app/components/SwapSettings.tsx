@@ -3,25 +3,26 @@
 import { useId } from "react";
 import { SettlementMethod } from "@ston-fi/omniston-sdk-react";
 
-import { isValidAddress } from "@/models/address";
-import { Chain, EVM_CHAINS } from "@/models/chain";
-import { Button } from "@/components/ui/button";
+import { isValidAddress } from "~/models/address";
+import { Chain } from "~/models/chain";
+import { ChainFamily, chainsByFamily } from "~/models/chain-family";
+import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+} from "~/components/ui/dialog";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Switch } from "~/components/ui/switch";
 import {
   DEFAULT_SLIPPAGE_TOLERANCE_PERCENT,
   MAX_INTEGRATOR_FEE_PIPS,
   MAX_SLIPPAGE_TOLERANCE_PERCENT,
   useSwapSettings,
-} from "@/providers/swap-settings";
+} from "~/providers/swap-settings";
 
 export function SwapSettings({
   trigger = (
@@ -166,7 +167,7 @@ const SwapIntegratorFeeSection = () => {
   const isIntegratorAddressValid =
     !integratorAddress ||
     isValidAddress(Chain.TON, integratorAddress) ||
-    isValidAddress(EVM_CHAINS[0], integratorAddress);
+    isValidAddress(chainsByFamily[ChainFamily.EVM][0], integratorAddress);
 
   return (
     <section className="flex flex-col space-y-2">

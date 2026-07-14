@@ -1,4 +1,5 @@
-import { Chain, type EvmChain } from "@/models/chain";
+import { Chain } from "~/models/chain";
+import type { EvmChain } from "~/models/chain-family";
 
 const chainToChainIdMap = {
   [Chain.ARBITRUM]: 42161,

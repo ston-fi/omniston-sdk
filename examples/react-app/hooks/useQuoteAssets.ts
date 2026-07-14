@@ -1,8 +1,8 @@
 import type { AssetId, Quote } from "@ston-fi/omniston-sdk-react";
 import { useMemo } from "react";
 
-import { getNativeAssetIdForChain, serializeAssetId } from "@/models/asset-id";
-import { useAssets } from "@/providers/assets";
+import { getNativeAssetIdForChain, serializeAssetId } from "~/models/asset-id";
+import { useAssets } from "~/providers/assets";
 
 function throwMissingAssetError(assetId: AssetId) {
   return new Error(`Can't display the quote. ${serializeAssetId(assetId)} is missing in store`);

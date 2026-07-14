@@ -1,11 +1,12 @@
 import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk";
 import z from "zod";
 
-import { trimStringWithEllipsis } from "@/lib/utils";
-import { isTonAddress } from "@/lib/ton/address";
-import { isErc20Address } from "@/lib/evm/address";
+import { trimStringWithEllipsis } from "~/lib/utils";
+import { isTonAddress } from "~/lib/ton/address";
+import { isErc20Address } from "~/lib/evm/address";
 
-import { Chain, EVM_CHAINS } from "./chain";
+import { Chain } from "./chain";
+import { ChainFamily, chainsByFamily } from "./chain-family";
 
 export const addressSchema = z.object({
   chain: z.discriminatedUnion("$case", [
@@ -14,7 +15,7 @@ export const addressSchema = z.object({
       value: z.string().nonempty(),
     }),
     z.object({
-      $case: z.literal(EVM_CHAINS),
+      $case: z.literal(chainsByFamily[ChainFamily.EVM]),
       value: z.string().nonempty(),
     }),
   ]),

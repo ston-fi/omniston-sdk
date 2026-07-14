@@ -1,13 +1,13 @@
 import { bsc } from "@reown/appkit/networks";
 
-import type { Asset } from "@/models/asset";
-import { Chain } from "@/models/chain";
-import { resolveAssetsMock } from "@/queries/assets-mock";
+import type { Asset } from "~/models/asset";
+import { Chain } from "~/models/chain";
+import { resolveAssetsMock } from "~/queries/assets-mock";
 import {
   createEvmAssetQueryFactory,
   evmAssetMockSchema,
   type EvmAssetMock,
-} from "@/queries/evm-asset-factory";
+} from "~/queries/evm-asset-factory";
 
 import BNB_ASSETS_MOCK from "./bnb-assets-mock.json";
 

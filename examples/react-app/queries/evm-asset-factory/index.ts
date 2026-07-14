@@ -4,9 +4,9 @@ import { getBalance, multicall, type Config } from "@wagmi/core";
 import { erc20Abi, type Address } from "viem";
 import { z } from "zod";
 
-import { erc20AddressSchema } from "@/lib/evm/address";
-import type { Asset } from "@/models/asset";
-import { EVM_CHAINS } from "@/models/chain";
+import { erc20AddressSchema } from "~/lib/evm/address";
+import type { Asset } from "~/models/asset";
+import type { EvmChain } from "~/models/chain-family";
 
 export const evmAssetMockSchema = z.object({
   address: z.union([erc20AddressSchema, z.literal("native")]),
@@ -27,7 +27,7 @@ type EvmAssetQueryArgs = {
 };
 
 type CreateEvmAssetQueryFactoryParams = {
-  chain: (typeof EVM_CHAINS)[number];
+  chain: EvmChain;
   wagmiChainId: number;
   queryKey: string;
   searchQueryKey: string;

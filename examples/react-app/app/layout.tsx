@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { unstable_noStore as noStore } from "next/cache";
 import { Inter } from "next/font/google";
 
-import { Header } from "@/components/Header";
-import { cn, retrieveEnvVariable } from "@/lib/utils";
-import { Providers } from "@/providers";
+import { Header } from "~/components/Header";
+import { cn, retrieveEnvVariable } from "~/lib/utils";
+import { Providers } from "~/providers";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });

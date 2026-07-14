@@ -2,14 +2,14 @@
 
 import { type Quote, matchQuoteByType } from "@ston-fi/omniston-sdk-react";
 
-import { Copy } from "@/components/ui/copy";
-import { DescriptionList } from "@/components/ui/description-list";
-import { useRfq } from "@/hooks/useRfq";
-import { cn, trimStringWithEllipsis } from "@/lib/utils";
-import { useTradeTrackState } from "@/providers/trade-track";
-import { QuotePreviewSwap } from "@/components/QuotePreviewSwap";
-import { QuotePreviewOrder } from "@/components/QuotePreviewOrder";
-import { RfqEventHistory } from "@/components/RfqEventHistory";
+import { Copy } from "~/components/ui/copy";
+import { DescriptionList } from "~/components/ui/description-list";
+import { useRfq } from "~/hooks/useRfq";
+import { cn, trimStringWithEllipsis } from "~/lib/utils";
+import { useTradeTrackState } from "~/providers/trade-track";
+import { QuotePreviewSwap } from "~/components/QuotePreviewSwap";
+import { QuotePreviewOrder } from "~/components/QuotePreviewOrder";
+import { RfqEventHistory } from "~/components/RfqEventHistory";
 
 export const QuotePreview = (props: { className?: string }) => {
   const { data: quoteEvent, error, isFetching } = useRfq();

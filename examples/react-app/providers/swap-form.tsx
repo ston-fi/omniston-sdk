@@ -4,8 +4,8 @@ import { createContext, type Dispatch, useContext, useEffect, useReducer, useRef
 import { z } from "zod";
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
-import { Chain } from "@/models/chain";
-import { assetIdSchema, isAssetIdEqual } from "@/models/asset-id";
+import { Chain } from "~/models/chain";
+import { assetIdSchema, isAssetIdEqual } from "~/models/asset-id";
 
 const SWAP_FORM_STORAGE_KEY = "@ston-fi/swap-form-state";
 

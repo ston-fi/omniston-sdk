@@ -1,4 +1,4 @@
-import { retrieveEnvVariable } from "@/lib/utils";
+import { retrieveEnvVariable } from "~/lib/utils";
 
 export async function GET() {
   const manifest = {

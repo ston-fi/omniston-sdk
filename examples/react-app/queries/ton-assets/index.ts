@@ -1,8 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk-react";
 
-import type { Asset } from "@/models/asset";
-import { Chain } from "@/models/chain";
+import type { Asset } from "~/models/asset";
+import { Chain } from "~/models/chain";
 
 import { fetchTonAssets } from "./fetch-ton-assets-action";
 import { searchTonAssets } from "./search-ton-assets-action";

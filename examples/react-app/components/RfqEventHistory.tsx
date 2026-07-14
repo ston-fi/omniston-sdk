@@ -3,10 +3,10 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import { useRfqEventHistory } from "@/hooks/useRfqEventHistory";
-import { cn } from "@/lib/utils";
+import { useRfqEventHistory } from "~/hooks/useRfqEventHistory";
+import { cn } from "~/lib/utils";
 import { CopyJsonCard } from "./ui/copy-json-card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
 
 export function RfqEventHistory({ className, ...props }: { className?: string }) {
   const events = useRfqEventHistory();

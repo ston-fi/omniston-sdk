@@ -13,11 +13,11 @@ import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { useMemo } from "react";
 import { isHtlcOrderQuote, BuildEvmOrderPayloadRequest } from "@ston-fi/omniston-sdk-react";
 
-import { useOmniston } from "@/hooks/useOmniston";
-import { useRfq } from "@/hooks/useRfq";
-import { useQuoteWallets } from "@/hooks/useTraderQuoteWallets";
-import { generateHtlcHashlock, generateHtlcSecret } from "@/lib/omniston/htlc";
-import { mapChainToChainId } from "@/lib/evm/chain";
+import { useOmniston } from "~/hooks/useOmniston";
+import { useRfq } from "~/hooks/useRfq";
+import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
+import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
+import { mapChainToChainId } from "~/lib/evm/chain";
 import {
   PERMIT2_ADDRESS,
   buildEip2612PermitTypedData,
@@ -25,10 +25,10 @@ import {
   encodeEip2612PermitData,
   encodePermit2PermitData,
   resolveEvmPermitConfig,
-} from "@/lib/evm/permits";
-import { useSwapSettings } from "@/providers/swap-settings";
-import { isEvmChain } from "@/models/chain";
-import { getContractNonce, getPermit2Nonce } from "@/lib/evm/on-chain";
+} from "~/lib/evm/permits";
+import { useSwapSettings } from "~/providers/swap-settings";
+import { ChainFamily, isChainInFamily } from "~/models/chain-family";
+import { getContractNonce, getPermit2Nonce } from "~/lib/evm/on-chain";
 
 type TypedData = Parameters<ReturnType<typeof useSignTypedData>["mutateAsync"]>[0];
 
@@ -60,7 +60,7 @@ export function useEvmTransaction() {
 
       const inputChain = quote.inputAsset.chain.$case;
 
-      if (!isEvmChain(inputChain)) {
+      if (!isChainInFamily(inputChain, ChainFamily.EVM)) {
         throw new Error(`Expected EVM chain for order quote, got "${inputChain}"`);
       }
 
@@ -232,7 +232,7 @@ export function useEvmTransaction() {
 
       const isAllowanceRequired = permitData
         ? false
-        : isEvmChain(quote.inputAsset.chain.$case) &&
+        : isChainInFamily(quote.inputAsset.chain.$case, ChainFamily.EVM) &&
           quote.inputAsset.chain.value.kind.$case !== "native";
 
       if (isAllowanceRequired) {

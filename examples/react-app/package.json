@@ -11,16 +11,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@radix-ui/react-avatar": "1.1.11",
-    "@radix-ui/react-collapsible": "1.1.12",
-    "@radix-ui/react-dialog": "1.1.15",
-    "@radix-ui/react-label": "2.1.8",
-    "@radix-ui/react-popover": "1.1.15",
-    "@radix-ui/react-select": "2.2.6",
-    "@radix-ui/react-slot": "1.2.4",
-    "@radix-ui/react-switch": "1.2.6",
-    "@reown/appkit": "1.8.19",
-    "@reown/appkit-adapter-wagmi": "1.8.19",
+    "@base-ui/react": "1.6.0",
+    "@reown/appkit": "1.8.21",
+    "@reown/appkit-adapter-wagmi": "1.8.21",
     "@ston-fi/api": "0.32.0",
     "@ston-fi/omniston-sdk": "workspace:*",
     "@ston-fi/omniston-sdk-react": "workspace:*",
@@ -31,10 +24,10 @@
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "lucide-react": "1.8.0",
-    "next": "16.2.3",
-    "react": "19.2.5",
-    "react-dom": "19.2.5",
-    "tailwind-merge": "3.5.0",
+    "next": "16.2.10",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "tailwind-merge": "3.6.0",
     "tailwindcss-animate": "1.0.7",
     "use-debounce": "10.1.1",
     "viem": "2.47.10",
@@ -42,12 +35,12 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "4.2.2",
+    "@tailwindcss/postcss": "4.3.2",
     "@total-typescript/ts-reset": "0.6.1",
     "@types/node": "24.6.0",
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
-    "postcss": "8.5.9",
-    "tailwindcss": "4.2.2"
+    "postcss": "8.5.16",
+    "tailwindcss": "4.3.2"
   }
 }
