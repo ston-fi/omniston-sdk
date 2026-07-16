@@ -98,14 +98,14 @@ const PERMIT_CONFIG_MAP: Record<ViemAddress, EvmPermitConfig> = {
       verifyingContract: "0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB",
     },
   },
-  "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913": {
-    kind: "permit2",
-    domain: {
-      name: "Permit2",
-      chainId: 8453,
-      verifyingContract: PERMIT2_ADDRESS,
-    },
-  },
+  // "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913": {
+  //   kind: "permit2",
+  //   domain: {
+  //     name: "Permit2",
+  //     chainId: 8453,
+  //     verifyingContract: PERMIT2_ADDRESS,
+  //   },
+  // },
 };
 
 export function resolveEvmPermitConfig(assetId: AssetId) {

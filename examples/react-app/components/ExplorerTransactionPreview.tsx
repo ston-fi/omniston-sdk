@@ -39,6 +39,9 @@ export const ExplorerTransactionPreview = ({
       case Chain.POLYGON: {
         return `https://polygonscan.com/tx/${txId}`;
       }
+      case Chain.ROBINHOOD: {
+        return `https://robinhoodchain.blockscout.com/tx/${txId}`;
+      }
       case Chain.TON: {
         return `https://tonviewer.com/transaction/${txId}`;
       }

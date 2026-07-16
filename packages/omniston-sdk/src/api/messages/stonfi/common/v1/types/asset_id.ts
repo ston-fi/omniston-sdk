@@ -48,6 +48,11 @@ export interface AssetId {
         $case: "polygon";
         value: EvmAssetId;
       } //
+    /** Robinhood (see [https://robinhood.com/]) */
+    | {
+        $case: "robinhood";
+        value: EvmAssetId;
+      } //
     /** TON (see [https://ton.org]) */
     | {
         $case: "ton";
@@ -136,9 +141,11 @@ export const AssetId: MessageFns<AssetId> = {
                 ? { $case: "ethereum", value: EvmAssetId.fromJSON(object.ethereum) }
                 : isSet(object.polygon)
                   ? { $case: "polygon", value: EvmAssetId.fromJSON(object.polygon) }
-                  : isSet(object.ton)
-                    ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
-                    : undefined,
+                  : isSet(object.robinhood)
+                    ? { $case: "robinhood", value: EvmAssetId.fromJSON(object.robinhood) }
+                    : isSet(object.ton)
+                      ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
+                      : undefined,
     };
   },
 
@@ -156,6 +163,8 @@ export const AssetId: MessageFns<AssetId> = {
       obj.ethereum = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "polygon") {
       obj.polygon = EvmAssetId.toJSON(message.chain.value);
+    } else if (message.chain?.$case === "robinhood") {
+      obj.robinhood = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "ton") {
       obj.ton = TonAssetId.toJSON(message.chain.value);
     }
@@ -201,6 +210,12 @@ export const AssetId: MessageFns<AssetId> = {
       case "polygon": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "polygon", value: EvmAssetId.fromPartial(object.chain.value) };
+        }
+        break;
+      }
+      case "robinhood": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "robinhood", value: EvmAssetId.fromPartial(object.chain.value) };
         }
         break;
       }

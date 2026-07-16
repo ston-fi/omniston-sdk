@@ -16,6 +16,7 @@ import { baseAssetQueryFactory } from "~/queries/base-assets";
 import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
 import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
 import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
+import { robinhoodAssetQueryFactory } from "~/queries/robinhood-assets";
 import { tonAssetQueryFactory } from "~/queries/ton-assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 
@@ -33,6 +34,7 @@ const ASSET_QUERY_FACTORIES = {
   [Chain.BNB]: bnbAssetQueryFactory,
   [Chain.ETHEREUM]: ethereumAssetQueryFactory,
   [Chain.POLYGON]: polygonAssetQueryFactory,
+  [Chain.ROBINHOOD]: robinhoodAssetQueryFactory,
   [Chain.TON]: tonAssetQueryFactory,
 } satisfies Record<Chain, unknown>;
 
@@ -141,6 +143,11 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     ...commonQueryOptions,
   });
 
+  const robinhoodAssetQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.ROBINHOOD),
+    ...commonQueryOptions,
+  });
+
   const tonAssetsQuery = useQuery({
     ...ASSET_QUERY_FACTORIES[Chain.TON].fetch({
       unconditionalAssets: getUnconditionalAssets(Chain.TON),
@@ -157,6 +164,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     [Chain.BNB]: bnbAssetsQuery,
     [Chain.ETHEREUM]: ethereumAssetsQuery,
     [Chain.POLYGON]: polygonAssetsQuery,
+    [Chain.ROBINHOOD]: robinhoodAssetQuery,
     [Chain.TON]: tonAssetsQuery,
   } satisfies Record<Chain, unknown>;
 

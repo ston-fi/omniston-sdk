@@ -27,6 +27,9 @@ message ChainAddress {
     // Polygon address in valid EIP-55 string format (see
     // [https://eips.ethereum.org/EIPS/eip-55])
     string polygon = 6;
+    // Robinhood address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string robinhood = 7;
 
     //////////////////////////////////////////////////
     // TON

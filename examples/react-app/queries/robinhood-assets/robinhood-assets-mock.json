@@ -1,0 +1,20 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "ETH",
+      "displayName": "Ethereum",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png"
+    }
+  },
+  {
+    "address": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDG",
+      "displayName": "Global Dollar",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/33793.png"
+    }
+  }
+]

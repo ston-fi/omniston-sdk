@@ -46,6 +46,9 @@ export const ExplorerAddressPreview = ({
       case Chain.POLYGON: {
         return `https://polygonscan.com/address/${address.chain.value}`;
       }
+      case Chain.ROBINHOOD: {
+        return `https://robinhoodchain.blockscout.com/address/${address.chain.value}`;
+      }
       case Chain.TON: {
         return `https://tonviewer.com/address/${address.chain.value}`;
       }

@@ -58,6 +58,11 @@ export type OmnistonErrorInfo =
           token_address: string;
         }
       | {
+          type: "EMULATION_JETTON_TRANSFER_FAILED";
+          protocol: string;
+          exit_code: string;
+        }
+      | {
           type:
             | "EMULATION_REFUND_SLIPPAGE"
             | "EMULATION_INSUFFICIENT_FUNDS"

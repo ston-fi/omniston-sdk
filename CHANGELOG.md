@@ -1,5 +1,14 @@
 # Changelog
 
+## 16-07-2026
+
+### @ston-fi/omniston-sdk@0.8.6
+
+#### Added
+
+- Added support for the `Robinhood (4663)` chain.
+- Extended `metadata.type` for `OmnistonError` instances with reason `QUOTE_VALIDATION_FAILED` with a new type: `EMULATION_JETTON_TRANSFER_FAILED`.
+
 ## 14-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.5

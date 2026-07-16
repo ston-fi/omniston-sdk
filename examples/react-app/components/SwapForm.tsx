@@ -17,6 +17,7 @@ import { useAssets } from "~/providers/assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
 import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
+import { robinhoodAssetQueryFactory } from "~/queries/robinhood-assets";
 
 const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
   const {
@@ -26,6 +27,7 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
     bnb: bnbWalletAddress,
     ethereum: ethereumWalletAddress,
     polygon: polygonWalletAddress,
+    robinhood: robinhoodWalletAddress,
     ton: tonWalletAddress,
   } = useConnectedWallets();
 
@@ -107,6 +109,19 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
         polygonAssetQueryFactory.search({
           searchTerm,
           walletAddress: polygonWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.ROBINHOOD,
+      fetchQueryOptions: robinhoodAssetQueryFactory.fetch({
+        walletAddress: robinhoodWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        robinhoodAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: robinhoodWalletAddress,
           wagmiConfig,
         }),
     },

@@ -7,6 +7,7 @@ export const Chain = {
   BNB: "bnb",
   ETHEREUM: "ethereum",
   POLYGON: "polygon",
+  ROBINHOOD: "robinhood",
   TON: "ton",
 } as const;
 
@@ -47,5 +48,9 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
   [Chain.TON]: {
     label: "TON",
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
+  },
+  [Chain.ROBINHOOD]: {
+    label: "ROBINHOOD",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/exchanges/64x64/909.png",
   },
 };

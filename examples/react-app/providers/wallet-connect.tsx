@@ -14,6 +14,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { WagmiProvider } from "wagmi";
 
+import { robinhood } from "~/lib/evm/custom-chains";
+
 let isAppKitCreated = false;
 
 export function WalletConnectProvider({
@@ -25,7 +27,7 @@ export function WalletConnectProvider({
 }) {
   const evmNetworks = useMemo(
     () =>
-      [arbitrum, avalanche, mainnet, base, polygon, bsc] satisfies [
+      [arbitrum, avalanche, mainnet, base, polygon, bsc, robinhood] satisfies [
         AppKitNetwork,
         ...AppKitNetwork[],
       ],

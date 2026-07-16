@@ -23,6 +23,8 @@ message AssetId {
     EvmAssetId ethereum = 5;
     // Polygon (see [https://polygon.technology/])
     EvmAssetId polygon = 6;
+    // Robinhood (see [https://robinhood.com/])
+    EvmAssetId robinhood = 7;
 
     //////////////////////////////////////////////////
     // TON

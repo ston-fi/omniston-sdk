@@ -8,6 +8,7 @@ const chainToChainIdMap = {
   [Chain.BNB]: 56,
   [Chain.ETHEREUM]: 1,
   [Chain.POLYGON]: 137,
+  [Chain.ROBINHOOD]: 4663,
 } as const satisfies Record<EvmChain, number>;
 
 export type EvmChainId = (typeof chainToChainIdMap)[EvmChain];
@@ -19,6 +20,7 @@ const chainIdToChainMap = {
   56: Chain.BNB,
   1: Chain.ETHEREUM,
   137: Chain.POLYGON,
+  4663: Chain.ROBINHOOD,
 } as const satisfies Record<EvmChainId, EvmChain>;
 
 export function mapChainIdToChain(chainId: EvmChainId): EvmChain {
