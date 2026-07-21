@@ -3,6 +3,7 @@
 ## 21-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.7
+### @ston-fi/omniston-sdk-react@0.8.7
 
 - Added support for the `Tron` chain.
 
