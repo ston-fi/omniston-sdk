@@ -38,6 +38,21 @@ export const assetIdSchema = z.object({
         ]),
       }),
     }),
+    z.object({
+      $case: z.literal(Chain.TRON),
+      value: z.object({
+        kind: z.discriminatedUnion("$case", [
+          z.object({
+            $case: z.literal("native"),
+            value: z.object({}),
+          }),
+          z.object({
+            $case: z.literal("trc20"),
+            value: z.string().nonempty(),
+          }),
+        ]),
+      }),
+    }),
   ]),
 }) satisfies z.ZodType<AssetId>;
 

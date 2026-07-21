@@ -6,6 +6,8 @@
 export type {
   AssetId,
   TonAssetId,
+  TronAssetId,
+  Trc1155AssetId,
   EvmAssetId,
   Erc1155AssetId,
 } from "./messages/stonfi/common/v1/types/asset_id";

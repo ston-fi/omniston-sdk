@@ -32,6 +32,13 @@ message AssetId {
 
     // TON (see [https://ton.org])
     TonAssetId ton = 50;
+
+    //////////////////////////////////////////////////
+    // TRON
+    //////////////////////////////////////////////////
+
+    // Tron (see [https://tron.network/])
+    TronAssetId tron = 60;
   }
 }
 
@@ -46,6 +53,32 @@ message TonAssetId {
     // [https://docs.ton.org/foundations/addresses/formats]).
     string jetton = 2;
   }
+}
+
+// Tron asset id (see [https://tron.network/])
+message TronAssetId {
+  oneof kind {
+    // Native Tron asset
+    google.protobuf.Empty native = 1;
+    // TRC-20 contract address in TRC-20 base58check format (`T...`, 34 chars;
+    // see [https://github.com/tronprotocol/tips/blob/master/tip-20.md]).
+    string trc20 = 2;
+    // TRC-1155 asset (mirrors ERC-1155 on EVM since Tron is TVM-based;
+    // see [https://eips.ethereum.org/EIPS/eip-1155]).
+    Trc1155AssetId trc1155 = 3;
+  }
+}
+
+// TRC-1155 asset id (mirrors ERC-1155 on EVM since Tron is TVM-based;
+// see [https://eips.ethereum.org/EIPS/eip-1155])
+message Trc1155AssetId {
+  // TRC-1155 contract address in TRC-20 base58check format (`T...`, 34 chars;
+  // see [https://github.com/tronprotocol/tips/blob/master/tip-20.md]).
+  string contract_address = 1;
+  // Token ID (uint256)
+  // Supports: Decimal ("42"), Hex ("0x2A"), Octal ("0o52"), or Binary
+  // ("0b101010").
+  string token_id = 2;
 }
 
 // EVM asset id (see [https://ethereum.org/developers/docs/evm/])

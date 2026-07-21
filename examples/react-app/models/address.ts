@@ -4,6 +4,7 @@ import z from "zod";
 import { trimStringWithEllipsis } from "~/lib/utils";
 import { isTonAddress } from "~/lib/ton/address";
 import { isErc20Address } from "~/lib/evm/address";
+import { isTronAddress } from "~/lib/tron/address";
 
 import { Chain } from "./chain";
 import { ChainFamily, chainsByFamily } from "./chain-family";
@@ -16,6 +17,10 @@ export const addressSchema = z.object({
     }),
     z.object({
       $case: z.literal(chainsByFamily[ChainFamily.EVM]),
+      value: z.string().nonempty(),
+    }),
+    z.object({
+      $case: z.literal(Chain.TRON),
       value: z.string().nonempty(),
     }),
   ]),
@@ -61,6 +66,21 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
+    case Chain.TRON: {
+      switch (assetId.chain.value.kind.$case) {
+        case "trc20": {
+          return {
+            chain: {
+              $case: Chain.TRON,
+              value: assetId.chain.value.kind.value,
+            },
+          };
+        }
+        default: {
+          return null;
+        }
+      }
+    }
     default: {
       throw new Error(`Unexpected chain: ${chainCase}`);
     }
@@ -80,6 +100,9 @@ export function isValidAddress(chain: Chain, src: string) {
     case Chain.POLYGON:
     case Chain.ROBINHOOD: {
       return isErc20Address(src);
+    }
+    case Chain.TRON: {
+      return isTronAddress(src);
     }
     default: {
       chain satisfies never;

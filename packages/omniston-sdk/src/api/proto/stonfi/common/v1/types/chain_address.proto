@@ -38,5 +38,13 @@ message ChainAddress {
     // Any valid TON address string format (see
     // [https://docs.ton.org/foundations/addresses/formats]).
     string ton = 50;
+
+    //////////////////////////////////////////////////
+    // TRON
+    //////////////////////////////////////////////////
+
+    // Tron address in TRC-20 base58check format (the canonical `T...` form,
+    // 34 chars; see [https://developers.tron.network/docs/account#address-format]).
+    string tron = 60;
   }
 }

@@ -79,6 +79,14 @@ export interface ChainAddress {
     | {
         $case: "ton";
         value: string;
+      } //
+    /**
+     * Tron address in TRC-20 base58check format (the canonical `T...` form,
+     * 34 chars; see [https://developers.tron.network/docs/account#address-format]).
+     */
+    | {
+        $case: "tron";
+        value: string;
       };
 }
 
@@ -105,7 +113,9 @@ export const ChainAddress: MessageFns<ChainAddress> = {
                     ? { $case: "robinhood", value: globalThis.String(object.robinhood) }
                     : isSet(object.ton)
                       ? { $case: "ton", value: globalThis.String(object.ton) }
-                      : undefined,
+                      : isSet(object.tron)
+                        ? { $case: "tron", value: globalThis.String(object.tron) }
+                        : undefined,
     };
   },
 
@@ -127,6 +137,8 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       obj.robinhood = message.chain.value;
     } else if (message.chain?.$case === "ton") {
       obj.ton = message.chain.value;
+    } else if (message.chain?.$case === "tron") {
+      obj.tron = message.chain.value;
     }
     return obj;
   },
@@ -182,6 +194,12 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       case "ton": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "ton", value: object.chain.value };
+        }
+        break;
+      }
+      case "tron": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "tron", value: object.chain.value };
         }
         break;
       }

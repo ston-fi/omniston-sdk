@@ -57,6 +57,11 @@ export interface AssetId {
     | {
         $case: "ton";
         value: TonAssetId;
+      } //
+    /** Tron (see [https://tron.network/]) */
+    | {
+        $case: "tron";
+        value: TronAssetId;
       };
 }
 
@@ -79,6 +84,51 @@ export interface TonAssetId {
         $case: "jetton";
         value: string;
       };
+}
+
+/** Tron asset id (see [https://tron.network/]) */
+export interface TronAssetId {
+  kind:
+    //
+    /** Native Tron asset */
+    | {
+        $case: "native";
+        value: Empty;
+      } //
+    /**
+     * TRC-20 contract address in TRC-20 base58check format (`T...`, 34 chars;
+     * see [https://github.com/tronprotocol/tips/blob/master/tip-20.md]).
+     */
+    | {
+        $case: "trc20";
+        value: string;
+      } //
+    /**
+     * TRC-1155 asset (mirrors ERC-1155 on EVM since Tron is TVM-based;
+     * see [https://eips.ethereum.org/EIPS/eip-1155]).
+     */
+    | {
+        $case: "trc1155";
+        value: Trc1155AssetId;
+      };
+}
+
+/**
+ * TRC-1155 asset id (mirrors ERC-1155 on EVM since Tron is TVM-based;
+ * see [https://eips.ethereum.org/EIPS/eip-1155])
+ */
+export interface Trc1155AssetId {
+  /**
+   * TRC-1155 contract address in TRC-20 base58check format (`T...`, 34 chars;
+   * see [https://github.com/tronprotocol/tips/blob/master/tip-20.md]).
+   */
+  contractAddress: string;
+  /**
+   * Token ID (uint256)
+   * Supports: Decimal ("42"), Hex ("0x2A"), Octal ("0o52"), or Binary
+   * ("0b101010").
+   */
+  tokenId: string;
 }
 
 /** EVM asset id (see [https://ethereum.org/developers/docs/evm/]) */
@@ -145,7 +195,9 @@ export const AssetId: MessageFns<AssetId> = {
                     ? { $case: "robinhood", value: EvmAssetId.fromJSON(object.robinhood) }
                     : isSet(object.ton)
                       ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
-                      : undefined,
+                      : isSet(object.tron)
+                        ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
+                        : undefined,
     };
   },
 
@@ -167,6 +219,8 @@ export const AssetId: MessageFns<AssetId> = {
       obj.robinhood = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "ton") {
       obj.ton = TonAssetId.toJSON(message.chain.value);
+    } else if (message.chain?.$case === "tron") {
+      obj.tron = TronAssetId.toJSON(message.chain.value);
     }
     return obj;
   },
@@ -225,6 +279,12 @@ export const AssetId: MessageFns<AssetId> = {
         }
         break;
       }
+      case "tron": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "tron", value: TronAssetId.fromPartial(object.chain.value) };
+        }
+        break;
+      }
     }
     return message;
   },
@@ -274,6 +334,100 @@ export const TonAssetId: MessageFns<TonAssetId> = {
         break;
       }
     }
+    return message;
+  },
+};
+
+function createBaseTronAssetId(): TronAssetId {
+  return { kind: undefined };
+}
+
+export const TronAssetId: MessageFns<TronAssetId> = {
+  fromJSON(object: any): TronAssetId {
+    return {
+      kind: isSet(object.native)
+        ? { $case: "native", value: Empty.fromJSON(object.native) }
+        : isSet(object.trc20)
+          ? { $case: "trc20", value: globalThis.String(object.trc20) }
+          : isSet(object.trc1155)
+            ? { $case: "trc1155", value: Trc1155AssetId.fromJSON(object.trc1155) }
+            : undefined,
+    };
+  },
+
+  toJSON(message: TronAssetId): unknown {
+    const obj: any = {};
+    if (message.kind?.$case === "native") {
+      obj.native = Empty.toJSON(message.kind.value);
+    } else if (message.kind?.$case === "trc20") {
+      obj.trc20 = message.kind.value;
+    } else if (message.kind?.$case === "trc1155") {
+      obj.trc1155 = Trc1155AssetId.toJSON(message.kind.value);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<TronAssetId>, I>>(base?: I): TronAssetId {
+    return TronAssetId.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<TronAssetId>, I>>(object: I): TronAssetId {
+    const message = createBaseTronAssetId();
+    switch (object.kind?.$case) {
+      case "native": {
+        if (object.kind?.value !== undefined && object.kind?.value !== null) {
+          message.kind = { $case: "native", value: Empty.fromPartial(object.kind.value) };
+        }
+        break;
+      }
+      case "trc20": {
+        if (object.kind?.value !== undefined && object.kind?.value !== null) {
+          message.kind = { $case: "trc20", value: object.kind.value };
+        }
+        break;
+      }
+      case "trc1155": {
+        if (object.kind?.value !== undefined && object.kind?.value !== null) {
+          message.kind = { $case: "trc1155", value: Trc1155AssetId.fromPartial(object.kind.value) };
+        }
+        break;
+      }
+    }
+    return message;
+  },
+};
+
+function createBaseTrc1155AssetId(): Trc1155AssetId {
+  return { contractAddress: "", tokenId: "" };
+}
+
+export const Trc1155AssetId: MessageFns<Trc1155AssetId> = {
+  fromJSON(object: any): Trc1155AssetId {
+    return {
+      contractAddress: isSet(object.contract_address)
+        ? globalThis.String(object.contract_address)
+        : "",
+      tokenId: isSet(object.token_id) ? globalThis.String(object.token_id) : "",
+    };
+  },
+
+  toJSON(message: Trc1155AssetId): unknown {
+    const obj: any = {};
+    if (message.contractAddress !== undefined) {
+      obj.contract_address = message.contractAddress;
+    }
+    if (message.tokenId !== undefined) {
+      obj.token_id = message.tokenId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Trc1155AssetId>, I>>(base?: I): Trc1155AssetId {
+    return Trc1155AssetId.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Trc1155AssetId>, I>>(object: I): Trc1155AssetId {
+    const message = createBaseTrc1155AssetId();
+    message.contractAddress = object.contractAddress ?? "";
+    message.tokenId = object.tokenId ?? "";
     return message;
   },
 };

@@ -19,6 +19,8 @@ import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
 import { robinhoodAssetQueryFactory } from "~/queries/robinhood-assets";
 import { tonAssetQueryFactory } from "~/queries/ton-assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { tronAssetQueryFactory } from "~/queries/tron-assets";
+import { useTronWebClient } from "~/hooks/useTronWebClient";
 
 type AssetsContextValue = {
   getAssetById: (assetId: AssetId) => Asset | undefined;
@@ -36,6 +38,7 @@ const ASSET_QUERY_FACTORIES = {
   [Chain.POLYGON]: polygonAssetQueryFactory,
   [Chain.ROBINHOOD]: robinhoodAssetQueryFactory,
   [Chain.TON]: tonAssetQueryFactory,
+  [Chain.TRON]: tronAssetQueryFactory,
 } satisfies Record<Chain, unknown>;
 
 const AssetsContext = createContext<AssetsContextValue | undefined>(undefined);
@@ -58,6 +61,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   const queryClient = useQueryClient();
 
   const wagmiConfig = useWagmiConfig();
+  const getTronWebClient = useTronWebClient();
   const isTonConnectRestored = useIsConnectionRestored();
   const walletAddresses = useConnectedWallets();
 
@@ -98,6 +102,11 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
         return ASSET_QUERY_FACTORIES[Chain.TON].fetch({
           unconditionalAssets,
           walletAddress: walletAddresses[Chain.TON],
+        });
+      case Chain.TRON:
+        return ASSET_QUERY_FACTORIES[Chain.TRON].fetch({
+          getTronWebClient,
+          walletAddress: walletAddresses[Chain.TRON],
         });
       default: {
         chain satisfies never;
@@ -157,6 +166,14 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     enabled: isTonConnectRestored,
   });
 
+  const tronAssetsQuery = useQuery({
+    ...ASSET_QUERY_FACTORIES[Chain.TRON].fetch({
+      getTronWebClient,
+      walletAddress: walletAddresses[Chain.TRON],
+    }),
+    ...commonQueryOptions,
+  });
+
   const assetsQueries = {
     [Chain.ARBITRUM]: arbitrumAssetsQuery,
     [Chain.AVALANCHE]: avalancheAssetsQuery,
@@ -166,6 +183,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     [Chain.POLYGON]: polygonAssetsQuery,
     [Chain.ROBINHOOD]: robinhoodAssetQuery,
     [Chain.TON]: tonAssetsQuery,
+    [Chain.TRON]: tronAssetsQuery,
   } satisfies Record<Chain, unknown>;
 
   const getAssetById = (assetId: AssetId): Asset | undefined => {

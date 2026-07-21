@@ -9,6 +9,7 @@ export const Chain = {
   POLYGON: "polygon",
   ROBINHOOD: "robinhood",
   TON: "ton",
+  TRON: "tron",
 } as const;
 
 export type Chain = (typeof Chain)[keyof typeof Chain];
@@ -45,12 +46,16 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
     label: "POLYGON",
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/28321.png",
   },
+  [Chain.ROBINHOOD]: {
+    label: "ROBINHOOD",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/exchanges/64x64/909.png",
+  },
   [Chain.TON]: {
     label: "TON",
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/11419.png",
   },
-  [Chain.ROBINHOOD]: {
-    label: "ROBINHOOD",
-    imageUrl: "https://s2.coinmarketcap.com/static/img/exchanges/64x64/909.png",
+  [Chain.TRON]: {
+    label: "TRON",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png",
   },
 };

@@ -2,16 +2,24 @@
 
 import { createContext, useContext, useMemo } from "react";
 
-export interface AppConfig {}
+import type { TronConfig } from "~/lib/tron/config";
+
+export interface AppConfig {
+  tronConfig: TronConfig;
+}
 
 const AppConfigContext = createContext<AppConfig | undefined>(undefined);
 
-export interface AppConfigProviderProps extends React.PropsWithChildren {}
+export interface AppConfigProviderProps extends React.PropsWithChildren {
+  tronConfig: TronConfig;
+}
 
-export function AppConfigProvider({ children }: AppConfigProviderProps) {
+export function AppConfigProvider({ children, tronConfig }: AppConfigProviderProps) {
   const value = useMemo(() => {
-    return {};
-  }, []);
+    return {
+      tronConfig,
+    };
+  }, [tronConfig]);
 
   return <AppConfigContext.Provider value={value}>{children}</AppConfigContext.Provider>;
 }

@@ -14,8 +14,11 @@ type TonAssetExtra = {};
 
 type EvmAssetExtra = {};
 
+type TronAssetExtra = {};
+
 type BlockchainExtraMap = {
   [Chain.TON]: TonAssetExtra;
+  [Chain.TRON]: TronAssetExtra;
 } & Record<EvmChain, EvmAssetExtra>;
 
 export type Asset = {

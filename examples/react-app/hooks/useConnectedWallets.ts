@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
 
+import { useTronWalletConnection } from "~/hooks/useTronWalletConnection";
 import { Chain } from "~/models/chain";
 import { getChainFamilyByChain } from "~/models/chain-family";
 import { ChainFamily } from "~/models/chain-family";
@@ -22,13 +23,21 @@ export function useConnectedWallets() {
     namespace: "eip155",
   });
 
+  const { address: tronWalletAddressString } = useTronWalletConnection();
+
   const addressByChainFamily = useMemo<Record<ChainFamily, string | undefined>>(
     () => ({
       [ChainFamily.TON]: tonConnectWalletAddressString || undefined,
       [ChainFamily.EVM]:
         isEvmConnected && evmWalletAddressString ? evmWalletAddressString : undefined,
+      [ChainFamily.TRON]: tronWalletAddressString,
     }),
-    [tonConnectWalletAddressString, isEvmConnected, evmWalletAddressString],
+    [
+      tonConnectWalletAddressString,
+      isEvmConnected,
+      evmWalletAddressString,
+      tronWalletAddressString,
+    ],
   );
 
   const connectedWallets = useMemo<Record<Chain, ChainAddress | undefined>>(() => {

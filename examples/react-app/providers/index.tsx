@@ -10,18 +10,20 @@ import { SwapSettingsProvider } from "./swap-settings";
 import { TonConnectProvider } from "./ton-connect";
 import { TradeTrackProvider } from "./trade-track";
 import { WalletConnectProvider } from "./wallet-connect";
-import { AppConfigProvider } from "./config";
+import { AppConfigProvider, type AppConfigProviderProps } from "./config";
 
 export function Providers({
   children,
   omnistonApiUrl,
   tonConnectManifestUrl,
   walletConnectProjectId,
+  tronConfig,
 }: {
   children: React.ReactNode;
   omnistonApiUrl: string;
   tonConnectManifestUrl: string;
   walletConnectProjectId: string;
+  tronConfig: AppConfigProviderProps["tronConfig"];
 }) {
   const queryClient = useRef(new QueryClient());
 
@@ -34,7 +36,7 @@ export function Providers({
 
   return (
     <QueryClientProvider client={queryClient.current}>
-      <AppConfigProvider>
+      <AppConfigProvider tronConfig={tronConfig}>
         <TonConnectProvider manifestUrl={tonConnectManifestUrl}>
           <WalletConnectProvider projectId={walletConnectProjectId}>
             <OmnistonProvider omniston={omniston.current}>

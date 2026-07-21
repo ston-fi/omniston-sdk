@@ -3,6 +3,7 @@ import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
 import { useMemo } from "react";
 
 import { cn } from "~/lib/utils";
+import { useAppConfig } from "~/providers/config";
 import { Chain } from "~/models/chain";
 
 interface ExplorerAddressPreviewProps extends Omit<
@@ -18,6 +19,10 @@ export const ExplorerAddressPreview = ({
   children,
   ...props
 }: ExplorerAddressPreviewProps) => {
+  const {
+    tronConfig: { explorerUrl: tronExplorerUrl },
+  } = useAppConfig();
+
   const previewLink = useMemo(() => {
     const isExpectedChain = Object.values(Chain).includes(address.chain.$case);
 
@@ -52,12 +57,15 @@ export const ExplorerAddressPreview = ({
       case Chain.TON: {
         return `https://tonviewer.com/address/${address.chain.value}`;
       }
+      case Chain.TRON: {
+        return `${tronExplorerUrl}/#/address/${address.chain.value}`;
+      }
       default: {
         chainCase satisfies never;
         throw new Error(`Unexpected chain: ${chainCase}`);
       }
     }
-  }, [address]);
+  }, [address, tronExplorerUrl]);
 
   return (
     <a

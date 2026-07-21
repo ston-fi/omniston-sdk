@@ -1,0 +1,20 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "TRX",
+      "displayName": "TRX",
+      "imageUrl": "https://assets.coingecko.com/coins/images/1094/standard/photo_2026-04-13_09-59-16.png"
+    }
+  },
+  {
+    "address": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDT",
+      "displayName": "Tether USD",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+    }
+  }
+]

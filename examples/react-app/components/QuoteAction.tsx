@@ -11,6 +11,7 @@ import { useTradeTrackState } from "~/providers/trade-track";
 import { useSwapForm } from "~/providers/swap-form";
 import { ChainFamily, isChainInFamily } from "~/models/chain-family";
 import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
+import { QuoteActionTron } from "~/components/QuoteActionTron";
 
 export const QuoteAction = (props: { className?: string }) => {
   const swapForm = useSwapForm();
@@ -68,6 +69,8 @@ export const QuoteAction = (props: { className?: string }) => {
     return <QuoteActionTon {...props} />;
   } else if (isChainInFamily(quote.inputAsset.chain.$case, ChainFamily.EVM)) {
     return <QuoteActionEvm {...props} />;
+  } else if (isChainInFamily(quote.inputAsset.chain.$case, ChainFamily.TRON)) {
+    return <QuoteActionTron {...props} />;
   }
 };
 

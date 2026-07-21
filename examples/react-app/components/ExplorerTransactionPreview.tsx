@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { ExternalLink } from "lucide-react";
 
+import { useAppConfig } from "~/providers/config";
 import { cn } from "~/lib/utils";
 import { Chain } from "~/models/chain";
 
@@ -19,6 +20,10 @@ export const ExplorerTransactionPreview = ({
   children,
   ...props
 }: ExplorerTransactionPreviewProps) => {
+  const {
+    tronConfig: { explorerUrl: tronExplorerUrl },
+  } = useAppConfig();
+
   const link = useMemo(() => {
     switch (chain) {
       case Chain.ARBITRUM: {
@@ -45,12 +50,15 @@ export const ExplorerTransactionPreview = ({
       case Chain.TON: {
         return `https://tonviewer.com/transaction/${txId}`;
       }
+      case Chain.TRON: {
+        return `${tronExplorerUrl}/#/transaction/${txId}`;
+      }
       default: {
         chain satisfies never;
         throw new Error(`Unexpected chain: ${chain}`);
       }
     }
-  }, [chain, txId]);
+  }, [chain, txId, tronExplorerUrl]);
 
   return (
     <a

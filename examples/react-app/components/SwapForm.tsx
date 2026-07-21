@@ -17,6 +17,8 @@ import { useAssets } from "~/providers/assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
 import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
+import { tronAssetQueryFactory } from "~/queries/tron-assets";
+import { useTronWebClient } from "~/hooks/useTronWebClient";
 import { robinhoodAssetQueryFactory } from "~/queries/robinhood-assets";
 
 const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
@@ -29,9 +31,12 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
     polygon: polygonWalletAddress,
     robinhood: robinhoodWalletAddress,
     ton: tonWalletAddress,
+    tron: tronWalletAddress,
   } = useConnectedWallets();
 
   const wagmiConfig = useWagmiConfig();
+  const getTronWebClient = useTronWebClient();
+
   return [
     {
       chain: Chain.ARBITRUM,
@@ -134,6 +139,19 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
         tonAssetQueryFactory.search({
           searchTerms: [searchTerm],
           walletAddress: tonWalletAddress,
+        }),
+    },
+    {
+      chain: Chain.TRON,
+      fetchQueryOptions: tronAssetQueryFactory.fetch({
+        getTronWebClient,
+        walletAddress: tronWalletAddress,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        tronAssetQueryFactory.search({
+          getTronWebClient,
+          searchTerm,
+          walletAddress: tronWalletAddress,
         }),
     },
   ];
