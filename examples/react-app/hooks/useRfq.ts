@@ -10,6 +10,7 @@ import {
 } from "@ston-fi/omniston-sdk-react";
 
 import { useDebounce } from "~/hooks/useDebounce";
+import { useEnsureQuoteAssets } from "~/hooks/useEnsureQuoteAssets";
 import { isValidAddress } from "~/models/address";
 import { floatToBigNumber } from "~/lib/utils";
 import { percentToPips } from "~/lib/utils/percent";
@@ -112,7 +113,7 @@ export const useRfq = () => {
 
   const [debouncedQuoteRequest] = useDebounce(quoteRequest, 300);
 
-  return _useRfq(
+  const rfqQuery = _useRfq(
     // we are disabling the query when the quote request is undefined
     // so we can be sure that the quote request is always defined when the query is enabled
     debouncedQuoteRequest!,
@@ -120,4 +121,17 @@ export const useRfq = () => {
       enabled: !trackingQuote && debouncedQuoteRequest !== undefined,
     },
   );
+
+  const quote = rfqQuery.data?.$case === "quoteUpdated" ? rfqQuery.data.value : undefined;
+  const quoteAssets = useEnsureQuoteAssets(quote);
+
+  const isEnsuringQuoteAssets = quote !== undefined && !quoteAssets.isReady;
+
+  // A quote event is application-ready only after its supported assets
+  // have been populated for all downstream consumers.
+  return {
+    data: isEnsuringQuoteAssets ? undefined : rfqQuery.data,
+    error: rfqQuery.error ?? quoteAssets.error,
+    isFetching: rfqQuery.isFetching || (isEnsuringQuoteAssets && quoteAssets.error === null),
+  };
 };

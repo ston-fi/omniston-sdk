@@ -32,7 +32,7 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
     robinhood: robinhoodWalletAddress,
     ton: tonWalletAddress,
     tron: tronWalletAddress,
-  } = useConnectedWallets();
+  } = useConnectedWallets().walletAddressByChain;
 
   const wagmiConfig = useWagmiConfig();
   const getTronWebClient = useTronWebClient();

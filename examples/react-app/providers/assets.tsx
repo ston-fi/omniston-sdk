@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useIsConnectionRestored } from "@tonconnect/ui-react";
 import { createContext, useContext, useState } from "react";
 import { useConfig as useWagmiConfig } from "wagmi";
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
@@ -41,6 +40,9 @@ const ASSET_QUERY_FACTORIES = {
   [Chain.TRON]: tronAssetQueryFactory,
 } satisfies Record<Chain, unknown>;
 
+const ASSET_QUERY_CONNECTED_WALLET_REFETCH_INTERVAL_MS = 60 * 1000;
+const ASSET_QUERY_DISCONNECTED_WALLET_REFETCH_INTERVAL_MS = 5 * 60 * 1000;
+
 const AssetsContext = createContext<AssetsContextValue | undefined>(undefined);
 
 const appendMissingAssetIds = (assetIds: AssetId[], assetIdsToAppend: AssetId[]) => {
@@ -62,17 +64,14 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
 
   const wagmiConfig = useWagmiConfig();
   const getTronWebClient = useTronWebClient();
-  const isTonConnectRestored = useIsConnectionRestored();
-  const walletAddresses = useConnectedWallets();
+  const { walletAddressByChain: connectedWalletAddressByChain, isWalletRestoredByChain } =
+    useConnectedWallets();
 
   // In-memory unconditional assets per blockchain — assets manually added by the user
   // that must survive query refetches. Session-only (not persisted).
   const [unconditionalAssetsByChain, setUnconditionalAssetsByChain] = useState<
     Partial<Record<Chain, AssetId[]>>
   >({});
-
-  const isWalletConnected = Object.values(walletAddresses).some(Boolean);
-  const refetchInterval = isWalletConnected ? 1000 * 60 : 1000 * 60 * 5;
 
   const getUnconditionalAssets = (chain: Chain) => unconditionalAssetsByChain[chain] ?? [];
 
@@ -86,7 +85,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   const getEvmAssetFetchOptions = (chain: EvmChain) =>
     ASSET_QUERY_FACTORIES[chain].fetch({
       wagmiConfig,
-      walletAddress: walletAddresses[chain],
+      walletAddress: connectedWalletAddressByChain[chain],
     });
 
   const getAssetFetchOptions = (
@@ -101,12 +100,12 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
       case Chain.TON:
         return ASSET_QUERY_FACTORIES[Chain.TON].fetch({
           unconditionalAssets,
-          walletAddress: walletAddresses[Chain.TON],
+          walletAddress: connectedWalletAddressByChain[Chain.TON],
         });
       case Chain.TRON:
         return ASSET_QUERY_FACTORIES[Chain.TRON].fetch({
           getTronWebClient,
-          walletAddress: walletAddresses[Chain.TRON],
+          walletAddress: connectedWalletAddressByChain[Chain.TRON],
         });
       default: {
         chain satisfies never;
@@ -115,63 +114,70 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     }
   };
 
-  const commonQueryOptions = {
+  const getCommonQueryOptions = (chain: Chain) => ({
+    enabled: isWalletRestoredByChain[chain],
+    placeholderData: (previousAssets?: Asset[]) =>
+      previousAssets?.map((asset) => ({
+        ...asset,
+        balance: undefined,
+      })),
+    refetchInterval: connectedWalletAddressByChain[chain]
+      ? ASSET_QUERY_CONNECTED_WALLET_REFETCH_INTERVAL_MS
+      : ASSET_QUERY_DISCONNECTED_WALLET_REFETCH_INTERVAL_MS,
     select: (assets: Asset[]) =>
       new Map(assets.map((asset) => [serializeAssetId(asset.id), asset])),
-    refetchInterval,
     staleTime: Infinity,
-  };
+  });
 
   const arbitrumAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.ARBITRUM),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.ARBITRUM),
   });
 
   const avalancheAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.AVALANCHE),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.AVALANCHE),
   });
 
   const baseAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.BASE),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.BASE),
   });
 
   const bnbAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.BNB),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.BNB),
   });
 
   const ethereumAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.ETHEREUM),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.ETHEREUM),
   });
 
   const polygonAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.POLYGON),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.POLYGON),
   });
 
   const robinhoodAssetQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.ROBINHOOD),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.ROBINHOOD),
   });
 
   const tonAssetsQuery = useQuery({
     ...ASSET_QUERY_FACTORIES[Chain.TON].fetch({
       unconditionalAssets: getUnconditionalAssets(Chain.TON),
-      walletAddress: walletAddresses[Chain.TON],
+      walletAddress: connectedWalletAddressByChain[Chain.TON],
     }),
-    ...commonQueryOptions,
-    enabled: isTonConnectRestored,
+    ...getCommonQueryOptions(Chain.TON),
   });
 
   const tronAssetsQuery = useQuery({
     ...ASSET_QUERY_FACTORIES[Chain.TRON].fetch({
       getTronWebClient,
-      walletAddress: walletAddresses[Chain.TRON],
+      walletAddress: connectedWalletAddressByChain[Chain.TRON],
     }),
-    ...commonQueryOptions,
+    ...getCommonQueryOptions(Chain.TRON),
   });
 
   const assetsQueries = {
@@ -218,22 +224,33 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   };
 
   const populateAssets = async (assetIds: AssetId[]) => {
-    if (assetIds.some((assetId) => assetId.chain.$case !== Chain.TON)) {
-      throw new Error("populateAssets only supports TON assets");
+    const [tonAssetIds, unsupportedAssetIds] = assetIds.reduce<[AssetId[], AssetId[]]>(
+      (acc, assetId) => {
+        if (assetId.chain.$case === Chain.TON) {
+          if (!getAssetById(assetId)) {
+            acc[0].push(assetId);
+          }
+        } else {
+          acc[1].push(assetId);
+        }
+
+        return acc;
+      },
+      [[], []],
+    );
+
+    if (unsupportedAssetIds.length > 0) {
+      console.warn(
+        "populateAssets currently only supports TON assets. Non-TON assets were ignored:",
+        unsupportedAssetIds.map(serializeAssetId),
+      );
     }
 
-    const tonAssetIdsToPopulate = assetIds.filter((assetId) => {
-      if (getAssetById(assetId)) return false;
-      if (assetId.chain.$case !== Chain.TON) return false;
-
-      return true;
-    });
-
-    if (tonAssetIdsToPopulate.length === 0) return;
+    if (tonAssetIds.length === 0) return;
 
     const nextUnconditionalAssets = appendMissingAssetIds(
       getUnconditionalAssets(Chain.TON),
-      tonAssetIdsToPopulate,
+      tonAssetIds,
     );
 
     setUnconditionalAssets(Chain.TON, nextUnconditionalAssets);
@@ -241,7 +258,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     await queryClient.fetchQuery(
       ASSET_QUERY_FACTORIES[Chain.TON].fetch({
         unconditionalAssets: nextUnconditionalAssets,
-        walletAddress: walletAddresses[Chain.TON],
+        walletAddress: connectedWalletAddressByChain[Chain.TON],
       }),
     );
   };

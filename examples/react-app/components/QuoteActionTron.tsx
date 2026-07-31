@@ -93,9 +93,9 @@ const _QuoteActionTron = (props: Omit<ButtonProps, "children">) => {
 function withTronWalletGuard(Component: React.ComponentType<Omit<ButtonProps, "children">>) {
   return (props: Omit<ButtonProps, "children">) => {
     const { open: openAppKit } = useAppKit();
-    const connectedWallets = useConnectedWallets();
+    const { walletAddressByChain: connectedWalletAddressByChain } = useConnectedWallets();
 
-    if (!connectedWallets[Chain.TRON]) {
+    if (!connectedWalletAddressByChain[Chain.TRON]) {
       return (
         <Button
           {...props}

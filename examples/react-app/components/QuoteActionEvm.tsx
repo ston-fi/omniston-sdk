@@ -93,9 +93,9 @@ const _QuoteActionEvm = (props: Omit<ButtonProps, "children">) => {
 function withEvmWalletGuard(Component: React.ComponentType<Omit<ButtonProps, "children">>) {
   return (props: Omit<ButtonProps, "children">) => {
     const { open: openAppKit } = useAppKit();
-    const connectedWallets = useConnectedWallets();
+    const { walletAddressByChain: connectedWalletAddressByChain } = useConnectedWallets();
 
-    if (chainsByFamily[ChainFamily.EVM].some((chain) => !connectedWallets[chain])) {
+    if (chainsByFamily[ChainFamily.EVM].some((chain) => !connectedWalletAddressByChain[chain])) {
       return (
         <Button
           {...props}

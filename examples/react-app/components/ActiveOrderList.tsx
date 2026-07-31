@@ -1,34 +1,32 @@
 import type { ActiveOrder } from "@ston-fi/omniston-sdk-react";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { useMemo } from "react";
 
 import { QuoteDataPresenter } from "~/components/QuotePreview";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { useEnsureQuoteAssets } from "~/hooks/useEnsureQuoteAssets";
 import { useOmniston } from "~/hooks/useOmniston";
 import { useQuoteAssets } from "~/hooks/useQuoteAssets";
-import { collectQuoteAssets } from "~/lib/omniston/quote";
 import { bigNumberToFloat, cn } from "~/lib/utils";
-import { serializeAssetId } from "~/models/asset-id";
-import { useAssets } from "~/providers/assets";
 
 export const ActiveOrderList = ({ className }: { className?: string }) => {
   const omniston = useOmniston();
-  const { populateAssets } = useAssets();
-  const connectedWallets = useConnectedWallets();
+  const { walletAddressByChain: connectedWalletAddressByChain } = useConnectedWallets();
 
-  const walletAddresses = useMemo(
-    () => Object.values(connectedWallets).filter(Boolean),
-    [connectedWallets],
+  const connectedWalletAddresses = useMemo(
+    () => Object.values(connectedWalletAddressByChain).filter(Boolean),
+    [connectedWalletAddressByChain],
   );
 
   const activeOrdersQuery = useQueries({
-    queries: walletAddresses.map((walletAddress) => ({
-      queryKey: ["orderGetActive", { traderAddress: walletAddress }],
+    queries: connectedWalletAddresses.map((connectedWalletAddress) => ({
+      queryKey: ["orderGetActive", { traderAddress: connectedWalletAddress }],
       queryFn: async () => ({
-        traderAddress: walletAddress,
-        orders: (await omniston.orderGetActive({ traderAddress: walletAddress })).activeOrders,
+        traderAddress: connectedWalletAddress,
+        orders: (await omniston.orderGetActive({ traderAddress: connectedWalletAddress }))
+          .activeOrders,
       }),
     })),
   });
@@ -43,28 +41,17 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
     [activeOrdersQuery],
   );
 
-  const activeOrdersAssetIds = useMemo(
-    () =>
-      new Map(
-        activeOrders
-          .flatMap((order) => collectQuoteAssets(order.quote))
-          .map((assetId) => [serializeAssetId(assetId), assetId]),
-      ),
+  const isActiveOrdersQueryLoading = activeOrdersQuery.some((queryResult) => queryResult.isLoading);
+  const activeOrderQuotes = useMemo(
+    () => activeOrders.map((activeOrder) => activeOrder.quote),
     [activeOrders],
   );
-
-  const isActiveOrdersQueryLoading = activeOrdersQuery.some((queryResult) => queryResult.isLoading);
-  const shouldLoadActiveOrderAssets = !isActiveOrdersQueryLoading && activeOrders.length > 0;
-
-  const activeOrderAssetsQuery = useQuery({
-    queryKey: ["activeOrderAssets", ...activeOrdersAssetIds.keys()],
-    queryFn: () => populateAssets(Array.from(activeOrdersAssetIds.values())).then(() => null),
-    enabled: shouldLoadActiveOrderAssets,
-  });
+  const activeOrderAssets = useEnsureQuoteAssets(activeOrderQuotes);
 
   if (isActiveOrdersQueryLoading) return null;
   if (activeOrders.length === 0) return null;
-  if (activeOrderAssetsQuery.status !== "success") return null;
+  if (activeOrderAssets.error) throw activeOrderAssets.error;
+  if (!activeOrderAssets.isReady) return null;
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>

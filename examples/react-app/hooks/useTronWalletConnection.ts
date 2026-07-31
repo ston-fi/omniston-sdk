@@ -36,7 +36,11 @@ import type { Trx } from "tronweb";
 type TronTransaction = Exclude<Parameters<Trx["signTransaction"]>[0], string>;
 
 export function useTronWalletConnection() {
-  const { address: appKitAddress, isConnected: isAppKitConnected } = useAppKitAccount({
+  const {
+    address: appKitAddress,
+    isConnected: isAppKitConnected,
+    status: appKitStatus,
+  } = useAppKitAccount({
     namespace: "tron",
   });
   const { walletInfo: appKitWalletInfo } = useWalletInfo("tron");
@@ -117,6 +121,7 @@ export function useTronWalletConnection() {
     wallet,
     isConnected: Boolean(address),
     isAppKitConnected,
+    appKitStatus,
     isTronLinkConnected,
     tronLinkWallet,
     signTransaction,
