@@ -5,12 +5,16 @@
 ### @ston-fi/omniston-sdk@0.8.8
 ### @ston-fi/omniston-sdk-react@0.8.8
 
-- Added support for the `X Link` chain.
+#### Added
+
+- Added support for the `X Link (196)` chain.
 
 ## 21-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.7
 ### @ston-fi/omniston-sdk-react@0.8.7
+
+#### Added
 
 - Added support for the `Tron` chain.
 
