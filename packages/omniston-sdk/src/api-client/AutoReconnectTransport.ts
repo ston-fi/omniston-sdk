@@ -1,8 +1,9 @@
-import { type Observable, Subject } from "rxjs";
+import { Subject } from "rxjs";
 
 import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
 import type { Logger } from "../logger/Logger";
+import type { Observable } from "../types/observable";
 
 import type { ConnectionErrorEvent, ConnectionStatusEvent } from "./ConnectionStatus";
 import type { Transport } from "./Transport";

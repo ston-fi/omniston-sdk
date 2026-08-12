@@ -37,6 +37,7 @@ import { TonTransaction } from "../api/messages/stonfi/omni/v1beta8/types/ton";
 import { ApiClient } from "../api-client/ApiClient";
 import type { ApiStreamController } from "../api-client/ApiStreamController";
 import { AutoReconnectTransport } from "../api-client/AutoReconnectTransport";
+import type { ConnectionStatusEvent } from "../api-client/ConnectionStatus";
 import type { Transport } from "../api-client/Transport";
 import { WebSocketTransport } from "../api-client/WebSocketTransport";
 import { ErrorCode } from "../constants";
@@ -121,7 +122,7 @@ export class Omniston {
    *
    * @see Transport
    */
-  public get transport() {
+  public get transport(): Transport {
     return this._transport;
   }
 
@@ -139,7 +140,7 @@ export class Omniston {
    *
    * @see ConnectionStatusEvent
    */
-  public get connectionStatusEvents() {
+  public get connectionStatusEvents(): Observable<ConnectionStatusEvent> {
     return this._apiClient.connectionStatusEvents;
   }
 
