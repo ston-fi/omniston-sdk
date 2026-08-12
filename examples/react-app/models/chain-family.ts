@@ -39,6 +39,7 @@ export const chainFamilyByChain: Record<Chain, ChainFamily> = {
   [Chain.ROBINHOOD]: ChainFamily.EVM,
   [Chain.TON]: ChainFamily.TON,
   [Chain.TRON]: ChainFamily.TRON,
+  [Chain.XLAYER]: ChainFamily.EVM,
 };
 
 export const chainsByFamily = {
@@ -51,6 +52,7 @@ export const chainsByFamily = {
     Chain.ETHEREUM,
     Chain.POLYGON,
     Chain.ROBINHOOD,
+    Chain.XLAYER,
   ],
   [ChainFamily.TRON]: [Chain.TRON],
 } as const satisfies Record<ChainFamily, readonly Chain[]>;

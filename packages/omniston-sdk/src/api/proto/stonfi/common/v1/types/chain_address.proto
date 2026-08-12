@@ -30,6 +30,9 @@ message ChainAddress {
     // Robinhood address in valid EIP-55 string format (see
     // [https://eips.ethereum.org/EIPS/eip-55])
     string robinhood = 7;
+    // X Layer address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string xlayer = 8;
 
     //////////////////////////////////////////////////
     // TON

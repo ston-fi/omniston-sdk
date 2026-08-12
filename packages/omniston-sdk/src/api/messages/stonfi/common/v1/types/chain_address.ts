@@ -73,6 +73,14 @@ export interface ChainAddress {
         value: string;
       } //
     /**
+     * X Layer address in valid EIP-55 string format (see
+     * [https://eips.ethereum.org/EIPS/eip-55])
+     */
+    | {
+        $case: "xlayer";
+        value: string;
+      } //
+    /**
      * Any valid TON address string format (see
      * [https://docs.ton.org/foundations/addresses/formats]).
      */
@@ -111,11 +119,13 @@ export const ChainAddress: MessageFns<ChainAddress> = {
                   ? { $case: "polygon", value: globalThis.String(object.polygon) }
                   : isSet(object.robinhood)
                     ? { $case: "robinhood", value: globalThis.String(object.robinhood) }
-                    : isSet(object.ton)
-                      ? { $case: "ton", value: globalThis.String(object.ton) }
-                      : isSet(object.tron)
-                        ? { $case: "tron", value: globalThis.String(object.tron) }
-                        : undefined,
+                    : isSet(object.xlayer)
+                      ? { $case: "xlayer", value: globalThis.String(object.xlayer) }
+                      : isSet(object.ton)
+                        ? { $case: "ton", value: globalThis.String(object.ton) }
+                        : isSet(object.tron)
+                          ? { $case: "tron", value: globalThis.String(object.tron) }
+                          : undefined,
     };
   },
 
@@ -135,6 +145,8 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       obj.polygon = message.chain.value;
     } else if (message.chain?.$case === "robinhood") {
       obj.robinhood = message.chain.value;
+    } else if (message.chain?.$case === "xlayer") {
+      obj.xlayer = message.chain.value;
     } else if (message.chain?.$case === "ton") {
       obj.ton = message.chain.value;
     } else if (message.chain?.$case === "tron") {
@@ -188,6 +200,12 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       case "robinhood": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "robinhood", value: object.chain.value };
+        }
+        break;
+      }
+      case "xlayer": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "xlayer", value: object.chain.value };
         }
         break;
       }

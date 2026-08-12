@@ -60,6 +60,9 @@ export const ExplorerAddressPreview = ({
       case Chain.TRON: {
         return `${tronExplorerUrl}/#/address/${address.chain.value}`;
       }
+      case Chain.XLAYER: {
+        return `https://web3.okx.com/explorer/x-layer/evm/address/${address.chain.value}`;
+      }
       default: {
         chainCase satisfies never;
         throw new Error(`Unexpected chain: ${chainCase}`);

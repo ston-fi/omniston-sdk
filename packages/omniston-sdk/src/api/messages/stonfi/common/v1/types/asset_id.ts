@@ -53,6 +53,11 @@ export interface AssetId {
         $case: "robinhood";
         value: EvmAssetId;
       } //
+    /** X Layer (see [https://web3.okx.com/xlayer]) */
+    | {
+        $case: "xlayer";
+        value: EvmAssetId;
+      } //
     /** TON (see [https://ton.org]) */
     | {
         $case: "ton";
@@ -193,11 +198,13 @@ export const AssetId: MessageFns<AssetId> = {
                   ? { $case: "polygon", value: EvmAssetId.fromJSON(object.polygon) }
                   : isSet(object.robinhood)
                     ? { $case: "robinhood", value: EvmAssetId.fromJSON(object.robinhood) }
-                    : isSet(object.ton)
-                      ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
-                      : isSet(object.tron)
-                        ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
-                        : undefined,
+                    : isSet(object.xlayer)
+                      ? { $case: "xlayer", value: EvmAssetId.fromJSON(object.xlayer) }
+                      : isSet(object.ton)
+                        ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
+                        : isSet(object.tron)
+                          ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
+                          : undefined,
     };
   },
 
@@ -217,6 +224,8 @@ export const AssetId: MessageFns<AssetId> = {
       obj.polygon = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "robinhood") {
       obj.robinhood = EvmAssetId.toJSON(message.chain.value);
+    } else if (message.chain?.$case === "xlayer") {
+      obj.xlayer = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "ton") {
       obj.ton = TonAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "tron") {
@@ -270,6 +279,12 @@ export const AssetId: MessageFns<AssetId> = {
       case "robinhood": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "robinhood", value: EvmAssetId.fromPartial(object.chain.value) };
+        }
+        break;
+      }
+      case "xlayer": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "xlayer", value: EvmAssetId.fromPartial(object.chain.value) };
         }
         break;
       }

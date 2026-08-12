@@ -1,0 +1,29 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "OKB",
+      "displayName": "OKB",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png"
+    }
+  },
+  {
+    "address": "0x779Ded0c9e1022225f8E0630b35a9b54bE713736",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDT0",
+      "displayName": "USDT0",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/38517.png"
+    }
+  },
+  {
+    "address": "0xB6CEceAB302E2E4948951eE7843FC24E92933061",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDC",
+      "displayName": "USDC",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
+  }
+]

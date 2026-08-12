@@ -53,6 +53,9 @@ export const ExplorerTransactionPreview = ({
       case Chain.TRON: {
         return `${tronExplorerUrl}/#/transaction/${txId}`;
       }
+      case Chain.XLAYER: {
+        return `https://web3.okx.com/explorer/x-layer/evm/tx/${txId}`;
+      }
       default: {
         chain satisfies never;
         throw new Error(`Unexpected chain: ${chain}`);

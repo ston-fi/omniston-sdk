@@ -10,6 +10,7 @@ export const Chain = {
   ROBINHOOD: "robinhood",
   TON: "ton",
   TRON: "tron",
+  XLAYER: "xlayer",
 } as const;
 
 export type Chain = (typeof Chain)[keyof typeof Chain];
@@ -57,5 +58,9 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
   [Chain.TRON]: {
     label: "TRON",
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1958.png",
+  },
+  [Chain.XLAYER]: {
+    label: "X Layer",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/3897.png",
   },
 };

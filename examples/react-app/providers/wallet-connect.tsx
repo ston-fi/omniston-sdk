@@ -13,6 +13,7 @@ import {
   tronMainnet,
   tronNileTestnet,
   robinhood,
+  xLayer,
   type AppKitNetwork,
 } from "@reown/appkit/networks";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -37,7 +38,7 @@ export function WalletConnectProvider({
 
   const evmNetworks = useMemo(
     () =>
-      [arbitrum, avalanche, mainnet, base, polygon, bsc, robinhood] satisfies [
+      [arbitrum, avalanche, mainnet, base, polygon, bsc, robinhood, xLayer] satisfies [
         AppKitNetwork,
         ...AppKitNetwork[],
       ],

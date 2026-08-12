@@ -1,5 +1,11 @@
 # Changelog
 
+## 12-08-2026
+
+### @ston-fi/omniston-sdk@0.8.8
+
+- Added support for the `X Link` chain.
+
 ## 21-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.7

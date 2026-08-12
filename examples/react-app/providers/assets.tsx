@@ -20,6 +20,7 @@ import { tonAssetQueryFactory } from "~/queries/ton-assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { tronAssetQueryFactory } from "~/queries/tron-assets";
 import { useTronWebClient } from "~/hooks/useTronWebClient";
+import { xLayerAssetQueryFactory } from "~/queries/xlayer-assets";
 
 type AssetsContextValue = {
   getAssetById: (assetId: AssetId) => Asset | undefined;
@@ -38,6 +39,7 @@ const ASSET_QUERY_FACTORIES = {
   [Chain.ROBINHOOD]: robinhoodAssetQueryFactory,
   [Chain.TON]: tonAssetQueryFactory,
   [Chain.TRON]: tronAssetQueryFactory,
+  [Chain.XLAYER]: xLayerAssetQueryFactory,
 } satisfies Record<Chain, unknown>;
 
 const ASSET_QUERY_CONNECTED_WALLET_REFETCH_INTERVAL_MS = 60 * 1000;
@@ -164,6 +166,11 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     ...getCommonQueryOptions(Chain.ROBINHOOD),
   });
 
+  const xLayerAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.XLAYER),
+    ...getCommonQueryOptions(Chain.XLAYER),
+  });
+
   const tonAssetsQuery = useQuery({
     ...ASSET_QUERY_FACTORIES[Chain.TON].fetch({
       unconditionalAssets: getUnconditionalAssets(Chain.TON),
@@ -190,6 +197,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     [Chain.ROBINHOOD]: robinhoodAssetQuery,
     [Chain.TON]: tonAssetsQuery,
     [Chain.TRON]: tronAssetsQuery,
+    [Chain.XLAYER]: xLayerAssetsQuery,
   } satisfies Record<Chain, unknown>;
 
   const getAssetById = (assetId: AssetId): Asset | undefined => {
