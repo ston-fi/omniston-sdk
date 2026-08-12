@@ -6,7 +6,7 @@ import {
   useDisconnect as useAppKitDisconnect,
   useWalletInfo,
 } from "@reown/appkit/react";
-import { TronLinkAdapterName } from "@tronweb3/tronwallet-adapter-tronlink";
+import { TronLinkAdapterName } from "@tronweb3/tronwallet-adapters";
 import {
   useTonAddress,
   useTonConnectModal,

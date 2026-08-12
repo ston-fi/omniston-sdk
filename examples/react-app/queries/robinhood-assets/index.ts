@@ -1,5 +1,5 @@
-// TODO(refactor): replace with the chain from `@reown/appkit/networks` when will be added there
-import { robinhood } from "~/lib/evm/custom-chains";
+import { robinhood } from "@reown/appkit/networks";
+
 import { memoizePromise } from "~/lib/utils/promise";
 import type { Asset } from "~/models/asset";
 import { Chain } from "~/models/chain";

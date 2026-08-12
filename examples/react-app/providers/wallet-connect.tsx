@@ -2,6 +2,7 @@
 
 import { createAppKit } from "@reown/appkit/react";
 import { WalletProvider as TronWalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { MetaMaskAdapter, TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
 import {
   arbitrum,
   avalanche,
@@ -11,18 +12,15 @@ import {
   polygon,
   tronMainnet,
   tronNileTestnet,
+  robinhood,
   type AppKitNetwork,
 } from "@reown/appkit/networks";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { TronAdapter } from "@reown/appkit-adapter-tron";
 import { WagmiProvider } from "wagmi";
-import { MetaMaskAdapter } from "@tronweb3/tronwallet-adapter-metamask-tron";
-import { TronLinkAdapter } from "@tronweb3/tronwallet-adapter-tronlink";
 
 import { useAppConfig } from "~/providers/config";
-
-import { robinhood } from "~/lib/evm/custom-chains";
 
 let isAppKitCreated = false;
 
