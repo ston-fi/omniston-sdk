@@ -5,7 +5,7 @@ import {
   type Address as ViemAddress,
 } from "viem";
 
-import type { AssetId } from "@ston-fi/omniston-sdk";
+import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
 export interface Eip2612PermitDomain {
   name: string;

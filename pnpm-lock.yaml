@@ -56,9 +56,6 @@ importers:
       '@ston-fi/api':
         specifier: 0.32.0
         version: 0.32.0
-      '@ston-fi/omniston-sdk':
-        specifier: workspace:*
-        version: link:../../packages/omniston-sdk
       '@ston-fi/omniston-sdk-react':
         specifier: workspace:*
         version: link:../../packages/omniston-sdk-react

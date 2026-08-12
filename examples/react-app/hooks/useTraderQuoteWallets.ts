@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Quote } from "@ston-fi/omniston-sdk";
+import type { Quote } from "@ston-fi/omniston-sdk-react";
 
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { Chain } from "~/models/chain";

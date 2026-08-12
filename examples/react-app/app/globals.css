@@ -76,7 +76,8 @@
 
 @utility container {
   margin-inline: auto;
-  padding-inline: 2rem;
+  padding-inline: 8px;
+
   @media (width >= --theme(--breakpoint-sm)) {
     max-width: none;
   }

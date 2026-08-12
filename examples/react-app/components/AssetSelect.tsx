@@ -125,7 +125,12 @@ export const AssetSelect = ({
       <PopoverTrigger asChild>
         <AssetSelectTrigger selectedAsset={selectedAsset} className={className} />
       </PopoverTrigger>
-      <PopoverContent className="w-full min-w-[300px] p-0">
+      <PopoverContent
+        align="start"
+        collisionAvoidance={{ align: "shift", side: "flip" }}
+        collisionPadding={16}
+        className="w-full max-w-[calc(100vw-2*16px)] overflow-hidden p-0"
+      >
         <BlockchainSelector
           className="p-2 pb-0"
           chains={chains}
@@ -166,7 +171,7 @@ export const AssetSelect = ({
 
                 return (
                   <CommandItem
-                    className="flex gap-2"
+                    className="flex min-w-0 gap-2 overflow-hidden"
                     key={serializeAssetId(asset.id)}
                     value={serializeAssetId(asset.id)}
                     onSelect={handleAssetSelect}
@@ -269,20 +274,34 @@ function BlockchainSelector({
   chains,
   selectedChain,
   onChainSelect,
+  className,
   ...props
 }: BlockchainSelectorProps) {
+  const selectedChainRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    selectedChainRef.current?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [selectedChain]);
+
   return (
-    <div className={cn("flex flex-1 border-b", props.className)}>
+    <div
+      {...props}
+      className={cn("flex flex-1 overflow-x-auto overflow-y-hidden border-b", className)}
+    >
       {chains.map(({ chain }) => {
         const { label, imageUrl } = CHAIN_METADATA[chain];
 
         return (
           <button
             key={chain}
+            ref={selectedChain === chain ? selectedChainRef : undefined}
             type="button"
             onClick={() => onChainSelect(chain)}
             className={cn(
-              "flex items-center gap-1.5 px-2 py-1 text-sm font-medium border-b-2 -mb-px transition-colors",
+              "flex shrink-0 items-center gap-1.5 border-b-2 -mb-px px-2 py-1 text-sm font-medium transition-colors",
               selectedChain === chain
                 ? "border-primary text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground",

@@ -16,7 +16,6 @@
     "@reown/appkit-adapter-tron": "1.8.23",
     "@reown/appkit-adapter-wagmi": "1.8.23",
     "@ston-fi/api": "0.32.0",
-    "@ston-fi/omniston-sdk": "workspace:*",
     "@ston-fi/omniston-sdk-react": "workspace:*",
     "@tanstack/react-query": "5.96.0",
     "@tonconnect/ui-react": "2.4.4",

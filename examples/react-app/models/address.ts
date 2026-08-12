@@ -1,4 +1,4 @@
-import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk";
+import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk-react";
 import z from "zod";
 
 import { trimStringWithEllipsis } from "~/lib/utils";
