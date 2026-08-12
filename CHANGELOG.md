@@ -2,6 +2,19 @@
 
 ## 12-08-2026
 
+### @ston-fi/omniston-sdk@0.8.9
+
+#### Changed
+
+- Replaced exposed RxJS stream types with the SDK-owned minimal `Observable` interface. RxJS remains an internal runtime dependency.
+- `Transport`, `WebSocketTransport`, `AutoReconnectTransport`, and `Omniston.connectionStatusEvents` no longer expose RxJS-specific methods or mutable subjects.
+
+If you were consuming the RxJS-specific API, you can easily construct an RxJS `Observable` from the SDK `Observable` and continue using your existing RxJS code without further changes.
+
+#### Fixed
+
+- Renamed `types/Observable.ts` to `types/observable.ts` to fix module resolution on case-sensitive Linux filesystems.
+
 ### @ston-fi/omniston-sdk@0.8.8
 ### @ston-fi/omniston-sdk-react@0.8.8
 
