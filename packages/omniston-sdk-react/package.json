@@ -36,8 +36,7 @@
   },
   "dependencies": {
     "@ston-fi/omniston-sdk": "workspace:*",
-    "@tanstack/react-query": "5.96.0",
-    "rxjs": "catalog:"
+    "@tanstack/react-query": "5.96.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
