@@ -15,6 +15,13 @@ If you were consuming the RxJS-specific API, you can easily construct an RxJS `O
 
 - Renamed `types/Observable.ts` to `types/observable.ts` to fix module resolution on case-sensitive Linux filesystems.
 
+### @ston-fi/omniston-sdk-react@0.8.9
+
+#### Changed
+
+- Removed the unused direct `rxjs` dependency. RxJS remains a runtime dependency of `@ston-fi/omniston-sdk`.
+- Moved `@tanstack/react-query` from a direct dependency to a peer dependency (`^5`) so applications use a single React Query instance and query context.
+
 ### @ston-fi/omniston-sdk@0.8.8
 ### @ston-fi/omniston-sdk-react@0.8.8
 
