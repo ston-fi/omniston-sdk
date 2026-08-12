@@ -35,8 +35,7 @@
     "prepublishOnly": "turbo run build && pnpm run lint && pnpm run test --run"
   },
   "dependencies": {
-    "@ston-fi/omniston-sdk": "workspace:*",
-    "@tanstack/react-query": "5.96.0"
+    "@ston-fi/omniston-sdk": "workspace:*"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
@@ -46,6 +45,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@tanstack/react-query": "^5",
     "react": "^18 || ^19"
   }
 }
