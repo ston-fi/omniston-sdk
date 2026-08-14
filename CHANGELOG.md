@@ -27,7 +27,7 @@ If you were consuming the RxJS-specific API, you can easily construct an RxJS `O
 
 #### Added
 
-- Added support for the `X Link (196)` chain.
+- Added support for the `X Layer (196)` chain.
 
 ## 21-07-2026
 
