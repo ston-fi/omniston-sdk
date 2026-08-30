@@ -59,7 +59,9 @@ export class ApiClient implements IApiClient {
 
     this.transport.messages.subscribe((message) => {
       this.logger?.debug(`Received: ${message}`);
-      this.serverAndClient.receiveAndSend(JSON.parse(message));
+      // Own task per message: a subscription's id arrives in the response and its handler is
+      // registered only afterwards, so an event sent in the same batch would find nothing listening.
+      setTimeout(() => this.serverAndClient.receiveAndSend(JSON.parse(message)), 0);
     });
 
     this.transport.connectionStatusEvents.subscribe(this.connectionStatusEvents);
