@@ -9,6 +9,7 @@ import { Chain } from "~/models/chain";
 import { ChainFamily, isChainInFamily, type EvmChain } from "~/models/chain-family";
 import { serializeAssetId, isAssetIdEqual } from "~/models/asset-id";
 import type { Asset } from "~/models/asset";
+import { arcAssetQueryFactory } from "~/queries/arc-assets";
 import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
 import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
 import { baseAssetQueryFactory } from "~/queries/base-assets";
@@ -31,6 +32,7 @@ type AssetsContextValue = {
 
 const ASSET_QUERY_FACTORIES = {
   [Chain.ARBITRUM]: arbitrumAssetQueryFactory,
+  [Chain.ARC]: arcAssetQueryFactory,
   [Chain.AVALANCHE]: avalancheAssetQueryFactory,
   [Chain.BASE]: baseAssetQueryFactory,
   [Chain.BNB]: bnbAssetQueryFactory,
@@ -59,6 +61,20 @@ const appendMissingAssetIds = (assetIds: AssetId[], assetIdsToAppend: AssetId[])
   });
 
   return nextAssetIds;
+};
+
+const appendMissingAssets = (assets: Asset[], assetsToAppend: Asset[]) => {
+  const nextAssets = [...assets];
+
+  assetsToAppend.forEach((asset) => {
+    const exists = nextAssets.some((existingAsset) => isAssetIdEqual(existingAsset.id, asset.id));
+
+    if (!exists) {
+      nextAssets.push(asset);
+    }
+  });
+
+  return nextAssets;
 };
 
 export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
@@ -136,6 +152,11 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     ...getCommonQueryOptions(Chain.ARBITRUM),
   });
 
+  const arcAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.ARC),
+    ...getCommonQueryOptions(Chain.ARC),
+  });
+
   const avalancheAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.AVALANCHE),
     ...getCommonQueryOptions(Chain.AVALANCHE),
@@ -189,6 +210,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
 
   const assetsQueries = {
     [Chain.ARBITRUM]: arbitrumAssetsQuery,
+    [Chain.ARC]: arcAssetsQuery,
     [Chain.AVALANCHE]: avalancheAssetsQuery,
     [Chain.BASE]: baseAssetsQuery,
     [Chain.BNB]: bnbAssetsQuery,
@@ -212,6 +234,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     if (getAssetById(asset.id)) return;
 
     const chain = asset.id.chain.$case;
+    const currentAssets = getAssetsByChain(chain);
     const nextUnconditionalAssets = appendMissingAssetIds(getUnconditionalAssets(chain), [
       asset.id,
     ]);
@@ -221,12 +244,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     queryClient.setQueryData(
       getAssetFetchOptions(chain, nextUnconditionalAssets).queryKey,
       (old: Asset[] | undefined) => {
-        if (!old) return [asset];
-
-        const exists = old.some((existingAsset) => isAssetIdEqual(existingAsset.id, asset.id));
-        if (exists) return old;
-
-        return [...old, asset];
+        return appendMissingAssets(currentAssets, [...(old ?? []), asset]);
       },
     );
   };

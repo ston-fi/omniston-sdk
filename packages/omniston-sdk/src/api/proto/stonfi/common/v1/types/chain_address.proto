@@ -33,6 +33,9 @@ message ChainAddress {
     // X Layer address in valid EIP-55 string format (see
     // [https://eips.ethereum.org/EIPS/eip-55])
     string xlayer = 8;
+    // Arc address in valid EIP-55 string format (see
+    // [https://eips.ethereum.org/EIPS/eip-55])
+    string arc = 9;
 
     //////////////////////////////////////////////////
     // TON

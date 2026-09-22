@@ -5,6 +5,7 @@ import { WalletProvider as TronWalletProvider } from "@tronweb3/tronwallet-adapt
 import { MetaMaskAdapter, TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
 import {
   arbitrum,
+  arc,
   avalanche,
   base,
   bsc,
@@ -38,7 +39,7 @@ export function WalletConnectProvider({
 
   const evmNetworks = useMemo(
     () =>
-      [arbitrum, avalanche, mainnet, base, polygon, bsc, robinhood, xLayer] satisfies [
+      [arbitrum, arc, avalanche, mainnet, base, polygon, bsc, robinhood, xLayer] satisfies [
         AppKitNetwork,
         ...AppKitNetwork[],
       ],

@@ -33,6 +33,9 @@ export const ExplorerAddressPreview = ({
     const chainCase = address.chain.$case as Chain;
 
     switch (chainCase) {
+      case Chain.ARC: {
+        return `https://explorer.arc.io/address/${address.chain.value}`;
+      }
       case Chain.ARBITRUM: {
         return `https://arbiscan.io/address/${address.chain.value}`;
       }

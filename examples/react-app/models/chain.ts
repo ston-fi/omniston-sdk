@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const Chain = {
   ARBITRUM: "arbitrum",
+  ARC: "arc",
   AVALANCHE: "avalanche",
   BASE: "base",
   BNB: "bnb",
@@ -26,6 +27,10 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
   [Chain.ARBITRUM]: {
     label: "ARBITRUM",
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/11841.png",
+  },
+  [Chain.ARC]: {
+    label: "ARC",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/40977.png",
   },
   [Chain.AVALANCHE]: {
     label: "AVALANCHE",

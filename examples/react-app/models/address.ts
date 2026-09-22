@@ -45,6 +45,7 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
+    case Chain.ARC:
     case Chain.ARBITRUM:
     case Chain.AVALANCHE:
     case Chain.BASE:
@@ -93,6 +94,7 @@ export function isValidAddress(chain: Chain, src: string) {
     case Chain.TON: {
       return isTonAddress(src);
     }
+    case Chain.ARC:
     case Chain.ARBITRUM:
     case Chain.AVALANCHE:
     case Chain.BASE:

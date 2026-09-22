@@ -16,6 +16,7 @@ import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
 import { useAssets } from "~/providers/assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
+import { arcAssetQueryFactory } from "~/queries/arc-assets";
 import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
 import { tronAssetQueryFactory } from "~/queries/tron-assets";
 import { useTronWebClient } from "~/hooks/useTronWebClient";
@@ -25,6 +26,7 @@ import { xLayerAssetQueryFactory } from "~/queries/xlayer-assets";
 const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
   const {
     arbitrum: arbitrumWalletAddress,
+    arc: arcWalletAddress,
     avalanche: avalancheWalletAddress,
     base: baseWalletAddress,
     bnb: bnbWalletAddress,
@@ -50,6 +52,19 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
         arbitrumAssetQueryFactory.search({
           searchTerm,
           walletAddress: arbitrumWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.ARC,
+      fetchQueryOptions: arcAssetQueryFactory.fetch({
+        walletAddress: arcWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        arcAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: arcWalletAddress,
           wagmiConfig,
         }),
     },

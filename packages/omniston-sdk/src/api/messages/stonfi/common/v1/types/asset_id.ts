@@ -58,6 +58,11 @@ export interface AssetId {
         $case: "xlayer";
         value: EvmAssetId;
       } //
+    /** Arc (see [https://www.arc.io/]) */
+    | {
+        $case: "arc";
+        value: EvmAssetId;
+      } //
     /** TON (see [https://ton.org]) */
     | {
         $case: "ton";
@@ -200,11 +205,13 @@ export const AssetId: MessageFns<AssetId> = {
                     ? { $case: "robinhood", value: EvmAssetId.fromJSON(object.robinhood) }
                     : isSet(object.xlayer)
                       ? { $case: "xlayer", value: EvmAssetId.fromJSON(object.xlayer) }
-                      : isSet(object.ton)
-                        ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
-                        : isSet(object.tron)
-                          ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
-                          : undefined,
+                      : isSet(object.arc)
+                        ? { $case: "arc", value: EvmAssetId.fromJSON(object.arc) }
+                        : isSet(object.ton)
+                          ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
+                          : isSet(object.tron)
+                            ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
+                            : undefined,
     };
   },
 
@@ -226,6 +233,8 @@ export const AssetId: MessageFns<AssetId> = {
       obj.robinhood = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "xlayer") {
       obj.xlayer = EvmAssetId.toJSON(message.chain.value);
+    } else if (message.chain?.$case === "arc") {
+      obj.arc = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "ton") {
       obj.ton = TonAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "tron") {
@@ -285,6 +294,12 @@ export const AssetId: MessageFns<AssetId> = {
       case "xlayer": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "xlayer", value: EvmAssetId.fromPartial(object.chain.value) };
+        }
+        break;
+      }
+      case "arc": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "arc", value: EvmAssetId.fromPartial(object.chain.value) };
         }
         break;
       }

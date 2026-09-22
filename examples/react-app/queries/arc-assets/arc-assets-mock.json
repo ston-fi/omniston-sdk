@@ -1,0 +1,20 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "USDC (Gas)",
+      "displayName": "USD Coin (Gas)",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
+  },
+  {
+    "address": "0x3600000000000000000000000000000000000000",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDC",
+      "displayName": "USD Coin",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
+  }
+]

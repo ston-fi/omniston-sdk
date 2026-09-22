@@ -27,6 +27,8 @@ message AssetId {
     EvmAssetId robinhood = 7;
     // X Layer (see [https://web3.okx.com/xlayer])
     EvmAssetId xlayer = 8;
+    // Arc (see [https://www.arc.io/])
+    EvmAssetId arc = 9;
 
     //////////////////////////////////////////////////
     // TON

@@ -26,6 +26,9 @@ export const ExplorerTransactionPreview = ({
 
   const link = useMemo(() => {
     switch (chain) {
+      case Chain.ARC: {
+        return `https://explorer.arc.io/tx/${txId}`;
+      }
       case Chain.ARBITRUM: {
         return `https://arbiscan.io/tx/${txId}`;
       }
