@@ -129,23 +129,22 @@ export const AssetSelect = ({
         align="start"
         collisionAvoidance={{ align: "shift", side: "flip" }}
         collisionPadding={16}
-        className="w-full max-w-[calc(100vw-2*16px)] overflow-hidden p-0"
+        className="flex max-h-[var(--available-height)] w-[360px] max-w-[calc(100vw-2*16px)] flex-col overflow-hidden p-0 sm:h-[360px] sm:w-[560px] sm:flex-row"
       >
         <BlockchainSelector
-          className="p-2 pb-0"
           chains={chains}
           selectedChain={selectedChain}
           onChainSelect={setSelectedChain}
         />
 
-        <Command shouldFilter={false}>
+        <Command className="h-auto min-h-0 min-w-0 flex-1 rounded-none" shouldFilter={false}>
           <CommandInput
             ref={searchInputRef}
             placeholder="Search asset…"
             value={searchTerm}
             onValueChange={setSearchTerm}
           />
-          <CommandList>
+          <CommandList className="min-h-0 sm:max-h-none sm:flex-1">
             {searchTerm.length > 0 && searchResult.isLoading && (
               <div className="p-2">
                 <Skeleton className="h-4 w-full" />
@@ -289,7 +288,10 @@ function BlockchainSelector({
   return (
     <div
       {...props}
-      className={cn("flex flex-1 overflow-x-auto overflow-y-hidden border-b", className)}
+      className={cn(
+        "flex shrink-0 gap-1 overflow-x-auto overflow-y-hidden border-b p-2 sm:min-h-0 sm:w-44 sm:flex-col sm:overflow-x-hidden sm:overflow-y-auto sm:border-r sm:border-b-0",
+        className,
+      )}
     >
       {chains.map(({ chain }) => {
         const { label, imageUrl } = CHAIN_METADATA[chain];
@@ -299,17 +301,19 @@ function BlockchainSelector({
             key={chain}
             ref={selectedChain === chain ? selectedChainRef : undefined}
             type="button"
+            aria-pressed={selectedChain === chain}
             onClick={() => onChainSelect(chain)}
             className={cn(
-              "flex shrink-0 items-center gap-1.5 border-b-2 -mb-px px-2 py-1 text-sm font-medium transition-colors",
+              "flex shrink-0 items-center gap-2 rounded-sm px-2 py-2 text-left text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring",
               selectedChain === chain
-                ? "border-primary text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground",
+                ? "bg-accent text-accent-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground",
             )}
           >
             <Avatar className="size-6 shrink-0">
-              <AvatarImage src={imageUrl} alt={label} />
+              <AvatarImage src={imageUrl} alt="" />
             </Avatar>
+            <span>{label}</span>
           </button>
         );
       })}
