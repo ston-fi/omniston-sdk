@@ -1,5 +1,13 @@
 # Changelog
 
+## 21-09-2026
+
+### @ston-fi/omniston-sdk@0.8.10
+
+#### Added
+
+- Added support for the `Arc (5042)` chain.
+
 ## 12-08-2026
 
 ### @ston-fi/omniston-sdk@0.8.9
