@@ -9,6 +9,15 @@
     }
   },
   {
+    "address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDC",
+      "displayName": "USD Coin",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
+  },
+  {
     "address": "0xC011a7E12a19f7B1f670d46F03B03f3342E82DFB",
     "metadata": {
       "decimals": 6,

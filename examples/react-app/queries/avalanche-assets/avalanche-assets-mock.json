@@ -12,8 +12,8 @@
     "address": "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
     "metadata": {
       "decimals": 6,
-      "symbol": "USDt",
-      "displayName": "TetherToken",
+      "symbol": "USDT",
+      "displayName": "Tether USD",
       "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
     }
   },

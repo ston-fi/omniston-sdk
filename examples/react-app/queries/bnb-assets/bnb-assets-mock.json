@@ -16,5 +16,14 @@
       "displayName": "Tether USD",
       "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
     }
+  },
+  {
+    "address": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "USDC",
+      "displayName": "USD Coin",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
   }
 ]
