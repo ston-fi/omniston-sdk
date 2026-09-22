@@ -13,6 +13,7 @@ import {
   type TrackSwapRequest,
   matchQuoteByType,
   useOmniston,
+  ExecutionPhase,
 } from "@ston-fi/omniston-sdk-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -124,14 +125,16 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
                   if (htlcSecrets) {
                     event.value.executions.forEach((execution, executionIndex) => {
                       const secret = htlcSecrets[executionIndex];
-                      const secretWasDisclosed = chunksSecretsDisclosed[executionIndex];
 
-                      if (
-                        secret &&
-                        !secretWasDisclosed &&
-                        !!execution.outputPositionPhase &&
-                        execution.outputPositionPhase !== "UNRECOGNIZED"
-                      ) {
+                      const isSecretDisclosed = chunksSecretsDisclosed[executionIndex];
+                      const isSecretDisclosePhase = execution.outputPositionPhase
+                        ? [
+                            ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION,
+                            ExecutionPhase.EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION,
+                          ].includes(execution.outputPositionPhase)
+                        : false;
+
+                      if (secret && isSecretDisclosePhase && !isSecretDisclosed) {
                         omniston.orderDiscloseHtlcSecret({
                           quoteId,
                           executionIndex,
