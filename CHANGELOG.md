@@ -3,6 +3,7 @@
 ## 30-09-2026
 
 ### @ston-fi/omniston-sdk@0.8.11
+### @ston-fi/omniston-sdk-react@0.8.11
 
 #### Added
 
