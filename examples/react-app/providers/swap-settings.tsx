@@ -1,8 +1,10 @@
 "use client";
 
 import { SettlementMethod } from "@ston-fi/omniston-sdk-react";
-import { createContext, useContext, useEffect, useReducer, useRef } from "react";
+import { createContext, useContext, useReducer } from "react";
 import { z } from "zod";
+
+import { useLocalStoragePersistence } from "~/hooks/useLocalStoragePersistence";
 
 export const DEFAULT_SLIPPAGE_TOLERANCE_PERCENT = 5;
 export const MAX_SLIPPAGE_TOLERANCE_PERCENT = 100;
@@ -78,9 +80,14 @@ const swapSettingsReducer = (
 const SwapSettingsContext = createContext<SwapSettings>({} as SwapSettings);
 
 export const SwapSettingsProvider = ({ children }: React.PropsWithChildren) => {
-  const isHydratedRef = useRef(false);
-
   const [state, dispatch] = useReducer(swapSettingsReducer, SwapSettingsSchema.parse({}));
+
+  useLocalStoragePersistence({
+    key: SETTINGS_STORAGE_KEY,
+    schema: SwapSettingsSchema,
+    value: state,
+    onRestore: (payload) => dispatch({ type: "INITIALIZE_FROM_STORAGE", payload }),
+  });
 
   const setSlippageTolerancePercent = (slippageTolerancePercent: number) => {
     dispatch({
@@ -126,29 +133,6 @@ export const SwapSettingsProvider = ({ children }: React.PropsWithChildren) => {
       payload: htlcMaxExecutions,
     });
   };
-
-  useEffect(() => {
-    const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
-
-    if (stored) {
-      try {
-        dispatch({
-          type: "INITIALIZE_FROM_STORAGE",
-          payload: SwapSettingsSchema.parse(JSON.parse(stored)),
-        });
-      } catch {
-        // ignore corrupt storage
-      }
-    }
-
-    isHydratedRef.current = true;
-  }, []);
-
-  useEffect(() => {
-    if (!isHydratedRef.current) return;
-
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
 
   return (
     <SwapSettingsContext.Provider

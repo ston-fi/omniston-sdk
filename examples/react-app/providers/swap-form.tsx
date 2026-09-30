@@ -1,11 +1,12 @@
 "use client";
 
-import { createContext, type Dispatch, useContext, useEffect, useReducer, useRef } from "react";
+import { createContext, type Dispatch, useContext, useReducer } from "react";
 import { z } from "zod";
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
 import { Chain } from "~/models/chain";
 import { assetIdSchema, isAssetIdEqual } from "~/models/asset-id";
+import { useLocalStoragePersistence } from "~/hooks/useLocalStoragePersistence";
 
 const SWAP_FORM_STORAGE_KEY = "@ston-fi/swap-form-state";
 
@@ -100,33 +101,13 @@ const swapReducer = (state: SwapState, action: IAction): SwapState => {
 
 export const SwapFormProvider = ({ children }: React.PropsWithChildren) => {
   const [state, dispatch] = useReducer(swapReducer, initialState);
-  const hydrated = useRef(false);
 
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(SWAP_FORM_STORAGE_KEY);
-      if (stored) {
-        const parsed = swapFormSchema.safeParse(JSON.parse(stored));
-
-        if (parsed.success) {
-          dispatch({ type: "INITIALIZE_FROM_STORAGE", payload: parsed.data });
-        }
-      }
-    } catch {
-      //
-    } finally {
-      hydrated.current = true;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!hydrated.current) return;
-    try {
-      localStorage.setItem(SWAP_FORM_STORAGE_KEY, JSON.stringify(z.encode(swapFormSchema, state)));
-    } catch {
-      //
-    }
-  }, [state]);
+  useLocalStoragePersistence({
+    key: SWAP_FORM_STORAGE_KEY,
+    schema: swapFormSchema,
+    value: state,
+    onRestore: (payload) => dispatch({ type: "INITIALIZE_FROM_STORAGE", payload }),
+  });
 
   return (
     <SwapContext.Provider value={state}>
