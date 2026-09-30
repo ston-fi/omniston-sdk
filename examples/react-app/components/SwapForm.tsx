@@ -10,6 +10,9 @@ import { Chain } from "~/models/chain";
 import { useSwapForm, useSwapFormDispatch } from "~/providers/swap-form";
 import { tonAssetQueryFactory } from "~/queries/ton-assets";
 import { baseAssetQueryFactory } from "~/queries/base-assets";
+import { hyperEvmAssetQueryFactory } from "~/queries/hyperevm-assets";
+import { monadAssetQueryFactory } from "~/queries/monad-assets";
+import { plasmaAssetQueryFactory } from "~/queries/plasma-assets";
 import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
 import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
 import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
@@ -31,6 +34,9 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
     base: baseWalletAddress,
     bnb: bnbWalletAddress,
     ethereum: ethereumWalletAddress,
+    hyperevm: hyperEvmWalletAddress,
+    monad: monadWalletAddress,
+    plasma: plasmaWalletAddress,
     polygon: polygonWalletAddress,
     robinhood: robinhoodWalletAddress,
     xlayer: xLayerWalletAddress,
@@ -118,6 +124,45 @@ const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
         ethereumAssetQueryFactory.search({
           searchTerm,
           walletAddress: ethereumWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.HYPEREVM,
+      fetchQueryOptions: hyperEvmAssetQueryFactory.fetch({
+        walletAddress: hyperEvmWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        hyperEvmAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: hyperEvmWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.MONAD,
+      fetchQueryOptions: monadAssetQueryFactory.fetch({
+        walletAddress: monadWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        monadAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: monadWalletAddress,
+          wagmiConfig,
+        }),
+    },
+    {
+      chain: Chain.PLASMA,
+      fetchQueryOptions: plasmaAssetQueryFactory.fetch({
+        walletAddress: plasmaWalletAddress,
+        wagmiConfig,
+      }),
+      searchQueryOptions: (searchTerm) =>
+        plasmaAssetQueryFactory.search({
+          searchTerm,
+          walletAddress: plasmaWalletAddress,
           wagmiConfig,
         }),
     },

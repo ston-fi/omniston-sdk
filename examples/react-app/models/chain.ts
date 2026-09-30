@@ -7,6 +7,9 @@ export const Chain = {
   BASE: "base",
   BNB: "bnb",
   ETHEREUM: "ethereum",
+  HYPEREVM: "hyperevm",
+  MONAD: "monad",
+  PLASMA: "plasma",
   POLYGON: "polygon",
   ROBINHOOD: "robinhood",
   TON: "ton",
@@ -47,6 +50,18 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
   [Chain.ETHEREUM]: {
     label: "ETHEREUM",
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png",
+  },
+  [Chain.HYPEREVM]: {
+    label: "HyperEVM",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png",
+  },
+  [Chain.MONAD]: {
+    label: "MONAD",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png",
+  },
+  [Chain.PLASMA]: {
+    label: "PLASMA",
+    imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png",
   },
   [Chain.POLYGON]: {
     label: "POLYGON",

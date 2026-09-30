@@ -51,6 +51,15 @@ export const ExplorerAddressPreview = ({
       case Chain.ETHEREUM: {
         return `https://etherscan.io/address/${address.chain.value}`;
       }
+      case Chain.HYPEREVM: {
+        return `https://hyperevmscan.io/address/${address.chain.value}`;
+      }
+      case Chain.MONAD: {
+        return `https://monadscan.com/address/${address.chain.value}`;
+      }
+      case Chain.PLASMA: {
+        return `https://plasmascan.to/address/${address.chain.value}`;
+      }
       case Chain.POLYGON: {
         return `https://polygonscan.com/address/${address.chain.value}`;
       }

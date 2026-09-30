@@ -44,6 +44,15 @@ export const ExplorerTransactionPreview = ({
       case Chain.ETHEREUM: {
         return `https://etherscan.io/tx/${txId}`;
       }
+      case Chain.HYPEREVM: {
+        return `https://hyperevmscan.io/tx/${txId}`;
+      }
+      case Chain.MONAD: {
+        return `https://monadscan.com/tx/${txId}`;
+      }
+      case Chain.PLASMA: {
+        return `https://plasmascan.to/tx/${txId}`;
+      }
       case Chain.POLYGON: {
         return `https://polygonscan.com/tx/${txId}`;
       }

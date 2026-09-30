@@ -29,6 +29,12 @@ message AssetId {
     EvmAssetId xlayer = 8;
     // Arc (see [https://www.arc.io/])
     EvmAssetId arc = 9;
+    // Monad.
+    EvmAssetId monad = 10;
+    // Plasma.
+    EvmAssetId plasma = 11;
+    // HyperEVM.
+    EvmAssetId hyperevm = 12;
 
     //////////////////////////////////////////////////
     // TON

@@ -1,0 +1,11 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "MON",
+      "displayName": "Monad",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/30495.png"
+    }
+  }
+]

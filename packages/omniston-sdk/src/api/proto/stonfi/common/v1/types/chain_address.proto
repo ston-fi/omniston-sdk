@@ -36,6 +36,12 @@ message ChainAddress {
     // Arc address in valid EIP-55 string format (see
     // [https://eips.ethereum.org/EIPS/eip-55])
     string arc = 9;
+    // Monad address in EIP-55 format.
+    string monad = 10;
+    // Plasma address in EIP-55 format.
+    string plasma = 11;
+    // HyperEVM address in EIP-55 format.
+    string hyperevm = 12;
 
     //////////////////////////////////////////////////
     // TON

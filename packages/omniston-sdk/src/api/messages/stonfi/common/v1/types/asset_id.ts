@@ -63,6 +63,21 @@ export interface AssetId {
         $case: "arc";
         value: EvmAssetId;
       } //
+    /** Monad. */
+    | {
+        $case: "monad";
+        value: EvmAssetId;
+      } //
+    /** Plasma. */
+    | {
+        $case: "plasma";
+        value: EvmAssetId;
+      } //
+    /** HyperEVM. */
+    | {
+        $case: "hyperevm";
+        value: EvmAssetId;
+      } //
     /** TON (see [https://ton.org]) */
     | {
         $case: "ton";
@@ -207,11 +222,17 @@ export const AssetId: MessageFns<AssetId> = {
                       ? { $case: "xlayer", value: EvmAssetId.fromJSON(object.xlayer) }
                       : isSet(object.arc)
                         ? { $case: "arc", value: EvmAssetId.fromJSON(object.arc) }
-                        : isSet(object.ton)
-                          ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
-                          : isSet(object.tron)
-                            ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
-                            : undefined,
+                        : isSet(object.monad)
+                          ? { $case: "monad", value: EvmAssetId.fromJSON(object.monad) }
+                          : isSet(object.plasma)
+                            ? { $case: "plasma", value: EvmAssetId.fromJSON(object.plasma) }
+                            : isSet(object.hyperevm)
+                              ? { $case: "hyperevm", value: EvmAssetId.fromJSON(object.hyperevm) }
+                              : isSet(object.ton)
+                                ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
+                                : isSet(object.tron)
+                                  ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
+                                  : undefined,
     };
   },
 
@@ -235,6 +256,12 @@ export const AssetId: MessageFns<AssetId> = {
       obj.xlayer = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "arc") {
       obj.arc = EvmAssetId.toJSON(message.chain.value);
+    } else if (message.chain?.$case === "monad") {
+      obj.monad = EvmAssetId.toJSON(message.chain.value);
+    } else if (message.chain?.$case === "plasma") {
+      obj.plasma = EvmAssetId.toJSON(message.chain.value);
+    } else if (message.chain?.$case === "hyperevm") {
+      obj.hyperevm = EvmAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "ton") {
       obj.ton = TonAssetId.toJSON(message.chain.value);
     } else if (message.chain?.$case === "tron") {
@@ -300,6 +327,24 @@ export const AssetId: MessageFns<AssetId> = {
       case "arc": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "arc", value: EvmAssetId.fromPartial(object.chain.value) };
+        }
+        break;
+      }
+      case "monad": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "monad", value: EvmAssetId.fromPartial(object.chain.value) };
+        }
+        break;
+      }
+      case "plasma": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "plasma", value: EvmAssetId.fromPartial(object.chain.value) };
+        }
+        break;
+      }
+      case "hyperevm": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "hyperevm", value: EvmAssetId.fromPartial(object.chain.value) };
         }
         break;
       }

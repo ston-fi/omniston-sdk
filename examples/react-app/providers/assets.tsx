@@ -15,6 +15,9 @@ import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
 import { baseAssetQueryFactory } from "~/queries/base-assets";
 import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
 import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
+import { hyperEvmAssetQueryFactory } from "~/queries/hyperevm-assets";
+import { monadAssetQueryFactory } from "~/queries/monad-assets";
+import { plasmaAssetQueryFactory } from "~/queries/plasma-assets";
 import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
 import { robinhoodAssetQueryFactory } from "~/queries/robinhood-assets";
 import { tonAssetQueryFactory } from "~/queries/ton-assets";
@@ -37,6 +40,9 @@ const ASSET_QUERY_FACTORIES = {
   [Chain.BASE]: baseAssetQueryFactory,
   [Chain.BNB]: bnbAssetQueryFactory,
   [Chain.ETHEREUM]: ethereumAssetQueryFactory,
+  [Chain.HYPEREVM]: hyperEvmAssetQueryFactory,
+  [Chain.MONAD]: monadAssetQueryFactory,
+  [Chain.PLASMA]: plasmaAssetQueryFactory,
   [Chain.POLYGON]: polygonAssetQueryFactory,
   [Chain.ROBINHOOD]: robinhoodAssetQueryFactory,
   [Chain.TON]: tonAssetQueryFactory,
@@ -177,6 +183,21 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     ...getCommonQueryOptions(Chain.ETHEREUM),
   });
 
+  const hyperEvmAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.HYPEREVM),
+    ...getCommonQueryOptions(Chain.HYPEREVM),
+  });
+
+  const monadAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.MONAD),
+    ...getCommonQueryOptions(Chain.MONAD),
+  });
+
+  const plasmaAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.PLASMA),
+    ...getCommonQueryOptions(Chain.PLASMA),
+  });
+
   const polygonAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.POLYGON),
     ...getCommonQueryOptions(Chain.POLYGON),
@@ -215,6 +236,9 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     [Chain.BASE]: baseAssetsQuery,
     [Chain.BNB]: bnbAssetsQuery,
     [Chain.ETHEREUM]: ethereumAssetsQuery,
+    [Chain.HYPEREVM]: hyperEvmAssetsQuery,
+    [Chain.MONAD]: monadAssetsQuery,
+    [Chain.PLASMA]: plasmaAssetsQuery,
     [Chain.POLYGON]: polygonAssetsQuery,
     [Chain.ROBINHOOD]: robinhoodAssetQuery,
     [Chain.TON]: tonAssetsQuery,

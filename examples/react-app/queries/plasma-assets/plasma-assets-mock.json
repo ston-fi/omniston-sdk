@@ -1,0 +1,20 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "XPL",
+      "displayName": "Plasma",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/36645.png"
+    }
+  },
+  {
+    "address": "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDT0",
+      "displayName": "USDT0",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/38517.png"
+    }
+  }
+]

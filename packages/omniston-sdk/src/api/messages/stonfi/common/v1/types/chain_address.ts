@@ -88,6 +88,21 @@ export interface ChainAddress {
         $case: "arc";
         value: string;
       } //
+    /** Monad address in EIP-55 format. */
+    | {
+        $case: "monad";
+        value: string;
+      } //
+    /** Plasma address in EIP-55 format. */
+    | {
+        $case: "plasma";
+        value: string;
+      } //
+    /** HyperEVM address in EIP-55 format. */
+    | {
+        $case: "hyperevm";
+        value: string;
+      } //
     /**
      * Any valid TON address string format (see
      * [https://docs.ton.org/foundations/addresses/formats]).
@@ -131,11 +146,17 @@ export const ChainAddress: MessageFns<ChainAddress> = {
                       ? { $case: "xlayer", value: globalThis.String(object.xlayer) }
                       : isSet(object.arc)
                         ? { $case: "arc", value: globalThis.String(object.arc) }
-                        : isSet(object.ton)
-                          ? { $case: "ton", value: globalThis.String(object.ton) }
-                          : isSet(object.tron)
-                            ? { $case: "tron", value: globalThis.String(object.tron) }
-                            : undefined,
+                        : isSet(object.monad)
+                          ? { $case: "monad", value: globalThis.String(object.monad) }
+                          : isSet(object.plasma)
+                            ? { $case: "plasma", value: globalThis.String(object.plasma) }
+                            : isSet(object.hyperevm)
+                              ? { $case: "hyperevm", value: globalThis.String(object.hyperevm) }
+                              : isSet(object.ton)
+                                ? { $case: "ton", value: globalThis.String(object.ton) }
+                                : isSet(object.tron)
+                                  ? { $case: "tron", value: globalThis.String(object.tron) }
+                                  : undefined,
     };
   },
 
@@ -159,6 +180,12 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       obj.xlayer = message.chain.value;
     } else if (message.chain?.$case === "arc") {
       obj.arc = message.chain.value;
+    } else if (message.chain?.$case === "monad") {
+      obj.monad = message.chain.value;
+    } else if (message.chain?.$case === "plasma") {
+      obj.plasma = message.chain.value;
+    } else if (message.chain?.$case === "hyperevm") {
+      obj.hyperevm = message.chain.value;
     } else if (message.chain?.$case === "ton") {
       obj.ton = message.chain.value;
     } else if (message.chain?.$case === "tron") {
@@ -224,6 +251,24 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       case "arc": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "arc", value: object.chain.value };
+        }
+        break;
+      }
+      case "monad": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "monad", value: object.chain.value };
+        }
+        break;
+      }
+      case "plasma": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "plasma", value: object.chain.value };
+        }
+        break;
+      }
+      case "hyperevm": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "hyperevm", value: object.chain.value };
         }
         break;
       }

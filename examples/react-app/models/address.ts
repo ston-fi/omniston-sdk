@@ -51,6 +51,9 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
     case Chain.BASE:
     case Chain.BNB:
     case Chain.ETHEREUM:
+    case Chain.HYPEREVM:
+    case Chain.MONAD:
+    case Chain.PLASMA:
     case Chain.POLYGON:
     case Chain.ROBINHOOD:
     case Chain.XLAYER: {
@@ -100,6 +103,9 @@ export function isValidAddress(chain: Chain, src: string) {
     case Chain.BASE:
     case Chain.BNB:
     case Chain.ETHEREUM:
+    case Chain.HYPEREVM:
+    case Chain.MONAD:
+    case Chain.PLASMA:
     case Chain.POLYGON:
     case Chain.ROBINHOOD:
     case Chain.XLAYER: {

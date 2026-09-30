@@ -9,7 +9,10 @@ import {
   avalanche,
   base,
   bsc,
+  hyperEvm,
   mainnet,
+  monad,
+  plasma,
   polygon,
   tronMainnet,
   tronNileTestnet,
@@ -39,10 +42,20 @@ export function WalletConnectProvider({
 
   const evmNetworks = useMemo(
     () =>
-      [arbitrum, arc, avalanche, mainnet, base, polygon, bsc, robinhood, xLayer] satisfies [
-        AppKitNetwork,
-        ...AppKitNetwork[],
-      ],
+      [
+        arbitrum,
+        arc,
+        avalanche,
+        mainnet,
+        base,
+        polygon,
+        bsc,
+        hyperEvm,
+        monad,
+        plasma,
+        robinhood,
+        xLayer,
+      ] satisfies [AppKitNetwork, ...AppKitNetwork[]],
     [],
   );
 
