@@ -24,6 +24,9 @@ describe("ApiClient tests", () => {
     apiClient = new ApiClient({ transport: mockTransport });
   });
 
+  // Delivery takes a task, so an assertion made before one has passed means nothing.
+  const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+
   // Make a simple server to respond "ok" to all methods
   function setUpSimpleServer() {
     vi.spyOn(mockTransport, "send").mockImplementation(async (message) => {
@@ -116,6 +119,7 @@ describe("ApiClient tests", () => {
       },
     });
     mockTransport.messages.next(JSON.stringify(serverNotification1));
+    await flush();
 
     expect(received).toEqual([testResult1]);
 
@@ -127,6 +131,7 @@ describe("ApiClient tests", () => {
       },
     });
     mockTransport.messages.next(JSON.stringify(serverNotification2));
+    await flush();
 
     expect(received).toEqual([testResult1, testResult2]);
   });
@@ -148,6 +153,7 @@ describe("ApiClient tests", () => {
       },
     });
     mockTransport.messages.next(JSON.stringify(serverNotification1));
+    await flush();
 
     expect(received).toEqual([]);
 
@@ -160,6 +166,7 @@ describe("ApiClient tests", () => {
       },
     });
     mockTransport.messages.next(JSON.stringify(serverNotification2));
+    await flush();
 
     expect(received).toEqual([]);
   });
@@ -186,9 +193,37 @@ describe("ApiClient tests", () => {
       },
     });
     mockTransport.messages.next(JSON.stringify(serverErrorNotification));
+    await flush();
 
     expect(received).toEqual([]);
     expect(receivedError?.message ?? "").toContain("Test error");
+  });
+
+  test("events sent together with the subscription id are kept, in order", async () => {
+    const results = ["first", "second", "third"];
+    vi.spyOn(mockTransport, "send").mockImplementation(async (message) => {
+      const { id, method } = JSON.parse(message);
+      if (method !== testMethod) return;
+      mockTransport.messages.next(
+        JSON.stringify(jsonRpcPayload({ id, result: testSubscriptionId })),
+      );
+      for (const result of results) {
+        mockTransport.messages.next(
+          JSON.stringify(
+            jsonRpcPayload({
+              method: testEventMethod,
+              params: { subscription: testSubscriptionId, result },
+            }),
+          ),
+        );
+      }
+    });
+
+    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const received: unknown[] = [];
+    (await eventStream.stream).subscribe((event) => received.push(event));
+
+    await vi.waitFor(() => expect(received).toEqual(results));
   });
 
   test("unsubscribe sends a message", async () => {
