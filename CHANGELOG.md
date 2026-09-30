@@ -1,5 +1,15 @@
 # Changelog
 
+## 30-09-2026
+
+### @ston-fi/omniston-sdk@0.8.11
+
+#### Added
+
+- Added support for the `Monad (143)` chain.
+- Added support for the `Hyper EVM (999)` chain.
+- Added support for the `Plasma (9745)` chain.
+
 ## 21-09-2026
 
 ### @ston-fi/omniston-sdk@0.8.10
