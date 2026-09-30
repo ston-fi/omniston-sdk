@@ -7,6 +7,7 @@ import { isValidAddress } from "~/models/address";
 import { Chain } from "~/models/chain";
 import { ChainFamily, chainsByFamily } from "~/models/chain-family";
 import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +16,16 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+} from "~/components/ui/field";
 import { Switch } from "~/components/ui/switch";
 import {
   DEFAULT_SLIPPAGE_TOLERANCE_PERCENT,
@@ -40,13 +50,16 @@ export function SwapSettings({
         <DialogHeader>
           <DialogTitle>Swap Settings</DialogTitle>
         </DialogHeader>
-        <SettlementMethodsSection />
-        <hr />
-        <SwapSlippageToleranceSection />
-        <SwapIntegratorFeeSection />
-        <SwapIntegratorFlexibleFeeSection />
-        <hr />
-        <OrderHtlcMaxExecutionsSection />
+        <FieldGroup>
+          <SettlementMethodsSection />
+          <FieldSeparator />
+          <SwapSlippageToleranceSection />
+          <FieldSeparator />
+          <SwapIntegratorFlexibleFeeSection />
+          <SwapIntegratorFeeSection />
+          <FieldSeparator />
+          <OrderHtlcMaxExecutionsSection />
+        </FieldGroup>
       </DialogContent>
     </Dialog>
   );
@@ -54,35 +67,48 @@ export function SwapSettings({
 
 const SettlementMethodsSection = () => {
   const { settlementMethods, setSettlementMethods } = useSwapSettings();
+  const id = useId();
 
   return (
-    <section className="space-y-2">
-      <p className="text-sm font-medium">Settlement Methods</p>
-      <div className="flex flex-wrap gap-2">
+    <FieldSet>
+      <FieldLegend variant="label">Settlement Methods</FieldLegend>
+      <FieldDescription>
+        Choose how trades can be completed. Keep at least one method enabled.
+      </FieldDescription>
+      <FieldGroup className="gap-3">
         {Object.entries(SettlementMethod).map(([key, value]) => {
           const isSelected = !!settlementMethods.find((method) => method === value);
           const isDisabled = settlementMethods.length === 1 && isSelected;
 
           return (
-            <Button
-              key={key}
-              className="flex flex-grow"
-              disabled={isDisabled}
-              variant={settlementMethods.includes(value) ? "default" : "secondary"}
-              onClick={() => {
-                if (settlementMethods.includes(value)) {
-                  setSettlementMethods([...new Set(settlementMethods.filter((m) => m !== value))]);
-                } else {
-                  setSettlementMethods([...new Set([...settlementMethods, value])]);
-                }
-              }}
-            >
-              {key}
-            </Button>
+            <Field key={key} orientation="horizontal" data-disabled={isDisabled}>
+              <Checkbox
+                id={`${id}-${key}`}
+                value={value}
+                checked={isSelected}
+                disabled={isDisabled}
+                className="data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+                onCheckedChange={() => {
+                  if (settlementMethods.includes(value)) {
+                    setSettlementMethods([
+                      ...new Set(settlementMethods.filter((m) => m !== value)),
+                    ]);
+                  } else {
+                    setSettlementMethods([...new Set([...settlementMethods, value])]);
+                  }
+                }}
+              />
+              <FieldLabel
+                htmlFor={`${id}-${key}`}
+                className="peer-data-[disabled]:cursor-not-allowed"
+              >
+                {key}
+              </FieldLabel>
+            </Field>
           );
         })}
-      </div>
-    </section>
+      </FieldGroup>
+    </FieldSet>
   );
 };
 
@@ -103,56 +129,63 @@ const SwapSlippageToleranceSection = () => {
   const disabled = !isSwapSettlementMethod;
 
   return (
-    <section className="flex items-end space-x-2">
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor={inputId}>Slippage Tolerance</Label>
-        {autoSlippageTolerance ? (
-          <Input id={inputId} type="text" value="Auto" disabled />
-        ) : (
-          <Input
-            id={inputId}
-            type="number"
-            inputMode="numeric"
-            min={0}
+    <Field data-disabled={disabled}>
+      <FieldContent>
+        <FieldLabel htmlFor={inputId}>Slippage Tolerance</FieldLabel>
+        <FieldDescription>
+          Set the maximum price change you accept for a swap. Auto uses Omniston’s recommendation.
+        </FieldDescription>
+      </FieldContent>
+      <div className="flex items-end space-x-2">
+        <div className="grid w-full items-center gap-1.5">
+          {autoSlippageTolerance ? (
+            <Input id={inputId} type="text" value="Auto" disabled />
+          ) : (
+            <Input
+              id={inputId}
+              type="number"
+              inputMode="numeric"
+              min={0}
+              disabled={disabled}
+              max={MAX_SLIPPAGE_TOLERANCE_PERCENT}
+              value={!Number.isNaN(slippageTolerancePercent) ? slippageTolerancePercent : ""}
+              onChange={(e) => {
+                const value = Number.parseFloat(e.target.value);
+
+                if (value < 0 || value > MAX_SLIPPAGE_TOLERANCE_PERCENT) return;
+
+                setSlippageTolerancePercent(value);
+              }}
+            />
+          )}
+        </div>
+        {[1, 5, 10].map((value) => (
+          <Button
+            key={value}
             disabled={disabled}
-            max={MAX_SLIPPAGE_TOLERANCE_PERCENT}
-            value={!Number.isNaN(slippageTolerancePercent) ? slippageTolerancePercent : ""}
-            onChange={(e) => {
-              const value = Number.parseFloat(e.target.value);
-
-              if (value < 0 || value > MAX_SLIPPAGE_TOLERANCE_PERCENT) return;
-
+            variant={
+              !autoSlippageTolerance && value === slippageTolerancePercent ? "default" : "secondary"
+            }
+            onClick={() => {
+              setAutoSlippageTolerance(false);
               setSlippageTolerancePercent(value);
             }}
-          />
-        )}
-      </div>
-      {[1, 5, 10].map((value) => (
+          >
+            {value}%
+          </Button>
+        ))}
         <Button
-          key={value}
           disabled={disabled}
-          variant={
-            !autoSlippageTolerance && value === slippageTolerancePercent ? "default" : "secondary"
-          }
+          variant={autoSlippageTolerance ? "default" : "secondary"}
           onClick={() => {
-            setAutoSlippageTolerance(false);
-            setSlippageTolerancePercent(value);
+            setAutoSlippageTolerance(true);
+            setSlippageTolerancePercent(DEFAULT_SLIPPAGE_TOLERANCE_PERCENT);
           }}
         >
-          {value}%
+          Auto
         </Button>
-      ))}
-      <Button
-        disabled={disabled}
-        variant={autoSlippageTolerance ? "default" : "secondary"}
-        onClick={() => {
-          setAutoSlippageTolerance(true);
-          setSlippageTolerancePercent(DEFAULT_SLIPPAGE_TOLERANCE_PERCENT);
-        }}
-      >
-        Auto
-      </Button>
-    </section>
+      </div>
+    </Field>
   );
 };
 
@@ -170,15 +203,14 @@ const SwapIntegratorFeeSection = () => {
     isValidAddress(chainsByFamily[ChainFamily.EVM][0], integratorAddress);
 
   return (
-    <section className="flex flex-col space-y-2">
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor={addressInputId}>Integrator Address</Label>
+    <FieldGroup>
+      <Field data-disabled={disabled} data-invalid={!disabled && !isIntegratorAddressValid}>
+        <FieldLabel htmlFor={addressInputId}>Integrator Address</FieldLabel>
         <Input
           id={addressInputId}
           type="text"
           disabled={disabled}
           value={integratorAddress ?? ""}
-          aria-invalid={!disabled && !isIntegratorAddressValid}
           className={!disabled && !isIntegratorAddressValid ? "border-destructive" : ""}
           placeholder=""
           onChange={(e) => {
@@ -191,9 +223,9 @@ const SwapIntegratorFeeSection = () => {
             }
           }}
         />
-      </div>
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor={feeInputId}>Integrator Fee (pips)</Label>
+      </Field>
+      <Field data-disabled={disabled || !integratorAddress || !isIntegratorAddressValid}>
+        <FieldLabel htmlFor={feeInputId}>Integrator Fee (pips)</FieldLabel>
         <Input
           id={feeInputId}
           type="number"
@@ -214,8 +246,8 @@ const SwapIntegratorFeeSection = () => {
             setIntegratorFeePips(value);
           }}
         />
-      </div>
-    </section>
+      </Field>
+    </FieldGroup>
   );
 };
 
@@ -228,17 +260,20 @@ const SwapIntegratorFlexibleFeeSection = () => {
   const disabled = !isSwapSettlementMethod;
 
   return (
-    <section className="flex items-center gap-2">
-      <Label htmlFor="flexible-integrator-fee" className="flex-1">
-        Whether a flexible integrator fee can be applied for the quote
-      </Label>
+    <Field orientation="horizontal" data-disabled={disabled}>
+      <FieldContent>
+        <FieldLabel htmlFor="flexible-integrator-fee">Flexible integrator fee</FieldLabel>
+        <FieldDescription>
+          Allow the integrator fee to vary so quotes can include protocols with limited fee support.
+        </FieldDescription>
+      </FieldContent>
       <Switch
         id="flexible-integrator-fee"
         disabled={disabled}
         checked={flexibleIntegratorFee}
         onCheckedChange={(checked) => setFlexibleIntegratorFee(checked)}
       />
-    </section>
+    </Field>
   );
 };
 
@@ -251,25 +286,23 @@ const OrderHtlcMaxExecutionsSection = () => {
   );
 
   return (
-    <section className="flex items-end space-x-2">
-      <div className="grid w-full items-center gap-1.5">
-        <Label htmlFor={inputId}>HTLC Max Executions</Label>
-        <Input
-          id={inputId}
-          type="number"
-          inputMode="numeric"
-          min={1}
-          value={htlcMaxExecutions}
-          disabled={!isOrderSettlementMethod}
-          onChange={(e) => {
-            const value = Number.parseInt(e.target.value);
+    <Field data-disabled={!isOrderSettlementMethod}>
+      <FieldLabel htmlFor={inputId}>HTLC Max Executions</FieldLabel>
+      <Input
+        id={inputId}
+        type="number"
+        inputMode="numeric"
+        min={1}
+        value={htlcMaxExecutions}
+        disabled={!isOrderSettlementMethod}
+        onChange={(e) => {
+          const value = Number.parseInt(e.target.value);
 
-            if (value < 1) return;
+          if (value < 1) return;
 
-            setHtlcMaxExecutions(value);
-          }}
-        />
-      </div>
-    </section>
+          setHtlcMaxExecutions(value);
+        }}
+      />
+    </Field>
   );
 };
