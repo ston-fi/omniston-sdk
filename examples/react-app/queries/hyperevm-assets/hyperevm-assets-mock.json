@@ -16,5 +16,14 @@
       "displayName": "USDT0",
       "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/38517.png"
     }
+  },
+  {
+    "address": "0xb88339CB7199b77E23DB6E890353E22632Ba630f",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDC",
+      "displayName": "USD Coin",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
   }
 ]

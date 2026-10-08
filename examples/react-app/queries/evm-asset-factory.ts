@@ -1,7 +1,7 @@
 import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
 import { queryOptions } from "@tanstack/react-query";
 import { getBalance, multicall, type Config } from "@wagmi/core";
-import { erc20Abi, type Address } from "viem";
+import { erc20Abi, type Address as ViemAddress } from "viem";
 import { z } from "zod";
 
 import { erc20AddressSchema } from "~/lib/evm/address";
@@ -44,42 +44,39 @@ export function createEvmAssetQueryFactory({
   const fetchBalances = async (
     evmAssets: Asset[],
     wagmiConfig: Config,
-    walletAddress: Address,
+    walletAddress: ViemAddress,
   ): Promise<Asset[]> => {
-    const erc20Assets = evmAssets.filter(
-      (asset) => asset.id.chain.$case === chain && asset.id.chain.value.kind.$case === "erc20",
-    );
     const nativeAsset = evmAssets.find(
       (asset) => asset.id.chain.$case === chain && asset.id.chain.value.kind.$case === "native",
     );
 
-    const [erc20Balances, nativeBalance] = await Promise.all([
-      erc20Assets.length
-        ? multicall(wagmiConfig, {
-            chainId: wagmiChainId,
-            contracts: erc20Assets.map((erc20Asset) => {
-              const kind = erc20Asset.id.chain.value.kind;
+    const erc20Addresses = evmAssets.reduce<ViemAddress[]>((acc, asset) => {
+      if (asset.id.chain.$case === chain && asset.id.chain.value.kind.$case === "erc20") {
+        acc.push(asset.id.chain.value.kind.value as ViemAddress);
+      }
 
-              if (kind.$case !== "erc20") {
-                throw new Error(`Unexpected non-ERC20 asset for chain: ${chain}`);
-              }
+      return acc;
+    }, []);
 
-              return {
-                abi: erc20Abi,
-                address: kind.value as Address,
-                functionName: "balanceOf",
-                args: [walletAddress],
-                account: walletAddress,
-              };
-            }),
-          })
-        : Promise.resolve([]),
+    const [nativeBalance, erc20Balances] = await Promise.all([
       nativeAsset
         ? getBalance(wagmiConfig, {
             address: walletAddress,
             chainId: wagmiChainId,
           })
         : Promise.resolve(undefined),
+      erc20Addresses.length
+        ? multicall(wagmiConfig, {
+            chainId: wagmiChainId,
+            contracts: erc20Addresses.map((address) => ({
+              abi: erc20Abi,
+              address: address,
+              functionName: "balanceOf",
+              args: [walletAddress],
+              account: walletAddress,
+            })),
+          })
+        : Promise.resolve([]),
     ]);
 
     let erc20BalanceIndex = 0;
@@ -109,7 +106,11 @@ export function createEvmAssetQueryFactory({
           let assets = await getAssets();
 
           if (walletAddress?.chain.$case === chain) {
-            assets = await fetchBalances(assets, wagmiConfig, walletAddress.chain.value as Address);
+            assets = await fetchBalances(
+              assets,
+              wagmiConfig,
+              walletAddress.chain.value as ViemAddress,
+            );
           }
 
           return sortAssets(assets);
@@ -141,7 +142,7 @@ export function createEvmAssetQueryFactory({
           assets = await fetchBalances(
             filteredAssets,
             wagmiConfig,
-            walletAddress.chain.value as Address,
+            walletAddress.chain.value as ViemAddress,
           );
 
           return sortAssets(assets);

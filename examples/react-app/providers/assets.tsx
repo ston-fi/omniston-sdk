@@ -9,22 +9,11 @@ import { Chain } from "~/models/chain";
 import { ChainFamily, isChainInFamily, type EvmChain } from "~/models/chain-family";
 import { serializeAssetId, isAssetIdEqual } from "~/models/asset-id";
 import type { Asset } from "~/models/asset";
-import { arcAssetQueryFactory } from "~/queries/arc-assets";
-import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
-import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
-import { baseAssetQueryFactory } from "~/queries/base-assets";
-import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
-import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
-import { hyperEvmAssetQueryFactory } from "~/queries/hyperevm-assets";
-import { monadAssetQueryFactory } from "~/queries/monad-assets";
-import { plasmaAssetQueryFactory } from "~/queries/plasma-assets";
-import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
-import { robinhoodAssetQueryFactory } from "~/queries/robinhood-assets";
+import { EVM_ASSET_QUERY_FACTORIES } from "~/queries/evm-asset-query-factories";
 import { tonAssetQueryFactory } from "~/queries/ton-assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { tronAssetQueryFactory } from "~/queries/tron-assets";
 import { useTronWebClient } from "~/hooks/useTronWebClient";
-import { xLayerAssetQueryFactory } from "~/queries/xlayer-assets";
 
 type AssetsContextValue = {
   getAssetById: (assetId: AssetId) => Asset | undefined;
@@ -34,20 +23,9 @@ type AssetsContextValue = {
 };
 
 const ASSET_QUERY_FACTORIES = {
-  [Chain.ARBITRUM]: arbitrumAssetQueryFactory,
-  [Chain.ARC]: arcAssetQueryFactory,
-  [Chain.AVALANCHE]: avalancheAssetQueryFactory,
-  [Chain.BASE]: baseAssetQueryFactory,
-  [Chain.BNB]: bnbAssetQueryFactory,
-  [Chain.ETHEREUM]: ethereumAssetQueryFactory,
-  [Chain.HYPEREVM]: hyperEvmAssetQueryFactory,
-  [Chain.MONAD]: monadAssetQueryFactory,
-  [Chain.PLASMA]: plasmaAssetQueryFactory,
-  [Chain.POLYGON]: polygonAssetQueryFactory,
-  [Chain.ROBINHOOD]: robinhoodAssetQueryFactory,
+  ...EVM_ASSET_QUERY_FACTORIES,
   [Chain.TON]: tonAssetQueryFactory,
   [Chain.TRON]: tronAssetQueryFactory,
-  [Chain.XLAYER]: xLayerAssetQueryFactory,
 } satisfies Record<Chain, unknown>;
 
 const ASSET_QUERY_CONNECTED_WALLET_REFETCH_INTERVAL_MS = 60 * 1000;

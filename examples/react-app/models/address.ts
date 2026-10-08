@@ -7,7 +7,7 @@ import { isErc20Address } from "~/lib/evm/address";
 import { isTronAddress } from "~/lib/tron/address";
 
 import { Chain } from "./chain";
-import { ChainFamily, chainsByFamily } from "./chain-family";
+import { ChainFamily, chainFamilyByChain, chainsByFamily } from "./chain-family";
 
 export const addressSchema = z.object({
   chain: z.discriminatedUnion("$case", [
@@ -28,9 +28,10 @@ export const addressSchema = z.object({
 
 export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
   const chainCase = assetId.chain.$case;
+  const chainFamily = chainFamilyByChain[chainCase];
 
-  switch (chainCase) {
-    case Chain.TON: {
+  switch (chainFamily) {
+    case ChainFamily.TON: {
       switch (assetId.chain.value.kind.$case) {
         case "jetton": {
           return {
@@ -45,18 +46,7 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
-    case Chain.ARC:
-    case Chain.ARBITRUM:
-    case Chain.AVALANCHE:
-    case Chain.BASE:
-    case Chain.BNB:
-    case Chain.ETHEREUM:
-    case Chain.HYPEREVM:
-    case Chain.MONAD:
-    case Chain.PLASMA:
-    case Chain.POLYGON:
-    case Chain.ROBINHOOD:
-    case Chain.XLAYER: {
+    case ChainFamily.EVM: {
       switch (assetId.chain.value.kind.$case) {
         case "erc20": {
           return {
@@ -71,7 +61,7 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
         }
       }
     }
-    case Chain.TRON: {
+    case ChainFamily.TRON: {
       switch (assetId.chain.value.kind.$case) {
         case "trc20": {
           return {
@@ -87,36 +77,28 @@ export function addressFromAssetId(assetId: AssetId): ChainAddress | null {
       }
     }
     default: {
-      throw new Error(`Unexpected chain: ${chainCase}`);
+      chainFamily satisfies never;
+      throw new Error(`Unexpected chain family: ${chainFamily}`);
     }
   }
 }
 
 export function isValidAddress(chain: Chain, src: string) {
-  switch (chain) {
-    case Chain.TON: {
+  const chainFamily = chainFamilyByChain[chain];
+
+  switch (chainFamily) {
+    case ChainFamily.TON: {
       return isTonAddress(src);
     }
-    case Chain.ARC:
-    case Chain.ARBITRUM:
-    case Chain.AVALANCHE:
-    case Chain.BASE:
-    case Chain.BNB:
-    case Chain.ETHEREUM:
-    case Chain.HYPEREVM:
-    case Chain.MONAD:
-    case Chain.PLASMA:
-    case Chain.POLYGON:
-    case Chain.ROBINHOOD:
-    case Chain.XLAYER: {
+    case ChainFamily.EVM: {
       return isErc20Address(src);
     }
-    case Chain.TRON: {
+    case ChainFamily.TRON: {
       return isTronAddress(src);
     }
     default: {
-      chain satisfies never;
-      throw new Error(`Unexpected chain: ${chain}`);
+      chainFamily satisfies never;
+      throw new Error(`Unexpected chain family: ${chainFamily}`);
     }
   }
 }

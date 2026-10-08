@@ -7,229 +7,62 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
 import { Chain } from "~/models/chain";
+import { ChainFamily, chainsByFamily } from "~/models/chain-family";
+import { EVM_ASSET_QUERY_FACTORIES } from "~/queries/evm-asset-query-factories";
 import { useSwapForm, useSwapFormDispatch } from "~/providers/swap-form";
 import { tonAssetQueryFactory } from "~/queries/ton-assets";
-import { baseAssetQueryFactory } from "~/queries/base-assets";
-import { hyperEvmAssetQueryFactory } from "~/queries/hyperevm-assets";
-import { monadAssetQueryFactory } from "~/queries/monad-assets";
-import { plasmaAssetQueryFactory } from "~/queries/plasma-assets";
-import { polygonAssetQueryFactory } from "~/queries/polygon-assets";
-import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
-import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
 import { useAssets } from "~/providers/assets";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
-import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
-import { arcAssetQueryFactory } from "~/queries/arc-assets";
-import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
 import { tronAssetQueryFactory } from "~/queries/tron-assets";
 import { useTronWebClient } from "~/hooks/useTronWebClient";
-import { robinhoodAssetQueryFactory } from "~/queries/robinhood-assets";
-import { xLayerAssetQueryFactory } from "~/queries/xlayer-assets";
 
-const useChainConfigs = (): [ChainTabConfig, ...ChainTabConfig[]] => {
-  const {
-    arbitrum: arbitrumWalletAddress,
-    arc: arcWalletAddress,
-    avalanche: avalancheWalletAddress,
-    base: baseWalletAddress,
-    bnb: bnbWalletAddress,
-    ethereum: ethereumWalletAddress,
-    hyperevm: hyperEvmWalletAddress,
-    monad: monadWalletAddress,
-    plasma: plasmaWalletAddress,
-    polygon: polygonWalletAddress,
-    robinhood: robinhoodWalletAddress,
-    xlayer: xLayerWalletAddress,
-    ton: tonWalletAddress,
-    tron: tronWalletAddress,
-  } = useConnectedWallets().walletAddressByChain;
+const useChainConfigs = () => {
+  const { walletAddressByChain } = useConnectedWallets();
 
   const wagmiConfig = useWagmiConfig();
   const getTronWebClient = useTronWebClient();
 
-  return [
-    {
-      chain: Chain.ARBITRUM,
-      fetchQueryOptions: arbitrumAssetQueryFactory.fetch({
-        walletAddress: arbitrumWalletAddress,
+  const chainConfigs: ChainTabConfig[] = [
+    ...chainsByFamily[ChainFamily.EVM].map((evmChain): ChainTabConfig => ({
+      chain: evmChain,
+      fetchQueryOptions: EVM_ASSET_QUERY_FACTORIES[evmChain].fetch({
+        walletAddress: walletAddressByChain[evmChain],
         wagmiConfig,
       }),
       searchQueryOptions: (searchTerm) =>
-        arbitrumAssetQueryFactory.search({
+        EVM_ASSET_QUERY_FACTORIES[evmChain].search({
           searchTerm,
-          walletAddress: arbitrumWalletAddress,
+          walletAddress: walletAddressByChain[evmChain],
           wagmiConfig,
         }),
-    },
-    {
-      chain: Chain.ARC,
-      fetchQueryOptions: arcAssetQueryFactory.fetch({
-        walletAddress: arcWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        arcAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: arcWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.AVALANCHE,
-      fetchQueryOptions: avalancheAssetQueryFactory.fetch({
-        walletAddress: avalancheWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        avalancheAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: avalancheWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.BASE,
-      fetchQueryOptions: baseAssetQueryFactory.fetch({
-        walletAddress: baseWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        baseAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: baseWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.BNB,
-      fetchQueryOptions: bnbAssetQueryFactory.fetch({
-        walletAddress: bnbWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        bnbAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: bnbWalletAddress,
-          wagmiConfig,
-        }),
-    },
-
-    {
-      chain: Chain.ETHEREUM,
-      fetchQueryOptions: ethereumAssetQueryFactory.fetch({
-        walletAddress: ethereumWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        ethereumAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: ethereumWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.HYPEREVM,
-      fetchQueryOptions: hyperEvmAssetQueryFactory.fetch({
-        walletAddress: hyperEvmWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        hyperEvmAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: hyperEvmWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.MONAD,
-      fetchQueryOptions: monadAssetQueryFactory.fetch({
-        walletAddress: monadWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        monadAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: monadWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.PLASMA,
-      fetchQueryOptions: plasmaAssetQueryFactory.fetch({
-        walletAddress: plasmaWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        plasmaAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: plasmaWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.POLYGON,
-      fetchQueryOptions: polygonAssetQueryFactory.fetch({
-        walletAddress: polygonWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        polygonAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: polygonWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.ROBINHOOD,
-      fetchQueryOptions: robinhoodAssetQueryFactory.fetch({
-        walletAddress: robinhoodWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        robinhoodAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: robinhoodWalletAddress,
-          wagmiConfig,
-        }),
-    },
-    {
-      chain: Chain.XLAYER,
-      fetchQueryOptions: xLayerAssetQueryFactory.fetch({
-        walletAddress: xLayerWalletAddress,
-        wagmiConfig,
-      }),
-      searchQueryOptions: (searchTerm) =>
-        xLayerAssetQueryFactory.search({
-          searchTerm,
-          walletAddress: xLayerWalletAddress,
-          wagmiConfig,
-        }),
-    },
+    })),
     {
       chain: Chain.TON,
       fetchQueryOptions: tonAssetQueryFactory.fetch({
-        walletAddress: tonWalletAddress,
+        walletAddress: walletAddressByChain[Chain.TON],
       }),
       searchQueryOptions: (searchTerm) =>
         tonAssetQueryFactory.search({
           searchTerms: [searchTerm],
-          walletAddress: tonWalletAddress,
+          walletAddress: walletAddressByChain[Chain.TON],
         }),
     },
     {
       chain: Chain.TRON,
       fetchQueryOptions: tronAssetQueryFactory.fetch({
         getTronWebClient,
-        walletAddress: tronWalletAddress,
+        walletAddress: walletAddressByChain[Chain.TRON],
       }),
       searchQueryOptions: (searchTerm) =>
         tronAssetQueryFactory.search({
           getTronWebClient,
           searchTerm,
-          walletAddress: tronWalletAddress,
+          walletAddress: walletAddressByChain[Chain.TRON],
         }),
     },
   ];
+
+  return chainConfigs as [ChainTabConfig, ...ChainTabConfig[]];
 };
 
 export const SwapForm = (props: { className?: string }) => {
