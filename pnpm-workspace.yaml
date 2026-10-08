@@ -1,18 +1,28 @@
-minimumReleaseAge: 2880
-minimumReleaseAgeExclude:
-  - "@ston-fi/*"
-
-onlyBuiltDependencies:
-  - "lefthook"
-
 packages:
   - "examples/*"
   - "packages/*"
 
-verifyDepsBeforeRun: "install"
-
 catalog:
   "@arethetypeswrong/cli": 0.18.2
   "publint": 0.3.18
-  "vitest": 4.0.18
   "tsdown": 0.21.7
+  "vitest": 4.0.18
+
+saveExact: true
+engineStrict: true
+verifyDepsBeforeRun: "install"
+linkWorkspacePackages: true
+preferWorkspacePackages: true
+
+minimumReleaseAge: 2880
+minimumReleaseAgeExclude:
+  - "@ston-fi/*"
+
+allowBuilds:
+  "@reown/appkit": false
+  bufferutil: false
+  esbuild: true
+  keccak: false
+  lefthook: true
+  protobufjs: false
+  utf-8-validate: false

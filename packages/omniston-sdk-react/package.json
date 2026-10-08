@@ -9,9 +9,7 @@
     "directory": "packages/omniston-sdk-react"
   },
   "files": [
-    "dist",
-    "package.json",
-    "README.md"
+    "dist"
   ],
   "type": "module",
   "sideEffects": false,

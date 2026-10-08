@@ -1,7 +1,5 @@
-# Lefthook configuration guide: https://lefthook.dev/configuration
-
 pre-commit:
-  parallel: true
   commands:
-    format:oxfmt:
-      run: pnpm turbo run format --affected && git add {staged_files}
+    format:
+      run: pnpm exec oxfmt --write --no-error-on-unmatched-pattern {staged_files}
+      stage_fixed: true

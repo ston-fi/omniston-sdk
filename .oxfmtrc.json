@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "sortImports": {},
-  "sortPackageJson": {},
+  "sortImports": true,
+  "sortPackageJson": true,
   "printWidth": 80
 }

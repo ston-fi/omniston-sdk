@@ -1,4 +1,4 @@
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 FROM base AS pnpm-base
 
@@ -6,7 +6,7 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
 
 RUN corepack enable
-RUN corepack prepare pnpm@10.33.0 --activate
+RUN corepack prepare pnpm@12.6.0 --activate
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install turbo --global
 
 
@@ -41,7 +41,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --ignore-scripts 
 
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
-COPY tsconfig.json ./tsconfig.json
+COPY tsconfig.base.json ./tsconfig.base.json
 COPY turbo.json ./turbo.json
 
 # Uncomment and use build args to enable remote caching
