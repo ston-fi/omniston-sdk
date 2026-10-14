@@ -64,7 +64,7 @@ export const Copy = React.forwardRef<HTMLDivElement, CopyProps>(
           />
           <CheckIcon
             className={cn(
-              "absolute inset-0 h-4 w-4 text-green-600 transition-all duration-300 ease-in-out",
+              "absolute inset-0 h-4 w-4 transition-all duration-300 ease-in-out",
               copied
                 ? "scale-100 rotate-0 opacity-100"
                 : "scale-0 rotate-180 opacity-0",

@@ -302,7 +302,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
 
     setUnconditionalAssets(Chain.TON, nextUnconditionalAssets);
 
-    await queryClient.fetchQuery(
+    await queryClient.query(
       ASSET_QUERY_FACTORIES[Chain.TON].fetch({
         unconditionalAssets: nextUnconditionalAssets,
         walletAddress: connectedWalletAddressByChain[Chain.TON],
