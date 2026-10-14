@@ -1,19 +1,23 @@
 "use client";
 
+import type { AssetId } from "@ston-fi/omniston-sdk-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
 import { useConfig as useWagmiConfig } from "wagmi";
-import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
-import { Chain } from "~/models/chain";
-import { ChainFamily, isChainInFamily, type EvmChain } from "~/models/chain-family";
-import { serializeAssetId, isAssetIdEqual } from "~/models/asset-id";
+import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { useTronWebClient } from "~/hooks/useTronWebClient";
 import type { Asset } from "~/models/asset";
+import { serializeAssetId, isAssetIdEqual } from "~/models/asset-id";
+import { Chain } from "~/models/chain";
+import {
+  ChainFamily,
+  isChainInFamily,
+  type EvmChain,
+} from "~/models/chain-family";
 import { EVM_ASSET_QUERY_FACTORIES } from "~/queries/evm-asset-query-factories";
 import { tonAssetQueryFactory } from "~/queries/ton-assets";
-import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { tronAssetQueryFactory } from "~/queries/tron-assets";
-import { useTronWebClient } from "~/hooks/useTronWebClient";
 
 type AssetsContextValue = {
   getAssetById: (assetId: AssetId) => Asset | undefined;
@@ -33,11 +37,16 @@ const ASSET_QUERY_DISCONNECTED_WALLET_REFETCH_INTERVAL_MS = 5 * 60 * 1000;
 
 const AssetsContext = createContext<AssetsContextValue | undefined>(undefined);
 
-const appendMissingAssetIds = (assetIds: AssetId[], assetIdsToAppend: AssetId[]) => {
+const appendMissingAssetIds = (
+  assetIds: AssetId[],
+  assetIdsToAppend: AssetId[],
+) => {
   const nextAssetIds = [...assetIds];
 
   assetIdsToAppend.forEach((assetId) => {
-    const exists = nextAssetIds.some((existingAssetId) => isAssetIdEqual(existingAssetId, assetId));
+    const exists = nextAssetIds.some((existingAssetId) =>
+      isAssetIdEqual(existingAssetId, assetId),
+    );
 
     if (!exists) {
       nextAssetIds.push(assetId);
@@ -51,7 +60,9 @@ const appendMissingAssets = (assets: Asset[], assetsToAppend: Asset[]) => {
   const nextAssets = [...assets];
 
   assetsToAppend.forEach((asset) => {
-    const exists = nextAssets.some((existingAsset) => isAssetIdEqual(existingAsset.id, asset.id));
+    const exists = nextAssets.some((existingAsset) =>
+      isAssetIdEqual(existingAsset.id, asset.id),
+    );
 
     if (!exists) {
       nextAssets.push(asset);
@@ -66,8 +77,10 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
 
   const wagmiConfig = useWagmiConfig();
   const getTronWebClient = useTronWebClient();
-  const { walletAddressByChain: connectedWalletAddressByChain, isWalletRestoredByChain } =
-    useConnectedWallets();
+  const {
+    walletAddressByChain: connectedWalletAddressByChain,
+    isWalletRestoredByChain,
+  } = useConnectedWallets();
 
   // In-memory unconditional assets per blockchain — assets manually added by the user
   // that must survive query refetches. Session-only (not persisted).
@@ -75,7 +88,8 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     Partial<Record<Chain, AssetId[]>>
   >({});
 
-  const getUnconditionalAssets = (chain: Chain) => unconditionalAssetsByChain[chain] ?? [];
+  const getUnconditionalAssets = (chain: Chain) =>
+    unconditionalAssetsByChain[chain] ?? [];
 
   const setUnconditionalAssets = (chain: Chain, assetIds: AssetId[]) => {
     setUnconditionalAssetsByChain((prev) => ({
@@ -225,7 +239,9 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   } satisfies Record<Chain, unknown>;
 
   const getAssetById = (assetId: AssetId): Asset | undefined => {
-    return assetsQueries[assetId.chain.$case].data?.get(serializeAssetId(assetId));
+    return assetsQueries[assetId.chain.$case].data?.get(
+      serializeAssetId(assetId),
+    );
   };
 
   const getAssetsByChain = (chain: Chain): Asset[] => {
@@ -237,9 +253,10 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
 
     const chain = asset.id.chain.$case;
     const currentAssets = getAssetsByChain(chain);
-    const nextUnconditionalAssets = appendMissingAssetIds(getUnconditionalAssets(chain), [
-      asset.id,
-    ]);
+    const nextUnconditionalAssets = appendMissingAssetIds(
+      getUnconditionalAssets(chain),
+      [asset.id],
+    );
 
     setUnconditionalAssets(chain, nextUnconditionalAssets);
 
@@ -252,7 +269,9 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
   };
 
   const populateAssets = async (assetIds: AssetId[]) => {
-    const [tonAssetIds, unsupportedAssetIds] = assetIds.reduce<[AssetId[], AssetId[]]>(
+    const [tonAssetIds, unsupportedAssetIds] = assetIds.reduce<
+      [AssetId[], AssetId[]]
+    >(
       (acc, assetId) => {
         if (assetId.chain.$case === Chain.TON) {
           if (!getAssetById(assetId)) {

@@ -47,5 +47,11 @@ export {
 } from "./omniston/OmnistonError";
 
 export type { InferObservableData, Observable } from "./types/observable";
-export type { OneOf, OneOfCase, OneOfCases, OneOfValue, OneOfValues } from "./types/oneOf";
+export type {
+  OneOf,
+  OneOfCase,
+  OneOfCases,
+  OneOfValue,
+  OneOfValues,
+} from "./types/oneOf";
 export type { QuoteOfType } from "./types/quote";

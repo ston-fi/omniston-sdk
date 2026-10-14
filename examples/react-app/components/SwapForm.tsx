@@ -5,16 +5,16 @@ import { useConfig as useWagmiConfig } from "wagmi";
 import { AssetSelect, type ChainTabConfig } from "~/components/AssetSelect";
 import { Card, CardContent } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
+import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { useTronWebClient } from "~/hooks/useTronWebClient";
 import { cn } from "~/lib/utils";
 import { Chain } from "~/models/chain";
 import { ChainFamily, chainsByFamily } from "~/models/chain-family";
-import { EVM_ASSET_QUERY_FACTORIES } from "~/queries/evm-asset-query-factories";
-import { useSwapForm, useSwapFormDispatch } from "~/providers/swap-form";
-import { tonAssetQueryFactory } from "~/queries/ton-assets";
 import { useAssets } from "~/providers/assets";
-import { useConnectedWallets } from "~/hooks/useConnectedWallets";
+import { useSwapForm, useSwapFormDispatch } from "~/providers/swap-form";
+import { EVM_ASSET_QUERY_FACTORIES } from "~/queries/evm-asset-query-factories";
+import { tonAssetQueryFactory } from "~/queries/ton-assets";
 import { tronAssetQueryFactory } from "~/queries/tron-assets";
-import { useTronWebClient } from "~/hooks/useTronWebClient";
 
 const useChainConfigs = () => {
   const { walletAddressByChain } = useConnectedWallets();
@@ -119,7 +119,9 @@ const InputAssetSelect = (props: { className?: string }) => {
       {...props}
       chains={chainConfigs}
       selectedAsset={inputAsset}
-      onAssetSelect={(asset) => dispatch({ type: "SET_INPUT_ASSET_ID", payload: asset })}
+      onAssetSelect={(asset) =>
+        dispatch({ type: "SET_INPUT_ASSET_ID", payload: asset })
+      }
     />
   );
 };
@@ -128,14 +130,21 @@ const InputAssetInput = (props: { className?: string }) => {
   const { inputAssetId, inputUnits } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
-  const handleInputUpdate = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputUpdate = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
     if (target.value && !validateFloatValue(target.value)) return;
 
     dispatch({ type: "SET_INPUT_UNITS", payload: target.value });
   };
 
   return (
-    <Input {...props} disabled={!inputAssetId} value={inputUnits} onChange={handleInputUpdate} />
+    <Input
+      {...props}
+      disabled={!inputAssetId}
+      value={inputUnits}
+      onChange={handleInputUpdate}
+    />
   );
 };
 
@@ -160,7 +169,9 @@ const OutputAssetSelect = (props: { className?: string }) => {
   const chainConfigs = useChainConfigs();
 
   const inputAsset = inputAssetId ? (getAssetById(inputAssetId) ?? null) : null;
-  const outputAsset = outputAssetId ? (getAssetById(outputAssetId) ?? null) : null;
+  const outputAsset = outputAssetId
+    ? (getAssetById(outputAssetId) ?? null)
+    : null;
 
   return (
     <AssetSelect
@@ -168,7 +179,9 @@ const OutputAssetSelect = (props: { className?: string }) => {
       chains={chainConfigs}
       selectedAsset={outputAsset}
       excludeAsset={inputAsset}
-      onAssetSelect={(asset) => dispatch({ type: "SET_OUTPUT_ASSET_ID", payload: asset })}
+      onAssetSelect={(asset) =>
+        dispatch({ type: "SET_OUTPUT_ASSET_ID", payload: asset })
+      }
     />
   );
 };
@@ -177,13 +190,20 @@ const OutputAssetInput = (props: { className?: string }) => {
   const { outputAssetId, outputUnits } = useSwapForm();
   const dispatch = useSwapFormDispatch();
 
-  const handleInputUpdate = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputUpdate = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
     if (target.value && !validateFloatValue(target.value)) return;
 
     dispatch({ type: "SET_OUTPUT_UNITS", payload: target.value });
   };
 
   return (
-    <Input {...props} disabled={!outputAssetId} value={outputUnits} onChange={handleInputUpdate} />
+    <Input
+      {...props}
+      disabled={!outputAssetId}
+      value={outputUnits}
+      onChange={handleInputUpdate}
+    />
   );
 };

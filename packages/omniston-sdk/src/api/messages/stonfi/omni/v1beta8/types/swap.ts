@@ -9,7 +9,12 @@
 
 import { AssetId } from "../../../common/v1/types/asset_id";
 import { ChainAddress } from "../../../common/v1/types/chain_address";
-import { KeepAlive, TradeStatus, tradeStatusFromJSON, tradeStatusToJSON } from "./common";
+import {
+  KeepAlive,
+  TradeStatus,
+  tradeStatusFromJSON,
+  tradeStatusToJSON,
+} from "./common";
 
 /** Result of a single swap chunk execution. */
 export const SwapChunkResult = {
@@ -19,12 +24,16 @@ export const SwapChunkResult = {
   UNRECOGNIZED: "UNRECOGNIZED",
 } as const;
 
-export type SwapChunkResult = (typeof SwapChunkResult)[keyof typeof SwapChunkResult];
+export type SwapChunkResult =
+  (typeof SwapChunkResult)[keyof typeof SwapChunkResult];
 
 export namespace SwapChunkResult {
-  export type SWAP_CHUNK_RESULT_PROCESSING = typeof SwapChunkResult.SWAP_CHUNK_RESULT_PROCESSING;
-  export type SWAP_CHUNK_RESULT_FILLED = typeof SwapChunkResult.SWAP_CHUNK_RESULT_FILLED;
-  export type SWAP_CHUNK_RESULT_ABORTED = typeof SwapChunkResult.SWAP_CHUNK_RESULT_ABORTED;
+  export type SWAP_CHUNK_RESULT_PROCESSING =
+    typeof SwapChunkResult.SWAP_CHUNK_RESULT_PROCESSING;
+  export type SWAP_CHUNK_RESULT_FILLED =
+    typeof SwapChunkResult.SWAP_CHUNK_RESULT_FILLED;
+  export type SWAP_CHUNK_RESULT_ABORTED =
+    typeof SwapChunkResult.SWAP_CHUNK_RESULT_ABORTED;
   export type UNRECOGNIZED = typeof SwapChunkResult.UNRECOGNIZED;
 }
 
@@ -170,7 +179,9 @@ export const SwapRoute: MessageFns<SwapRoute> = {
   create<I extends Exact<DeepPartial<SwapRoute>, I>>(base?: I): SwapRoute {
     return SwapRoute.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapRoute>, I>>(object: I): SwapRoute {
+  fromPartial<I extends Exact<DeepPartial<SwapRoute>, I>>(
+    object: I,
+  ): SwapRoute {
     const message = createBaseSwapRoute();
     message.steps = object.steps?.map((e) => SwapStep.fromPartial(e)) || [];
     return message;
@@ -184,8 +195,12 @@ function createBaseSwapStep(): SwapStep {
 export const SwapStep: MessageFns<SwapStep> = {
   fromJSON(object: any): SwapStep {
     return {
-      inputAsset: isSet(object.input_asset) ? AssetId.fromJSON(object.input_asset) : undefined,
-      outputAsset: isSet(object.output_asset) ? AssetId.fromJSON(object.output_asset) : undefined,
+      inputAsset: isSet(object.input_asset)
+        ? AssetId.fromJSON(object.input_asset)
+        : undefined,
+      outputAsset: isSet(object.output_asset)
+        ? AssetId.fromJSON(object.output_asset)
+        : undefined,
       chunks: globalThis.Array.isArray(object?.chunks)
         ? object.chunks.map((e: any) => SwapChunk.fromJSON(e))
         : [],
@@ -231,9 +246,15 @@ function createBaseSwapChunk(): SwapChunk {
 export const SwapChunk: MessageFns<SwapChunk> = {
   fromJSON(object: any): SwapChunk {
     return {
-      protocol: isSet(object.protocol) ? globalThis.String(object.protocol) : "",
-      inputUnits: isSet(object.input_units) ? globalThis.String(object.input_units) : "",
-      outputUnits: isSet(object.output_units) ? globalThis.String(object.output_units) : "",
+      protocol: isSet(object.protocol)
+        ? globalThis.String(object.protocol)
+        : "",
+      inputUnits: isSet(object.input_units)
+        ? globalThis.String(object.input_units)
+        : "",
+      outputUnits: isSet(object.output_units)
+        ? globalThis.String(object.output_units)
+        : "",
     };
   },
 
@@ -254,7 +275,9 @@ export const SwapChunk: MessageFns<SwapChunk> = {
   create<I extends Exact<DeepPartial<SwapChunk>, I>>(base?: I): SwapChunk {
     return SwapChunk.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapChunk>, I>>(object: I): SwapChunk {
+  fromPartial<I extends Exact<DeepPartial<SwapChunk>, I>>(
+    object: I,
+  ): SwapChunk {
     const message = createBaseSwapChunk();
     message.protocol = object.protocol ?? "";
     message.inputUnits = object.inputUnits ?? "";
@@ -278,11 +301,15 @@ function createBaseSwapChunkProgress(): SwapChunkProgress {
 export const SwapChunkProgress: MessageFns<SwapChunkProgress> = {
   fromJSON(object: any): SwapChunkProgress {
     return {
-      protocol: isSet(object.protocol) ? globalThis.String(object.protocol) : "",
+      protocol: isSet(object.protocol)
+        ? globalThis.String(object.protocol)
+        : "",
       targetAddress: isSet(object.target_address)
         ? ChainAddress.fromJSON(object.target_address)
         : undefined,
-      inputUnits: isSet(object.input_units) ? globalThis.String(object.input_units) : "",
+      inputUnits: isSet(object.input_units)
+        ? globalThis.String(object.input_units)
+        : "",
       expectedOutputUnits: isSet(object.expected_output_units)
         ? globalThis.String(object.expected_output_units)
         : "",
@@ -322,10 +349,14 @@ export const SwapChunkProgress: MessageFns<SwapChunkProgress> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SwapChunkProgress>, I>>(base?: I): SwapChunkProgress {
+  create<I extends Exact<DeepPartial<SwapChunkProgress>, I>>(
+    base?: I,
+  ): SwapChunkProgress {
     return SwapChunkProgress.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapChunkProgress>, I>>(object: I): SwapChunkProgress {
+  fromPartial<I extends Exact<DeepPartial<SwapChunkProgress>, I>>(
+    object: I,
+  ): SwapChunkProgress {
     const message = createBaseSwapChunkProgress();
     message.protocol = object.protocol ?? "";
     message.targetAddress =
@@ -335,7 +366,8 @@ export const SwapChunkProgress: MessageFns<SwapChunkProgress> = {
     message.inputUnits = object.inputUnits ?? "";
     message.expectedOutputUnits = object.expectedOutputUnits ?? "";
     message.actualOutputUnits = object.actualOutputUnits ?? "";
-    message.result = object.result ?? SwapChunkResult.SWAP_CHUNK_RESULT_PROCESSING;
+    message.result =
+      object.result ?? SwapChunkResult.SWAP_CHUNK_RESULT_PROCESSING;
     message.txHash = object.txHash ?? "";
     return message;
   },
@@ -362,12 +394,17 @@ export const SwapStepProgress: MessageFns<SwapStepProgress> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SwapStepProgress>, I>>(base?: I): SwapStepProgress {
+  create<I extends Exact<DeepPartial<SwapStepProgress>, I>>(
+    base?: I,
+  ): SwapStepProgress {
     return SwapStepProgress.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapStepProgress>, I>>(object: I): SwapStepProgress {
+  fromPartial<I extends Exact<DeepPartial<SwapStepProgress>, I>>(
+    object: I,
+  ): SwapStepProgress {
     const message = createBaseSwapStepProgress();
-    message.chunks = object.chunks?.map((e) => SwapChunkProgress.fromPartial(e)) || [];
+    message.chunks =
+      object.chunks?.map((e) => SwapChunkProgress.fromPartial(e)) || [];
     return message;
   },
 };
@@ -393,12 +430,17 @@ export const SwapRouteProgress: MessageFns<SwapRouteProgress> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SwapRouteProgress>, I>>(base?: I): SwapRouteProgress {
+  create<I extends Exact<DeepPartial<SwapRouteProgress>, I>>(
+    base?: I,
+  ): SwapRouteProgress {
     return SwapRouteProgress.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapRouteProgress>, I>>(object: I): SwapRouteProgress {
+  fromPartial<I extends Exact<DeepPartial<SwapRouteProgress>, I>>(
+    object: I,
+  ): SwapRouteProgress {
     const message = createBaseSwapRouteProgress();
-    message.steps = object.steps?.map((e) => SwapStepProgress.fromPartial(e)) || [];
+    message.steps =
+      object.steps?.map((e) => SwapStepProgress.fromPartial(e)) || [];
     return message;
   },
 };
@@ -449,21 +491,29 @@ export const SwapProgress: MessageFns<SwapProgress> = {
       obj.transfer_timestamp = Math.round(message.transferTimestamp);
     }
     if (message.estimatedFinishTimestamp !== undefined) {
-      obj.estimated_finish_timestamp = Math.round(message.estimatedFinishTimestamp);
+      obj.estimated_finish_timestamp = Math.round(
+        message.estimatedFinishTimestamp,
+      );
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SwapProgress>, I>>(base?: I): SwapProgress {
+  create<I extends Exact<DeepPartial<SwapProgress>, I>>(
+    base?: I,
+  ): SwapProgress {
     return SwapProgress.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapProgress>, I>>(object: I): SwapProgress {
+  fromPartial<I extends Exact<DeepPartial<SwapProgress>, I>>(
+    object: I,
+  ): SwapProgress {
     const message = createBaseSwapProgress();
     message.status = object.status ?? TradeStatus.TRADE_STATUS_IN_PROGRESS;
     message.outgoingTxHash = object.outgoingTxHash ?? "";
-    message.routes = object.routes?.map((e) => SwapRouteProgress.fromPartial(e)) || [];
+    message.routes =
+      object.routes?.map((e) => SwapRouteProgress.fromPartial(e)) || [];
     message.transferTimestamp = object.transferTimestamp ?? undefined;
-    message.estimatedFinishTimestamp = object.estimatedFinishTimestamp ?? undefined;
+    message.estimatedFinishTimestamp =
+      object.estimatedFinishTimestamp ?? undefined;
     return message;
   },
 };
@@ -482,10 +532,14 @@ export const AwaitingTransfer: MessageFns<AwaitingTransfer> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<AwaitingTransfer>, I>>(base?: I): AwaitingTransfer {
+  create<I extends Exact<DeepPartial<AwaitingTransfer>, I>>(
+    base?: I,
+  ): AwaitingTransfer {
     return AwaitingTransfer.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<AwaitingTransfer>, I>>(_: I): AwaitingTransfer {
+  fromPartial<I extends Exact<DeepPartial<AwaitingTransfer>, I>>(
+    _: I,
+  ): AwaitingTransfer {
     const message = createBaseAwaitingTransfer();
     return message;
   },
@@ -499,11 +553,17 @@ export const SwapProgressEvent: MessageFns<SwapProgressEvent> = {
   fromJSON(object: any): SwapProgressEvent {
     return {
       event: isSet(object.awaiting_transfer)
-        ? { $case: "awaitingTransfer", value: AwaitingTransfer.fromJSON(object.awaiting_transfer) }
+        ? {
+            $case: "awaitingTransfer",
+            value: AwaitingTransfer.fromJSON(object.awaiting_transfer),
+          }
         : isSet(object.progress)
           ? { $case: "progress", value: SwapProgress.fromJSON(object.progress) }
           : isSet(object.keep_alive)
-            ? { $case: "keepAlive", value: KeepAlive.fromJSON(object.keep_alive) }
+            ? {
+                $case: "keepAlive",
+                value: KeepAlive.fromJSON(object.keep_alive),
+              }
             : undefined,
     };
   },
@@ -520,10 +580,14 @@ export const SwapProgressEvent: MessageFns<SwapProgressEvent> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SwapProgressEvent>, I>>(base?: I): SwapProgressEvent {
+  create<I extends Exact<DeepPartial<SwapProgressEvent>, I>>(
+    base?: I,
+  ): SwapProgressEvent {
     return SwapProgressEvent.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapProgressEvent>, I>>(object: I): SwapProgressEvent {
+  fromPartial<I extends Exact<DeepPartial<SwapProgressEvent>, I>>(
+    object: I,
+  ): SwapProgressEvent {
     const message = createBaseSwapProgressEvent();
     switch (object.event?.$case) {
       case "awaitingTransfer": {
@@ -546,7 +610,10 @@ export const SwapProgressEvent: MessageFns<SwapProgressEvent> = {
       }
       case "keepAlive": {
         if (object.event?.value !== undefined && object.event?.value !== null) {
-          message.event = { $case: "keepAlive", value: KeepAlive.fromPartial(object.event.value) };
+          message.event = {
+            $case: "keepAlive",
+            value: KeepAlive.fromPartial(object.event.value),
+          };
         }
         break;
       }
@@ -555,7 +622,14 @@ export const SwapProgressEvent: MessageFns<SwapProgressEvent> = {
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -572,7 +646,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

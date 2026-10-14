@@ -6,6 +6,13 @@ import {
   type OperatorFunction,
   type Observable as RxObservable,
 } from "rxjs";
+
+import { ApiClient } from "../api-client/ApiClient";
+import type { ApiStreamController } from "../api-client/ApiStreamController";
+import { AutoReconnectTransport } from "../api-client/AutoReconnectTransport";
+import type { ConnectionStatusEvent } from "../api-client/ConnectionStatus";
+import type { Transport } from "../api-client/Transport";
+import { WebSocketTransport } from "../api-client/WebSocketTransport";
 import {
   BuildEvmOrderCancellationRequest,
   BuildEvmOrderPayloadRequest,
@@ -34,12 +41,6 @@ import { OrderStatusEvent } from "../api/messages/stonfi/omni/v1beta8/types/orde
 import { QuoteRequest } from "../api/messages/stonfi/omni/v1beta8/types/quote";
 import { SwapProgressEvent } from "../api/messages/stonfi/omni/v1beta8/types/swap";
 import { TonTransaction } from "../api/messages/stonfi/omni/v1beta8/types/ton";
-import { ApiClient } from "../api-client/ApiClient";
-import type { ApiStreamController } from "../api-client/ApiStreamController";
-import { AutoReconnectTransport } from "../api-client/AutoReconnectTransport";
-import type { ConnectionStatusEvent } from "../api-client/ConnectionStatus";
-import type { Transport } from "../api-client/Transport";
-import { WebSocketTransport } from "../api-client/WebSocketTransport";
 import { ErrorCode } from "../constants";
 import { Timer } from "../helpers/timer/Timer";
 import { toSimpleObservable } from "../helpers/toSimpleObservable";
@@ -48,7 +49,6 @@ import { wrapErrorsAsync } from "../helpers/wrapError";
 import type { Logger } from "../logger/Logger";
 import type { Observable } from "../types/observable";
 import type { OneOf, OneOfValue } from "../types/oneOf";
-
 import { RPC } from "./constants";
 import { OmnistonError } from "./OmnistonError";
 
@@ -170,7 +170,9 @@ export class Omniston {
       QuoteRequest.toJSON(request),
     );
 
-    let rfqId: OneOfValue<NonNullable<QuoteEvent["event"]>, "ack">["rfqId"] | undefined;
+    let rfqId:
+      | OneOfValue<NonNullable<QuoteEvent["event"]>, "ack">["rfqId"]
+      | undefined;
 
     const quoteEvents = (await quoteStream.stream).pipe(
       map((e) => QuoteEvent.fromJSON(e).event),
@@ -260,9 +262,14 @@ export class Omniston {
     const swapTrackEvents = (await swapTrackStream.stream).pipe(
       map((e) => SwapProgressEvent.fromJSON(e).event),
       filter(
-        (swapEvent) => swapEvent?.$case === "awaitingTransfer" || swapEvent?.$case === "progress",
+        (swapEvent) =>
+          swapEvent?.$case === "awaitingTransfer" ||
+          swapEvent?.$case === "progress",
       ),
-      this._rxTapUnsubscribeLifecycle(RPC.SWAP.TRACK.UNSUBSCRIBE, swapTrackStream),
+      this._rxTapUnsubscribeLifecycle(
+        RPC.SWAP.TRACK.UNSUBSCRIBE,
+        swapTrackStream,
+      ),
     );
 
     return swapTrackEvents;
@@ -295,7 +302,10 @@ export class Omniston {
     const orderTrackEvents = (await orderTrackStream.stream).pipe(
       map((e) => OrderStatusEvent.fromJSON(e).event),
       filter((orderEvent) => orderEvent?.$case === "order"),
-      this._rxTapUnsubscribeLifecycle(RPC.ORDER.TRACK.UNSUBSCRIBE, orderTrackStream),
+      this._rxTapUnsubscribeLifecycle(
+        RPC.ORDER.TRACK.UNSUBSCRIBE,
+        orderTrackStream,
+      ),
     );
 
     return orderTrackEvents;
@@ -332,7 +342,10 @@ export class Omniston {
   }): (request: TRequest) => Promise<TResponse> {
     return (request: TRequest) =>
       wrapErrorsAsync(async () => {
-        const response = await this._apiClient.send(method, requestSerializer(request));
+        const response = await this._apiClient.send(
+          method,
+          requestSerializer(request),
+        );
 
         return responseDeserializer(response);
       });
@@ -342,7 +355,10 @@ export class Omniston {
    * Helper to convert Promise<RxObservable<T>> method return type to Observable<T>
    */
   private _rxToSimpleObservable<TArgs extends Array<unknown>, TReturn>(
-    originalMethod: (this: Omniston, ...args: TArgs) => Promise<RxObservable<TReturn>>,
+    originalMethod: (
+      this: Omniston,
+      ...args: TArgs
+    ) => Promise<RxObservable<TReturn>>,
   ): (this: Omniston, ...args: TArgs) => Observable<TReturn> {
     return toSimpleObservable(unwrapObservable(originalMethod));
   }

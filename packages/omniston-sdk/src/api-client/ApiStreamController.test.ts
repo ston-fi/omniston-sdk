@@ -1,6 +1,10 @@
 import { Subject } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { type ApiClientWrapper, ApiStreamController } from "./ApiStreamController";
+
+import {
+  type ApiClientWrapper,
+  ApiStreamController,
+} from "./ApiStreamController";
 import type { ConnectionStatusEvent } from "./ConnectionStatus";
 
 describe("ApiStreamController tests", () => {
@@ -17,7 +21,8 @@ describe("ApiStreamController tests", () => {
   let nextSubscriptionId: number;
   let streamMap: Map<string, Subject<unknown>>;
 
-  const streamKey = (method: string, subscriptionId: number) => `${method}:${subscriptionId}`;
+  const streamKey = (method: string, subscriptionId: number) =>
+    `${method}:${subscriptionId}`;
 
   const getStream = (method: string, subscriptionId: number) => {
     const key = streamKey(method, subscriptionId);
@@ -43,7 +48,8 @@ describe("ApiStreamController tests", () => {
 
     apiClient = {
       send: sendSpy,
-      readStream: (method, subscriptionId) => getStream(method, subscriptionId).asObservable(),
+      readStream: (method, subscriptionId) =>
+        getStream(method, subscriptionId).asObservable(),
     };
 
     streamController = new ApiStreamController({
@@ -171,7 +177,8 @@ describe("ApiStreamController tests", () => {
 
     apiClient = {
       send: sendSpy,
-      readStream: (method, subscriptionId) => getStream(method, subscriptionId).asObservable(),
+      readStream: (method, subscriptionId) =>
+        getStream(method, subscriptionId).asObservable(),
     };
 
     streamController = new ApiStreamController({
@@ -185,7 +192,9 @@ describe("ApiStreamController tests", () => {
     const streamPromise = streamController.stream;
 
     // Request unsubscribe before subscribe RPC resolves. This should be queued, not dropped.
-    await expect(streamController.unsubscribeFromStream(testUnsubscribeMethod)).resolves.toBe(true);
+    await expect(
+      streamController.unsubscribeFromStream(testUnsubscribeMethod),
+    ).resolves.toBe(true);
     expect(sendSpy).toHaveBeenCalledTimes(1);
     expect(sendSpy).toHaveBeenCalledWith(testMethod, testPayload);
 

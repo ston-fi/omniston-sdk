@@ -1,11 +1,8 @@
 "use client";
 
-import { useId } from "react";
 import { SettlementMethod } from "@ston-fi/omniston-sdk-react";
+import { useId } from "react";
 
-import { isValidAddress } from "~/models/address";
-import { Chain } from "~/models/chain";
-import { ChainFamily, chainsByFamily } from "~/models/chain-family";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -15,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
 import {
   Field,
   FieldContent,
@@ -26,7 +22,11 @@ import {
   FieldSeparator,
   FieldSet,
 } from "~/components/ui/field";
+import { Input } from "~/components/ui/input";
 import { Switch } from "~/components/ui/switch";
+import { isValidAddress } from "~/models/address";
+import { Chain } from "~/models/chain";
+import { ChainFamily, chainsByFamily } from "~/models/chain-family";
 import {
   DEFAULT_SLIPPAGE_TOLERANCE_PERCENT,
   MAX_INTEGRATOR_FEE_PIPS,
@@ -77,11 +77,17 @@ const SettlementMethodsSection = () => {
       </FieldDescription>
       <FieldGroup className="gap-3">
         {Object.entries(SettlementMethod).map(([key, value]) => {
-          const isSelected = !!settlementMethods.find((method) => method === value);
+          const isSelected = !!settlementMethods.find(
+            (method) => method === value,
+          );
           const isDisabled = settlementMethods.length === 1 && isSelected;
 
           return (
-            <Field key={key} orientation="horizontal" data-disabled={isDisabled}>
+            <Field
+              key={key}
+              orientation="horizontal"
+              data-disabled={isDisabled}
+            >
               <Checkbox
                 id={`${id}-${key}`}
                 value={value}
@@ -94,7 +100,9 @@ const SettlementMethodsSection = () => {
                       ...new Set(settlementMethods.filter((m) => m !== value)),
                     ]);
                   } else {
-                    setSettlementMethods([...new Set([...settlementMethods, value])]);
+                    setSettlementMethods([
+                      ...new Set([...settlementMethods, value]),
+                    ]);
                   }
                 }}
               />
@@ -133,7 +141,8 @@ const SwapSlippageToleranceSection = () => {
       <FieldContent>
         <FieldLabel htmlFor={inputId}>Slippage Tolerance</FieldLabel>
         <FieldDescription>
-          Set the maximum price change you accept for a swap. Auto uses Omniston’s recommendation.
+          Set the maximum price change you accept for a swap. Auto uses
+          Omniston’s recommendation.
         </FieldDescription>
       </FieldContent>
       <div className="flex items-end space-x-2">
@@ -148,7 +157,11 @@ const SwapSlippageToleranceSection = () => {
               min={0}
               disabled={disabled}
               max={MAX_SLIPPAGE_TOLERANCE_PERCENT}
-              value={!Number.isNaN(slippageTolerancePercent) ? slippageTolerancePercent : ""}
+              value={
+                !Number.isNaN(slippageTolerancePercent)
+                  ? slippageTolerancePercent
+                  : ""
+              }
               onChange={(e) => {
                 const value = Number.parseFloat(e.target.value);
 
@@ -164,7 +177,9 @@ const SwapSlippageToleranceSection = () => {
             key={value}
             disabled={disabled}
             variant={
-              !autoSlippageTolerance && value === slippageTolerancePercent ? "default" : "secondary"
+              !autoSlippageTolerance && value === slippageTolerancePercent
+                ? "default"
+                : "secondary"
             }
             onClick={() => {
               setAutoSlippageTolerance(false);
@@ -190,8 +205,12 @@ const SwapSlippageToleranceSection = () => {
 };
 
 const SwapIntegratorFeeSection = () => {
-  const { integratorAddress, setIntegratorAddress, integratorFeePips, setIntegratorFeePips } =
-    useSwapSettings();
+  const {
+    integratorAddress,
+    setIntegratorAddress,
+    integratorFeePips,
+    setIntegratorFeePips,
+  } = useSwapSettings();
 
   const addressInputId = useId();
   const feeInputId = useId();
@@ -204,14 +223,19 @@ const SwapIntegratorFeeSection = () => {
 
   return (
     <FieldGroup>
-      <Field data-disabled={disabled} data-invalid={!disabled && !isIntegratorAddressValid}>
+      <Field
+        data-disabled={disabled}
+        data-invalid={!disabled && !isIntegratorAddressValid}
+      >
         <FieldLabel htmlFor={addressInputId}>Integrator Address</FieldLabel>
         <Input
           id={addressInputId}
           type="text"
           disabled={disabled}
           value={integratorAddress ?? ""}
-          className={!disabled && !isIntegratorAddressValid ? "border-destructive" : ""}
+          className={
+            !disabled && !isIntegratorAddressValid ? "border-destructive" : ""
+          }
           placeholder=""
           onChange={(e) => {
             const address = e.target.value || undefined;
@@ -224,7 +248,11 @@ const SwapIntegratorFeeSection = () => {
           }}
         />
       </Field>
-      <Field data-disabled={disabled || !integratorAddress || !isIntegratorAddressValid}>
+      <Field
+        data-disabled={
+          disabled || !integratorAddress || !isIntegratorAddressValid
+        }
+      >
         <FieldLabel htmlFor={feeInputId}>Integrator Fee (pips)</FieldLabel>
         <Input
           id={feeInputId}
@@ -252,7 +280,8 @@ const SwapIntegratorFeeSection = () => {
 };
 
 const SwapIntegratorFlexibleFeeSection = () => {
-  const { settlementMethods, flexibleIntegratorFee, setFlexibleIntegratorFee } = useSwapSettings();
+  const { settlementMethods, flexibleIntegratorFee, setFlexibleIntegratorFee } =
+    useSwapSettings();
 
   const isSwapSettlementMethod = !!settlementMethods.find(
     (method) => method === SettlementMethod.SWAP,
@@ -262,9 +291,12 @@ const SwapIntegratorFlexibleFeeSection = () => {
   return (
     <Field orientation="horizontal" data-disabled={disabled}>
       <FieldContent>
-        <FieldLabel htmlFor="flexible-integrator-fee">Flexible integrator fee</FieldLabel>
+        <FieldLabel htmlFor="flexible-integrator-fee">
+          Flexible integrator fee
+        </FieldLabel>
         <FieldDescription>
-          Allow the integrator fee to vary so quotes can include protocols with limited fee support.
+          Allow the integrator fee to vary so quotes can include protocols with
+          limited fee support.
         </FieldDescription>
       </FieldContent>
       <Switch
@@ -278,7 +310,8 @@ const SwapIntegratorFlexibleFeeSection = () => {
 };
 
 const OrderHtlcMaxExecutionsSection = () => {
-  const { settlementMethods, htlcMaxExecutions, setHtlcMaxExecutions } = useSwapSettings();
+  const { settlementMethods, htlcMaxExecutions, setHtlcMaxExecutions } =
+    useSwapSettings();
 
   const inputId = useId();
   const isOrderSettlementMethod = !!settlementMethods.find(

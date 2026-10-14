@@ -9,7 +9,11 @@
 
 import { AssetId } from "../../../common/v1/types/asset_id";
 import { ChainAddress } from "../../../common/v1/types/chain_address";
-import { HashingFunction, hashingFunctionFromJSON, hashingFunctionToJSON } from "./common";
+import {
+  HashingFunction,
+  hashingFunctionFromJSON,
+  hashingFunctionToJSON,
+} from "./common";
 import { SwapRoute } from "./swap";
 
 /**
@@ -26,13 +30,16 @@ export const GaslessSettlement = {
   UNRECOGNIZED: "UNRECOGNIZED",
 } as const;
 
-export type GaslessSettlement = (typeof GaslessSettlement)[keyof typeof GaslessSettlement];
+export type GaslessSettlement =
+  (typeof GaslessSettlement)[keyof typeof GaslessSettlement];
 
 export namespace GaslessSettlement {
   export type GASLESS_SETTLEMENT_PROHIBITED =
     typeof GaslessSettlement.GASLESS_SETTLEMENT_PROHIBITED;
-  export type GASLESS_SETTLEMENT_POSSIBLE = typeof GaslessSettlement.GASLESS_SETTLEMENT_POSSIBLE;
-  export type GASLESS_SETTLEMENT_REQUIRED = typeof GaslessSettlement.GASLESS_SETTLEMENT_REQUIRED;
+  export type GASLESS_SETTLEMENT_POSSIBLE =
+    typeof GaslessSettlement.GASLESS_SETTLEMENT_POSSIBLE;
+  export type GASLESS_SETTLEMENT_REQUIRED =
+    typeof GaslessSettlement.GASLESS_SETTLEMENT_REQUIRED;
   export type UNRECOGNIZED = typeof GaslessSettlement.UNRECOGNIZED;
 }
 
@@ -434,7 +441,9 @@ export const SwapSettlementParams: MessageFns<SwapSettlementParams> = {
       maxPriceSlippagePips: isSet(object.max_price_slippage_pips)
         ? globalThis.Number(object.max_price_slippage_pips)
         : undefined,
-      maxRoutes: isSet(object.max_routes) ? globalThis.Number(object.max_routes) : undefined,
+      maxRoutes: isSet(object.max_routes)
+        ? globalThis.Number(object.max_routes)
+        : undefined,
       flexibleIntegratorFee: isSet(object.flexible_integrator_fee)
         ? globalThis.Boolean(object.flexible_integrator_fee)
         : undefined,
@@ -461,7 +470,9 @@ export const SwapSettlementParams: MessageFns<SwapSettlementParams> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SwapSettlementParams>, I>>(base?: I): SwapSettlementParams {
+  create<I extends Exact<DeepPartial<SwapSettlementParams>, I>>(
+    base?: I,
+  ): SwapSettlementParams {
     return SwapSettlementParams.fromPartial(base ?? ({} as any));
   },
   fromPartial<I extends Exact<DeepPartial<SwapSettlementParams>, I>>(
@@ -490,10 +501,14 @@ export const OrderSettlementParams: MessageFns<OrderSettlementParams> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<OrderSettlementParams>, I>>(base?: I): OrderSettlementParams {
+  create<I extends Exact<DeepPartial<OrderSettlementParams>, I>>(
+    base?: I,
+  ): OrderSettlementParams {
     return OrderSettlementParams.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<OrderSettlementParams>, I>>(_: I): OrderSettlementParams {
+  fromPartial<I extends Exact<DeepPartial<OrderSettlementParams>, I>>(
+    _: I,
+  ): OrderSettlementParams {
     const message = createBaseOrderSettlementParams();
     return message;
   },
@@ -509,7 +524,10 @@ export const SettlementParams: MessageFns<SettlementParams> = {
       params: isSet(object.swap)
         ? { $case: "swap", value: SwapSettlementParams.fromJSON(object.swap) }
         : isSet(object.order)
-          ? { $case: "order", value: OrderSettlementParams.fromJSON(object.order) }
+          ? {
+              $case: "order",
+              value: OrderSettlementParams.fromJSON(object.order),
+            }
           : undefined,
     };
   },
@@ -524,14 +542,21 @@ export const SettlementParams: MessageFns<SettlementParams> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SettlementParams>, I>>(base?: I): SettlementParams {
+  create<I extends Exact<DeepPartial<SettlementParams>, I>>(
+    base?: I,
+  ): SettlementParams {
     return SettlementParams.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SettlementParams>, I>>(object: I): SettlementParams {
+  fromPartial<I extends Exact<DeepPartial<SettlementParams>, I>>(
+    object: I,
+  ): SettlementParams {
     const message = createBaseSettlementParams();
     switch (object.params?.$case) {
       case "swap": {
-        if (object.params?.value !== undefined && object.params?.value !== null) {
+        if (
+          object.params?.value !== undefined &&
+          object.params?.value !== null
+        ) {
           message.params = {
             $case: "swap",
             value: SwapSettlementParams.fromPartial(object.params.value),
@@ -540,7 +565,10 @@ export const SettlementParams: MessageFns<SettlementParams> = {
         break;
       }
       case "order": {
-        if (object.params?.value !== undefined && object.params?.value !== null) {
+        if (
+          object.params?.value !== undefined &&
+          object.params?.value !== null
+        ) {
           message.params = {
             $case: "order",
             value: OrderSettlementParams.fromPartial(object.params.value),
@@ -596,7 +624,9 @@ export const SwapSettlementData: MessageFns<SwapSettlementData> = {
       obj.recommended_min_output_amount = message.recommendedMinOutputAmount;
     }
     if (message.recommendedSlippagePips !== undefined) {
-      obj.recommended_slippage_pips = Math.round(message.recommendedSlippagePips);
+      obj.recommended_slippage_pips = Math.round(
+        message.recommendedSlippagePips,
+      );
     }
     if (message.priceImpactPips !== undefined) {
       obj.price_impact_pips = Math.round(message.priceImpactPips);
@@ -604,14 +634,19 @@ export const SwapSettlementData: MessageFns<SwapSettlementData> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SwapSettlementData>, I>>(base?: I): SwapSettlementData {
+  create<I extends Exact<DeepPartial<SwapSettlementData>, I>>(
+    base?: I,
+  ): SwapSettlementData {
     return SwapSettlementData.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SwapSettlementData>, I>>(object: I): SwapSettlementData {
+  fromPartial<I extends Exact<DeepPartial<SwapSettlementData>, I>>(
+    object: I,
+  ): SwapSettlementData {
     const message = createBaseSwapSettlementData();
     message.routes = object.routes?.map((e) => SwapRoute.fromPartial(e)) || [];
     message.minOutputAmount = object.minOutputAmount ?? "";
-    message.recommendedMinOutputAmount = object.recommendedMinOutputAmount ?? "";
+    message.recommendedMinOutputAmount =
+      object.recommendedMinOutputAmount ?? "";
     message.recommendedSlippagePips = object.recommendedSlippagePips ?? 0;
     message.priceImpactPips = object.priceImpactPips ?? undefined;
     return message;
@@ -645,7 +680,9 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
       srcProtocolContractAddress: isSet(object.src_protocol_contract_address)
         ? ChainAddress.fromJSON(object.src_protocol_contract_address)
         : undefined,
-      srcWrappedNativeTokenAddress: isSet(object.src_wrapped_native_token_address)
+      srcWrappedNativeTokenAddress: isSet(
+        object.src_wrapped_native_token_address,
+      )
         ? ChainAddress.fromJSON(object.src_wrapped_native_token_address)
         : undefined,
       srcInitialResolverAddress: isSet(object.src_initial_resolver_address)
@@ -666,7 +703,9 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
       resolverSendsUnits: isSet(object.resolver_sends_units)
         ? globalThis.String(object.resolver_sends_units)
         : "",
-      dstWrappedNativeTokenAddress: isSet(object.dst_wrapped_native_token_address)
+      dstWrappedNativeTokenAddress: isSet(
+        object.dst_wrapped_native_token_address,
+      )
         ? ChainAddress.fromJSON(object.dst_wrapped_native_token_address)
         : undefined,
       dstSecurityDepositAsset: isSet(object.dst_security_deposit_asset)
@@ -696,7 +735,9 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
   toJSON(message: OrderSettlementData): unknown {
     const obj: any = {};
     if (message.srcProtocolContractAddress !== undefined) {
-      obj.src_protocol_contract_address = ChainAddress.toJSON(message.srcProtocolContractAddress);
+      obj.src_protocol_contract_address = ChainAddress.toJSON(
+        message.srcProtocolContractAddress,
+      );
     }
     if (message.srcWrappedNativeTokenAddress !== undefined) {
       obj.src_wrapped_native_token_address = ChainAddress.toJSON(
@@ -704,19 +745,27 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
       );
     }
     if (message.srcInitialResolverAddress !== undefined) {
-      obj.src_initial_resolver_address = ChainAddress.toJSON(message.srcInitialResolverAddress);
+      obj.src_initial_resolver_address = ChainAddress.toJSON(
+        message.srcInitialResolverAddress,
+      );
     }
     if (message.srcHtlcSecurityDepositAsset !== undefined) {
-      obj.src_htlc_security_deposit_asset = AssetId.toJSON(message.srcHtlcSecurityDepositAsset);
+      obj.src_htlc_security_deposit_asset = AssetId.toJSON(
+        message.srcHtlcSecurityDepositAsset,
+      );
     }
     if (message.srcHtlcSecurityDepositUnits !== undefined) {
       obj.src_htlc_security_deposit_units = message.srcHtlcSecurityDepositUnits;
     }
     if (message.htlcHashingFunction !== undefined) {
-      obj.htlc_hashing_function = hashingFunctionToJSON(message.htlcHashingFunction);
+      obj.htlc_hashing_function = hashingFunctionToJSON(
+        message.htlcHashingFunction,
+      );
     }
     if (message.dstProtocolContractAddress !== undefined) {
-      obj.dst_protocol_contract_address = ChainAddress.toJSON(message.dstProtocolContractAddress);
+      obj.dst_protocol_contract_address = ChainAddress.toJSON(
+        message.dstProtocolContractAddress,
+      );
     }
     if (message.resolverSendsUnits !== undefined) {
       obj.resolver_sends_units = message.resolverSendsUnits;
@@ -727,7 +776,9 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
       );
     }
     if (message.dstSecurityDepositAsset !== undefined) {
-      obj.dst_security_deposit_asset = AssetId.toJSON(message.dstSecurityDepositAsset);
+      obj.dst_security_deposit_asset = AssetId.toJSON(
+        message.dstSecurityDepositAsset,
+      );
     }
     if (message.dstSecurityDepositUnits !== undefined) {
       obj.dst_security_deposit_units = message.dstSecurityDepositUnits;
@@ -745,12 +796,16 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
       obj.protocol_fee_pips = Math.round(message.protocolFeePips);
     }
     if (message.protocolFeeRecipientAddress !== undefined) {
-      obj.protocol_fee_recipient_address = ChainAddress.toJSON(message.protocolFeeRecipientAddress);
+      obj.protocol_fee_recipient_address = ChainAddress.toJSON(
+        message.protocolFeeRecipientAddress,
+      );
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<OrderSettlementData>, I>>(base?: I): OrderSettlementData {
+  create<I extends Exact<DeepPartial<OrderSettlementData>, I>>(
+    base?: I,
+  ): OrderSettlementData {
     return OrderSettlementData.fromPartial(base ?? ({} as any));
   },
   fromPartial<I extends Exact<DeepPartial<OrderSettlementData>, I>>(
@@ -758,7 +813,8 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
   ): OrderSettlementData {
     const message = createBaseOrderSettlementData();
     message.srcProtocolContractAddress =
-      object.srcProtocolContractAddress !== undefined && object.srcProtocolContractAddress !== null
+      object.srcProtocolContractAddress !== undefined &&
+      object.srcProtocolContractAddress !== null
         ? ChainAddress.fromPartial(object.srcProtocolContractAddress)
         : undefined;
     message.srcWrappedNativeTokenAddress =
@@ -767,7 +823,8 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
         ? ChainAddress.fromPartial(object.srcWrappedNativeTokenAddress)
         : undefined;
     message.srcInitialResolverAddress =
-      object.srcInitialResolverAddress !== undefined && object.srcInitialResolverAddress !== null
+      object.srcInitialResolverAddress !== undefined &&
+      object.srcInitialResolverAddress !== null
         ? ChainAddress.fromPartial(object.srcInitialResolverAddress)
         : undefined;
     message.srcHtlcSecurityDepositAsset =
@@ -775,10 +832,12 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
       object.srcHtlcSecurityDepositAsset !== null
         ? AssetId.fromPartial(object.srcHtlcSecurityDepositAsset)
         : undefined;
-    message.srcHtlcSecurityDepositUnits = object.srcHtlcSecurityDepositUnits ?? undefined;
+    message.srcHtlcSecurityDepositUnits =
+      object.srcHtlcSecurityDepositUnits ?? undefined;
     message.htlcHashingFunction = object.htlcHashingFunction ?? undefined;
     message.dstProtocolContractAddress =
-      object.dstProtocolContractAddress !== undefined && object.dstProtocolContractAddress !== null
+      object.dstProtocolContractAddress !== undefined &&
+      object.dstProtocolContractAddress !== null
         ? ChainAddress.fromPartial(object.dstProtocolContractAddress)
         : undefined;
     message.resolverSendsUnits = object.resolverSendsUnits ?? "";
@@ -788,10 +847,12 @@ export const OrderSettlementData: MessageFns<OrderSettlementData> = {
         ? ChainAddress.fromPartial(object.dstWrappedNativeTokenAddress)
         : undefined;
     message.dstSecurityDepositAsset =
-      object.dstSecurityDepositAsset !== undefined && object.dstSecurityDepositAsset !== null
+      object.dstSecurityDepositAsset !== undefined &&
+      object.dstSecurityDepositAsset !== null
         ? AssetId.fromPartial(object.dstSecurityDepositAsset)
         : undefined;
-    message.dstSecurityDepositUnits = object.dstSecurityDepositUnits ?? undefined;
+    message.dstSecurityDepositUnits =
+      object.dstSecurityDepositUnits ?? undefined;
     message.tradeStartDeadline = object.tradeStartDeadline ?? 0;
     message.exclusivityTimeout = object.exclusivityTimeout ?? 0;
     message.integratorFeePips = object.integratorFeePips ?? 0;
@@ -819,12 +880,19 @@ function createBaseQuoteRequest(): QuoteRequest {
 export const QuoteRequest: MessageFns<QuoteRequest> = {
   fromJSON(object: any): QuoteRequest {
     return {
-      inputAsset: isSet(object.input_asset) ? AssetId.fromJSON(object.input_asset) : undefined,
-      outputAsset: isSet(object.output_asset) ? AssetId.fromJSON(object.output_asset) : undefined,
+      inputAsset: isSet(object.input_asset)
+        ? AssetId.fromJSON(object.input_asset)
+        : undefined,
+      outputAsset: isSet(object.output_asset)
+        ? AssetId.fromJSON(object.output_asset)
+        : undefined,
       amount: isSet(object.input_units)
         ? { $case: "inputUnits", value: globalThis.String(object.input_units) }
         : isSet(object.output_units)
-          ? { $case: "outputUnits", value: globalThis.String(object.output_units) }
+          ? {
+              $case: "outputUnits",
+              value: globalThis.String(object.output_units),
+            }
           : undefined,
       integratorAddress: isSet(object.integrator_address)
         ? ChainAddress.fromJSON(object.integrator_address)
@@ -858,15 +926,21 @@ export const QuoteRequest: MessageFns<QuoteRequest> = {
       obj.integrator_fee_pips = Math.round(message.integratorFeePips);
     }
     if (message.settlementParams?.length) {
-      obj.settlement_params = message.settlementParams.map((e) => SettlementParams.toJSON(e));
+      obj.settlement_params = message.settlementParams.map((e) =>
+        SettlementParams.toJSON(e),
+      );
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<QuoteRequest>, I>>(base?: I): QuoteRequest {
+  create<I extends Exact<DeepPartial<QuoteRequest>, I>>(
+    base?: I,
+  ): QuoteRequest {
     return QuoteRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<QuoteRequest>, I>>(object: I): QuoteRequest {
+  fromPartial<I extends Exact<DeepPartial<QuoteRequest>, I>>(
+    object: I,
+  ): QuoteRequest {
     const message = createBaseQuoteRequest();
     message.inputAsset =
       object.inputAsset !== undefined && object.inputAsset !== null
@@ -878,25 +952,33 @@ export const QuoteRequest: MessageFns<QuoteRequest> = {
         : undefined;
     switch (object.amount?.$case) {
       case "inputUnits": {
-        if (object.amount?.value !== undefined && object.amount?.value !== null) {
+        if (
+          object.amount?.value !== undefined &&
+          object.amount?.value !== null
+        ) {
           message.amount = { $case: "inputUnits", value: object.amount.value };
         }
         break;
       }
       case "outputUnits": {
-        if (object.amount?.value !== undefined && object.amount?.value !== null) {
+        if (
+          object.amount?.value !== undefined &&
+          object.amount?.value !== null
+        ) {
           message.amount = { $case: "outputUnits", value: object.amount.value };
         }
         break;
       }
     }
     message.integratorAddress =
-      object.integratorAddress !== undefined && object.integratorAddress !== null
+      object.integratorAddress !== undefined &&
+      object.integratorAddress !== null
         ? ChainAddress.fromPartial(object.integratorAddress)
         : undefined;
     message.integratorFeePips = object.integratorFeePips ?? undefined;
     message.settlementParams =
-      object.settlementParams?.map((e) => SettlementParams.fromPartial(e)) || [];
+      object.settlementParams?.map((e) => SettlementParams.fromPartial(e)) ||
+      [];
     return message;
   },
 };
@@ -927,12 +1009,24 @@ export const Quote: MessageFns<Quote> = {
     return {
       rfqId: isSet(object.rfq_id) ? globalThis.String(object.rfq_id) : "",
       quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      resolverId: isSet(object.resolver_id) ? globalThis.String(object.resolver_id) : "",
-      resolverName: isSet(object.resolver_name) ? globalThis.String(object.resolver_name) : "",
-      inputAsset: isSet(object.input_asset) ? AssetId.fromJSON(object.input_asset) : undefined,
-      outputAsset: isSet(object.output_asset) ? AssetId.fromJSON(object.output_asset) : undefined,
-      inputUnits: isSet(object.input_units) ? globalThis.String(object.input_units) : "",
-      outputUnits: isSet(object.output_units) ? globalThis.String(object.output_units) : "",
+      resolverId: isSet(object.resolver_id)
+        ? globalThis.String(object.resolver_id)
+        : "",
+      resolverName: isSet(object.resolver_name)
+        ? globalThis.String(object.resolver_name)
+        : "",
+      inputAsset: isSet(object.input_asset)
+        ? AssetId.fromJSON(object.input_asset)
+        : undefined,
+      outputAsset: isSet(object.output_asset)
+        ? AssetId.fromJSON(object.output_asset)
+        : undefined,
+      inputUnits: isSet(object.input_units)
+        ? globalThis.String(object.input_units)
+        : "",
+      outputUnits: isSet(object.output_units)
+        ? globalThis.String(object.output_units)
+        : "",
       integratorAddress: isSet(object.integrator_address)
         ? ChainAddress.fromJSON(object.integrator_address)
         : undefined,
@@ -942,16 +1036,23 @@ export const Quote: MessageFns<Quote> = {
       protocolFeeUnits: isSet(object.protocol_fee_units)
         ? globalThis.String(object.protocol_fee_units)
         : "",
-      quoteTimestamp: isSet(object.quote_timestamp) ? globalThis.Number(object.quote_timestamp) : 0,
+      quoteTimestamp: isSet(object.quote_timestamp)
+        ? globalThis.Number(object.quote_timestamp)
+        : 0,
       estimatedSettlementDuration: isSet(object.estimated_settlement_duration)
         ? globalThis.Number(object.estimated_settlement_duration)
         : undefined,
       settlementData: isSet(object.swap)
         ? { $case: "swap", value: SwapSettlementData.fromJSON(object.swap) }
         : isSet(object.order)
-          ? { $case: "order", value: OrderSettlementData.fromJSON(object.order) }
+          ? {
+              $case: "order",
+              value: OrderSettlementData.fromJSON(object.order),
+            }
           : undefined,
-      gasBudget: isSet(object.gas_budget) ? globalThis.String(object.gas_budget) : undefined,
+      gasBudget: isSet(object.gas_budget)
+        ? globalThis.String(object.gas_budget)
+        : undefined,
       estimatedGasConsumption: isSet(object.estimated_gas_consumption)
         ? globalThis.String(object.estimated_gas_consumption)
         : undefined,
@@ -997,7 +1098,9 @@ export const Quote: MessageFns<Quote> = {
       obj.quote_timestamp = Math.round(message.quoteTimestamp);
     }
     if (message.estimatedSettlementDuration !== undefined) {
-      obj.estimated_settlement_duration = Math.round(message.estimatedSettlementDuration);
+      obj.estimated_settlement_duration = Math.round(
+        message.estimatedSettlementDuration,
+      );
     }
     if (message.settlementData?.$case === "swap") {
       obj.swap = SwapSettlementData.toJSON(message.settlementData.value);
@@ -1033,16 +1136,21 @@ export const Quote: MessageFns<Quote> = {
     message.inputUnits = object.inputUnits ?? "";
     message.outputUnits = object.outputUnits ?? "";
     message.integratorAddress =
-      object.integratorAddress !== undefined && object.integratorAddress !== null
+      object.integratorAddress !== undefined &&
+      object.integratorAddress !== null
         ? ChainAddress.fromPartial(object.integratorAddress)
         : undefined;
     message.integratorFeeUnits = object.integratorFeeUnits ?? "";
     message.protocolFeeUnits = object.protocolFeeUnits ?? "";
     message.quoteTimestamp = object.quoteTimestamp ?? 0;
-    message.estimatedSettlementDuration = object.estimatedSettlementDuration ?? undefined;
+    message.estimatedSettlementDuration =
+      object.estimatedSettlementDuration ?? undefined;
     switch (object.settlementData?.$case) {
       case "swap": {
-        if (object.settlementData?.value !== undefined && object.settlementData?.value !== null) {
+        if (
+          object.settlementData?.value !== undefined &&
+          object.settlementData?.value !== null
+        ) {
           message.settlementData = {
             $case: "swap",
             value: SwapSettlementData.fromPartial(object.settlementData.value),
@@ -1051,7 +1159,10 @@ export const Quote: MessageFns<Quote> = {
         break;
       }
       case "order": {
-        if (object.settlementData?.value !== undefined && object.settlementData?.value !== null) {
+        if (
+          object.settlementData?.value !== undefined &&
+          object.settlementData?.value !== null
+        ) {
           message.settlementData = {
             $case: "order",
             value: OrderSettlementData.fromPartial(object.settlementData.value),
@@ -1061,12 +1172,20 @@ export const Quote: MessageFns<Quote> = {
       }
     }
     message.gasBudget = object.gasBudget ?? undefined;
-    message.estimatedGasConsumption = object.estimatedGasConsumption ?? undefined;
+    message.estimatedGasConsumption =
+      object.estimatedGasConsumption ?? undefined;
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -1083,7 +1202,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

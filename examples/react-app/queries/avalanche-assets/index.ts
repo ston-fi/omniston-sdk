@@ -21,9 +21,13 @@ export const avalancheAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: AVALANCHE_ASSETS_QUERY_KEY,
   searchQueryKey: AVALANCHE_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.AVALANCHE, AVALANCHE_ASSETS_MOCK, evmAssetMockSchema)).map(
-      transformToAsset,
-    ),
+    (
+      await resolveAssetsMock(
+        Chain.AVALANCHE,
+        AVALANCHE_ASSETS_MOCK,
+        evmAssetMockSchema,
+      )
+    ).map(transformToAsset),
   ),
 });
 

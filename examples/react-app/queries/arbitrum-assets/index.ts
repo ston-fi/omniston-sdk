@@ -21,9 +21,13 @@ export const arbitrumAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: ARBITRUM_ASSETS_QUERY_KEY,
   searchQueryKey: ARBITRUM_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.ARBITRUM, ARBITRUM_ASSETS_MOCK, evmAssetMockSchema)).map(
-      transformToAsset,
-    ),
+    (
+      await resolveAssetsMock(
+        Chain.ARBITRUM,
+        ARBITRUM_ASSETS_MOCK,
+        evmAssetMockSchema,
+      )
+    ).map(transformToAsset),
   ),
 });
 

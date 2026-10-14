@@ -1,5 +1,12 @@
-import type { OmnistonError, RegisterSignedOrderRequest } from "@ston-fi/omniston-sdk";
-import { type UseQueryOptions, type UseQueryResult, useQuery } from "@tanstack/react-query";
+import type {
+  OmnistonError,
+  RegisterSignedOrderRequest,
+} from "@ston-fi/omniston-sdk";
+import {
+  type UseQueryOptions,
+  type UseQueryResult,
+  useQuery,
+} from "@tanstack/react-query";
 
 import { useOmniston } from "./useOmniston";
 
@@ -8,7 +15,10 @@ import { useOmniston } from "./useOmniston";
  */
 export function useRegisterSignedOrder(
   request: RegisterSignedOrderRequest,
-  queryOptions?: Omit<UseQueryOptions<void, OmnistonError>, "queryKey" | "queryFn">,
+  queryOptions?: Omit<
+    UseQueryOptions<void, OmnistonError>,
+    "queryKey" | "queryFn"
+  >,
 ): UseQueryResult<void, OmnistonError> {
   const omniston = useOmniston();
 

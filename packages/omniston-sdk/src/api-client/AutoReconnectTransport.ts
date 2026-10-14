@@ -4,8 +4,10 @@ import { Timer } from "../helpers/timer/Timer";
 import type { ITimer } from "../helpers/timer/Timer.types";
 import type { Logger } from "../logger/Logger";
 import type { Observable } from "../types/observable";
-
-import type { ConnectionErrorEvent, ConnectionStatusEvent } from "./ConnectionStatus";
+import type {
+  ConnectionErrorEvent,
+  ConnectionStatusEvent,
+} from "./ConnectionStatus";
 import type { Transport } from "./Transport";
 
 const DEFAULT_MAX_RETRIES = 5;
@@ -137,7 +139,8 @@ class ReconnectingProcess {
     this.timer = options.timer ?? new Timer();
     this.logger = options.logger;
     this.maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
-    this.reconnectDelayMs = options.reconnectDelayMs ?? DEFAULT_RECONNECT_DELAY_MS;
+    this.reconnectDelayMs =
+      options.reconnectDelayMs ?? DEFAULT_RECONNECT_DELAY_MS;
 
     this.maxRetries = options.maxRetries ?? DEFAULT_MAX_RETRIES;
     this.result = new Promise((resolve, reject) => {

@@ -25,7 +25,9 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       <body className="min-h-svh">
         <main className="container flex min-h-svh items-center justify-center py-10">
           <div className="w-full max-w-2xl rounded-md border border-red-200 bg-red-50 p-4">
-            <h2 className="font-medium text-red-800">An unexpected error has occurred:</h2>
+            <h2 className="font-medium text-red-800">
+              An unexpected error has occurred:
+            </h2>
             <p className="mt-2 text-red-700">{error.message}</p>
             <hr className="my-3 border-red-200" />
             <pre className="max-h-80 overflow-auto text-red-700">

@@ -21,7 +21,12 @@ const SwapSettingsSchema = z.object({
     .catch(DEFAULT_SLIPPAGE_TOLERANCE_PERCENT),
   autoSlippageTolerance: z.boolean().catch(DEFAULT_AUTO_SLIPPAGE_TOLERANCE),
   integratorAddress: z.string().optional().catch(undefined),
-  integratorFeePips: z.number().min(0).max(MAX_INTEGRATOR_FEE_PIPS).optional().catch(undefined),
+  integratorFeePips: z
+    .number()
+    .min(0)
+    .max(MAX_INTEGRATOR_FEE_PIPS)
+    .optional()
+    .catch(undefined),
   flexibleIntegratorFee: z.boolean().default(false).catch(false),
   htlcMaxExecutions: z.number().int().positive().catch(1),
   settlementMethods: z
@@ -80,13 +85,17 @@ const swapSettingsReducer = (
 const SwapSettingsContext = createContext<SwapSettings>({} as SwapSettings);
 
 export const SwapSettingsProvider = ({ children }: React.PropsWithChildren) => {
-  const [state, dispatch] = useReducer(swapSettingsReducer, SwapSettingsSchema.parse({}));
+  const [state, dispatch] = useReducer(
+    swapSettingsReducer,
+    SwapSettingsSchema.parse({}),
+  );
 
   useLocalStoragePersistence({
     key: SETTINGS_STORAGE_KEY,
     schema: SwapSettingsSchema,
     value: state,
-    onRestore: (payload) => dispatch({ type: "INITIALIZE_FROM_STORAGE", payload }),
+    onRestore: (payload) =>
+      dispatch({ type: "INITIALIZE_FROM_STORAGE", payload }),
   });
 
   const setSlippageTolerancePercent = (slippageTolerancePercent: number) => {
@@ -103,15 +112,21 @@ export const SwapSettingsProvider = ({ children }: React.PropsWithChildren) => {
     });
   };
 
-  const setSettlementMethods = (settlementMethods: SwapSettingsState["settlementMethods"]) => {
+  const setSettlementMethods = (
+    settlementMethods: SwapSettingsState["settlementMethods"],
+  ) => {
     dispatch({ type: "SET_SETTLEMENT_METHODS", payload: settlementMethods });
   };
 
-  const setIntegratorAddress = (integratorAddress: SwapSettingsState["integratorAddress"]) => {
+  const setIntegratorAddress = (
+    integratorAddress: SwapSettingsState["integratorAddress"],
+  ) => {
     dispatch({ type: "SET_INTEGRATOR_ADDRESS", payload: integratorAddress });
   };
 
-  const setIntegratorFeePips = (integratorFeePercent: SwapSettingsState["integratorFeePips"]) => {
+  const setIntegratorFeePips = (
+    integratorFeePercent: SwapSettingsState["integratorFeePips"],
+  ) => {
     dispatch({
       type: "SET_INTEGRATOR_FEE_PIPS",
       payload: integratorFeePercent,
@@ -127,7 +142,9 @@ export const SwapSettingsProvider = ({ children }: React.PropsWithChildren) => {
     });
   };
 
-  const setHtlcMaxExecutions = (htlcMaxExecutions: SwapSettingsState["htlcMaxExecutions"]) => {
+  const setHtlcMaxExecutions = (
+    htlcMaxExecutions: SwapSettingsState["htlcMaxExecutions"],
+  ) => {
     dispatch({
       type: "SET_HTLC_MAX_EXECUTIONS",
       payload: htlcMaxExecutions,
@@ -156,7 +173,9 @@ export const useSwapSettings = () => {
   const context = useContext(SwapSettingsContext);
 
   if (!context) {
-    throw new Error("useSwapSettings must be used within a SwapSettingsProvider");
+    throw new Error(
+      "useSwapSettings must be used within a SwapSettingsProvider",
+    );
   }
 
   return context;

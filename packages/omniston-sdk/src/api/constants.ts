@@ -3,7 +3,13 @@
 // @ts-nocheck
 // oxlint-disable
 
-export { HashingFunction, TradeStatus } from "./messages/stonfi/omni/v1beta8/types/common";
-export { ExecutionPhase, OrderCancellationMode } from "./messages/stonfi/omni/v1beta8/types/order";
+export {
+  HashingFunction,
+  TradeStatus,
+} from "./messages/stonfi/omni/v1beta8/types/common";
+export {
+  ExecutionPhase,
+  OrderCancellationMode,
+} from "./messages/stonfi/omni/v1beta8/types/order";
 export { GaslessSettlement } from "./messages/stonfi/omni/v1beta8/types/quote";
 export { SwapChunkResult } from "./messages/stonfi/omni/v1beta8/types/swap";

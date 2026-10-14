@@ -58,10 +58,14 @@ export const TrackSwapRequest: MessageFns<TrackSwapRequest> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<TrackSwapRequest>, I>>(base?: I): TrackSwapRequest {
+  create<I extends Exact<DeepPartial<TrackSwapRequest>, I>>(
+    base?: I,
+  ): TrackSwapRequest {
     return TrackSwapRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TrackSwapRequest>, I>>(object: I): TrackSwapRequest {
+  fromPartial<I extends Exact<DeepPartial<TrackSwapRequest>, I>>(
+    object: I,
+  ): TrackSwapRequest {
     const message = createBaseTrackSwapRequest();
     message.quoteId = object.quoteId ?? "";
     message.traderAddress =
@@ -73,7 +77,14 @@ export const TrackSwapRequest: MessageFns<TrackSwapRequest> = {
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -90,7 +101,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

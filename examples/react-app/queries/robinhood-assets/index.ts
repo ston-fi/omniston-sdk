@@ -21,9 +21,13 @@ export const robinhoodAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: ROBINHOOD_ASSETS_QUERY_KEY,
   searchQueryKey: ROBINHOOD_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.ROBINHOOD, ROBINHOOD_ASSETS_MOCK, evmAssetMockSchema)).map(
-      transformToAsset,
-    ),
+    (
+      await resolveAssetsMock(
+        Chain.ROBINHOOD,
+        ROBINHOOD_ASSETS_MOCK,
+        evmAssetMockSchema,
+      )
+    ).map(transformToAsset),
   ),
 });
 

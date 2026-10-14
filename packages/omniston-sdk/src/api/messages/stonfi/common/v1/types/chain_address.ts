@@ -137,25 +137,52 @@ export const ChainAddress: MessageFns<ChainAddress> = {
             : isSet(object.bnb)
               ? { $case: "bnb", value: globalThis.String(object.bnb) }
               : isSet(object.ethereum)
-                ? { $case: "ethereum", value: globalThis.String(object.ethereum) }
+                ? {
+                    $case: "ethereum",
+                    value: globalThis.String(object.ethereum),
+                  }
                 : isSet(object.polygon)
-                  ? { $case: "polygon", value: globalThis.String(object.polygon) }
+                  ? {
+                      $case: "polygon",
+                      value: globalThis.String(object.polygon),
+                    }
                   : isSet(object.robinhood)
-                    ? { $case: "robinhood", value: globalThis.String(object.robinhood) }
+                    ? {
+                        $case: "robinhood",
+                        value: globalThis.String(object.robinhood),
+                      }
                     : isSet(object.xlayer)
-                      ? { $case: "xlayer", value: globalThis.String(object.xlayer) }
+                      ? {
+                          $case: "xlayer",
+                          value: globalThis.String(object.xlayer),
+                        }
                       : isSet(object.arc)
                         ? { $case: "arc", value: globalThis.String(object.arc) }
                         : isSet(object.monad)
-                          ? { $case: "monad", value: globalThis.String(object.monad) }
+                          ? {
+                              $case: "monad",
+                              value: globalThis.String(object.monad),
+                            }
                           : isSet(object.plasma)
-                            ? { $case: "plasma", value: globalThis.String(object.plasma) }
+                            ? {
+                                $case: "plasma",
+                                value: globalThis.String(object.plasma),
+                              }
                             : isSet(object.hyperevm)
-                              ? { $case: "hyperevm", value: globalThis.String(object.hyperevm) }
+                              ? {
+                                  $case: "hyperevm",
+                                  value: globalThis.String(object.hyperevm),
+                                }
                               : isSet(object.ton)
-                                ? { $case: "ton", value: globalThis.String(object.ton) }
+                                ? {
+                                    $case: "ton",
+                                    value: globalThis.String(object.ton),
+                                  }
                                 : isSet(object.tron)
-                                  ? { $case: "tron", value: globalThis.String(object.tron) }
+                                  ? {
+                                      $case: "tron",
+                                      value: globalThis.String(object.tron),
+                                    }
                                   : undefined,
     };
   },
@@ -194,10 +221,14 @@ export const ChainAddress: MessageFns<ChainAddress> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<ChainAddress>, I>>(base?: I): ChainAddress {
+  create<I extends Exact<DeepPartial<ChainAddress>, I>>(
+    base?: I,
+  ): ChainAddress {
     return ChainAddress.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ChainAddress>, I>>(object: I): ChainAddress {
+  fromPartial<I extends Exact<DeepPartial<ChainAddress>, I>>(
+    object: I,
+  ): ChainAddress {
     const message = createBaseChainAddress();
     switch (object.chain?.$case) {
       case "arbitrum": {
@@ -289,7 +320,14 @@ export const ChainAddress: MessageFns<ChainAddress> = {
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -306,7 +344,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

@@ -139,102 +139,117 @@ function createBaseBuildEvmOrderPayloadRequest(): BuildEvmOrderPayloadRequest {
   };
 }
 
-export const BuildEvmOrderPayloadRequest: MessageFns<BuildEvmOrderPayloadRequest> = {
-  fromJSON(object: any): BuildEvmOrderPayloadRequest {
-    return {
-      quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      ownerSrcAddress: isSet(object.owner_src_address)
-        ? ChainAddress.fromJSON(object.owner_src_address)
-        : undefined,
-      traderDstAddress: isSet(object.trader_dst_address)
-        ? ChainAddress.fromJSON(object.trader_dst_address)
-        : undefined,
-      encodedPermitData: isSet(object.encoded_permit_data)
-        ? bytesFromBase64(object.encoded_permit_data)
-        : undefined,
-      permitSignature: isSet(object.permit_signature)
-        ? bytesFromBase64(object.permit_signature)
-        : undefined,
-      usePermit2: isSet(object.use_permit2) ? globalThis.Boolean(object.use_permit2) : undefined,
-      htlcSecrets: isSet(object.htlc_secrets)
-        ? HtlcSecrets.fromJSON(object.htlc_secrets)
-        : undefined,
-      traderDstDiscloseAddress: isSet(object.trader_dst_disclose_address)
-        ? ChainAddress.fromJSON(object.trader_dst_disclose_address)
-        : undefined,
-    };
-  },
+export const BuildEvmOrderPayloadRequest: MessageFns<BuildEvmOrderPayloadRequest> =
+  {
+    fromJSON(object: any): BuildEvmOrderPayloadRequest {
+      return {
+        quoteId: isSet(object.quote_id)
+          ? globalThis.String(object.quote_id)
+          : "",
+        ownerSrcAddress: isSet(object.owner_src_address)
+          ? ChainAddress.fromJSON(object.owner_src_address)
+          : undefined,
+        traderDstAddress: isSet(object.trader_dst_address)
+          ? ChainAddress.fromJSON(object.trader_dst_address)
+          : undefined,
+        encodedPermitData: isSet(object.encoded_permit_data)
+          ? bytesFromBase64(object.encoded_permit_data)
+          : undefined,
+        permitSignature: isSet(object.permit_signature)
+          ? bytesFromBase64(object.permit_signature)
+          : undefined,
+        usePermit2: isSet(object.use_permit2)
+          ? globalThis.Boolean(object.use_permit2)
+          : undefined,
+        htlcSecrets: isSet(object.htlc_secrets)
+          ? HtlcSecrets.fromJSON(object.htlc_secrets)
+          : undefined,
+        traderDstDiscloseAddress: isSet(object.trader_dst_disclose_address)
+          ? ChainAddress.fromJSON(object.trader_dst_disclose_address)
+          : undefined,
+      };
+    },
 
-  toJSON(message: BuildEvmOrderPayloadRequest): unknown {
-    const obj: any = {};
-    if (message.quoteId !== undefined) {
-      obj.quote_id = message.quoteId;
-    }
-    if (message.ownerSrcAddress !== undefined) {
-      obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
-    }
-    if (message.traderDstAddress !== undefined) {
-      obj.trader_dst_address = ChainAddress.toJSON(message.traderDstAddress);
-    }
-    if (message.encodedPermitData !== undefined) {
-      obj.encoded_permit_data = base64FromBytes(message.encodedPermitData);
-    }
-    if (message.permitSignature !== undefined) {
-      obj.permit_signature = base64FromBytes(message.permitSignature);
-    }
-    if (message.usePermit2 !== undefined) {
-      obj.use_permit2 = message.usePermit2;
-    }
-    if (message.htlcSecrets !== undefined) {
-      obj.htlc_secrets = HtlcSecrets.toJSON(message.htlcSecrets);
-    }
-    if (message.traderDstDiscloseAddress !== undefined) {
-      obj.trader_dst_disclose_address = ChainAddress.toJSON(message.traderDstDiscloseAddress);
-    }
-    return obj;
-  },
+    toJSON(message: BuildEvmOrderPayloadRequest): unknown {
+      const obj: any = {};
+      if (message.quoteId !== undefined) {
+        obj.quote_id = message.quoteId;
+      }
+      if (message.ownerSrcAddress !== undefined) {
+        obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
+      }
+      if (message.traderDstAddress !== undefined) {
+        obj.trader_dst_address = ChainAddress.toJSON(message.traderDstAddress);
+      }
+      if (message.encodedPermitData !== undefined) {
+        obj.encoded_permit_data = base64FromBytes(message.encodedPermitData);
+      }
+      if (message.permitSignature !== undefined) {
+        obj.permit_signature = base64FromBytes(message.permitSignature);
+      }
+      if (message.usePermit2 !== undefined) {
+        obj.use_permit2 = message.usePermit2;
+      }
+      if (message.htlcSecrets !== undefined) {
+        obj.htlc_secrets = HtlcSecrets.toJSON(message.htlcSecrets);
+      }
+      if (message.traderDstDiscloseAddress !== undefined) {
+        obj.trader_dst_disclose_address = ChainAddress.toJSON(
+          message.traderDstDiscloseAddress,
+        );
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<BuildEvmOrderPayloadRequest>, I>>(
-    base?: I,
-  ): BuildEvmOrderPayloadRequest {
-    return BuildEvmOrderPayloadRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<BuildEvmOrderPayloadRequest>, I>>(
-    object: I,
-  ): BuildEvmOrderPayloadRequest {
-    const message = createBaseBuildEvmOrderPayloadRequest();
-    message.quoteId = object.quoteId ?? "";
-    message.ownerSrcAddress =
-      object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
-        ? ChainAddress.fromPartial(object.ownerSrcAddress)
-        : undefined;
-    message.traderDstAddress =
-      object.traderDstAddress !== undefined && object.traderDstAddress !== null
-        ? ChainAddress.fromPartial(object.traderDstAddress)
-        : undefined;
-    message.encodedPermitData = object.encodedPermitData ?? undefined;
-    message.permitSignature = object.permitSignature ?? undefined;
-    message.usePermit2 = object.usePermit2 ?? undefined;
-    message.htlcSecrets =
-      object.htlcSecrets !== undefined && object.htlcSecrets !== null
-        ? HtlcSecrets.fromPartial(object.htlcSecrets)
-        : undefined;
-    message.traderDstDiscloseAddress =
-      object.traderDstDiscloseAddress !== undefined && object.traderDstDiscloseAddress !== null
-        ? ChainAddress.fromPartial(object.traderDstDiscloseAddress)
-        : undefined;
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<BuildEvmOrderPayloadRequest>, I>>(
+      base?: I,
+    ): BuildEvmOrderPayloadRequest {
+      return BuildEvmOrderPayloadRequest.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<BuildEvmOrderPayloadRequest>, I>>(
+      object: I,
+    ): BuildEvmOrderPayloadRequest {
+      const message = createBaseBuildEvmOrderPayloadRequest();
+      message.quoteId = object.quoteId ?? "";
+      message.ownerSrcAddress =
+        object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
+          ? ChainAddress.fromPartial(object.ownerSrcAddress)
+          : undefined;
+      message.traderDstAddress =
+        object.traderDstAddress !== undefined &&
+        object.traderDstAddress !== null
+          ? ChainAddress.fromPartial(object.traderDstAddress)
+          : undefined;
+      message.encodedPermitData = object.encodedPermitData ?? undefined;
+      message.permitSignature = object.permitSignature ?? undefined;
+      message.usePermit2 = object.usePermit2 ?? undefined;
+      message.htlcSecrets =
+        object.htlcSecrets !== undefined && object.htlcSecrets !== null
+          ? HtlcSecrets.fromPartial(object.htlcSecrets)
+          : undefined;
+      message.traderDstDiscloseAddress =
+        object.traderDstDiscloseAddress !== undefined &&
+        object.traderDstDiscloseAddress !== null
+          ? ChainAddress.fromPartial(object.traderDstDiscloseAddress)
+          : undefined;
+      return message;
+    },
+  };
 
 function createBaseEvmOrderPayloadResponse(): EvmOrderPayloadResponse {
-  return { typedData: "", orderExtension: new Uint8Array(0), serializedOrderDetails: undefined };
+  return {
+    typedData: "",
+    orderExtension: new Uint8Array(0),
+    serializedOrderDetails: undefined,
+  };
 }
 
 export const EvmOrderPayloadResponse: MessageFns<EvmOrderPayloadResponse> = {
   fromJSON(object: any): EvmOrderPayloadResponse {
     return {
-      typedData: isSet(object.typed_data) ? globalThis.String(object.typed_data) : "",
+      typedData: isSet(object.typed_data)
+        ? globalThis.String(object.typed_data)
+        : "",
       orderExtension: isSet(object.order_extension)
         ? bytesFromBase64(object.order_extension)
         : new Uint8Array(0),
@@ -253,7 +268,9 @@ export const EvmOrderPayloadResponse: MessageFns<EvmOrderPayloadResponse> = {
       obj.order_extension = base64FromBytes(message.orderExtension);
     }
     if (message.serializedOrderDetails !== undefined) {
-      obj.serialized_order_details = base64FromBytes(message.serializedOrderDetails);
+      obj.serialized_order_details = base64FromBytes(
+        message.serializedOrderDetails,
+      );
     }
     return obj;
   },
@@ -278,75 +295,83 @@ function createBaseBuildEvmOrderCancellationRequest(): BuildEvmOrderCancellation
   return { quoteId: "", ownerSrcAddress: undefined };
 }
 
-export const BuildEvmOrderCancellationRequest: MessageFns<BuildEvmOrderCancellationRequest> = {
-  fromJSON(object: any): BuildEvmOrderCancellationRequest {
-    return {
-      quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      ownerSrcAddress: isSet(object.owner_src_address)
-        ? ChainAddress.fromJSON(object.owner_src_address)
-        : undefined,
-    };
-  },
+export const BuildEvmOrderCancellationRequest: MessageFns<BuildEvmOrderCancellationRequest> =
+  {
+    fromJSON(object: any): BuildEvmOrderCancellationRequest {
+      return {
+        quoteId: isSet(object.quote_id)
+          ? globalThis.String(object.quote_id)
+          : "",
+        ownerSrcAddress: isSet(object.owner_src_address)
+          ? ChainAddress.fromJSON(object.owner_src_address)
+          : undefined,
+      };
+    },
 
-  toJSON(message: BuildEvmOrderCancellationRequest): unknown {
-    const obj: any = {};
-    if (message.quoteId !== undefined) {
-      obj.quote_id = message.quoteId;
-    }
-    if (message.ownerSrcAddress !== undefined) {
-      obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
-    }
-    return obj;
-  },
+    toJSON(message: BuildEvmOrderCancellationRequest): unknown {
+      const obj: any = {};
+      if (message.quoteId !== undefined) {
+        obj.quote_id = message.quoteId;
+      }
+      if (message.ownerSrcAddress !== undefined) {
+        obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<BuildEvmOrderCancellationRequest>, I>>(
-    base?: I,
-  ): BuildEvmOrderCancellationRequest {
-    return BuildEvmOrderCancellationRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<BuildEvmOrderCancellationRequest>, I>>(
-    object: I,
-  ): BuildEvmOrderCancellationRequest {
-    const message = createBaseBuildEvmOrderCancellationRequest();
-    message.quoteId = object.quoteId ?? "";
-    message.ownerSrcAddress =
-      object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
-        ? ChainAddress.fromPartial(object.ownerSrcAddress)
-        : undefined;
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<BuildEvmOrderCancellationRequest>, I>>(
+      base?: I,
+    ): BuildEvmOrderCancellationRequest {
+      return BuildEvmOrderCancellationRequest.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<
+      I extends Exact<DeepPartial<BuildEvmOrderCancellationRequest>, I>,
+    >(object: I): BuildEvmOrderCancellationRequest {
+      const message = createBaseBuildEvmOrderCancellationRequest();
+      message.quoteId = object.quoteId ?? "";
+      message.ownerSrcAddress =
+        object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
+          ? ChainAddress.fromPartial(object.ownerSrcAddress)
+          : undefined;
+      return message;
+    },
+  };
 
 function createBaseEvmOrderCancellationResponse(): EvmOrderCancellationResponse {
   return { typedData: "" };
 }
 
-export const EvmOrderCancellationResponse: MessageFns<EvmOrderCancellationResponse> = {
-  fromJSON(object: any): EvmOrderCancellationResponse {
-    return { typedData: isSet(object.typed_data) ? globalThis.String(object.typed_data) : "" };
-  },
+export const EvmOrderCancellationResponse: MessageFns<EvmOrderCancellationResponse> =
+  {
+    fromJSON(object: any): EvmOrderCancellationResponse {
+      return {
+        typedData: isSet(object.typed_data)
+          ? globalThis.String(object.typed_data)
+          : "",
+      };
+    },
 
-  toJSON(message: EvmOrderCancellationResponse): unknown {
-    const obj: any = {};
-    if (message.typedData !== undefined) {
-      obj.typed_data = message.typedData;
-    }
-    return obj;
-  },
+    toJSON(message: EvmOrderCancellationResponse): unknown {
+      const obj: any = {};
+      if (message.typedData !== undefined) {
+        obj.typed_data = message.typedData;
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<EvmOrderCancellationResponse>, I>>(
-    base?: I,
-  ): EvmOrderCancellationResponse {
-    return EvmOrderCancellationResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<EvmOrderCancellationResponse>, I>>(
-    object: I,
-  ): EvmOrderCancellationResponse {
-    const message = createBaseEvmOrderCancellationResponse();
-    message.typedData = object.typedData ?? "";
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<EvmOrderCancellationResponse>, I>>(
+      base?: I,
+    ): EvmOrderCancellationResponse {
+      return EvmOrderCancellationResponse.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<EvmOrderCancellationResponse>, I>>(
+      object: I,
+    ): EvmOrderCancellationResponse {
+      const message = createBaseEvmOrderCancellationResponse();
+      message.typedData = object.typedData ?? "";
+      return message;
+    },
+  };
 
 function bytesFromBase64(b64: string): Uint8Array {
   if ((globalThis as any).Buffer) {
@@ -373,7 +398,14 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -390,7 +422,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

@@ -40,9 +40,9 @@ type ObservableQueryFnDeps<TObservable extends Observable<unknown>> = {
   onData: (data: InferObservableData<TObservable>) => void;
 };
 
-export function observableQueryFnPromise<TObservable extends Observable<unknown>>(
-  deps: ObservableQueryFnDeps<TObservable>,
-): Promise<never> {
+export function observableQueryFnPromise<
+  TObservable extends Observable<unknown>,
+>(deps: ObservableQueryFnDeps<TObservable>): Promise<never> {
   const { requestFn, queryClient, requestCtx, onData } = deps;
   const { queryKey, signal } = requestCtx;
 
@@ -94,12 +94,18 @@ export function observableQueryFnPromise<TObservable extends Observable<unknown>
 /**
  * A wrapper for data fetching functions that return an Observable to use with react-query.
  */
-export function useObservableQuery<TObservable extends Observable<unknown>, TError = unknown>({
+export function useObservableQuery<
+  TObservable extends Observable<unknown>,
+  TError = unknown,
+>({
   queryKey,
   requestFn,
   enabled,
   ...queryOptions
-}: UseObservableQueryOptions<TObservable, TError>): ObservableQueryResult<TObservable, TError> {
+}: UseObservableQueryOptions<TObservable, TError>): ObservableQueryResult<
+  TObservable,
+  TError
+> {
   const queryClient = useQueryClient();
 
   // Prevents React from batching synchronous updates that would skip intermediate states.
@@ -112,7 +118,11 @@ export function useObservableQuery<TObservable extends Observable<unknown>, TErr
     (callback) => {
       updateEmitterRef.current.addEventListener(forceUpdateEventName, callback);
 
-      return () => updateEmitterRef.current.removeEventListener(forceUpdateEventName, callback);
+      return () =>
+        updateEmitterRef.current.removeEventListener(
+          forceUpdateEventName,
+          callback,
+        );
     },
     () => queryClient.getQueryData(queryKey),
     () => queryClient.getQueryData(queryKey),
@@ -129,7 +139,9 @@ export function useObservableQuery<TObservable extends Observable<unknown>, TErr
         requestCtx: ctx,
         onData: (data) => {
           queryClient.setQueryData(queryKey, data);
-          updateEmitterRef.current.dispatchEvent(new Event(forceUpdateEventName));
+          updateEmitterRef.current.dispatchEvent(
+            new Event(forceUpdateEventName),
+          );
         },
       });
     },

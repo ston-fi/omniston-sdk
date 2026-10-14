@@ -3,6 +3,7 @@
 ## 30-09-2026
 
 ### @ston-fi/omniston-sdk@0.8.11
+
 ### @ston-fi/omniston-sdk-react@0.8.11
 
 #### Added
@@ -14,6 +15,7 @@
 ## 21-09-2026
 
 ### @ston-fi/omniston-sdk@0.8.10
+
 ### @ston-fi/omniston-sdk-react@0.8.10
 
 #### Added
@@ -43,6 +45,7 @@ If you were consuming the RxJS-specific API, you can easily construct an RxJS `O
 - Moved `@tanstack/react-query` from a direct dependency to a peer dependency (`^5`) so applications use a single React Query instance and query context.
 
 ### @ston-fi/omniston-sdk@0.8.8
+
 ### @ston-fi/omniston-sdk-react@0.8.8
 
 #### Added
@@ -52,6 +55,7 @@ If you were consuming the RxJS-specific API, you can easily construct an RxJS `O
 ## 21-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.7
+
 ### @ston-fi/omniston-sdk-react@0.8.7
 
 #### Added
@@ -61,6 +65,7 @@ If you were consuming the RxJS-specific API, you can easily construct an RxJS `O
 ## 16-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.6
+
 ### @ston-fi/omniston-sdk-react@0.8.6
 
 #### Added
@@ -71,6 +76,7 @@ If you were consuming the RxJS-specific API, you can easily construct an RxJS `O
 ## 14-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.5
+
 ### @ston-fi/omniston-sdk-react@0.8.5
 
 #### Added
@@ -83,6 +89,7 @@ If you were consuming the RxJS-specific API, you can easily construct an RxJS `O
 ## 03-07-2026
 
 ### @ston-fi/omniston-sdk@0.8.4
+
 ### @ston-fi/omniston-sdk-react@0.8.4
 
 This release adds optional timing fields that help integrators show estimated settlement and order completion times in their apps, improving UX for swap flows where timing expectations matter.
@@ -96,6 +103,7 @@ This release adds optional timing fields that help integrators show estimated se
 ## 02-06-2026
 
 ### @ston-fi/omniston-sdk@0.8.3
+
 ### @ston-fi/omniston-sdk-react@0.8.3
 
 #### Added
@@ -110,22 +118,27 @@ This release adds optional timing fields that help integrators show estimated se
 ## 07-05-2026
 
 ### @ston-fi/omniston-sdk@0.8.2
+
 ### @ston-fi/omniston-sdk-react@0.8.2
 
 #### Fixed
+
 - Fixed a bug in early unsubscribe handling for SDK streams caused by the async stream-to-observable conversion path. This could happen when consumers send RFQs frequently and cancel them while the RPC subscribe promise is still pending: the local consumer was already unsubscribed, so it did not keep receiving events, but the cancel message was not sent properly and the server-side subscription could remain open. The SDK now sends the pending unsubscribe as soon as the stream is initialized so the server can drop the connection correctly.
 
 ## 01-05-2026
 
 ### @ston-fi/omniston-sdk@0.8.1
+
 ### @ston-fi/omniston-sdk-react@0.8.1
 
 #### Added
+
 - the `OrderSettlementData` type extended with 3 new fields (integratorFeePips, protocolFeePips, protocolFeeRecipientAddress)
 
 ## 27-04-2026
 
 ### @ston-fi/omniston-sdk@0.8.0
+
 ### @ston-fi/omniston-sdk-react@0.8.0
 
 - re-tag `0.8.0-rc.0` release as stable
@@ -142,6 +155,7 @@ This release also includes a fully working example app in this repository that d
 It can serve as a reference implementation when migrating real applications to `v1beta8`.
 
 Here are some useful links for the new API:
+
 - [v1beta8 Glossary](https://github.com/ston-fi/stonfi-proto/blob/main/proto/stonfi/omni/GLOSSARY.md)
 - [v1beta8 API proto files](https://github.com/ston-fi/stonfi-proto/tree/main/proto/stonfi/omni)
 - [v1beta7 to v1beta8 migration guide](https://github.com/ston-fi/stonfi-proto/blob/main/proto/stonfi/omni/v1beta8/v1beta7-to-v1beta8-migration-guide.md)
@@ -268,7 +282,7 @@ Tracking is now split the same way:
 +
 + switch (quote.settlementData?.$case) {
 +   case "swap":
-+     stream = await omniston.swapTrack({ 
++     stream = await omniston.swapTrack({
 +       /** */
 +       outgoingTxQuery // you can pass external message hash/sighed BOC/tx hash here directly
 +     });
@@ -329,7 +343,7 @@ Start by replacing removed hooks with settlement-specific hooks:
 
 ```diff
  const { data: quoteEvent } = useRfq(request);
- 
+
 - const quote = quoteEvent?.type === "quoteUpdated" ? quoteEvent.quote : undefined;
 + const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
 ```
@@ -373,6 +387,7 @@ Stream hooks built on `useObservableQuery` no longer expose an imperative `unsub
 ## 02-04-2026
 
 ### @ston-fi/omniston-sdk@0.7.9
+
 ### @ston-fi/omniston-sdk-react@0.7.12
 
 #### Added
@@ -384,6 +399,7 @@ Stream hooks built on `useObservableQuery` no longer expose an imperative `unsub
 ### @ston-fi/omniston-sdk-react@0.7.11
 
 #### Fixed
+
 - Fixed the `useObservableQuery` reaction to frequent stream events.
 
   The `useObservableQuery` is an underlying mechanism for binding Omniston SDK streams to TanStack Query.
@@ -413,6 +429,7 @@ Stream hooks built on `useObservableQuery` no longer expose an imperative `unsub
 ## 04-11-2025
 
 ### @ston-fi/omniston-sdk@0.7.7
+
 ### @ston-fi/omniston-sdk-react@0.7.9
 
 #### Fixed
@@ -432,6 +449,7 @@ Stream hooks built on `useObservableQuery` no longer expose an imperative `unsub
 ## 23-10-2025
 
 ### @ston-fi/omniston-sdk@0.7.6
+
 ### @ston-fi/omniston-sdk-react@0.7.8
 
 This is a technical release with the following improvements:
@@ -446,6 +464,7 @@ This is a technical release with the following improvements:
 ## 08-10-2025
 
 ### @ston-fi/omniston-sdk@0.7.5
+
 ### @ston-fi/omniston-sdk-react@0.7.7
 
 - new `flexibleReferrerFee` parameter was added to the `rfq.settlementParams` to control whether the flexible referrer fee can be applied for the quote. This new parameter allows the swap to be performed with a lower referrerFee than specified via `rfq.referrerFeeBps` to provide a better swap rate for the end user
@@ -453,6 +472,7 @@ This is a technical release with the following improvements:
 ## 09-09-2025
 
 ### @ston-fi/omniston-sdk@0.7.4
+
 ### @ston-fi/omniston-sdk-react@0.7.6
 
 - Empty `TonMessage.jettonWalletStateInit` now will be `undefined` instead of `""`
@@ -462,6 +482,7 @@ These changes were due to the fact that in yesterday's release of the [`@tonconn
 ## 03-09-2025
 
 ### @ston-fi/omniston-sdk@0.7.3
+
 ### @ston-fi/omniston-sdk-react@0.7.5
 
 - Added new `QuoteRequestAck` quote event with `rfq_id` assignment.
@@ -474,14 +495,14 @@ It was implemented as a dedicated event and not as part of a `Quote` event to be
 omniston.requestForQuote(quoteRequest).subscribe({
   next: (quoteResponseEvent) => {
     switch (quoteResponseEvent.type) {
-      case 'ack': {
+      case "ack": {
         const { rfqId } = quoteResponseEvent;
 
         ///
       }
     }
   },
-})
+});
 ```
 
 - For ease of use of the new `QuoteRequestAck` event at the SDK level, each event received after a `QuoteRequestAck` event was extended with the rfqId field.
@@ -490,35 +511,37 @@ omniston.requestForQuote(quoteRequest).subscribe({
 omniston.requestForQuote(quoteRequest).subscribe({
   next: (quoteResponseEvent) => {
     switch (quoteResponseEvent.type) {
-      case 'quoteUpdated': {
+      case "quoteUpdated": {
         const { rfqId } = quoteResponseEvent;
 
         ///
       }
-      case 'unsubscribed': {
+      case "unsubscribed": {
         const { rfqId } = quoteResponseEvent;
 
         ///
       }
     }
   },
-})
+});
 ```
 
 ## 08-08-2025
 
 ### @ston-fi/omniston-sdk@0.7.2
+
 ### @ston-fi/omniston-sdk-react@0.7.4
 
 - Added new optional field to `TransactionRequest`.
 
-| Name            | Type      | Description                                                       |
-|-----------------|-----------|-------------------------------------------------------------------|
+| Name            | Type      | Description                                                      |
+| --------------- | --------- | ---------------------------------------------------------------- |
 | `refundAddress` | `Address` | The address to which funds will be returned in case of a failure |
 
 ## 30-07-2025
 
 ### @ston-fi/omniston-sdk@0.7.1
+
 ### @ston-fi/omniston-sdk-react@0.7.3
 
 - `OmnistonError` class was extended with the optional `details` field, which contains error-related information. Possible error details data are described with the new `OmnistonErrorDetails` type
@@ -560,7 +583,6 @@ const omniston = new Omniston({
 // omnistonTransport.connectionStatusEvents.subscribe(({ status }) => { /* ... */ })
 ```
 
-
 ## 08-07-2025
 
 ### @ston-fi/omniston-sdk-react@0.7.1
@@ -586,6 +608,7 @@ const omniston = new Omniston({
 ## 13-06-2025
 
 ### @ston-fi/omniston-sdk@0.6.0
+
 ### @ston-fi/omniston-sdk-react@0.6.0
 
 Support for [`v1beta7` API](https://github.com/ston-fi/omniston-api)
@@ -601,6 +624,7 @@ Support for [`v1beta7` API](https://github.com/ston-fi/omniston-api)
 Based on our integrators' feedback, the `v1beta6` was extended with more fields. The updated API is fully backward compatible.
 
 ### @ston-fi/omniston-sdk@0.5.0
+
 ### @ston-fi/omniston-sdk-react@0.5.0
 
 - `buildTransfer` method extended with the `gasExcessAddress` field to configure the address that will receive the gas not spent by the trade.

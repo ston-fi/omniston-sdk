@@ -3,12 +3,22 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
 import { useRfqEventHistory } from "~/hooks/useRfqEventHistory";
 import { cn } from "~/lib/utils";
-import { CopyJsonCard } from "./ui/copy-json-card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
 
-export function RfqEventHistory({ className, ...props }: { className?: string }) {
+import { CopyJsonCard } from "./ui/copy-json-card";
+
+export function RfqEventHistory({
+  className,
+  ...props
+}: {
+  className?: string;
+}) {
   const events = useRfqEventHistory();
   const [isPulsing, setIsPulsing] = useState(false);
 
@@ -51,7 +61,9 @@ export function RfqEventHistory({ className, ...props }: { className?: string })
           {events.map((event, index) => (
             <li key={index}>
               <CopyJsonCard title={`Event #${index + 1}`} value={event}>
-                <pre className="overflow-auto text-xs">{JSON.stringify(event)}</pre>
+                <pre className="overflow-auto text-xs">
+                  {JSON.stringify(event)}
+                </pre>
               </CopyJsonCard>
             </li>
           ))}

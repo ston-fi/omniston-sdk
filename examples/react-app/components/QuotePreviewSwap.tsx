@@ -4,7 +4,11 @@ import type { QuoteOfType } from "@ston-fi/omniston-sdk-react";
 import { ChevronDown } from "lucide-react";
 
 import { QuotePresenter } from "~/components/QuotePresenter";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
 import { CopyJsonCard } from "~/components/ui/copy-json-card";
 import { DescriptionList } from "~/components/ui/description-list";
 import { bigNumberToFloat, cn } from "~/lib/utils";
@@ -45,7 +49,11 @@ export const QuotePreviewSwap = ({ quote }: { quote: SwapQuote }) => {
               </DescriptionList>
             ) : null}
             {swapSettlementData.routes.map((route, i) => (
-              <SwapRouteItem key={i} swapSettlementData={swapSettlementData} route={route} />
+              <SwapRouteItem
+                key={i}
+                swapSettlementData={swapSettlementData}
+                route={route}
+              />
             ))}
           </CopyJsonCard>
         </CollapsibleContent>

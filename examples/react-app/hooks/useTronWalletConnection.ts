@@ -1,4 +1,5 @@
-import { useCallback, useMemo } from "react";
+import type { TronConnector } from "@reown/appkit-adapter-tron";
+import { tronNileTestnet } from "@reown/appkit/networks";
 import {
   useAppKitAccount,
   useAppKitProvider,
@@ -6,9 +7,8 @@ import {
   useWalletInfo,
   type WalletConnectConnector,
 } from "@reown/appkit/react";
-import type { TronConnector } from "@reown/appkit-adapter-tron";
-import { tronNileTestnet } from "@reown/appkit/networks";
 import { useWallet as useTronWallet } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { useCallback, useMemo } from "react";
 import type { Trx } from "tronweb";
 
 /**
@@ -150,8 +150,10 @@ async function appKitSignTransaction({
   }
 
   if (walletProvider.type === "WALLET_CONNECT") {
-    const provider = walletProvider.provider as WalletConnectConnector["provider"];
-    const usesV1Format = provider.session?.sessionProperties?.["tron_method_version"] === "v1";
+    const provider =
+      walletProvider.provider as WalletConnectConnector["provider"];
+    const usesV1Format =
+      provider.session?.sessionProperties?.["tron_method_version"] === "v1";
     const signedTransaction:
       | {
           signature: string[];

@@ -23,7 +23,7 @@ export default function Home() {
           trigger={
             <Button
               variant="outline"
-              className="data-[state=open]:border-foreground/50 data-[popup-open]:border-foreground/50 size-8 p-0"
+              className="size-8 p-0 data-[popup-open]:border-foreground/50 data-[state=open]:border-foreground/50"
             >
               <Settings size={16} />
             </Button>
@@ -32,10 +32,10 @@ export default function Home() {
       </div>
 
       <SwapForm />
-      <QuotePreview className="animate-in fade-in-0 slide-in-from-bottom-2 duration-200" />
+      <QuotePreview className="duration-200 animate-in fade-in-0 slide-in-from-bottom-2" />
       <QuoteAction className="w-full" />
-      <QuoteTrackTrade className="animate-in fade-in-0 slide-in-from-bottom-2 duration-200" />
-      <ActiveOrderList className="animate-in fade-in-0 slide-in-from-bottom-2 duration-200" />
+      <QuoteTrackTrade className="duration-200 animate-in fade-in-0 slide-in-from-bottom-2" />
+      <ActiveOrderList className="duration-200 animate-in fade-in-0 slide-in-from-bottom-2" />
     </section>
   );
 }

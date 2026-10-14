@@ -1,4 +1,5 @@
 import path from "node:path";
+
 import protobuf from "protobufjs";
 import ts from "typescript";
 
@@ -12,7 +13,9 @@ export function buildProtoFileRules({ protoDir, protoFilePath }) {
   };
 
   const normalizedProtoPath = path.resolve(protoFilePath);
-  const relativeProtoPath = path.relative(protoDir, normalizedProtoPath).replace(/\\/g, "/");
+  const relativeProtoPath = path
+    .relative(protoDir, normalizedProtoPath)
+    .replace(/\\/g, "/");
 
   root.loadSync([relativeProtoPath], { keepCase: false });
   root.resolveAll();
@@ -84,7 +87,9 @@ export function transformGeneratedContent(content, messageRules) {
   const visit = (node) => {
     if (
       ts.isInterfaceDeclaration(node) &&
-      node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)
+      node.modifiers?.some(
+        (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
+      )
     ) {
       const messageRule = messageRules.get(node.name.text);
       if (!messageRule) {
@@ -113,7 +118,11 @@ export function transformGeneratedContent(content, messageRules) {
           edits.push({
             start: member.type.getStart(sourceFile),
             end: member.type.end,
-            text: printer.printNode(ts.EmitHint.Unspecified, nextMember.type, sourceFile),
+            text: printer.printNode(
+              ts.EmitHint.Unspecified,
+              nextMember.type,
+              sourceFile,
+            ),
           });
         }
       }
@@ -136,14 +145,22 @@ export function transformProtoAstNode(node, context) {
     return node;
   }
 
-  const nextType = node.type ? stripUndefinedFromTypeNode(node.type) : node.type;
+  const nextType = node.type
+    ? stripUndefinedFromTypeNode(node.type)
+    : node.type;
   const hasChanges = node.questionToken || nextType !== node.type;
 
   if (!hasChanges) {
     return node;
   }
 
-  return ts.factory.updatePropertySignature(node, node.modifiers, node.name, undefined, nextType);
+  return ts.factory.updatePropertySignature(
+    node,
+    node.modifiers,
+    node.name,
+    undefined,
+    nextType,
+  );
 }
 
 function getPropertyName(nameNode) {

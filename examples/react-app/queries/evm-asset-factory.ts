@@ -47,11 +47,16 @@ export function createEvmAssetQueryFactory({
     walletAddress: ViemAddress,
   ): Promise<Asset[]> => {
     const nativeAsset = evmAssets.find(
-      (asset) => asset.id.chain.$case === chain && asset.id.chain.value.kind.$case === "native",
+      (asset) =>
+        asset.id.chain.$case === chain &&
+        asset.id.chain.value.kind.$case === "native",
     );
 
     const erc20Addresses = evmAssets.reduce<ViemAddress[]>((acc, asset) => {
-      if (asset.id.chain.$case === chain && asset.id.chain.value.kind.$case === "erc20") {
+      if (
+        asset.id.chain.$case === chain &&
+        asset.id.chain.value.kind.$case === "erc20"
+      ) {
         acc.push(asset.id.chain.value.kind.value as ViemAddress);
       }
 
@@ -82,7 +87,10 @@ export function createEvmAssetQueryFactory({
     let erc20BalanceIndex = 0;
 
     return evmAssets.map((asset) => {
-      if (asset.id.chain.$case === chain && asset.id.chain.value.kind.$case === "native") {
+      if (
+        asset.id.chain.$case === chain &&
+        asset.id.chain.value.kind.$case === "native"
+      ) {
         return {
           ...asset,
           balance: nativeBalance?.value,

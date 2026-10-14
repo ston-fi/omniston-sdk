@@ -4,9 +4,9 @@ import type { Quote } from "@ston-fi/omniston-sdk-react";
 
 import { ExplorerAddressPreview } from "~/components/ExplorerAddressPreview";
 import { DescriptionList } from "~/components/ui/description-list";
+import { useQuoteAssets } from "~/hooks/useQuoteAssets";
 import { bigNumberToFloat, trimStringWithEllipsis } from "~/lib/utils";
 import { Chain } from "~/models/chain";
-import { useQuoteAssets } from "~/hooks/useQuoteAssets";
 
 export function QuotePresenter({
   quote,
@@ -14,7 +14,8 @@ export function QuotePresenter({
 }: React.ComponentProps<typeof DescriptionList> & {
   quote: Quote;
 }) {
-  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
+    useQuoteAssets(quote);
 
   const {
     rfqId,

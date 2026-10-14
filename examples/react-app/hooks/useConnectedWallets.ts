@@ -1,7 +1,7 @@
-import { useIsConnectionRestored, useTonAddress } from "@tonconnect/ui-react";
-import { useMemo } from "react";
 import { useAppKitAccount, useAppKitState } from "@reown/appkit/react";
 import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
+import { useIsConnectionRestored, useTonAddress } from "@tonconnect/ui-react";
+import { useMemo } from "react";
 
 import { useTronWalletConnection } from "~/hooks/useTronWalletConnection";
 import { Chain } from "~/models/chain";
@@ -38,7 +38,9 @@ export function useConnectedWallets() {
     () => ({
       [ChainFamily.TON]: tonConnectWalletAddressString || undefined,
       [ChainFamily.EVM]:
-        isEvmConnected && evmWalletAddressString ? evmWalletAddressString : undefined,
+        isEvmConnected && evmWalletAddressString
+          ? evmWalletAddressString
+          : undefined,
       [ChainFamily.TRON]: tronWalletAddressString,
     }),
     [
@@ -49,10 +51,15 @@ export function useConnectedWallets() {
     ],
   );
 
-  const walletAddressByChain = useMemo<Record<Chain, ChainAddress | undefined>>(() => {
-    return (Object.values(Chain) as Chain[]).reduce<Record<Chain, ChainAddress | undefined>>(
+  const walletAddressByChain = useMemo<
+    Record<Chain, ChainAddress | undefined>
+  >(() => {
+    return (Object.values(Chain) as Chain[]).reduce<
+      Record<Chain, ChainAddress | undefined>
+    >(
       (acc, chain) => {
-        const walletAddressString = addressByChainFamily[getChainFamilyByChain(chain)];
+        const walletAddressString =
+          addressByChainFamily[getChainFamilyByChain(chain)];
 
         acc[chain] = walletAddressString
           ? createChainAddress(chain, walletAddressString)
@@ -66,7 +73,8 @@ export function useConnectedWallets() {
 
   const isAppKitConnectionRestored = (
     status: typeof evmConnectionStatus | typeof tronAppKitConnectionStatus,
-  ) => isAppKitInitialized && status !== "connecting" && status !== "reconnecting";
+  ) =>
+    isAppKitInitialized && status !== "connecting" && status !== "reconnecting";
 
   const isConnectionRestoredByChainFamily = {
     [ChainFamily.TON]: isTonConnectionRestored,
@@ -77,9 +85,12 @@ export function useConnectedWallets() {
       !tronLinkWallet.disconnecting,
   } satisfies Record<ChainFamily, boolean>;
 
-  const isWalletRestoredByChain = (Object.values(Chain) as Chain[]).reduce<Record<Chain, boolean>>(
+  const isWalletRestoredByChain = (Object.values(Chain) as Chain[]).reduce<
+    Record<Chain, boolean>
+  >(
     (acc, chain) => {
-      acc[chain] = isConnectionRestoredByChainFamily[getChainFamilyByChain(chain)];
+      acc[chain] =
+        isConnectionRestoredByChainFamily[getChainFamilyByChain(chain)];
 
       return acc;
     },

@@ -41,19 +41,21 @@ describe("ApiClient tests", () => {
 
   // Make server to respond to the request with the given subscription id
   function setUpSubscription(method: string, subscriptionId: number) {
-    return vi.spyOn(mockTransport, "send").mockImplementation(async (message) => {
-      const { id: requestId, method: requestMethod } = JSON.parse(message);
-      if (method === requestMethod) {
-        mockTransport.messages.next(
-          JSON.stringify(
-            jsonRpcPayload({
-              id: requestId,
-              result: subscriptionId,
-            }),
-          ),
-        );
-      }
-    });
+    return vi
+      .spyOn(mockTransport, "send")
+      .mockImplementation(async (message) => {
+        const { id: requestId, method: requestMethod } = JSON.parse(message);
+        if (method === requestMethod) {
+          mockTransport.messages.next(
+            JSON.stringify(
+              jsonRpcPayload({
+                id: requestId,
+                result: subscriptionId,
+              }),
+            ),
+          );
+        }
+      });
   }
 
   test("method call", async () => {
@@ -82,7 +84,9 @@ describe("ApiClient tests", () => {
   test("returns an error if transport throws", async () => {
     vi.spyOn(mockTransport, "send").mockRejectedValue(testError);
 
-    await expect(apiClient.send(testMethod, testPayload)).rejects.toThrowError(testError.message);
+    await expect(apiClient.send(testMethod, testPayload)).rejects.toThrowError(
+      testError.message,
+    );
   });
 
   test("returns an error if server returns an error", async () => {
@@ -100,7 +104,11 @@ describe("ApiClient tests", () => {
 
   test("subscribe to event stream", async () => {
     setUpSubscription(testMethod, testSubscriptionId);
-    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const eventStream = apiClient.subscribeToStream(
+      testMethod,
+      testEventMethod,
+      testPayload,
+    );
     const events = await eventStream.stream;
     const testResult1 = "testResult1";
     const testResult2 = "testResult2";
@@ -133,7 +141,11 @@ describe("ApiClient tests", () => {
 
   test("event subscription ignores other subscription events", async () => {
     setUpSubscription(testMethod, testSubscriptionId);
-    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const eventStream = apiClient.subscribeToStream(
+      testMethod,
+      testEventMethod,
+      testPayload,
+    );
     const events = await eventStream.stream;
     const testResult1 = "testResult1";
 
@@ -166,7 +178,11 @@ describe("ApiClient tests", () => {
 
   test("event subscription propagates errors", async () => {
     setUpSubscription(testMethod, testSubscriptionId);
-    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const eventStream = apiClient.subscribeToStream(
+      testMethod,
+      testEventMethod,
+      testPayload,
+    );
     const events = await eventStream.stream;
 
     const received: unknown[] = [];
@@ -193,7 +209,11 @@ describe("ApiClient tests", () => {
 
   test("unsubscribe sends a message", async () => {
     const sendSpy = setUpSubscription(testMethod, testSubscriptionId);
-    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const eventStream = apiClient.subscribeToStream(
+      testMethod,
+      testEventMethod,
+      testPayload,
+    );
 
     mockTransport.connectionStatusEvents.next({ status: "connected" });
     (await eventStream.stream).subscribe();
@@ -226,23 +246,35 @@ describe("ApiClient tests", () => {
 
   test("does not call unsubscribe before getting event stream", async () => {
     const sendSpy = setUpSubscription(testMethod, testSubscriptionId);
-    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const eventStream = apiClient.subscribeToStream(
+      testMethod,
+      testEventMethod,
+      testPayload,
+    );
 
-    await expect(eventStream.unsubscribeFromStream(testUnsubscribeMethod)).resolves.toBe(true);
+    await expect(
+      eventStream.unsubscribeFromStream(testUnsubscribeMethod),
+    ).resolves.toBe(true);
 
     expect(sendSpy).not.toHaveBeenCalled();
   });
 
   test("does not call unsubscribe after close", async () => {
     const sendSpy = setUpSubscription(testMethod, testSubscriptionId);
-    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const eventStream = apiClient.subscribeToStream(
+      testMethod,
+      testEventMethod,
+      testPayload,
+    );
     (await eventStream.stream).subscribe();
     sendSpy.mockClear();
 
     mockTransport.close();
     mockTransport.connectionStatusEvents.next({ status: "closed" });
 
-    await expect(eventStream.unsubscribeFromStream(testUnsubscribeMethod)).resolves.toBe(true);
+    await expect(
+      eventStream.unsubscribeFromStream(testUnsubscribeMethod),
+    ).resolves.toBe(true);
 
     expect(sendSpy).not.toHaveBeenCalled();
   });
@@ -291,7 +323,11 @@ describe("ApiClient tests", () => {
       mockTransport.connectionStatusEvents.next({ status: "connected" });
     });
     const sendSpy = setUpSubscription(testMethod, testSubscriptionId);
-    const eventStream = apiClient.subscribeToStream(testMethod, testEventMethod, testPayload);
+    const eventStream = apiClient.subscribeToStream(
+      testMethod,
+      testEventMethod,
+      testPayload,
+    );
     (await eventStream.stream).subscribe();
 
     const expectedSubscriptionRequest = jsonRpcPayload({

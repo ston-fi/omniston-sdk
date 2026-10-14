@@ -14,11 +14,14 @@ export const HashingFunction = {
   UNRECOGNIZED: "UNRECOGNIZED",
 } as const;
 
-export type HashingFunction = (typeof HashingFunction)[keyof typeof HashingFunction];
+export type HashingFunction =
+  (typeof HashingFunction)[keyof typeof HashingFunction];
 
 export namespace HashingFunction {
-  export type HASHING_FUNCTION_KECCAK256 = typeof HashingFunction.HASHING_FUNCTION_KECCAK256;
-  export type HASHING_FUNCTION_SHA256 = typeof HashingFunction.HASHING_FUNCTION_SHA256;
+  export type HASHING_FUNCTION_KECCAK256 =
+    typeof HashingFunction.HASHING_FUNCTION_KECCAK256;
+  export type HASHING_FUNCTION_SHA256 =
+    typeof HashingFunction.HASHING_FUNCTION_SHA256;
   export type UNRECOGNIZED = typeof HashingFunction.UNRECOGNIZED;
 }
 
@@ -76,10 +79,14 @@ export const TradeStatus = {
 export type TradeStatus = (typeof TradeStatus)[keyof typeof TradeStatus];
 
 export namespace TradeStatus {
-  export type TRADE_STATUS_IN_PROGRESS = typeof TradeStatus.TRADE_STATUS_IN_PROGRESS;
-  export type TRADE_STATUS_FULLY_FILLED = typeof TradeStatus.TRADE_STATUS_FULLY_FILLED;
-  export type TRADE_STATUS_PARTIALLY_FILLED = typeof TradeStatus.TRADE_STATUS_PARTIALLY_FILLED;
-  export type TRADE_STATUS_CANCELLED = typeof TradeStatus.TRADE_STATUS_CANCELLED;
+  export type TRADE_STATUS_IN_PROGRESS =
+    typeof TradeStatus.TRADE_STATUS_IN_PROGRESS;
+  export type TRADE_STATUS_FULLY_FILLED =
+    typeof TradeStatus.TRADE_STATUS_FULLY_FILLED;
+  export type TRADE_STATUS_PARTIALLY_FILLED =
+    typeof TradeStatus.TRADE_STATUS_PARTIALLY_FILLED;
+  export type TRADE_STATUS_CANCELLED =
+    typeof TradeStatus.TRADE_STATUS_CANCELLED;
   export type TRADE_STATUS_FAILED = typeof TradeStatus.TRADE_STATUS_FAILED;
   export type UNRECOGNIZED = typeof TradeStatus.UNRECOGNIZED;
 }
@@ -155,7 +162,14 @@ export const KeepAlive: MessageFns<KeepAlive> = {
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -172,7 +186,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 interface MessageFns<T> {
   fromJSON(object: any): T;

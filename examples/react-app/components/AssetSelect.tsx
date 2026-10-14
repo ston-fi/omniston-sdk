@@ -1,6 +1,10 @@
 "use client";
 
-import { useQuery, useQueries, type UseQueryOptions } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueries,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -14,16 +18,24 @@ import {
   CommandItem,
   CommandList,
 } from "~/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { Skeleton } from "~/components/ui/skeleton";
 import { bigNumberToFloat, cn } from "~/lib/utils";
-import type { Asset } from "~/models/asset";
-import { isAssetIdEqual, deserializeAssetId, serializeAssetId } from "~/models/asset-id";
 import { truncateAddress, addressFromAssetId } from "~/models/address";
-
-import { ExplorerAddressPreview } from "./ExplorerAddressPreview";
+import type { Asset } from "~/models/asset";
+import {
+  isAssetIdEqual,
+  deserializeAssetId,
+  serializeAssetId,
+} from "~/models/asset-id";
 import { CHAIN_METADATA, Chain, chainSchema } from "~/models/chain";
 import { useAssets } from "~/providers/assets";
+
+import { ExplorerAddressPreview } from "./ExplorerAddressPreview";
 
 type AssetQueryOptions = UseQueryOptions<Asset[], Error, Asset[], any[]>;
 
@@ -83,7 +95,8 @@ export const AssetSelect = ({
     queries: chains.map((chain) => chain.fetchQueryOptions),
   });
 
-  const activeConfig = chains.find(({ chain }) => chain === selectedChain) ?? defaultChain;
+  const activeConfig =
+    chains.find(({ chain }) => chain === selectedChain) ?? defaultChain;
 
   const fetchResult = useQuery(activeConfig.fetchQueryOptions);
 
@@ -96,7 +109,9 @@ export const AssetSelect = ({
   });
 
   const rawAssets: Asset[] =
-    searchTerm.length > 0 ? (searchResult.data ?? []) : (fetchResult.data ?? []);
+    searchTerm.length > 0
+      ? (searchResult.data ?? [])
+      : (fetchResult.data ?? []);
 
   const displayAssets = excludeAsset
     ? rawAssets.filter((a) => !isAssetIdEqual(a.id, excludeAsset.id))
@@ -123,7 +138,10 @@ export const AssetSelect = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <AssetSelectTrigger selectedAsset={selectedAsset} className={className} />
+        <AssetSelectTrigger
+          selectedAsset={selectedAsset}
+          className={className}
+        />
       </PopoverTrigger>
       <PopoverContent
         align="start"
@@ -137,7 +155,10 @@ export const AssetSelect = ({
           onChainSelect={setSelectedChain}
         />
 
-        <Command className="h-auto min-h-0 min-w-0 flex-1 rounded-none" shouldFilter={false}>
+        <Command
+          className="h-auto min-h-0 min-w-0 flex-1 rounded-none"
+          shouldFilter={false}
+        >
           <CommandInput
             ref={searchInputRef}
             placeholder="Search asset…"
@@ -178,7 +199,9 @@ export const AssetSelect = ({
                     <Avatar className="aspect-square size-7 shrink-0">
                       <AvatarImage
                         src={asset.metadata.imageUrl}
-                        alt={asset.metadata.displayName ?? asset.metadata.symbol}
+                        alt={
+                          asset.metadata.displayName ?? asset.metadata.symbol
+                        }
                       />
                       <AvatarFallback>
                         <Skeleton className="rounded-full" />
@@ -187,9 +210,12 @@ export const AssetSelect = ({
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <div className="flex items-center justify-between gap-1">
                         <span>{asset.metadata.symbol}</span>
-                        <span className="text-muted-foreground text-sm tabular-nums">
+                        <span className="text-sm text-muted-foreground tabular-nums">
                           {asset?.balance
-                            ? bigNumberToFloat(asset.balance, asset.metadata.decimals)
+                            ? bigNumberToFloat(
+                                asset.balance,
+                                asset.metadata.decimals,
+                              )
                             : null}
                         </span>
                       </div>
@@ -215,7 +241,10 @@ export const AssetSelect = ({
   );
 };
 
-interface AssetSelectTriggerProps extends Omit<React.ComponentProps<typeof Button>, "children"> {
+interface AssetSelectTriggerProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "children"
+> {
   selectedAsset: Asset | null;
 }
 
@@ -230,7 +259,7 @@ const AssetSelectTrigger = React.forwardRef<
       variant="outline"
       role="combobox"
       className={cn(
-        "w-full justify-start group data-[state=open]:border-foreground/50 data-[popup-open]:border-foreground/50 py-0.5",
+        "group w-full justify-start py-0.5 data-[popup-open]:border-foreground/50 data-[state=open]:border-foreground/50",
         className,
       )}
     >
@@ -243,7 +272,7 @@ const AssetSelectTrigger = React.forwardRef<
                 alt={selectedAsset.metadata.symbol}
               />
             </Avatar>
-            <span className="bg-background absolute -right-1 -bottom-1 flex size-3 rounded-full p-px">
+            <span className="absolute -right-1 -bottom-1 flex size-3 rounded-full bg-background p-px">
               <Avatar className="size-full">
                 <AvatarImage
                   src={CHAIN_METADATA[selectedAsset.id.chain.$case].imageUrl}
@@ -263,7 +292,10 @@ const AssetSelectTrigger = React.forwardRef<
   );
 });
 
-interface BlockchainSelectorProps extends Omit<React.ComponentProps<"div">, "children"> {
+interface BlockchainSelectorProps extends Omit<
+  React.ComponentProps<"div">,
+  "children"
+> {
   selectedChain: Chain;
   chains: ChainTabConfig[];
   onChainSelect: (chain: Chain) => void;

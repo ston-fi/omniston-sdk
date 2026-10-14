@@ -38,7 +38,7 @@ export const Copy = React.forwardRef<HTMLDivElement, CopyProps>(
         className={cn(
           "inline-flex w-max items-center gap-2 rounded-md transition-all duration-200",
           "hover:text-primary",
-          "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden",
           className,
         )}
         onClick={handleCopy}
@@ -57,13 +57,17 @@ export const Copy = React.forwardRef<HTMLDivElement, CopyProps>(
           <CopyIcon
             className={cn(
               "h-4 w-4 transition-all duration-300 ease-in-out",
-              copied ? "opacity-0 rotate-180" : "scale-100 opacity-100 rotate-0",
+              copied
+                ? "rotate-180 opacity-0"
+                : "scale-100 rotate-0 opacity-100",
             )}
           />
           <CheckIcon
             className={cn(
-              "absolute inset-0 h-4 w-4 transition-all duration-300 ease-in-out text-green-600",
-              copied ? "scale-100 opacity-100 rotate-0" : "scale-0 opacity-0 rotate-180",
+              "absolute inset-0 h-4 w-4 text-green-600 transition-all duration-300 ease-in-out",
+              copied
+                ? "scale-100 rotate-0 opacity-100"
+                : "scale-0 rotate-180 opacity-0",
             )}
           />
         </div>

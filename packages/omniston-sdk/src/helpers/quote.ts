@@ -35,7 +35,9 @@ type RequiredNonNullable<T, K extends keyof T> = T & {
   [P in K]-?: NonNullable<T[P]>;
 };
 
-export function isHtlcOrderQuote(quote: Quote): quote is QuoteOfType<"order"> & {
+export function isHtlcOrderQuote(
+  quote: Quote,
+): quote is QuoteOfType<"order"> & {
   settlementData: OneOf<
     "order",
     RequiredNonNullable<
@@ -51,7 +53,10 @@ export function isHtlcOrderQuote(quote: Quote): quote is QuoteOfType<"order"> & 
 } {
   if (!isOrderQuote(quote)) return false;
 
-  if (quote.inputAsset.chain?.$case === "ton" && quote.outputAsset.chain?.$case === "ton") {
+  if (
+    quote.inputAsset.chain?.$case === "ton" &&
+    quote.outputAsset.chain?.$case === "ton"
+  ) {
     return false;
   }
 

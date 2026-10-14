@@ -107,7 +107,9 @@ export const HtlcOrderDetailsV1: MessageFns<HtlcOrderDetailsV1> = {
   fromJSON(object: any): HtlcOrderDetailsV1 {
     return {
       quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      outputAsset: isSet(object.output_asset) ? AssetId.fromJSON(object.output_asset) : undefined,
+      outputAsset: isSet(object.output_asset)
+        ? AssetId.fromJSON(object.output_asset)
+        : undefined,
       traderDstAddress: isSet(object.trader_dst_address)
         ? ChainAddress.fromJSON(object.trader_dst_address)
         : undefined,
@@ -132,7 +134,9 @@ export const HtlcOrderDetailsV1: MessageFns<HtlcOrderDetailsV1> = {
       obj.trader_dst_address = ChainAddress.toJSON(message.traderDstAddress);
     }
     if (message.traderDstDiscloseAddress !== undefined) {
-      obj.trader_dst_disclose_address = ChainAddress.toJSON(message.traderDstDiscloseAddress);
+      obj.trader_dst_disclose_address = ChainAddress.toJSON(
+        message.traderDstDiscloseAddress,
+      );
     }
     if (message.secretHashes?.length) {
       obj.secret_hashes = message.secretHashes.map((e) => base64FromBytes(e));
@@ -140,10 +144,14 @@ export const HtlcOrderDetailsV1: MessageFns<HtlcOrderDetailsV1> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<HtlcOrderDetailsV1>, I>>(base?: I): HtlcOrderDetailsV1 {
+  create<I extends Exact<DeepPartial<HtlcOrderDetailsV1>, I>>(
+    base?: I,
+  ): HtlcOrderDetailsV1 {
     return HtlcOrderDetailsV1.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<HtlcOrderDetailsV1>, I>>(object: I): HtlcOrderDetailsV1 {
+  fromPartial<I extends Exact<DeepPartial<HtlcOrderDetailsV1>, I>>(
+    object: I,
+  ): HtlcOrderDetailsV1 {
     const message = createBaseHtlcOrderDetailsV1();
     message.quoteId = object.quoteId ?? "";
     message.outputAsset =
@@ -155,7 +163,8 @@ export const HtlcOrderDetailsV1: MessageFns<HtlcOrderDetailsV1> = {
         ? ChainAddress.fromPartial(object.traderDstAddress)
         : undefined;
     message.traderDstDiscloseAddress =
-      object.traderDstDiscloseAddress !== undefined && object.traderDstDiscloseAddress !== null
+      object.traderDstDiscloseAddress !== undefined &&
+      object.traderDstDiscloseAddress !== null
         ? ChainAddress.fromPartial(object.traderDstDiscloseAddress)
         : undefined;
     message.secretHashes = object.secretHashes?.map((e) => e) || [];
@@ -167,46 +176,53 @@ function createBaseVersionedHtlcOrderDetails(): VersionedHtlcOrderDetails {
   return { details: undefined };
 }
 
-export const VersionedHtlcOrderDetails: MessageFns<VersionedHtlcOrderDetails> = {
-  fromJSON(object: any): VersionedHtlcOrderDetails {
-    return {
-      details: isSet(object.version1)
-        ? { $case: "version1", value: HtlcOrderDetailsV1.fromJSON(object.version1) }
-        : undefined,
-    };
-  },
+export const VersionedHtlcOrderDetails: MessageFns<VersionedHtlcOrderDetails> =
+  {
+    fromJSON(object: any): VersionedHtlcOrderDetails {
+      return {
+        details: isSet(object.version1)
+          ? {
+              $case: "version1",
+              value: HtlcOrderDetailsV1.fromJSON(object.version1),
+            }
+          : undefined,
+      };
+    },
 
-  toJSON(message: VersionedHtlcOrderDetails): unknown {
-    const obj: any = {};
-    if (message.details?.$case === "version1") {
-      obj.version1 = HtlcOrderDetailsV1.toJSON(message.details.value);
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<VersionedHtlcOrderDetails>, I>>(
-    base?: I,
-  ): VersionedHtlcOrderDetails {
-    return VersionedHtlcOrderDetails.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<VersionedHtlcOrderDetails>, I>>(
-    object: I,
-  ): VersionedHtlcOrderDetails {
-    const message = createBaseVersionedHtlcOrderDetails();
-    switch (object.details?.$case) {
-      case "version1": {
-        if (object.details?.value !== undefined && object.details?.value !== null) {
-          message.details = {
-            $case: "version1",
-            value: HtlcOrderDetailsV1.fromPartial(object.details.value),
-          };
-        }
-        break;
+    toJSON(message: VersionedHtlcOrderDetails): unknown {
+      const obj: any = {};
+      if (message.details?.$case === "version1") {
+        obj.version1 = HtlcOrderDetailsV1.toJSON(message.details.value);
       }
-    }
-    return message;
-  },
-};
+      return obj;
+    },
+
+    create<I extends Exact<DeepPartial<VersionedHtlcOrderDetails>, I>>(
+      base?: I,
+    ): VersionedHtlcOrderDetails {
+      return VersionedHtlcOrderDetails.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<VersionedHtlcOrderDetails>, I>>(
+      object: I,
+    ): VersionedHtlcOrderDetails {
+      const message = createBaseVersionedHtlcOrderDetails();
+      switch (object.details?.$case) {
+        case "version1": {
+          if (
+            object.details?.value !== undefined &&
+            object.details?.value !== null
+          ) {
+            message.details = {
+              $case: "version1",
+              value: HtlcOrderDetailsV1.fromPartial(object.details.value),
+            };
+          }
+          break;
+        }
+      }
+      return message;
+    },
+  };
 
 function createBaseSecretModeGenerated(): SecretModeGenerated {
   return { maxExecutions: 0 };
@@ -215,7 +231,9 @@ function createBaseSecretModeGenerated(): SecretModeGenerated {
 export const SecretModeGenerated: MessageFns<SecretModeGenerated> = {
   fromJSON(object: any): SecretModeGenerated {
     return {
-      maxExecutions: isSet(object.max_executions) ? globalThis.Number(object.max_executions) : 0,
+      maxExecutions: isSet(object.max_executions)
+        ? globalThis.Number(object.max_executions)
+        : 0,
     };
   },
 
@@ -227,7 +245,9 @@ export const SecretModeGenerated: MessageFns<SecretModeGenerated> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SecretModeGenerated>, I>>(base?: I): SecretModeGenerated {
+  create<I extends Exact<DeepPartial<SecretModeGenerated>, I>>(
+    base?: I,
+  ): SecretModeGenerated {
     return SecretModeGenerated.fromPartial(base ?? ({} as any));
   },
   fromPartial<I extends Exact<DeepPartial<SecretModeGenerated>, I>>(
@@ -260,10 +280,14 @@ export const SecretModeProvided: MessageFns<SecretModeProvided> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SecretModeProvided>, I>>(base?: I): SecretModeProvided {
+  create<I extends Exact<DeepPartial<SecretModeProvided>, I>>(
+    base?: I,
+  ): SecretModeProvided {
     return SecretModeProvided.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SecretModeProvided>, I>>(object: I): SecretModeProvided {
+  fromPartial<I extends Exact<DeepPartial<SecretModeProvided>, I>>(
+    object: I,
+  ): SecretModeProvided {
     const message = createBaseSecretModeProvided();
     message.hashes = object.hashes?.map((e) => e) || [];
     return message;
@@ -278,9 +302,15 @@ export const HtlcSecrets: MessageFns<HtlcSecrets> = {
   fromJSON(object: any): HtlcSecrets {
     return {
       secretMode: isSet(object.generated)
-        ? { $case: "generated", value: SecretModeGenerated.fromJSON(object.generated) }
+        ? {
+            $case: "generated",
+            value: SecretModeGenerated.fromJSON(object.generated),
+          }
         : isSet(object.provided)
-          ? { $case: "provided", value: SecretModeProvided.fromJSON(object.provided) }
+          ? {
+              $case: "provided",
+              value: SecretModeProvided.fromJSON(object.provided),
+            }
           : undefined,
     };
   },
@@ -298,11 +328,16 @@ export const HtlcSecrets: MessageFns<HtlcSecrets> = {
   create<I extends Exact<DeepPartial<HtlcSecrets>, I>>(base?: I): HtlcSecrets {
     return HtlcSecrets.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<HtlcSecrets>, I>>(object: I): HtlcSecrets {
+  fromPartial<I extends Exact<DeepPartial<HtlcSecrets>, I>>(
+    object: I,
+  ): HtlcSecrets {
     const message = createBaseHtlcSecrets();
     switch (object.secretMode?.$case) {
       case "generated": {
-        if (object.secretMode?.value !== undefined && object.secretMode?.value !== null) {
+        if (
+          object.secretMode?.value !== undefined &&
+          object.secretMode?.value !== null
+        ) {
           message.secretMode = {
             $case: "generated",
             value: SecretModeGenerated.fromPartial(object.secretMode.value),
@@ -311,7 +346,10 @@ export const HtlcSecrets: MessageFns<HtlcSecrets> = {
         break;
       }
       case "provided": {
-        if (object.secretMode?.value !== undefined && object.secretMode?.value !== null) {
+        if (
+          object.secretMode?.value !== undefined &&
+          object.secretMode?.value !== null
+        ) {
           message.secretMode = {
             $case: "provided",
             value: SecretModeProvided.fromPartial(object.secretMode.value),
@@ -349,7 +387,14 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -366,7 +411,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

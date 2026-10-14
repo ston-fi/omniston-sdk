@@ -177,7 +177,7 @@
 }
 
 button[data-tc-connect-button] {
-  @apply bg-primary transform-none!;
+  @apply transform-none! bg-primary;
 }
 
 button[data-tc-dropdown-button] {

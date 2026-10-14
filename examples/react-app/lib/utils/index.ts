@@ -49,7 +49,11 @@ export function bigNumberToFloat(value: bigint | string, decimals: number) {
  * Trims a string to keep a specified number of characters at the start and end,
  * replacing the middle section with an ellipsis.
  */
-export function trimStringWithEllipsis(str: string, start: number, end?: number) {
+export function trimStringWithEllipsis(
+  str: string,
+  start: number,
+  end?: number,
+) {
   if (end === undefined) {
     end = start;
   }

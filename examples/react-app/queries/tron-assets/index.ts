@@ -18,9 +18,9 @@ export const tronAssetQueryFactory = createTronAssetQueryFactory({
   queryKey: TRON_ASSETS_QUERY_KEY,
   searchQueryKey: TRON_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.TRON, TRON_ASSETS_MOCK, tronAssetMockSchema)).map(
-      transformToAsset,
-    ),
+    (
+      await resolveAssetsMock(Chain.TRON, TRON_ASSETS_MOCK, tronAssetMockSchema)
+    ).map(transformToAsset),
   ),
 });
 
@@ -40,14 +40,16 @@ export function createTronAssetQueryFactory({
   ): Promise<Asset[]> => {
     const trc20ContractAddresses = tronAssets
       .map((asset) =>
-        asset.id.chain.$case === Chain.TRON && asset.id.chain.value.kind.$case === "trc20"
+        asset.id.chain.$case === Chain.TRON &&
+        asset.id.chain.value.kind.$case === "trc20"
           ? asset.id.chain.value.kind.value
           : null,
       )
       .filter(Boolean);
     const nativeAsset = tronAssets.find(
       (asset) =>
-        asset.id.chain.$case === Chain.TRON && asset.id.chain.value.kind.$case === "native",
+        asset.id.chain.$case === Chain.TRON &&
+        asset.id.chain.value.kind.$case === "native",
     );
 
     tronWeb.setAddress(walletAddress);
@@ -74,7 +76,10 @@ export function createTronAssetQueryFactory({
     let trc20BalanceIndex = 0;
 
     return tronAssets.map((asset) => {
-      if (asset.id.chain.$case === Chain.TRON && asset.id.chain.value.kind.$case === "native") {
+      if (
+        asset.id.chain.$case === Chain.TRON &&
+        asset.id.chain.value.kind.$case === "native"
+      ) {
         return {
           ...asset,
           balance: nativeBalance,
@@ -133,7 +138,8 @@ export function createTronAssetQueryFactory({
           const term = searchTerm.toLowerCase();
 
           const filteredAssets = assets.filter((asset) =>
-            asset.id.chain.$case === Chain.TRON && asset.id.chain.value.kind.$case === "trc20"
+            asset.id.chain.$case === Chain.TRON &&
+            asset.id.chain.value.kind.$case === "trc20"
               ? asset.id.chain.value.kind.value === term
               : asset.metadata.symbol?.toLowerCase().includes(term) ||
                 asset.metadata.displayName?.toLowerCase().includes(term),

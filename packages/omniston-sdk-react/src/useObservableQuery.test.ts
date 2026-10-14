@@ -198,7 +198,8 @@ async function importUseObservableQueryWithMocks(options?: {
     useQuery: useQueryMock,
     useQueryClient: useQueryClientMock,
   }));
-  const useSyncExternalStoreMock = options?.useSyncExternalStore ?? (() => undefined);
+  const useSyncExternalStoreMock =
+    options?.useSyncExternalStore ?? (() => undefined);
   vi.doMock("react", () => ({
     useRef: <T>(value: T) => ({ current: value }),
     useSyncExternalStore: useSyncExternalStoreMock,
@@ -312,12 +313,14 @@ describe("useObservableQuery enabled behavior", () => {
 
   test("triggers external-store update on each query next emission", async () => {
     const notifications = { count: 0 };
-    const useSyncExternalStore = vi.fn((subscribe: (callback: () => void) => () => void) => {
-      subscribe(() => {
-        notifications.count++;
-      });
-      return undefined;
-    });
+    const useSyncExternalStore = vi.fn(
+      (subscribe: (callback: () => void) => () => void) => {
+        subscribe(() => {
+          notifications.count++;
+        });
+        return undefined;
+      },
+    );
 
     const { useObservableQuery } = await importUseObservableQueryWithMocks({
       useSyncExternalStore,

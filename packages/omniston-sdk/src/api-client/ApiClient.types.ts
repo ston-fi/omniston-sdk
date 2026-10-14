@@ -1,6 +1,10 @@
 import type { Observable } from "rxjs";
+
 import type { ApiStreamController } from "./ApiStreamController";
-import type { ConnectionStatus, ConnectionStatusEvent } from "./ConnectionStatus";
+import type {
+  ConnectionStatus,
+  ConnectionStatusEvent,
+} from "./ConnectionStatus";
 
 /**
  * A client to communicate with Omniston API.
@@ -18,7 +22,11 @@ export interface IApiClient {
    * @param eventMethod Notification method name
    * @param payload Method parameters as JSON
    */
-  subscribeToStream(method: string, eventMethod: string, payload: unknown): ApiStreamController;
+  subscribeToStream(
+    method: string,
+    eventMethod: string,
+    payload: unknown,
+  ): ApiStreamController;
 
   get connectionStatus(): ConnectionStatus;
   get connectionStatusEvents(): Observable<ConnectionStatusEvent>;

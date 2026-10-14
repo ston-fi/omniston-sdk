@@ -213,25 +213,55 @@ export const AssetId: MessageFns<AssetId> = {
             : isSet(object.bnb)
               ? { $case: "bnb", value: EvmAssetId.fromJSON(object.bnb) }
               : isSet(object.ethereum)
-                ? { $case: "ethereum", value: EvmAssetId.fromJSON(object.ethereum) }
+                ? {
+                    $case: "ethereum",
+                    value: EvmAssetId.fromJSON(object.ethereum),
+                  }
                 : isSet(object.polygon)
-                  ? { $case: "polygon", value: EvmAssetId.fromJSON(object.polygon) }
+                  ? {
+                      $case: "polygon",
+                      value: EvmAssetId.fromJSON(object.polygon),
+                    }
                   : isSet(object.robinhood)
-                    ? { $case: "robinhood", value: EvmAssetId.fromJSON(object.robinhood) }
+                    ? {
+                        $case: "robinhood",
+                        value: EvmAssetId.fromJSON(object.robinhood),
+                      }
                     : isSet(object.xlayer)
-                      ? { $case: "xlayer", value: EvmAssetId.fromJSON(object.xlayer) }
+                      ? {
+                          $case: "xlayer",
+                          value: EvmAssetId.fromJSON(object.xlayer),
+                        }
                       : isSet(object.arc)
-                        ? { $case: "arc", value: EvmAssetId.fromJSON(object.arc) }
+                        ? {
+                            $case: "arc",
+                            value: EvmAssetId.fromJSON(object.arc),
+                          }
                         : isSet(object.monad)
-                          ? { $case: "monad", value: EvmAssetId.fromJSON(object.monad) }
+                          ? {
+                              $case: "monad",
+                              value: EvmAssetId.fromJSON(object.monad),
+                            }
                           : isSet(object.plasma)
-                            ? { $case: "plasma", value: EvmAssetId.fromJSON(object.plasma) }
+                            ? {
+                                $case: "plasma",
+                                value: EvmAssetId.fromJSON(object.plasma),
+                              }
                             : isSet(object.hyperevm)
-                              ? { $case: "hyperevm", value: EvmAssetId.fromJSON(object.hyperevm) }
+                              ? {
+                                  $case: "hyperevm",
+                                  value: EvmAssetId.fromJSON(object.hyperevm),
+                                }
                               : isSet(object.ton)
-                                ? { $case: "ton", value: TonAssetId.fromJSON(object.ton) }
+                                ? {
+                                    $case: "ton",
+                                    value: TonAssetId.fromJSON(object.ton),
+                                  }
                                 : isSet(object.tron)
-                                  ? { $case: "tron", value: TronAssetId.fromJSON(object.tron) }
+                                  ? {
+                                      $case: "tron",
+                                      value: TronAssetId.fromJSON(object.tron),
+                                    }
                                   : undefined,
     };
   },
@@ -278,85 +308,127 @@ export const AssetId: MessageFns<AssetId> = {
     switch (object.chain?.$case) {
       case "arbitrum": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "arbitrum", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "arbitrum",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "avalanche": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "avalanche", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "avalanche",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "base": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "base", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "base",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "bnb": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "bnb", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "bnb",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "ethereum": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "ethereum", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "ethereum",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "polygon": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "polygon", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "polygon",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "robinhood": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "robinhood", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "robinhood",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "xlayer": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "xlayer", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "xlayer",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "arc": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "arc", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "arc",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "monad": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "monad", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "monad",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "plasma": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "plasma", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "plasma",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "hyperevm": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "hyperevm", value: EvmAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "hyperevm",
+            value: EvmAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "ton": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "ton", value: TonAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "ton",
+            value: TonAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
       case "tron": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
-          message.chain = { $case: "tron", value: TronAssetId.fromPartial(object.chain.value) };
+          message.chain = {
+            $case: "tron",
+            value: TronAssetId.fromPartial(object.chain.value),
+          };
         }
         break;
       }
@@ -393,12 +465,17 @@ export const TonAssetId: MessageFns<TonAssetId> = {
   create<I extends Exact<DeepPartial<TonAssetId>, I>>(base?: I): TonAssetId {
     return TonAssetId.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TonAssetId>, I>>(object: I): TonAssetId {
+  fromPartial<I extends Exact<DeepPartial<TonAssetId>, I>>(
+    object: I,
+  ): TonAssetId {
     const message = createBaseTonAssetId();
     switch (object.kind?.$case) {
       case "native": {
         if (object.kind?.value !== undefined && object.kind?.value !== null) {
-          message.kind = { $case: "native", value: Empty.fromPartial(object.kind.value) };
+          message.kind = {
+            $case: "native",
+            value: Empty.fromPartial(object.kind.value),
+          };
         }
         break;
       }
@@ -425,7 +502,10 @@ export const TronAssetId: MessageFns<TronAssetId> = {
         : isSet(object.trc20)
           ? { $case: "trc20", value: globalThis.String(object.trc20) }
           : isSet(object.trc1155)
-            ? { $case: "trc1155", value: Trc1155AssetId.fromJSON(object.trc1155) }
+            ? {
+                $case: "trc1155",
+                value: Trc1155AssetId.fromJSON(object.trc1155),
+              }
             : undefined,
     };
   },
@@ -445,12 +525,17 @@ export const TronAssetId: MessageFns<TronAssetId> = {
   create<I extends Exact<DeepPartial<TronAssetId>, I>>(base?: I): TronAssetId {
     return TronAssetId.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TronAssetId>, I>>(object: I): TronAssetId {
+  fromPartial<I extends Exact<DeepPartial<TronAssetId>, I>>(
+    object: I,
+  ): TronAssetId {
     const message = createBaseTronAssetId();
     switch (object.kind?.$case) {
       case "native": {
         if (object.kind?.value !== undefined && object.kind?.value !== null) {
-          message.kind = { $case: "native", value: Empty.fromPartial(object.kind.value) };
+          message.kind = {
+            $case: "native",
+            value: Empty.fromPartial(object.kind.value),
+          };
         }
         break;
       }
@@ -462,7 +547,10 @@ export const TronAssetId: MessageFns<TronAssetId> = {
       }
       case "trc1155": {
         if (object.kind?.value !== undefined && object.kind?.value !== null) {
-          message.kind = { $case: "trc1155", value: Trc1155AssetId.fromPartial(object.kind.value) };
+          message.kind = {
+            $case: "trc1155",
+            value: Trc1155AssetId.fromPartial(object.kind.value),
+          };
         }
         break;
       }
@@ -496,10 +584,14 @@ export const Trc1155AssetId: MessageFns<Trc1155AssetId> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Trc1155AssetId>, I>>(base?: I): Trc1155AssetId {
+  create<I extends Exact<DeepPartial<Trc1155AssetId>, I>>(
+    base?: I,
+  ): Trc1155AssetId {
     return Trc1155AssetId.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Trc1155AssetId>, I>>(object: I): Trc1155AssetId {
+  fromPartial<I extends Exact<DeepPartial<Trc1155AssetId>, I>>(
+    object: I,
+  ): Trc1155AssetId {
     const message = createBaseTrc1155AssetId();
     message.contractAddress = object.contractAddress ?? "";
     message.tokenId = object.tokenId ?? "";
@@ -519,7 +611,10 @@ export const EvmAssetId: MessageFns<EvmAssetId> = {
         : isSet(object.erc20)
           ? { $case: "erc20", value: globalThis.String(object.erc20) }
           : isSet(object.erc1155)
-            ? { $case: "erc1155", value: Erc1155AssetId.fromJSON(object.erc1155) }
+            ? {
+                $case: "erc1155",
+                value: Erc1155AssetId.fromJSON(object.erc1155),
+              }
             : undefined,
     };
   },
@@ -539,12 +634,17 @@ export const EvmAssetId: MessageFns<EvmAssetId> = {
   create<I extends Exact<DeepPartial<EvmAssetId>, I>>(base?: I): EvmAssetId {
     return EvmAssetId.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<EvmAssetId>, I>>(object: I): EvmAssetId {
+  fromPartial<I extends Exact<DeepPartial<EvmAssetId>, I>>(
+    object: I,
+  ): EvmAssetId {
     const message = createBaseEvmAssetId();
     switch (object.kind?.$case) {
       case "native": {
         if (object.kind?.value !== undefined && object.kind?.value !== null) {
-          message.kind = { $case: "native", value: Empty.fromPartial(object.kind.value) };
+          message.kind = {
+            $case: "native",
+            value: Empty.fromPartial(object.kind.value),
+          };
         }
         break;
       }
@@ -556,7 +656,10 @@ export const EvmAssetId: MessageFns<EvmAssetId> = {
       }
       case "erc1155": {
         if (object.kind?.value !== undefined && object.kind?.value !== null) {
-          message.kind = { $case: "erc1155", value: Erc1155AssetId.fromPartial(object.kind.value) };
+          message.kind = {
+            $case: "erc1155",
+            value: Erc1155AssetId.fromPartial(object.kind.value),
+          };
         }
         break;
       }
@@ -590,10 +693,14 @@ export const Erc1155AssetId: MessageFns<Erc1155AssetId> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<Erc1155AssetId>, I>>(base?: I): Erc1155AssetId {
+  create<I extends Exact<DeepPartial<Erc1155AssetId>, I>>(
+    base?: I,
+  ): Erc1155AssetId {
     return Erc1155AssetId.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Erc1155AssetId>, I>>(object: I): Erc1155AssetId {
+  fromPartial<I extends Exact<DeepPartial<Erc1155AssetId>, I>>(
+    object: I,
+  ): Erc1155AssetId {
     const message = createBaseErc1155AssetId();
     message.contractAddress = object.contractAddress ?? "";
     message.tokenId = object.tokenId ?? "";
@@ -601,7 +708,14 @@ export const Erc1155AssetId: MessageFns<Erc1155AssetId> = {
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -618,7 +732,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

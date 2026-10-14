@@ -1,5 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
 import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk-react";
+import { queryOptions } from "@tanstack/react-query";
 
 import type { Asset } from "~/models/asset";
 import { Chain } from "~/models/chain";
@@ -21,19 +21,32 @@ export const tonAssetQueryFactory = {
     walletAddress?: ChainAddress;
   }) => {
     return queryOptions({
-      queryKey: [TON_ASSETS_QUERY_KEY, walletAddress, condition, unconditionalAssets],
+      queryKey: [
+        TON_ASSETS_QUERY_KEY,
+        walletAddress,
+        condition,
+        unconditionalAssets,
+      ],
       queryFn: async () => {
         const assets = await fetchTonAssets({
           condition: condition ? condition : undefined,
-          unconditionalAssets: unconditionalAssets?.reduce<string[]>((acc, assetId) => {
-            if (assetId.chain.$case === Chain.TON && assetId.chain.value.kind.$case === "jetton") {
-              acc.push(assetId.chain.value.kind.value);
-            }
+          unconditionalAssets: unconditionalAssets?.reduce<string[]>(
+            (acc, assetId) => {
+              if (
+                assetId.chain.$case === Chain.TON &&
+                assetId.chain.value.kind.$case === "jetton"
+              ) {
+                acc.push(assetId.chain.value.kind.value);
+              }
 
-            return acc;
-          }, []),
+              return acc;
+            },
+            [],
+          ),
           walletAddress:
-            walletAddress?.chain.$case === Chain.TON ? walletAddress.chain.value : undefined,
+            walletAddress?.chain.$case === Chain.TON
+              ? walletAddress.chain.value
+              : undefined,
         });
 
         const sortedAssets = sortAssets(assets);
@@ -65,15 +78,23 @@ export const tonAssetQueryFactory = {
         const assets = await searchTonAssets({
           searchTerms,
           condition: condition ? condition : undefined,
-          unconditionalAssets: unconditionalAssets?.reduce<string[]>((acc, assetId) => {
-            if (assetId.chain.$case === Chain.TON && assetId.chain.value.kind.$case === "jetton") {
-              acc.push(assetId.chain.value.kind.value);
-            }
+          unconditionalAssets: unconditionalAssets?.reduce<string[]>(
+            (acc, assetId) => {
+              if (
+                assetId.chain.$case === Chain.TON &&
+                assetId.chain.value.kind.$case === "jetton"
+              ) {
+                acc.push(assetId.chain.value.kind.value);
+              }
 
-            return acc;
-          }, []),
+              return acc;
+            },
+            [],
+          ),
           walletAddress:
-            walletAddress?.chain.$case === Chain.TON ? walletAddress.chain.value : undefined,
+            walletAddress?.chain.$case === Chain.TON
+              ? walletAddress.chain.value
+              : undefined,
         });
 
         const sortedAssets = sortAssets(assets);

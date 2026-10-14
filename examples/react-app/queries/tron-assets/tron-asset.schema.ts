@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import type { Asset } from "~/models/asset";
 import { tronAddressSchema } from "~/lib/tron/address";
+import type { Asset } from "~/models/asset";
 import { Chain } from "~/models/chain";
 
 export const tronAssetMockSchema = z.object({

@@ -3,7 +3,11 @@ import type {
   TonEscrowVaultBalancesRequest,
   TonEscrowVaultBalancesResponse,
 } from "@ston-fi/omniston-sdk";
-import { type UseQueryOptions, type UseQueryResult, useQuery } from "@tanstack/react-query";
+import {
+  type UseQueryOptions,
+  type UseQueryResult,
+  useQuery,
+} from "@tanstack/react-query";
 
 import { useOmniston } from "./useOmniston";
 

@@ -10,28 +10,37 @@ import {
   isOrderQuote,
 } from "@ston-fi/omniston-sdk-react";
 
-import { bigNumberToFloat, cn, trimStringWithEllipsis } from "~/lib/utils";
-import { Copy } from "~/components/ui/copy";
 import { ExplorerAddressPreview } from "~/components/ExplorerAddressPreview";
 import { TradeTrackStatusPresenter } from "~/components/TradeTrackStatusPresenter";
+import { Copy } from "~/components/ui/copy";
+import { CopyJsonCard } from "~/components/ui/copy-json-card";
 import { DescriptionList } from "~/components/ui/description-list";
 import { Skeleton } from "~/components/ui/skeleton";
-import { Chain } from "~/models/chain";
-import { CopyJsonCard } from "~/components/ui/copy-json-card";
-import { useTradeTrackState } from "~/providers/trade-track";
 import { useQuoteAssets } from "~/hooks/useQuoteAssets";
+import { bigNumberToFloat, cn, trimStringWithEllipsis } from "~/lib/utils";
+import { Chain } from "~/models/chain";
+import { useTradeTrackState } from "~/providers/trade-track";
 
 export function TradeTrackOrder(props: { className?: string }) {
-  const { quote: trackingQuote, tradeEvent: tradeTrackProgress } = useTradeTrackState();
+  const { quote: trackingQuote, tradeEvent: tradeTrackProgress } =
+    useTradeTrackState();
 
   if (!trackingQuote || !isOrderQuote(trackingQuote)) return null;
 
   const orderTrackEvent =
-    tradeTrackProgress?.$case === "order" ? tradeTrackProgress.value : undefined;
+    tradeTrackProgress?.$case === "order"
+      ? tradeTrackProgress.value
+      : undefined;
 
   switch (orderTrackEvent?.$case) {
     case "order": {
-      return <OrderEventView {...props} quote={trackingQuote} order={orderTrackEvent.value} />;
+      return (
+        <OrderEventView
+          {...props}
+          quote={trackingQuote}
+          order={orderTrackEvent.value}
+        />
+      );
     }
     case "unsubscribed": {
       return (
@@ -61,9 +70,16 @@ export function TradeTrackOrder(props: { className?: string }) {
   }
 }
 
-function TradeTrackOrderCard({ className, children, ...props }: React.ComponentProps<"div">) {
+function TradeTrackOrderCard({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
-    <div {...props} className={cn("flex flex-col gap-2 p-4 border rounded-md", className)}>
+    <div
+      {...props}
+      className={cn("flex flex-col gap-2 rounded-md border p-4", className)}
+    >
       {children}
     </div>
   );
@@ -78,7 +94,8 @@ function OrderEventView({
   order: Order;
   className?: string;
 }) {
-  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
+    useQuoteAssets(quote);
 
   const {
     status,
@@ -90,7 +107,12 @@ function OrderEventView({
   } = order;
 
   return (
-    <div className={cn("flex flex-col gap-2 p-4 border rounded-md", props.className)}>
+    <div
+      className={cn(
+        "flex flex-col gap-2 rounded-md border p-4",
+        props.className,
+      )}
+    >
       <DescriptionList>
         <li>
           <span>Status:</span>
@@ -102,13 +124,17 @@ function OrderEventView({
         {estimatedFinishTimestamp ? (
           <li>
             <span>Estimated finish timestamp:</span>
-            <span>{new Date(estimatedFinishTimestamp * 1000).toLocaleString()}</span>
+            <span>
+              {new Date(estimatedFinishTimestamp * 1000).toLocaleString()}
+            </span>
           </li>
         ) : null}
         {maximumFinishTimestamp ? (
           <li>
             <span>Maximum finish timestamp:</span>
-            <span>{new Date(maximumFinishTimestamp * 1000).toLocaleString()}</span>
+            <span>
+              {new Date(maximumFinishTimestamp * 1000).toLocaleString()}
+            </span>
           </li>
         ) : null}
         <li>
@@ -148,7 +174,8 @@ function EscrowExecution({
   executions: Execution[];
   execution: Execution;
 }) {
-  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
+    useQuoteAssets(quote);
 
   const {
     index,
@@ -189,7 +216,9 @@ function EscrowExecution({
         {secretHashStr ? (
           <li>
             <span>secretHash</span>
-            <Copy value={secretHashStr}>{trimStringWithEllipsis(secretHashStr, 6)}</Copy>
+            <Copy value={secretHashStr}>
+              {trimStringWithEllipsis(secretHashStr, 6)}
+            </Copy>
           </li>
         ) : null}
         <hr />
@@ -215,7 +244,9 @@ function EscrowExecution({
           <span>inputPositionPhase</span>
           <ExecutionPhasePresenter phase={inputPositionPhase} />
         </li>
-        <ExecutionPhaseTimestampsPresenter timestamps={inputPositionPhaseTimestamps} />
+        <ExecutionPhaseTimestampsPresenter
+          timestamps={inputPositionPhaseTimestamps}
+        />
         <hr />
         <li>
           <span>outputUnits</span>
@@ -240,7 +271,9 @@ function EscrowExecution({
           </li>
         ) : null}
         {outputPositionPhaseTimestamps ? (
-          <ExecutionPhaseTimestampsPresenter timestamps={outputPositionPhaseTimestamps} />
+          <ExecutionPhaseTimestampsPresenter
+            timestamps={outputPositionPhaseTimestamps}
+          />
         ) : null}
       </DescriptionList>
     </div>
@@ -286,23 +319,35 @@ function ExecutionPhaseTimestampsPresenter({
       {privateCompletionAvailableTimestamp ? (
         <li>
           <span>privateCompletionAvailableTimestamp:</span>
-          <pre>{new Date(privateCompletionAvailableTimestamp * 1000).toLocaleString()}</pre>
+          <pre>
+            {new Date(
+              privateCompletionAvailableTimestamp * 1000,
+            ).toLocaleString()}
+          </pre>
         </li>
       ) : null}
       {publicCompletionAvailableTimestamp ? (
         <li>
           <span>publicCompletionAvailableTimestamp:</span>
-          <pre>{new Date(publicCompletionAvailableTimestamp * 1000).toLocaleString()}</pre>
+          <pre>
+            {new Date(
+              publicCompletionAvailableTimestamp * 1000,
+            ).toLocaleString()}
+          </pre>
         </li>
       ) : null}
       <li>
         <span>privateRollbackAvailableTimestamp:</span>
-        <pre>{new Date(privateRollbackAvailableTimestamp * 1000).toLocaleString()}</pre>
+        <pre>
+          {new Date(privateRollbackAvailableTimestamp * 1000).toLocaleString()}
+        </pre>
       </li>
       {publicRollbackAvailableTimestamp ? (
         <li>
           <span>publicRollbackAvailableTimestamp:</span>
-          <pre>{new Date(publicRollbackAvailableTimestamp * 1000).toLocaleString()}</pre>
+          <pre>
+            {new Date(publicRollbackAvailableTimestamp * 1000).toLocaleString()}
+          </pre>
         </li>
       ) : null}
     </>

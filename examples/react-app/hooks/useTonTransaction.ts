@@ -1,20 +1,24 @@
+import {
+  matchQuoteByType,
+  isHtlcOrderQuote,
+} from "@ston-fi/omniston-sdk-react";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useMemo } from "react";
-import { matchQuoteByType, isHtlcOrderQuote } from "@ston-fi/omniston-sdk-react";
 
 import { useOmniston } from "~/hooks/useOmniston";
 import { useRfq } from "~/hooks/useRfq";
 import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
+import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
 import { hexToBase64 } from "~/lib/utils";
 import { useSwapSettings } from "~/providers/swap-settings";
-import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
 
 export function useTonTransaction() {
   const [tonConnect] = useTonConnectUI();
   const omniston = useOmniston();
 
   const { data: quoteEvent } = useRfq();
-  const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
+  const quote =
+    quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
 
   const { autoSlippageTolerance, htlcMaxExecutions } = useSwapSettings();
 
@@ -43,9 +47,15 @@ export function useTonTransaction() {
           }),
         order: (orderQuote) => async () => {
           if (isHtlcOrderQuote(orderQuote)) {
-            const secrets = Array.from({ length: htlcMaxExecutions }, generateHtlcSecret);
+            const secrets = Array.from(
+              { length: htlcMaxExecutions },
+              generateHtlcSecret,
+            );
             const hashlocks = secrets.map((secret) =>
-              generateHtlcHashlock(secret, orderQuote.settlementData.value.htlcHashingFunction),
+              generateHtlcHashlock(
+                secret,
+                orderQuote.settlementData.value.htlcHashingFunction,
+              ),
             );
 
             htlcSecrets = secrets;

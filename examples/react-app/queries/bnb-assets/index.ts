@@ -20,7 +20,9 @@ export const bnbAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: BNB_ASSETS_QUERY_KEY,
   searchQueryKey: BNB_ASSETS_SEARCH_QUERY_KEY,
   getAssets: async () =>
-    (await resolveAssetsMock(Chain.BNB, BNB_ASSETS_MOCK, evmAssetMockSchema)).map(transformToAsset),
+    (
+      await resolveAssetsMock(Chain.BNB, BNB_ASSETS_MOCK, evmAssetMockSchema)
+    ).map(transformToAsset),
 });
 
 function transformToAsset(bnbAsset: EvmAssetMock): Asset {

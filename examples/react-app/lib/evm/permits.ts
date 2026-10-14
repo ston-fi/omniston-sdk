@@ -1,11 +1,10 @@
+import type { AssetId } from "@ston-fi/omniston-sdk-react";
 import {
   encodeAbiParameters,
   hexToBytes,
   parseAbiParameters,
   type Address as ViemAddress,
 } from "viem";
-
-import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
 export interface Eip2612PermitDomain {
   name: string;

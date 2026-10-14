@@ -1,9 +1,9 @@
-import { useMemo } from "react";
 import { ExternalLink } from "lucide-react";
+import { useMemo } from "react";
 
-import { useAppConfig } from "~/providers/config";
 import { cn } from "~/lib/utils";
 import { Chain } from "~/models/chain";
+import { useAppConfig } from "~/providers/config";
 
 interface ExplorerTransactionPreviewProps extends Omit<
   React.ComponentProps<"a">,
@@ -81,7 +81,7 @@ export const ExplorerTransactionPreview = ({
       rel="noopener noreferrer"
       {...props}
       href={link}
-      className={cn("flex gap-1 items-center hover:text-primary", className)}
+      className={cn("flex items-center gap-1 hover:text-primary", className)}
     >
       {children}
       <ExternalLink className="size-4 shrink-0" />

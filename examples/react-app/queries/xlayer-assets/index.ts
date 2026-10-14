@@ -21,9 +21,13 @@ export const xLayerAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: XLAYER_ASSETS_QUERY_KEY,
   searchQueryKey: XLAYER_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.XLAYER, XLAYER_ASSETS_MOCK, evmAssetMockSchema)).map(
-      transformToAsset,
-    ),
+    (
+      await resolveAssetsMock(
+        Chain.XLAYER,
+        XLAYER_ASSETS_MOCK,
+        evmAssetMockSchema,
+      )
+    ).map(transformToAsset),
   ),
 });
 

@@ -92,4 +92,7 @@ export type {
   AwaitingTransfer,
   SwapProgressEvent,
 } from "./messages/stonfi/omni/v1beta8/types/swap";
-export type { TonMessage, TonTransaction } from "./messages/stonfi/omni/v1beta8/types/ton";
+export type {
+  TonMessage,
+  TonTransaction,
+} from "./messages/stonfi/omni/v1beta8/types/ton";

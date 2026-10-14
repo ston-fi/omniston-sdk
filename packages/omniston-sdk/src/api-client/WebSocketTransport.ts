@@ -15,7 +15,8 @@ export class WebSocketTransport implements Transport {
   private webSocket: WebSocket | undefined;
   private isClosing = false;
 
-  private readonly connectionStatusEventsSubject = new Subject<ConnectionStatusEvent>();
+  private readonly connectionStatusEventsSubject =
+    new Subject<ConnectionStatusEvent>();
   private readonly messagesSubject = new Subject<string>();
 
   public readonly connectionStatusEvents: Observable<ConnectionStatusEvent> =
@@ -92,7 +93,10 @@ export class WebSocketTransport implements Transport {
   close(): void {
     this.isClosing = true;
     const readyState = this.webSocket?.readyState;
-    if (readyState === READY_STATE_CONNECTING || readyState === READY_STATE_OPEN) {
+    if (
+      readyState === READY_STATE_CONNECTING ||
+      readyState === READY_STATE_OPEN
+    ) {
       this.connectionStatusEventsSubject.next({
         status: "closing",
       });

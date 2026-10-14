@@ -2,9 +2,9 @@
 
 import { matchQuoteByType } from "@ston-fi/omniston-sdk-react";
 
-import { useTradeTrackState } from "~/providers/trade-track";
-import { TradeTrackSwap } from "~/components/TradeTrackSwap";
 import { TradeTrackOrder } from "~/components/TradeTrackOrder";
+import { TradeTrackSwap } from "~/components/TradeTrackSwap";
+import { useTradeTrackState } from "~/providers/trade-track";
 
 export function QuoteTrackTrade({ ...props }: { className?: string }) {
   const { quote: trackingQuote } = useTradeTrackState();

@@ -1,1 +1,4 @@
-export interface Logger extends Pick<Console, "log" | "debug" | "warn" | "error"> {}
+export interface Logger extends Pick<
+  Console,
+  "log" | "debug" | "warn" | "error"
+> {}

@@ -21,9 +21,13 @@ export const monadAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: MONAD_ASSETS_QUERY_KEY,
   searchQueryKey: MONAD_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.MONAD, MONAD_ASSETS_MOCK, evmAssetMockSchema)).map(
-      transformToAsset,
-    ),
+    (
+      await resolveAssetsMock(
+        Chain.MONAD,
+        MONAD_ASSETS_MOCK,
+        evmAssetMockSchema,
+      )
+    ).map(transformToAsset),
   ),
 });
 

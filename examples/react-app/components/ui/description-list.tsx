@@ -1,6 +1,10 @@
 import { cn } from "~/lib/utils";
 
-export function DescriptionList({ children, className, ...props }: React.ComponentProps<"dl">) {
+export function DescriptionList({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"dl">) {
   return (
     <dl
       {...props}

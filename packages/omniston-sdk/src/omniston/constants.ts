@@ -7,14 +7,17 @@ export const RPC = {
     },
   },
   TON: {
-    GET_ESCROW_VAULT_BALANCES: "stonfi.omni.v1beta8.TonRpc.GetEscrowVaultBalances",
+    GET_ESCROW_VAULT_BALANCES:
+      "stonfi.omni.v1beta8.TonRpc.GetEscrowVaultBalances",
     BUILD_SWAP: "stonfi.omni.v1beta8.TonRpc.BuildSwap",
     BUILD_ESCROW_TRANSFER: "stonfi.omni.v1beta8.TonRpc.BuildEscrowTransfer",
-    BUILD_ESCROW_CANCELLATION: "stonfi.omni.v1beta8.TonRpc.BuildEscrowCancellation",
+    BUILD_ESCROW_CANCELLATION:
+      "stonfi.omni.v1beta8.TonRpc.BuildEscrowCancellation",
   },
   EVM: {
     BUILD_ORDER_PAYLOAD: "stonfi.omni.v1beta8.EvmRpc.BuildOrderPayload",
-    BUILD_ORDER_CANCELLATION: "stonfi.omni.v1beta8.EvmRpc.BuildOrderCancellation",
+    BUILD_ORDER_CANCELLATION:
+      "stonfi.omni.v1beta8.EvmRpc.BuildOrderCancellation",
   },
   SWAP: {
     TRACK: {

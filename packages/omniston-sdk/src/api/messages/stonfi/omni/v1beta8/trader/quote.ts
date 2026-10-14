@@ -68,10 +68,14 @@ export const NoQuoteEvent: MessageFns<NoQuoteEvent> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<NoQuoteEvent>, I>>(base?: I): NoQuoteEvent {
+  create<I extends Exact<DeepPartial<NoQuoteEvent>, I>>(
+    base?: I,
+  ): NoQuoteEvent {
     return NoQuoteEvent.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<NoQuoteEvent>, I>>(_: I): NoQuoteEvent {
+  fromPartial<I extends Exact<DeepPartial<NoQuoteEvent>, I>>(
+    _: I,
+  ): NoQuoteEvent {
     const message = createBaseNoQuoteEvent();
     return message;
   },
@@ -83,7 +87,9 @@ function createBaseQuoteRequestAck(): QuoteRequestAck {
 
 export const QuoteRequestAck: MessageFns<QuoteRequestAck> = {
   fromJSON(object: any): QuoteRequestAck {
-    return { rfqId: isSet(object.rfq_id) ? globalThis.String(object.rfq_id) : "" };
+    return {
+      rfqId: isSet(object.rfq_id) ? globalThis.String(object.rfq_id) : "",
+    };
   },
 
   toJSON(message: QuoteRequestAck): unknown {
@@ -94,10 +100,14 @@ export const QuoteRequestAck: MessageFns<QuoteRequestAck> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<QuoteRequestAck>, I>>(base?: I): QuoteRequestAck {
+  create<I extends Exact<DeepPartial<QuoteRequestAck>, I>>(
+    base?: I,
+  ): QuoteRequestAck {
     return QuoteRequestAck.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<QuoteRequestAck>, I>>(object: I): QuoteRequestAck {
+  fromPartial<I extends Exact<DeepPartial<QuoteRequestAck>, I>>(
+    object: I,
+  ): QuoteRequestAck {
     const message = createBaseQuoteRequestAck();
     message.rfqId = object.rfqId ?? "";
     return message;
@@ -114,11 +124,20 @@ export const QuoteEvent: MessageFns<QuoteEvent> = {
       event: isSet(object.ack)
         ? { $case: "ack", value: QuoteRequestAck.fromJSON(object.ack) }
         : isSet(object.quote_updated)
-          ? { $case: "quoteUpdated", value: Quote.fromJSON(object.quote_updated) }
+          ? {
+              $case: "quoteUpdated",
+              value: Quote.fromJSON(object.quote_updated),
+            }
           : isSet(object.no_quote)
-            ? { $case: "noQuote", value: NoQuoteEvent.fromJSON(object.no_quote) }
+            ? {
+                $case: "noQuote",
+                value: NoQuoteEvent.fromJSON(object.no_quote),
+              }
             : isSet(object.keep_alive)
-              ? { $case: "keepAlive", value: KeepAlive.fromJSON(object.keep_alive) }
+              ? {
+                  $case: "keepAlive",
+                  value: KeepAlive.fromJSON(object.keep_alive),
+                }
               : undefined,
     };
   },
@@ -140,30 +159,44 @@ export const QuoteEvent: MessageFns<QuoteEvent> = {
   create<I extends Exact<DeepPartial<QuoteEvent>, I>>(base?: I): QuoteEvent {
     return QuoteEvent.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<QuoteEvent>, I>>(object: I): QuoteEvent {
+  fromPartial<I extends Exact<DeepPartial<QuoteEvent>, I>>(
+    object: I,
+  ): QuoteEvent {
     const message = createBaseQuoteEvent();
     switch (object.event?.$case) {
       case "ack": {
         if (object.event?.value !== undefined && object.event?.value !== null) {
-          message.event = { $case: "ack", value: QuoteRequestAck.fromPartial(object.event.value) };
+          message.event = {
+            $case: "ack",
+            value: QuoteRequestAck.fromPartial(object.event.value),
+          };
         }
         break;
       }
       case "quoteUpdated": {
         if (object.event?.value !== undefined && object.event?.value !== null) {
-          message.event = { $case: "quoteUpdated", value: Quote.fromPartial(object.event.value) };
+          message.event = {
+            $case: "quoteUpdated",
+            value: Quote.fromPartial(object.event.value),
+          };
         }
         break;
       }
       case "noQuote": {
         if (object.event?.value !== undefined && object.event?.value !== null) {
-          message.event = { $case: "noQuote", value: NoQuoteEvent.fromPartial(object.event.value) };
+          message.event = {
+            $case: "noQuote",
+            value: NoQuoteEvent.fromPartial(object.event.value),
+          };
         }
         break;
       }
       case "keepAlive": {
         if (object.event?.value !== undefined && object.event?.value !== null) {
-          message.event = { $case: "keepAlive", value: KeepAlive.fromPartial(object.event.value) };
+          message.event = {
+            $case: "keepAlive",
+            value: KeepAlive.fromPartial(object.event.value),
+          };
         }
         break;
       }
@@ -172,7 +205,14 @@ export const QuoteEvent: MessageFns<QuoteEvent> = {
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -189,7 +229,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

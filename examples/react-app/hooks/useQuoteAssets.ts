@@ -5,7 +5,9 @@ import { getNativeAssetIdForChain, serializeAssetId } from "~/models/asset-id";
 import { useAssets } from "~/providers/assets";
 
 function throwMissingAssetError(assetId: AssetId) {
-  return new Error(`Can't display the quote. ${serializeAssetId(assetId)} is missing in store`);
+  return new Error(
+    `Can't display the quote. ${serializeAssetId(assetId)} is missing in store`,
+  );
 }
 
 export function useQuoteAssets(quote: Quote) {
@@ -19,7 +21,9 @@ export function useQuoteAssets(quote: Quote) {
       throw throwMissingAssetError(inputAssetId);
     }
 
-    const inputNativeAssetId = getNativeAssetIdForChain(quote.inputAsset.chain.$case);
+    const inputNativeAssetId = getNativeAssetIdForChain(
+      quote.inputAsset.chain.$case,
+    );
     const inputNativeAsset = getAssetById(inputNativeAssetId);
 
     if (!inputNativeAsset) {
@@ -32,7 +36,9 @@ export function useQuoteAssets(quote: Quote) {
     if (!outputAsset) {
       throw throwMissingAssetError(outputAssetId);
     }
-    const outputNativeAssetId = getNativeAssetIdForChain(quote.outputAsset.chain.$case);
+    const outputNativeAssetId = getNativeAssetIdForChain(
+      quote.outputAsset.chain.$case,
+    );
     const outputNativeAsset = getAssetById(outputNativeAssetId);
 
     if (!outputNativeAsset) {

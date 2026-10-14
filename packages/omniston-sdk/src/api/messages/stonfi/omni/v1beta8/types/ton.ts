@@ -51,14 +51,23 @@ export interface TonTransaction {
 }
 
 function createBaseTonMessage(): TonMessage {
-  return { targetAddress: "", sendAmount: "", payload: "", jettonWalletStateInit: undefined };
+  return {
+    targetAddress: "",
+    sendAmount: "",
+    payload: "",
+    jettonWalletStateInit: undefined,
+  };
 }
 
 export const TonMessage: MessageFns<TonMessage> = {
   fromJSON(object: any): TonMessage {
     return {
-      targetAddress: isSet(object.target_address) ? globalThis.String(object.target_address) : "",
-      sendAmount: isSet(object.send_amount) ? globalThis.String(object.send_amount) : "",
+      targetAddress: isSet(object.target_address)
+        ? globalThis.String(object.target_address)
+        : "",
+      sendAmount: isSet(object.send_amount)
+        ? globalThis.String(object.send_amount)
+        : "",
       payload: isSet(object.payload) ? globalThis.String(object.payload) : "",
       jettonWalletStateInit: isSet(object.jetton_wallet_state_init)
         ? globalThis.String(object.jetton_wallet_state_init)
@@ -86,7 +95,9 @@ export const TonMessage: MessageFns<TonMessage> = {
   create<I extends Exact<DeepPartial<TonMessage>, I>>(base?: I): TonMessage {
     return TonMessage.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TonMessage>, I>>(object: I): TonMessage {
+  fromPartial<I extends Exact<DeepPartial<TonMessage>, I>>(
+    object: I,
+  ): TonMessage {
     const message = createBaseTonMessage();
     message.targetAddress = object.targetAddress ?? "";
     message.sendAmount = object.sendAmount ?? "";
@@ -117,17 +128,29 @@ export const TonTransaction: MessageFns<TonTransaction> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<TonTransaction>, I>>(base?: I): TonTransaction {
+  create<I extends Exact<DeepPartial<TonTransaction>, I>>(
+    base?: I,
+  ): TonTransaction {
     return TonTransaction.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TonTransaction>, I>>(object: I): TonTransaction {
+  fromPartial<I extends Exact<DeepPartial<TonTransaction>, I>>(
+    object: I,
+  ): TonTransaction {
     const message = createBaseTonTransaction();
-    message.messages = object.messages?.map((e) => TonMessage.fromPartial(e)) || [];
+    message.messages =
+      object.messages?.map((e) => TonMessage.fromPartial(e)) || [];
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -144,7 +167,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

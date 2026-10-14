@@ -1,13 +1,17 @@
 import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk-react";
 import z from "zod";
 
-import { trimStringWithEllipsis } from "~/lib/utils";
-import { isTonAddress } from "~/lib/ton/address";
 import { isErc20Address } from "~/lib/evm/address";
+import { isTonAddress } from "~/lib/ton/address";
 import { isTronAddress } from "~/lib/tron/address";
+import { trimStringWithEllipsis } from "~/lib/utils";
 
 import { Chain } from "./chain";
-import { ChainFamily, chainFamilyByChain, chainsByFamily } from "./chain-family";
+import {
+  ChainFamily,
+  chainFamilyByChain,
+  chainsByFamily,
+} from "./chain-family";
 
 export const addressSchema = z.object({
   chain: z.discriminatedUnion("$case", [

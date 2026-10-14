@@ -5,7 +5,8 @@ export const SettlementMethod = {
   ORDER: "order",
 } as const;
 
-export type SettlementMethod = (typeof SettlementMethod)[keyof typeof SettlementMethod];
+export type SettlementMethod =
+  (typeof SettlementMethod)[keyof typeof SettlementMethod];
 
 export const ErrorCode = {
   /**

@@ -27,7 +27,9 @@ describe("AutoReconnectTransport tests", () => {
     mockTransport = new MockTransport();
   });
 
-  function setUp(options?: Omit<AutoReconnectTransportOptions, "timer" | "transport">) {
+  function setUp(
+    options?: Omit<AutoReconnectTransportOptions, "timer" | "transport">,
+  ) {
     return new AutoReconnectTransport({
       timer: fakeTimer,
       transport: mockTransport,
@@ -53,7 +55,9 @@ describe("AutoReconnectTransport tests", () => {
   test("connection events are propagated", () => {
     const testTransport = setUp();
     const received: ConnectionStatusEvent[] = [];
-    testTransport.connectionStatusEvents.subscribe((event) => received.push(event));
+    testTransport.connectionStatusEvents.subscribe((event) =>
+      received.push(event),
+    );
     const connectedEvent: ConnectionConnectedEvent = { status: "connected" };
     mockTransport.connectionStatusEvents.next(connectedEvent);
     expect(received).toEqual([connectedEvent]);
@@ -75,7 +79,9 @@ describe("AutoReconnectTransport tests", () => {
 
   test("connect() method masks errors", async () => {
     const testTransport = setUp();
-    const connectSpy = vi.spyOn(mockTransport, "connect").mockRejectedValue("Test error");
+    const connectSpy = vi
+      .spyOn(mockTransport, "connect")
+      .mockRejectedValue("Test error");
     await expect(testTransport.connect()).resolves.toBeUndefined();
     expect(connectSpy).toHaveBeenCalledOnce();
   });
@@ -141,10 +147,12 @@ describe("AutoReconnectTransport tests", () => {
     });
 
     // Set up the connection to fail every time.
-    const connectSpy = vi.spyOn(mockTransport, "connect").mockImplementation(() => {
-      mockTransport.connectionStatusEvents.next(testConnectionError);
-      return Promise.reject(new Error("test error"));
-    });
+    const connectSpy = vi
+      .spyOn(mockTransport, "connect")
+      .mockImplementation(() => {
+        mockTransport.connectionStatusEvents.next(testConnectionError);
+        return Promise.reject(new Error("test error"));
+      });
 
     await testTransport.connect();
     expect(connectSpy).toHaveBeenCalledTimes(1);
@@ -244,7 +252,9 @@ describe("AutoReconnectTransport tests", () => {
     });
 
     mockTransport.connectionStatusEvents.next(testConnectionError);
-    expect(receivedEvents).toEqual([{ ...testConnectionError, isReconnecting: true }]);
+    expect(receivedEvents).toEqual([
+      { ...testConnectionError, isReconnecting: true },
+    ]);
 
     mockTransport.connectionStatusEvents.next(testConnectionError);
     expect(receivedEvents).toEqual([

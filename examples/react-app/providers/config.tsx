@@ -14,14 +14,21 @@ export interface AppConfigProviderProps extends React.PropsWithChildren {
   tronConfig: TronConfig;
 }
 
-export function AppConfigProvider({ children, tronConfig }: AppConfigProviderProps) {
+export function AppConfigProvider({
+  children,
+  tronConfig,
+}: AppConfigProviderProps) {
   const value = useMemo(() => {
     return {
       tronConfig,
     };
   }, [tronConfig]);
 
-  return <AppConfigContext.Provider value={value}>{children}</AppConfigContext.Provider>;
+  return (
+    <AppConfigContext.Provider value={value}>
+      {children}
+    </AppConfigContext.Provider>
+  );
 }
 
 export function useAppConfig() {

@@ -74,7 +74,9 @@ export function isAssetIdEqual(
   return serializeAssetId(a) === serializeAssetId(b);
 }
 
-export function getNativeAssetIdForChain(chainId: AssetId["chain"]["$case"]): AssetId {
+export function getNativeAssetIdForChain(
+  chainId: AssetId["chain"]["$case"],
+): AssetId {
   return {
     chain: {
       $case: chainId,

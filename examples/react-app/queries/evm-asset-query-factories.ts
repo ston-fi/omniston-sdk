@@ -1,12 +1,12 @@
 import { Chain } from "~/models/chain";
 import type { EvmChain } from "~/models/chain-family";
-import type { createEvmAssetQueryFactory } from "~/queries/evm-asset-factory";
-import { arcAssetQueryFactory } from "~/queries/arc-assets";
 import { arbitrumAssetQueryFactory } from "~/queries/arbitrum-assets";
+import { arcAssetQueryFactory } from "~/queries/arc-assets";
 import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
 import { baseAssetQueryFactory } from "~/queries/base-assets";
 import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
 import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
+import type { createEvmAssetQueryFactory } from "~/queries/evm-asset-factory";
 import { hyperEvmAssetQueryFactory } from "~/queries/hyperevm-assets";
 import { monadAssetQueryFactory } from "~/queries/monad-assets";
 import { plasmaAssetQueryFactory } from "~/queries/plasma-assets";

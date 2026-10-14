@@ -168,65 +168,77 @@ export interface BuildTonEscrowCancellationRequest {
 }
 
 function createBaseTonEscrowVaultBalancesRequest(): TonEscrowVaultBalancesRequest {
-  return { ownerAddress: undefined, escrowFactoryAddress: undefined, assetAddress: undefined };
+  return {
+    ownerAddress: undefined,
+    escrowFactoryAddress: undefined,
+    assetAddress: undefined,
+  };
 }
 
-export const TonEscrowVaultBalancesRequest: MessageFns<TonEscrowVaultBalancesRequest> = {
-  fromJSON(object: any): TonEscrowVaultBalancesRequest {
-    return {
-      ownerAddress: isSet(object.owner_address)
-        ? ChainAddress.fromJSON(object.owner_address)
-        : undefined,
-      escrowFactoryAddress: isSet(object.escrow_factory_address)
-        ? ChainAddress.fromJSON(object.escrow_factory_address)
-        : undefined,
-      assetAddress: isSet(object.asset_address)
-        ? AssetId.fromJSON(object.asset_address)
-        : undefined,
-    };
-  },
+export const TonEscrowVaultBalancesRequest: MessageFns<TonEscrowVaultBalancesRequest> =
+  {
+    fromJSON(object: any): TonEscrowVaultBalancesRequest {
+      return {
+        ownerAddress: isSet(object.owner_address)
+          ? ChainAddress.fromJSON(object.owner_address)
+          : undefined,
+        escrowFactoryAddress: isSet(object.escrow_factory_address)
+          ? ChainAddress.fromJSON(object.escrow_factory_address)
+          : undefined,
+        assetAddress: isSet(object.asset_address)
+          ? AssetId.fromJSON(object.asset_address)
+          : undefined,
+      };
+    },
 
-  toJSON(message: TonEscrowVaultBalancesRequest): unknown {
-    const obj: any = {};
-    if (message.ownerAddress !== undefined) {
-      obj.owner_address = ChainAddress.toJSON(message.ownerAddress);
-    }
-    if (message.escrowFactoryAddress !== undefined) {
-      obj.escrow_factory_address = ChainAddress.toJSON(message.escrowFactoryAddress);
-    }
-    if (message.assetAddress !== undefined) {
-      obj.asset_address = AssetId.toJSON(message.assetAddress);
-    }
-    return obj;
-  },
+    toJSON(message: TonEscrowVaultBalancesRequest): unknown {
+      const obj: any = {};
+      if (message.ownerAddress !== undefined) {
+        obj.owner_address = ChainAddress.toJSON(message.ownerAddress);
+      }
+      if (message.escrowFactoryAddress !== undefined) {
+        obj.escrow_factory_address = ChainAddress.toJSON(
+          message.escrowFactoryAddress,
+        );
+      }
+      if (message.assetAddress !== undefined) {
+        obj.asset_address = AssetId.toJSON(message.assetAddress);
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<TonEscrowVaultBalancesRequest>, I>>(
-    base?: I,
-  ): TonEscrowVaultBalancesRequest {
-    return TonEscrowVaultBalancesRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<TonEscrowVaultBalancesRequest>, I>>(
-    object: I,
-  ): TonEscrowVaultBalancesRequest {
-    const message = createBaseTonEscrowVaultBalancesRequest();
-    message.ownerAddress =
-      object.ownerAddress !== undefined && object.ownerAddress !== null
-        ? ChainAddress.fromPartial(object.ownerAddress)
-        : undefined;
-    message.escrowFactoryAddress =
-      object.escrowFactoryAddress !== undefined && object.escrowFactoryAddress !== null
-        ? ChainAddress.fromPartial(object.escrowFactoryAddress)
-        : undefined;
-    message.assetAddress =
-      object.assetAddress !== undefined && object.assetAddress !== null
-        ? AssetId.fromPartial(object.assetAddress)
-        : undefined;
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<TonEscrowVaultBalancesRequest>, I>>(
+      base?: I,
+    ): TonEscrowVaultBalancesRequest {
+      return TonEscrowVaultBalancesRequest.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<TonEscrowVaultBalancesRequest>, I>>(
+      object: I,
+    ): TonEscrowVaultBalancesRequest {
+      const message = createBaseTonEscrowVaultBalancesRequest();
+      message.ownerAddress =
+        object.ownerAddress !== undefined && object.ownerAddress !== null
+          ? ChainAddress.fromPartial(object.ownerAddress)
+          : undefined;
+      message.escrowFactoryAddress =
+        object.escrowFactoryAddress !== undefined &&
+        object.escrowFactoryAddress !== null
+          ? ChainAddress.fromPartial(object.escrowFactoryAddress)
+          : undefined;
+      message.assetAddress =
+        object.assetAddress !== undefined && object.assetAddress !== null
+          ? AssetId.fromPartial(object.assetAddress)
+          : undefined;
+      return message;
+    },
+  };
 
 function createBaseTonVaultBalance(): TonVaultBalance {
-  return { factoryAddress: undefined, assetAddress: undefined, amountUnits: "" };
+  return {
+    factoryAddress: undefined,
+    assetAddress: undefined,
+    amountUnits: "",
+  };
 }
 
 export const TonVaultBalance: MessageFns<TonVaultBalance> = {
@@ -238,7 +250,9 @@ export const TonVaultBalance: MessageFns<TonVaultBalance> = {
       assetAddress: isSet(object.asset_address)
         ? AssetId.fromJSON(object.asset_address)
         : undefined,
-      amountUnits: isSet(object.amount_units) ? globalThis.String(object.amount_units) : "",
+      amountUnits: isSet(object.amount_units)
+        ? globalThis.String(object.amount_units)
+        : "",
     };
   },
 
@@ -256,10 +270,14 @@ export const TonVaultBalance: MessageFns<TonVaultBalance> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<TonVaultBalance>, I>>(base?: I): TonVaultBalance {
+  create<I extends Exact<DeepPartial<TonVaultBalance>, I>>(
+    base?: I,
+  ): TonVaultBalance {
     return TonVaultBalance.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TonVaultBalance>, I>>(object: I): TonVaultBalance {
+  fromPartial<I extends Exact<DeepPartial<TonVaultBalance>, I>>(
+    object: I,
+  ): TonVaultBalance {
     const message = createBaseTonVaultBalance();
     message.factoryAddress =
       object.factoryAddress !== undefined && object.factoryAddress !== null
@@ -278,46 +296,48 @@ function createBaseTonEscrowVaultBalancesResponse(): TonEscrowVaultBalancesRespo
   return { ownerAddress: undefined, balances: [] };
 }
 
-export const TonEscrowVaultBalancesResponse: MessageFns<TonEscrowVaultBalancesResponse> = {
-  fromJSON(object: any): TonEscrowVaultBalancesResponse {
-    return {
-      ownerAddress: isSet(object.owner_address)
-        ? ChainAddress.fromJSON(object.owner_address)
-        : undefined,
-      balances: globalThis.Array.isArray(object?.balances)
-        ? object.balances.map((e: any) => TonVaultBalance.fromJSON(e))
-        : [],
-    };
-  },
+export const TonEscrowVaultBalancesResponse: MessageFns<TonEscrowVaultBalancesResponse> =
+  {
+    fromJSON(object: any): TonEscrowVaultBalancesResponse {
+      return {
+        ownerAddress: isSet(object.owner_address)
+          ? ChainAddress.fromJSON(object.owner_address)
+          : undefined,
+        balances: globalThis.Array.isArray(object?.balances)
+          ? object.balances.map((e: any) => TonVaultBalance.fromJSON(e))
+          : [],
+      };
+    },
 
-  toJSON(message: TonEscrowVaultBalancesResponse): unknown {
-    const obj: any = {};
-    if (message.ownerAddress !== undefined) {
-      obj.owner_address = ChainAddress.toJSON(message.ownerAddress);
-    }
-    if (message.balances?.length) {
-      obj.balances = message.balances.map((e) => TonVaultBalance.toJSON(e));
-    }
-    return obj;
-  },
+    toJSON(message: TonEscrowVaultBalancesResponse): unknown {
+      const obj: any = {};
+      if (message.ownerAddress !== undefined) {
+        obj.owner_address = ChainAddress.toJSON(message.ownerAddress);
+      }
+      if (message.balances?.length) {
+        obj.balances = message.balances.map((e) => TonVaultBalance.toJSON(e));
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<TonEscrowVaultBalancesResponse>, I>>(
-    base?: I,
-  ): TonEscrowVaultBalancesResponse {
-    return TonEscrowVaultBalancesResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<TonEscrowVaultBalancesResponse>, I>>(
-    object: I,
-  ): TonEscrowVaultBalancesResponse {
-    const message = createBaseTonEscrowVaultBalancesResponse();
-    message.ownerAddress =
-      object.ownerAddress !== undefined && object.ownerAddress !== null
-        ? ChainAddress.fromPartial(object.ownerAddress)
-        : undefined;
-    message.balances = object.balances?.map((e) => TonVaultBalance.fromPartial(e)) || [];
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<TonEscrowVaultBalancesResponse>, I>>(
+      base?: I,
+    ): TonEscrowVaultBalancesResponse {
+      return TonEscrowVaultBalancesResponse.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<
+      I extends Exact<DeepPartial<TonEscrowVaultBalancesResponse>, I>,
+    >(object: I): TonEscrowVaultBalancesResponse {
+      const message = createBaseTonEscrowVaultBalancesResponse();
+      message.ownerAddress =
+        object.ownerAddress !== undefined && object.ownerAddress !== null
+          ? ChainAddress.fromPartial(object.ownerAddress)
+          : undefined;
+      message.balances =
+        object.balances?.map((e) => TonVaultBalance.fromPartial(e)) || [];
+      return message;
+    },
+  };
 
 function createBaseBuildTonSwapRequest(): BuildTonSwapRequest {
   return {
@@ -358,7 +378,9 @@ export const BuildTonSwapRequest: MessageFns<BuildTonSwapRequest> = {
       obj.quote_id = message.quoteId;
     }
     if (message.transferSrcAddress !== undefined) {
-      obj.transfer_src_address = ChainAddress.toJSON(message.transferSrcAddress);
+      obj.transfer_src_address = ChainAddress.toJSON(
+        message.transferSrcAddress,
+      );
     }
     if (message.traderDstAddress !== undefined) {
       obj.trader_dst_address = ChainAddress.toJSON(message.traderDstAddress);
@@ -375,7 +397,9 @@ export const BuildTonSwapRequest: MessageFns<BuildTonSwapRequest> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<BuildTonSwapRequest>, I>>(base?: I): BuildTonSwapRequest {
+  create<I extends Exact<DeepPartial<BuildTonSwapRequest>, I>>(
+    base?: I,
+  ): BuildTonSwapRequest {
     return BuildTonSwapRequest.fromPartial(base ?? ({} as any));
   },
   fromPartial<I extends Exact<DeepPartial<BuildTonSwapRequest>, I>>(
@@ -384,7 +408,8 @@ export const BuildTonSwapRequest: MessageFns<BuildTonSwapRequest> = {
     const message = createBaseBuildTonSwapRequest();
     message.quoteId = object.quoteId ?? "";
     message.transferSrcAddress =
-      object.transferSrcAddress !== undefined && object.transferSrcAddress !== null
+      object.transferSrcAddress !== undefined &&
+      object.transferSrcAddress !== null
         ? ChainAddress.fromPartial(object.transferSrcAddress)
         : undefined;
     message.traderDstAddress =
@@ -419,173 +444,196 @@ function createBaseBuildTonEscrowTransferRequest(): BuildTonEscrowTransferReques
   };
 }
 
-export const BuildTonEscrowTransferRequest: MessageFns<BuildTonEscrowTransferRequest> = {
-  fromJSON(object: any): BuildTonEscrowTransferRequest {
-    return {
-      quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      ownerSrcAddress: isSet(object.owner_src_address)
-        ? ChainAddress.fromJSON(object.owner_src_address)
-        : undefined,
-      traderDstAddress: isSet(object.trader_dst_address)
-        ? ChainAddress.fromJSON(object.trader_dst_address)
-        : undefined,
-      transferSrcAddress: isSet(object.transfer_src_address)
-        ? ChainAddress.fromJSON(object.transfer_src_address)
-        : undefined,
-      gasExcessAddress: isSet(object.gas_excess_address)
-        ? ChainAddress.fromJSON(object.gas_excess_address)
-        : undefined,
-      refundSrcAddress: isSet(object.refund_src_address)
-        ? ChainAddress.fromJSON(object.refund_src_address)
-        : undefined,
-      depositViaVault: isSet(object.deposit_via_vault)
-        ? globalThis.Boolean(object.deposit_via_vault)
-        : undefined,
-      refundToVault: isSet(object.refund_to_vault)
-        ? globalThis.Boolean(object.refund_to_vault)
-        : undefined,
-      htlcSecrets: isSet(object.htlc_secrets)
-        ? HtlcSecrets.fromJSON(object.htlc_secrets)
-        : undefined,
-      traderDstDiscloseAddress: isSet(object.trader_dst_disclose_address)
-        ? ChainAddress.fromJSON(object.trader_dst_disclose_address)
-        : undefined,
-    };
-  },
+export const BuildTonEscrowTransferRequest: MessageFns<BuildTonEscrowTransferRequest> =
+  {
+    fromJSON(object: any): BuildTonEscrowTransferRequest {
+      return {
+        quoteId: isSet(object.quote_id)
+          ? globalThis.String(object.quote_id)
+          : "",
+        ownerSrcAddress: isSet(object.owner_src_address)
+          ? ChainAddress.fromJSON(object.owner_src_address)
+          : undefined,
+        traderDstAddress: isSet(object.trader_dst_address)
+          ? ChainAddress.fromJSON(object.trader_dst_address)
+          : undefined,
+        transferSrcAddress: isSet(object.transfer_src_address)
+          ? ChainAddress.fromJSON(object.transfer_src_address)
+          : undefined,
+        gasExcessAddress: isSet(object.gas_excess_address)
+          ? ChainAddress.fromJSON(object.gas_excess_address)
+          : undefined,
+        refundSrcAddress: isSet(object.refund_src_address)
+          ? ChainAddress.fromJSON(object.refund_src_address)
+          : undefined,
+        depositViaVault: isSet(object.deposit_via_vault)
+          ? globalThis.Boolean(object.deposit_via_vault)
+          : undefined,
+        refundToVault: isSet(object.refund_to_vault)
+          ? globalThis.Boolean(object.refund_to_vault)
+          : undefined,
+        htlcSecrets: isSet(object.htlc_secrets)
+          ? HtlcSecrets.fromJSON(object.htlc_secrets)
+          : undefined,
+        traderDstDiscloseAddress: isSet(object.trader_dst_disclose_address)
+          ? ChainAddress.fromJSON(object.trader_dst_disclose_address)
+          : undefined,
+      };
+    },
 
-  toJSON(message: BuildTonEscrowTransferRequest): unknown {
-    const obj: any = {};
-    if (message.quoteId !== undefined) {
-      obj.quote_id = message.quoteId;
-    }
-    if (message.ownerSrcAddress !== undefined) {
-      obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
-    }
-    if (message.traderDstAddress !== undefined) {
-      obj.trader_dst_address = ChainAddress.toJSON(message.traderDstAddress);
-    }
-    if (message.transferSrcAddress !== undefined) {
-      obj.transfer_src_address = ChainAddress.toJSON(message.transferSrcAddress);
-    }
-    if (message.gasExcessAddress !== undefined) {
-      obj.gas_excess_address = ChainAddress.toJSON(message.gasExcessAddress);
-    }
-    if (message.refundSrcAddress !== undefined) {
-      obj.refund_src_address = ChainAddress.toJSON(message.refundSrcAddress);
-    }
-    if (message.depositViaVault !== undefined) {
-      obj.deposit_via_vault = message.depositViaVault;
-    }
-    if (message.refundToVault !== undefined) {
-      obj.refund_to_vault = message.refundToVault;
-    }
-    if (message.htlcSecrets !== undefined) {
-      obj.htlc_secrets = HtlcSecrets.toJSON(message.htlcSecrets);
-    }
-    if (message.traderDstDiscloseAddress !== undefined) {
-      obj.trader_dst_disclose_address = ChainAddress.toJSON(message.traderDstDiscloseAddress);
-    }
-    return obj;
-  },
+    toJSON(message: BuildTonEscrowTransferRequest): unknown {
+      const obj: any = {};
+      if (message.quoteId !== undefined) {
+        obj.quote_id = message.quoteId;
+      }
+      if (message.ownerSrcAddress !== undefined) {
+        obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
+      }
+      if (message.traderDstAddress !== undefined) {
+        obj.trader_dst_address = ChainAddress.toJSON(message.traderDstAddress);
+      }
+      if (message.transferSrcAddress !== undefined) {
+        obj.transfer_src_address = ChainAddress.toJSON(
+          message.transferSrcAddress,
+        );
+      }
+      if (message.gasExcessAddress !== undefined) {
+        obj.gas_excess_address = ChainAddress.toJSON(message.gasExcessAddress);
+      }
+      if (message.refundSrcAddress !== undefined) {
+        obj.refund_src_address = ChainAddress.toJSON(message.refundSrcAddress);
+      }
+      if (message.depositViaVault !== undefined) {
+        obj.deposit_via_vault = message.depositViaVault;
+      }
+      if (message.refundToVault !== undefined) {
+        obj.refund_to_vault = message.refundToVault;
+      }
+      if (message.htlcSecrets !== undefined) {
+        obj.htlc_secrets = HtlcSecrets.toJSON(message.htlcSecrets);
+      }
+      if (message.traderDstDiscloseAddress !== undefined) {
+        obj.trader_dst_disclose_address = ChainAddress.toJSON(
+          message.traderDstDiscloseAddress,
+        );
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<BuildTonEscrowTransferRequest>, I>>(
-    base?: I,
-  ): BuildTonEscrowTransferRequest {
-    return BuildTonEscrowTransferRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<BuildTonEscrowTransferRequest>, I>>(
-    object: I,
-  ): BuildTonEscrowTransferRequest {
-    const message = createBaseBuildTonEscrowTransferRequest();
-    message.quoteId = object.quoteId ?? "";
-    message.ownerSrcAddress =
-      object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
-        ? ChainAddress.fromPartial(object.ownerSrcAddress)
-        : undefined;
-    message.traderDstAddress =
-      object.traderDstAddress !== undefined && object.traderDstAddress !== null
-        ? ChainAddress.fromPartial(object.traderDstAddress)
-        : undefined;
-    message.transferSrcAddress =
-      object.transferSrcAddress !== undefined && object.transferSrcAddress !== null
-        ? ChainAddress.fromPartial(object.transferSrcAddress)
-        : undefined;
-    message.gasExcessAddress =
-      object.gasExcessAddress !== undefined && object.gasExcessAddress !== null
-        ? ChainAddress.fromPartial(object.gasExcessAddress)
-        : undefined;
-    message.refundSrcAddress =
-      object.refundSrcAddress !== undefined && object.refundSrcAddress !== null
-        ? ChainAddress.fromPartial(object.refundSrcAddress)
-        : undefined;
-    message.depositViaVault = object.depositViaVault ?? undefined;
-    message.refundToVault = object.refundToVault ?? undefined;
-    message.htlcSecrets =
-      object.htlcSecrets !== undefined && object.htlcSecrets !== null
-        ? HtlcSecrets.fromPartial(object.htlcSecrets)
-        : undefined;
-    message.traderDstDiscloseAddress =
-      object.traderDstDiscloseAddress !== undefined && object.traderDstDiscloseAddress !== null
-        ? ChainAddress.fromPartial(object.traderDstDiscloseAddress)
-        : undefined;
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<BuildTonEscrowTransferRequest>, I>>(
+      base?: I,
+    ): BuildTonEscrowTransferRequest {
+      return BuildTonEscrowTransferRequest.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<BuildTonEscrowTransferRequest>, I>>(
+      object: I,
+    ): BuildTonEscrowTransferRequest {
+      const message = createBaseBuildTonEscrowTransferRequest();
+      message.quoteId = object.quoteId ?? "";
+      message.ownerSrcAddress =
+        object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
+          ? ChainAddress.fromPartial(object.ownerSrcAddress)
+          : undefined;
+      message.traderDstAddress =
+        object.traderDstAddress !== undefined &&
+        object.traderDstAddress !== null
+          ? ChainAddress.fromPartial(object.traderDstAddress)
+          : undefined;
+      message.transferSrcAddress =
+        object.transferSrcAddress !== undefined &&
+        object.transferSrcAddress !== null
+          ? ChainAddress.fromPartial(object.transferSrcAddress)
+          : undefined;
+      message.gasExcessAddress =
+        object.gasExcessAddress !== undefined &&
+        object.gasExcessAddress !== null
+          ? ChainAddress.fromPartial(object.gasExcessAddress)
+          : undefined;
+      message.refundSrcAddress =
+        object.refundSrcAddress !== undefined &&
+        object.refundSrcAddress !== null
+          ? ChainAddress.fromPartial(object.refundSrcAddress)
+          : undefined;
+      message.depositViaVault = object.depositViaVault ?? undefined;
+      message.refundToVault = object.refundToVault ?? undefined;
+      message.htlcSecrets =
+        object.htlcSecrets !== undefined && object.htlcSecrets !== null
+          ? HtlcSecrets.fromPartial(object.htlcSecrets)
+          : undefined;
+      message.traderDstDiscloseAddress =
+        object.traderDstDiscloseAddress !== undefined &&
+        object.traderDstDiscloseAddress !== null
+          ? ChainAddress.fromPartial(object.traderDstDiscloseAddress)
+          : undefined;
+      return message;
+    },
+  };
 
 function createBaseBuildTonEscrowCancellationRequest(): BuildTonEscrowCancellationRequest {
   return { quoteId: "", ownerAddress: undefined, gasExcessAddress: undefined };
 }
 
-export const BuildTonEscrowCancellationRequest: MessageFns<BuildTonEscrowCancellationRequest> = {
-  fromJSON(object: any): BuildTonEscrowCancellationRequest {
-    return {
-      quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      ownerAddress: isSet(object.owner_address)
-        ? ChainAddress.fromJSON(object.owner_address)
-        : undefined,
-      gasExcessAddress: isSet(object.gas_excess_address)
-        ? ChainAddress.fromJSON(object.gas_excess_address)
-        : undefined,
-    };
-  },
+export const BuildTonEscrowCancellationRequest: MessageFns<BuildTonEscrowCancellationRequest> =
+  {
+    fromJSON(object: any): BuildTonEscrowCancellationRequest {
+      return {
+        quoteId: isSet(object.quote_id)
+          ? globalThis.String(object.quote_id)
+          : "",
+        ownerAddress: isSet(object.owner_address)
+          ? ChainAddress.fromJSON(object.owner_address)
+          : undefined,
+        gasExcessAddress: isSet(object.gas_excess_address)
+          ? ChainAddress.fromJSON(object.gas_excess_address)
+          : undefined,
+      };
+    },
 
-  toJSON(message: BuildTonEscrowCancellationRequest): unknown {
-    const obj: any = {};
-    if (message.quoteId !== undefined) {
-      obj.quote_id = message.quoteId;
-    }
-    if (message.ownerAddress !== undefined) {
-      obj.owner_address = ChainAddress.toJSON(message.ownerAddress);
-    }
-    if (message.gasExcessAddress !== undefined) {
-      obj.gas_excess_address = ChainAddress.toJSON(message.gasExcessAddress);
-    }
-    return obj;
-  },
+    toJSON(message: BuildTonEscrowCancellationRequest): unknown {
+      const obj: any = {};
+      if (message.quoteId !== undefined) {
+        obj.quote_id = message.quoteId;
+      }
+      if (message.ownerAddress !== undefined) {
+        obj.owner_address = ChainAddress.toJSON(message.ownerAddress);
+      }
+      if (message.gasExcessAddress !== undefined) {
+        obj.gas_excess_address = ChainAddress.toJSON(message.gasExcessAddress);
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<BuildTonEscrowCancellationRequest>, I>>(
-    base?: I,
-  ): BuildTonEscrowCancellationRequest {
-    return BuildTonEscrowCancellationRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<BuildTonEscrowCancellationRequest>, I>>(
-    object: I,
-  ): BuildTonEscrowCancellationRequest {
-    const message = createBaseBuildTonEscrowCancellationRequest();
-    message.quoteId = object.quoteId ?? "";
-    message.ownerAddress =
-      object.ownerAddress !== undefined && object.ownerAddress !== null
-        ? ChainAddress.fromPartial(object.ownerAddress)
-        : undefined;
-    message.gasExcessAddress =
-      object.gasExcessAddress !== undefined && object.gasExcessAddress !== null
-        ? ChainAddress.fromPartial(object.gasExcessAddress)
-        : undefined;
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<BuildTonEscrowCancellationRequest>, I>>(
+      base?: I,
+    ): BuildTonEscrowCancellationRequest {
+      return BuildTonEscrowCancellationRequest.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<
+      I extends Exact<DeepPartial<BuildTonEscrowCancellationRequest>, I>,
+    >(object: I): BuildTonEscrowCancellationRequest {
+      const message = createBaseBuildTonEscrowCancellationRequest();
+      message.quoteId = object.quoteId ?? "";
+      message.ownerAddress =
+        object.ownerAddress !== undefined && object.ownerAddress !== null
+          ? ChainAddress.fromPartial(object.ownerAddress)
+          : undefined;
+      message.gasExcessAddress =
+        object.gasExcessAddress !== undefined &&
+        object.gasExcessAddress !== null
+          ? ChainAddress.fromPartial(object.gasExcessAddress)
+          : undefined;
+      return message;
+    },
+  };
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -602,7 +650,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

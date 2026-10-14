@@ -1,7 +1,9 @@
 import { readContract, type Config as WagmiConfig } from "@wagmi/core";
 import { parseAbi, type Address as ViemAddress } from "viem";
 
-const ERC20_NONCES_ABI = parseAbi(["function nonces(address owner) view returns (uint256)"]);
+const ERC20_NONCES_ABI = parseAbi([
+  "function nonces(address owner) view returns (uint256)",
+]);
 
 const PERMIT2_ALLOWANCE_ABI = parseAbi([
   "function allowance(address user, address token, address spender) view returns (uint160 amount, uint48 expiration, uint48 nonce)",

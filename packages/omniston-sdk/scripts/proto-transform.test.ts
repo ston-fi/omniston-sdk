@@ -1,8 +1,13 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+
 import { afterEach, describe, expect, test } from "vitest";
-import { buildProtoFileRules, transformGeneratedContent } from "./proto-transform.js";
+
+import {
+  buildProtoFileRules,
+  transformGeneratedContent,
+} from "./proto-transform.js";
 
 const tempDirs: string[] = [];
 
@@ -97,8 +102,12 @@ export interface Outer {
 
     expect(transformed).toContain("req: string;");
     expect(transformed).toContain("opt?: string | undefined;");
-    expect(transformed).toMatch(/kind:\s*[\s\S]*\$case:\s*"text"[\s\S]*\$case:\s*"code"/);
-    expect(transformed).toMatch(/selection:\s*[\s\S]*\$case:\s*"nested"[\s\S]*\$case:\s*"label"/);
+    expect(transformed).toMatch(
+      /kind:\s*[\s\S]*\$case:\s*"text"[\s\S]*\$case:\s*"code"/,
+    );
+    expect(transformed).toMatch(
+      /selection:\s*[\s\S]*\$case:\s*"nested"[\s\S]*\$case:\s*"label"/,
+    );
     expect(transformed).toContain("child: Inner;");
     expect(transformed).toContain("maybeChild?: Inner | undefined;");
 

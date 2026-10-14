@@ -1,8 +1,7 @@
 "use client";
 
-import { createAppKit } from "@reown/appkit/react";
-import { WalletProvider as TronWalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
-import { MetaMaskAdapter, TronLinkAdapter } from "@tronweb3/tronwallet-adapters";
+import { TronAdapter } from "@reown/appkit-adapter-tron";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import {
   arbitrum,
   arc,
@@ -20,9 +19,13 @@ import {
   xLayer,
   type AppKitNetwork,
 } from "@reown/appkit/networks";
+import { createAppKit } from "@reown/appkit/react";
+import { WalletProvider as TronWalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
+import {
+  MetaMaskAdapter,
+  TronLinkAdapter,
+} from "@tronweb3/tronwallet-adapters";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { TronAdapter } from "@reown/appkit-adapter-tron";
 import { WagmiProvider } from "wagmi";
 
 import { useAppConfig } from "~/providers/config";
@@ -108,7 +111,10 @@ export function WalletConnectProvider({
 
   return (
     <WagmiProvider config={wagmiAdapter.current.wagmiConfig}>
-      <TronWalletProvider adapters={[tronLinkAdapter.current]} autoConnect={false}>
+      <TronWalletProvider
+        adapters={[tronLinkAdapter.current]}
+        autoConnect={false}
+      >
         {isAppKitReady ? children : null}
       </TronWalletProvider>
     </WagmiProvider>

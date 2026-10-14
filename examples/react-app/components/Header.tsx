@@ -9,7 +9,7 @@ import GitHubIcon from "~/public/icons/github.svg";
 
 export function Header() {
   return (
-    <header className="bg-background sticky top-0 z-[10] flex h-16 items-center justify-between gap-4 border-b">
+    <header className="sticky top-0 z-[10] flex h-16 items-center justify-between gap-4 border-b bg-background">
       <section className="container flex items-center gap-4">
         <a
           href="https://ston.fi"
@@ -22,7 +22,9 @@ export function Header() {
             height={60}
             alt="logo"
           />
-          <Badge className="absolute -right-7 bottom-1 scale-[0.8] rotate-[-13deg]">example</Badge>
+          <Badge className="absolute -right-7 bottom-1 scale-[0.8] rotate-[-13deg]">
+            example
+          </Badge>
         </a>
 
         <WalletManager />

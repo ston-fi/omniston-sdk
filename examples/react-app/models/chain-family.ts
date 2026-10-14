@@ -64,7 +64,8 @@ export const chainsByFamily = {
   [ChainFamily.TRON]: [Chain.TRON],
 } as const satisfies Record<ChainFamily, readonly Chain[]>;
 
-export type ChainInFamily<T extends ChainFamily> = (typeof chainsByFamily)[T][number];
+export type ChainInFamily<T extends ChainFamily> =
+  (typeof chainsByFamily)[T][number];
 
 type Assert<T extends true> = T;
 // Type-level assertion to ensure that all `Chain` values are present in the `chainsByFamily` mapping.

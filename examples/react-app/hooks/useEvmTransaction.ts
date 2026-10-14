@@ -1,4 +1,10 @@
 import {
+  isHtlcOrderQuote,
+  BuildEvmOrderPayloadRequest,
+} from "@ston-fi/omniston-sdk-react";
+import { readContract, waitForTransactionReceipt } from "@wagmi/core";
+import { useMemo } from "react";
+import {
   encodeAbiParameters,
   erc20Abi,
   hexToBytes,
@@ -8,16 +14,18 @@ import {
   signatureToCompactSignature,
   type Address as EvmAddress,
 } from "viem";
-import { useConfig, useSignTypedData, useSwitchChain, useWriteContract } from "wagmi";
-import { readContract, waitForTransactionReceipt } from "@wagmi/core";
-import { useMemo } from "react";
-import { isHtlcOrderQuote, BuildEvmOrderPayloadRequest } from "@ston-fi/omniston-sdk-react";
+import {
+  useConfig,
+  useSignTypedData,
+  useSwitchChain,
+  useWriteContract,
+} from "wagmi";
 
 import { useOmniston } from "~/hooks/useOmniston";
 import { useRfq } from "~/hooks/useRfq";
 import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
-import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
 import { mapChainToChainId } from "~/lib/evm/chain";
+import { getContractNonce, getPermit2Nonce } from "~/lib/evm/on-chain";
 import {
   PERMIT2_ADDRESS,
   buildEip2612PermitTypedData,
@@ -26,13 +34,17 @@ import {
   encodePermit2PermitData,
   resolveEvmPermitConfig,
 } from "~/lib/evm/permits";
-import { useSwapSettings } from "~/providers/swap-settings";
+import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
 import { ChainFamily, isChainInFamily } from "~/models/chain-family";
-import { getContractNonce, getPermit2Nonce } from "~/lib/evm/on-chain";
+import { useSwapSettings } from "~/providers/swap-settings";
 
-type TypedData = Parameters<ReturnType<typeof useSignTypedData>["mutateAsync"]>[0];
+type TypedData = Parameters<
+  ReturnType<typeof useSignTypedData>["mutateAsync"]
+>[0];
 
-type SignTypedDataResult = Awaited<ReturnType<ReturnType<typeof useSignTypedData>["mutateAsync"]>>;
+type SignTypedDataResult = Awaited<
+  ReturnType<ReturnType<typeof useSignTypedData>["mutateAsync"]>
+>;
 
 export function useEvmTransaction() {
   const omniston = useOmniston();
@@ -43,7 +55,8 @@ export function useEvmTransaction() {
   const { mutateAsync: writeContractAsync } = useWriteContract();
 
   const { data: quoteEvent } = useRfq();
-  const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
+  const quote =
+    quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
 
   const { htlcMaxExecutions } = useSwapSettings();
 
@@ -55,13 +68,17 @@ export function useEvmTransaction() {
 
     return async () => {
       if (!isHtlcOrderQuote(quote)) {
-        throw new Error(`Expected HTLC order quote, got "${quote.settlementData.$case}"`);
+        throw new Error(
+          `Expected HTLC order quote, got "${quote.settlementData.$case}"`,
+        );
       }
 
       const inputChain = quote.inputAsset.chain.$case;
 
       if (!isChainInFamily(inputChain, ChainFamily.EVM)) {
-        throw new Error(`Expected EVM chain for order quote, got "${inputChain}"`);
+        throw new Error(
+          `Expected EVM chain for order quote, got "${inputChain}"`,
+        );
       }
 
       const inputChainId = mapChainToChainId(inputChain);
@@ -85,9 +102,10 @@ export function useEvmTransaction() {
 
       if (shouldUsePermit && permitConfig) {
         const ownerAddress = inputWalletAddress.chain.value as EvmAddress;
-        const tokenAddress = quote.inputAsset.chain.value.kind.value as EvmAddress;
-        const spenderAddress = quote.settlementData.value.srcProtocolContractAddress.chain
+        const tokenAddress = quote.inputAsset.chain.value.kind
           .value as EvmAddress;
+        const spenderAddress = quote.settlementData.value
+          .srcProtocolContractAddress.chain.value as EvmAddress;
 
         if (permitConfig.kind === "eip2612") {
           const nonce = await getContractNonce(wagmiConfig, {
@@ -129,7 +147,8 @@ export function useEvmTransaction() {
             chainId: inputChainId,
           });
 
-          const isAllowanceSufficient = currentAllowance >= BigInt(quote.inputUnits);
+          const isAllowanceSufficient =
+            currentAllowance >= BigInt(quote.inputUnits);
 
           if (!isAllowanceSufficient) {
             const approveHash = await writeContractAsync({
@@ -188,19 +207,27 @@ export function useEvmTransaction() {
       // --- htlc
 
       let htlcSecrets: Uint8Array[] | undefined;
-      let htlcSecretsData: Required<Pick<BuildEvmOrderPayloadRequest, "htlcSecrets">> | undefined;
+      let htlcSecretsData:
+        | Required<Pick<BuildEvmOrderPayloadRequest, "htlcSecrets">>
+        | undefined;
 
       const shouldUseHtlc = true; // currently EVM order quotes are always HTLC
 
       if (shouldUseHtlc) {
-        htlcSecrets = Array.from({ length: htlcMaxExecutions }, generateHtlcSecret);
+        htlcSecrets = Array.from(
+          { length: htlcMaxExecutions },
+          generateHtlcSecret,
+        );
         htlcSecretsData = {
           htlcSecrets: {
             secretMode: {
               $case: "provided",
               value: {
                 hashes: htlcSecrets.map((secret) =>
-                  generateHtlcHashlock(secret, quote.settlementData.value.htlcHashingFunction),
+                  generateHtlcHashlock(
+                    secret,
+                    quote.settlementData.value.htlcHashingFunction,
+                  ),
                 ),
               },
             },
@@ -219,7 +246,10 @@ export function useEvmTransaction() {
         ...permitData,
       });
 
-      const orderTypedData = JSON.parse(evmOrderPayload.typedData) as Omit<TypedData, "domain"> & {
+      const orderTypedData = JSON.parse(evmOrderPayload.typedData) as Omit<
+        TypedData,
+        "domain"
+      > & {
         domain: Required<NonNullable<TypedData["domain"]>>;
       };
 
@@ -244,7 +274,8 @@ export function useEvmTransaction() {
           chainId,
         });
 
-        const isAllowanceSufficient = currentAllowance >= BigInt(quote.inputUnits);
+        const isAllowanceSufficient =
+          currentAllowance >= BigInt(quote.inputUnits);
 
         if (!isAllowanceSufficient) {
           const approveHash = await writeContractAsync({
@@ -308,7 +339,8 @@ export function useEvmTransaction() {
 function encodeCompactSignature(serializedSignature: SignTypedDataResult) {
   const signature = parseSignature(serializedSignature);
   const compactSignature = signatureToCompactSignature(signature);
-  const serializedCompactSignature = serializeCompactSignature(compactSignature);
+  const serializedCompactSignature =
+    serializeCompactSignature(compactSignature);
   const bytes = hexToBytes(serializedCompactSignature);
 
   return bytes;
@@ -322,7 +354,9 @@ function encodeTypedData(typedData: any) {
   return hexToBytes(
     encodeAbiParameters(
       typedData.types[typedData.primaryType],
-      typedData.types[typedData.primaryType].map((type: any) => typedData.message[type.name]),
+      typedData.types[typedData.primaryType].map(
+        (type: any) => typedData.message[type.name],
+      ),
     ),
   );
 }

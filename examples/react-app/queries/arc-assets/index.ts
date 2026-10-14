@@ -21,7 +21,9 @@ export const arcAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: ARC_ASSETS_QUERY_KEY,
   searchQueryKey: ARC_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.ARC, ARC_ASSETS_MOCK, evmAssetMockSchema)).map(transformToAsset),
+    (
+      await resolveAssetsMock(Chain.ARC, ARC_ASSETS_MOCK, evmAssetMockSchema)
+    ).map(transformToAsset),
   ),
 });
 

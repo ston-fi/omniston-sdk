@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import type { Asset } from "~/models/asset";
 import { tonAddressSchema } from "~/lib/ton/address";
+import type { Asset } from "~/models/asset";
 import { Chain } from "~/models/chain";
 
 export const tonAssetSchema = z.object({

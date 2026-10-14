@@ -15,7 +15,7 @@ export function ConnectionStatus() {
       key={connectionStatus}
       role="button"
       variant={getBadgeVariant(connectionStatus)}
-      className="animate-in fade-in-0 zoom-in-95 duration-200"
+      className="duration-200 animate-in fade-in-0 zoom-in-95"
       onClick={() => omniston.transport.reconnect()}
     >
       {connectionStatus}

@@ -173,10 +173,18 @@ function createBaseLimitOrderCreateRequest(): LimitOrderCreateRequest {
 export const LimitOrderCreateRequest: MessageFns<LimitOrderCreateRequest> = {
   fromJSON(object: any): LimitOrderCreateRequest {
     return {
-      inputAsset: isSet(object.input_asset) ? AssetId.fromJSON(object.input_asset) : undefined,
-      outputAsset: isSet(object.output_asset) ? AssetId.fromJSON(object.output_asset) : undefined,
-      inputUnits: isSet(object.input_units) ? globalThis.String(object.input_units) : "",
-      outputUnits: isSet(object.output_units) ? globalThis.String(object.output_units) : "",
+      inputAsset: isSet(object.input_asset)
+        ? AssetId.fromJSON(object.input_asset)
+        : undefined,
+      outputAsset: isSet(object.output_asset)
+        ? AssetId.fromJSON(object.output_asset)
+        : undefined,
+      inputUnits: isSet(object.input_units)
+        ? globalThis.String(object.input_units)
+        : "",
+      outputUnits: isSet(object.output_units)
+        ? globalThis.String(object.output_units)
+        : "",
       integratorAddress: isSet(object.integrator_address)
         ? ChainAddress.fromJSON(object.integrator_address)
         : undefined,
@@ -210,7 +218,9 @@ export const LimitOrderCreateRequest: MessageFns<LimitOrderCreateRequest> = {
       obj.integrator_fee_pips = Math.round(message.integratorFeePips);
     }
     if (message.settlementParams !== undefined) {
-      obj.settlement_params = OrderSettlementParams.toJSON(message.settlementParams);
+      obj.settlement_params = OrderSettlementParams.toJSON(
+        message.settlementParams,
+      );
     }
     return obj;
   },
@@ -235,7 +245,8 @@ export const LimitOrderCreateRequest: MessageFns<LimitOrderCreateRequest> = {
     message.inputUnits = object.inputUnits ?? "";
     message.outputUnits = object.outputUnits ?? "";
     message.integratorAddress =
-      object.integratorAddress !== undefined && object.integratorAddress !== null
+      object.integratorAddress !== undefined &&
+      object.integratorAddress !== null
         ? ChainAddress.fromPartial(object.integratorAddress)
         : undefined;
     message.integratorFeePips = object.integratorFeePips ?? undefined;
@@ -253,7 +264,9 @@ function createBaseLimitOrderResponse(): LimitOrderResponse {
 
 export const LimitOrderResponse: MessageFns<LimitOrderResponse> = {
   fromJSON(object: any): LimitOrderResponse {
-    return { quote: isSet(object.quote) ? Quote.fromJSON(object.quote) : undefined };
+    return {
+      quote: isSet(object.quote) ? Quote.fromJSON(object.quote) : undefined,
+    };
   },
 
   toJSON(message: LimitOrderResponse): unknown {
@@ -264,10 +277,14 @@ export const LimitOrderResponse: MessageFns<LimitOrderResponse> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<LimitOrderResponse>, I>>(base?: I): LimitOrderResponse {
+  create<I extends Exact<DeepPartial<LimitOrderResponse>, I>>(
+    base?: I,
+  ): LimitOrderResponse {
     return LimitOrderResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<LimitOrderResponse>, I>>(object: I): LimitOrderResponse {
+  fromPartial<I extends Exact<DeepPartial<LimitOrderResponse>, I>>(
+    object: I,
+  ): LimitOrderResponse {
     const message = createBaseLimitOrderResponse();
     message.quote =
       object.quote !== undefined && object.quote !== null
@@ -298,7 +315,9 @@ export const ActiveOrdersRequest: MessageFns<ActiveOrdersRequest> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<ActiveOrdersRequest>, I>>(base?: I): ActiveOrdersRequest {
+  create<I extends Exact<DeepPartial<ActiveOrdersRequest>, I>>(
+    base?: I,
+  ): ActiveOrdersRequest {
     return ActiveOrdersRequest.fromPartial(base ?? ({} as any));
   },
   fromPartial<I extends Exact<DeepPartial<ActiveOrdersRequest>, I>>(
@@ -339,7 +358,9 @@ export const ActiveOrder: MessageFns<ActiveOrder> = {
   create<I extends Exact<DeepPartial<ActiveOrder>, I>>(base?: I): ActiveOrder {
     return ActiveOrder.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<ActiveOrder>, I>>(object: I): ActiveOrder {
+  fromPartial<I extends Exact<DeepPartial<ActiveOrder>, I>>(
+    object: I,
+  ): ActiveOrder {
     const message = createBaseActiveOrder();
     message.order =
       object.order !== undefined && object.order !== null
@@ -369,19 +390,24 @@ export const ActiveOrdersResponse: MessageFns<ActiveOrdersResponse> = {
   toJSON(message: ActiveOrdersResponse): unknown {
     const obj: any = {};
     if (message.activeOrders?.length) {
-      obj.active_orders = message.activeOrders.map((e) => ActiveOrder.toJSON(e));
+      obj.active_orders = message.activeOrders.map((e) =>
+        ActiveOrder.toJSON(e),
+      );
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<ActiveOrdersResponse>, I>>(base?: I): ActiveOrdersResponse {
+  create<I extends Exact<DeepPartial<ActiveOrdersResponse>, I>>(
+    base?: I,
+  ): ActiveOrdersResponse {
     return ActiveOrdersResponse.fromPartial(base ?? ({} as any));
   },
   fromPartial<I extends Exact<DeepPartial<ActiveOrdersResponse>, I>>(
     object: I,
   ): ActiveOrdersResponse {
     const message = createBaseActiveOrdersResponse();
-    message.activeOrders = object.activeOrders?.map((e) => ActiveOrder.fromPartial(e)) || [];
+    message.activeOrders =
+      object.activeOrders?.map((e) => ActiveOrder.fromPartial(e)) || [];
     return message;
   },
 };
@@ -411,10 +437,14 @@ export const TrackOrderRequest: MessageFns<TrackOrderRequest> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<TrackOrderRequest>, I>>(base?: I): TrackOrderRequest {
+  create<I extends Exact<DeepPartial<TrackOrderRequest>, I>>(
+    base?: I,
+  ): TrackOrderRequest {
     return TrackOrderRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<TrackOrderRequest>, I>>(object: I): TrackOrderRequest {
+  fromPartial<I extends Exact<DeepPartial<TrackOrderRequest>, I>>(
+    object: I,
+  ): TrackOrderRequest {
     const message = createBaseTrackOrderRequest();
     message.quoteId = object.quoteId ?? "";
     message.traderAddress =
@@ -434,64 +464,74 @@ function createBaseRegisterSignedOrderRequest(): RegisterSignedOrderRequest {
   };
 }
 
-export const RegisterSignedOrderRequest: MessageFns<RegisterSignedOrderRequest> = {
-  fromJSON(object: any): RegisterSignedOrderRequest {
-    return {
-      quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      ownerSrcAddress: isSet(object.owner_src_address)
-        ? ChainAddress.fromJSON(object.owner_src_address)
-        : undefined,
-      signedOrder: isSet(object.signed_order)
-        ? SignedOrder.fromJSON(object.signed_order)
-        : undefined,
-      serializedOrderDetails: isSet(object.serialized_order_details)
-        ? bytesFromBase64(object.serialized_order_details)
-        : undefined,
-    };
-  },
+export const RegisterSignedOrderRequest: MessageFns<RegisterSignedOrderRequest> =
+  {
+    fromJSON(object: any): RegisterSignedOrderRequest {
+      return {
+        quoteId: isSet(object.quote_id)
+          ? globalThis.String(object.quote_id)
+          : "",
+        ownerSrcAddress: isSet(object.owner_src_address)
+          ? ChainAddress.fromJSON(object.owner_src_address)
+          : undefined,
+        signedOrder: isSet(object.signed_order)
+          ? SignedOrder.fromJSON(object.signed_order)
+          : undefined,
+        serializedOrderDetails: isSet(object.serialized_order_details)
+          ? bytesFromBase64(object.serialized_order_details)
+          : undefined,
+      };
+    },
 
-  toJSON(message: RegisterSignedOrderRequest): unknown {
-    const obj: any = {};
-    if (message.quoteId !== undefined) {
-      obj.quote_id = message.quoteId;
-    }
-    if (message.ownerSrcAddress !== undefined) {
-      obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
-    }
-    if (message.signedOrder !== undefined) {
-      obj.signed_order = SignedOrder.toJSON(message.signedOrder);
-    }
-    if (message.serializedOrderDetails !== undefined) {
-      obj.serialized_order_details = base64FromBytes(message.serializedOrderDetails);
-    }
-    return obj;
-  },
+    toJSON(message: RegisterSignedOrderRequest): unknown {
+      const obj: any = {};
+      if (message.quoteId !== undefined) {
+        obj.quote_id = message.quoteId;
+      }
+      if (message.ownerSrcAddress !== undefined) {
+        obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
+      }
+      if (message.signedOrder !== undefined) {
+        obj.signed_order = SignedOrder.toJSON(message.signedOrder);
+      }
+      if (message.serializedOrderDetails !== undefined) {
+        obj.serialized_order_details = base64FromBytes(
+          message.serializedOrderDetails,
+        );
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<RegisterSignedOrderRequest>, I>>(
-    base?: I,
-  ): RegisterSignedOrderRequest {
-    return RegisterSignedOrderRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<RegisterSignedOrderRequest>, I>>(
-    object: I,
-  ): RegisterSignedOrderRequest {
-    const message = createBaseRegisterSignedOrderRequest();
-    message.quoteId = object.quoteId ?? "";
-    message.ownerSrcAddress =
-      object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
-        ? ChainAddress.fromPartial(object.ownerSrcAddress)
-        : undefined;
-    message.signedOrder =
-      object.signedOrder !== undefined && object.signedOrder !== null
-        ? SignedOrder.fromPartial(object.signedOrder)
-        : undefined;
-    message.serializedOrderDetails = object.serializedOrderDetails ?? undefined;
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<RegisterSignedOrderRequest>, I>>(
+      base?: I,
+    ): RegisterSignedOrderRequest {
+      return RegisterSignedOrderRequest.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<RegisterSignedOrderRequest>, I>>(
+      object: I,
+    ): RegisterSignedOrderRequest {
+      const message = createBaseRegisterSignedOrderRequest();
+      message.quoteId = object.quoteId ?? "";
+      message.ownerSrcAddress =
+        object.ownerSrcAddress !== undefined && object.ownerSrcAddress !== null
+          ? ChainAddress.fromPartial(object.ownerSrcAddress)
+          : undefined;
+      message.signedOrder =
+        object.signedOrder !== undefined && object.signedOrder !== null
+          ? SignedOrder.fromPartial(object.signedOrder)
+          : undefined;
+      message.serializedOrderDetails =
+        object.serializedOrderDetails ?? undefined;
+      return message;
+    },
+  };
 
 function createBaseCancelSignedOrderRequest(): CancelSignedOrderRequest {
-  return { quoteId: "", ownerSrcAddress: undefined, signedCancellation: undefined };
+  return {
+    quoteId: "",
+    ownerSrcAddress: undefined,
+    signedCancellation: undefined,
+  };
 }
 
 export const CancelSignedOrderRequest: MessageFns<CancelSignedOrderRequest> = {
@@ -516,7 +556,9 @@ export const CancelSignedOrderRequest: MessageFns<CancelSignedOrderRequest> = {
       obj.owner_src_address = ChainAddress.toJSON(message.ownerSrcAddress);
     }
     if (message.signedCancellation !== undefined) {
-      obj.signed_cancellation = SignedOrderCancellation.toJSON(message.signedCancellation);
+      obj.signed_cancellation = SignedOrderCancellation.toJSON(
+        message.signedCancellation,
+      );
     }
     return obj;
   },
@@ -536,7 +578,8 @@ export const CancelSignedOrderRequest: MessageFns<CancelSignedOrderRequest> = {
         ? ChainAddress.fromPartial(object.ownerSrcAddress)
         : undefined;
     message.signedCancellation =
-      object.signedCancellation !== undefined && object.signedCancellation !== null
+      object.signedCancellation !== undefined &&
+      object.signedCancellation !== null
         ? SignedOrderCancellation.fromPartial(object.signedCancellation)
         : undefined;
     return message;
@@ -547,28 +590,29 @@ function createBaseSignedOrderCancelledOffchain(): SignedOrderCancelledOffchain 
   return {};
 }
 
-export const SignedOrderCancelledOffchain: MessageFns<SignedOrderCancelledOffchain> = {
-  fromJSON(_: any): SignedOrderCancelledOffchain {
-    return {};
-  },
+export const SignedOrderCancelledOffchain: MessageFns<SignedOrderCancelledOffchain> =
+  {
+    fromJSON(_: any): SignedOrderCancelledOffchain {
+      return {};
+    },
 
-  toJSON(_: SignedOrderCancelledOffchain): unknown {
-    const obj: any = {};
-    return obj;
-  },
+    toJSON(_: SignedOrderCancelledOffchain): unknown {
+      const obj: any = {};
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<SignedOrderCancelledOffchain>, I>>(
-    base?: I,
-  ): SignedOrderCancelledOffchain {
-    return SignedOrderCancelledOffchain.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<SignedOrderCancelledOffchain>, I>>(
-    _: I,
-  ): SignedOrderCancelledOffchain {
-    const message = createBaseSignedOrderCancelledOffchain();
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<SignedOrderCancelledOffchain>, I>>(
+      base?: I,
+    ): SignedOrderCancelledOffchain {
+      return SignedOrderCancelledOffchain.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<SignedOrderCancelledOffchain>, I>>(
+      _: I,
+    ): SignedOrderCancelledOffchain {
+      const message = createBaseSignedOrderCancelledOffchain();
+      return message;
+    },
+  };
 
 function createBaseSignedOrderOnchainCancellationRequired(): SignedOrderOnchainCancellationRequired {
   return { order: undefined };
@@ -577,7 +621,9 @@ function createBaseSignedOrderOnchainCancellationRequired(): SignedOrderOnchainC
 export const SignedOrderOnchainCancellationRequired: MessageFns<SignedOrderOnchainCancellationRequired> =
   {
     fromJSON(object: any): SignedOrderOnchainCancellationRequired {
-      return { order: isSet(object.order) ? Order.fromJSON(object.order) : undefined };
+      return {
+        order: isSet(object.order) ? Order.fromJSON(object.order) : undefined,
+      };
     },
 
     toJSON(message: SignedOrderOnchainCancellationRequired): unknown {
@@ -588,14 +634,16 @@ export const SignedOrderOnchainCancellationRequired: MessageFns<SignedOrderOncha
       return obj;
     },
 
-    create<I extends Exact<DeepPartial<SignedOrderOnchainCancellationRequired>, I>>(
-      base?: I,
-    ): SignedOrderOnchainCancellationRequired {
-      return SignedOrderOnchainCancellationRequired.fromPartial(base ?? ({} as any));
+    create<
+      I extends Exact<DeepPartial<SignedOrderOnchainCancellationRequired>, I>,
+    >(base?: I): SignedOrderOnchainCancellationRequired {
+      return SignedOrderOnchainCancellationRequired.fromPartial(
+        base ?? ({} as any),
+      );
     },
-    fromPartial<I extends Exact<DeepPartial<SignedOrderOnchainCancellationRequired>, I>>(
-      object: I,
-    ): SignedOrderOnchainCancellationRequired {
+    fromPartial<
+      I extends Exact<DeepPartial<SignedOrderOnchainCancellationRequired>, I>,
+    >(object: I): SignedOrderOnchainCancellationRequired {
       const message = createBaseSignedOrderOnchainCancellationRequired();
       message.order =
         object.order !== undefined && object.order !== null
@@ -609,108 +657,134 @@ function createBaseCancelSignedOrderResponse(): CancelSignedOrderResponse {
   return { result: undefined };
 }
 
-export const CancelSignedOrderResponse: MessageFns<CancelSignedOrderResponse> = {
-  fromJSON(object: any): CancelSignedOrderResponse {
-    return {
-      result: isSet(object.cancelled_offchain)
-        ? {
-            $case: "cancelledOffchain",
-            value: SignedOrderCancelledOffchain.fromJSON(object.cancelled_offchain),
-          }
-        : isSet(object.requires_onchain)
+export const CancelSignedOrderResponse: MessageFns<CancelSignedOrderResponse> =
+  {
+    fromJSON(object: any): CancelSignedOrderResponse {
+      return {
+        result: isSet(object.cancelled_offchain)
           ? {
-              $case: "requiresOnchain",
-              value: SignedOrderOnchainCancellationRequired.fromJSON(object.requires_onchain),
+              $case: "cancelledOffchain",
+              value: SignedOrderCancelledOffchain.fromJSON(
+                object.cancelled_offchain,
+              ),
             }
-          : undefined,
-    };
-  },
+          : isSet(object.requires_onchain)
+            ? {
+                $case: "requiresOnchain",
+                value: SignedOrderOnchainCancellationRequired.fromJSON(
+                  object.requires_onchain,
+                ),
+              }
+            : undefined,
+      };
+    },
 
-  toJSON(message: CancelSignedOrderResponse): unknown {
-    const obj: any = {};
-    if (message.result?.$case === "cancelledOffchain") {
-      obj.cancelled_offchain = SignedOrderCancelledOffchain.toJSON(message.result.value);
-    } else if (message.result?.$case === "requiresOnchain") {
-      obj.requires_onchain = SignedOrderOnchainCancellationRequired.toJSON(message.result.value);
-    }
-    return obj;
-  },
+    toJSON(message: CancelSignedOrderResponse): unknown {
+      const obj: any = {};
+      if (message.result?.$case === "cancelledOffchain") {
+        obj.cancelled_offchain = SignedOrderCancelledOffchain.toJSON(
+          message.result.value,
+        );
+      } else if (message.result?.$case === "requiresOnchain") {
+        obj.requires_onchain = SignedOrderOnchainCancellationRequired.toJSON(
+          message.result.value,
+        );
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<CancelSignedOrderResponse>, I>>(
-    base?: I,
-  ): CancelSignedOrderResponse {
-    return CancelSignedOrderResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<CancelSignedOrderResponse>, I>>(
-    object: I,
-  ): CancelSignedOrderResponse {
-    const message = createBaseCancelSignedOrderResponse();
-    switch (object.result?.$case) {
-      case "cancelledOffchain": {
-        if (object.result?.value !== undefined && object.result?.value !== null) {
-          message.result = {
-            $case: "cancelledOffchain",
-            value: SignedOrderCancelledOffchain.fromPartial(object.result.value),
-          };
+    create<I extends Exact<DeepPartial<CancelSignedOrderResponse>, I>>(
+      base?: I,
+    ): CancelSignedOrderResponse {
+      return CancelSignedOrderResponse.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<CancelSignedOrderResponse>, I>>(
+      object: I,
+    ): CancelSignedOrderResponse {
+      const message = createBaseCancelSignedOrderResponse();
+      switch (object.result?.$case) {
+        case "cancelledOffchain": {
+          if (
+            object.result?.value !== undefined &&
+            object.result?.value !== null
+          ) {
+            message.result = {
+              $case: "cancelledOffchain",
+              value: SignedOrderCancelledOffchain.fromPartial(
+                object.result.value,
+              ),
+            };
+          }
+          break;
         }
-        break;
-      }
-      case "requiresOnchain": {
-        if (object.result?.value !== undefined && object.result?.value !== null) {
-          message.result = {
-            $case: "requiresOnchain",
-            value: SignedOrderOnchainCancellationRequired.fromPartial(object.result.value),
-          };
+        case "requiresOnchain": {
+          if (
+            object.result?.value !== undefined &&
+            object.result?.value !== null
+          ) {
+            message.result = {
+              $case: "requiresOnchain",
+              value: SignedOrderOnchainCancellationRequired.fromPartial(
+                object.result.value,
+              ),
+            };
+          }
+          break;
         }
-        break;
       }
-    }
-    return message;
-  },
-};
+      return message;
+    },
+  };
 
 function createBaseDiscloseHtlcSecretRequest(): DiscloseHtlcSecretRequest {
   return { quoteId: "", executionIndex: 0, secret: new Uint8Array(0) };
 }
 
-export const DiscloseHtlcSecretRequest: MessageFns<DiscloseHtlcSecretRequest> = {
-  fromJSON(object: any): DiscloseHtlcSecretRequest {
-    return {
-      quoteId: isSet(object.quote_id) ? globalThis.String(object.quote_id) : "",
-      executionIndex: isSet(object.execution_index) ? globalThis.Number(object.execution_index) : 0,
-      secret: isSet(object.secret) ? bytesFromBase64(object.secret) : new Uint8Array(0),
-    };
-  },
+export const DiscloseHtlcSecretRequest: MessageFns<DiscloseHtlcSecretRequest> =
+  {
+    fromJSON(object: any): DiscloseHtlcSecretRequest {
+      return {
+        quoteId: isSet(object.quote_id)
+          ? globalThis.String(object.quote_id)
+          : "",
+        executionIndex: isSet(object.execution_index)
+          ? globalThis.Number(object.execution_index)
+          : 0,
+        secret: isSet(object.secret)
+          ? bytesFromBase64(object.secret)
+          : new Uint8Array(0),
+      };
+    },
 
-  toJSON(message: DiscloseHtlcSecretRequest): unknown {
-    const obj: any = {};
-    if (message.quoteId !== undefined) {
-      obj.quote_id = message.quoteId;
-    }
-    if (message.executionIndex !== undefined) {
-      obj.execution_index = Math.round(message.executionIndex);
-    }
-    if (message.secret !== undefined) {
-      obj.secret = base64FromBytes(message.secret);
-    }
-    return obj;
-  },
+    toJSON(message: DiscloseHtlcSecretRequest): unknown {
+      const obj: any = {};
+      if (message.quoteId !== undefined) {
+        obj.quote_id = message.quoteId;
+      }
+      if (message.executionIndex !== undefined) {
+        obj.execution_index = Math.round(message.executionIndex);
+      }
+      if (message.secret !== undefined) {
+        obj.secret = base64FromBytes(message.secret);
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<DiscloseHtlcSecretRequest>, I>>(
-    base?: I,
-  ): DiscloseHtlcSecretRequest {
-    return DiscloseHtlcSecretRequest.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<DiscloseHtlcSecretRequest>, I>>(
-    object: I,
-  ): DiscloseHtlcSecretRequest {
-    const message = createBaseDiscloseHtlcSecretRequest();
-    message.quoteId = object.quoteId ?? "";
-    message.executionIndex = object.executionIndex ?? 0;
-    message.secret = object.secret ?? new Uint8Array(0);
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<DiscloseHtlcSecretRequest>, I>>(
+      base?: I,
+    ): DiscloseHtlcSecretRequest {
+      return DiscloseHtlcSecretRequest.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<DiscloseHtlcSecretRequest>, I>>(
+      object: I,
+    ): DiscloseHtlcSecretRequest {
+      const message = createBaseDiscloseHtlcSecretRequest();
+      message.quoteId = object.quoteId ?? "";
+      message.executionIndex = object.executionIndex ?? 0;
+      message.secret = object.secret ?? new Uint8Array(0);
+      return message;
+    },
+  };
 
 function bytesFromBase64(b64: string): Uint8Array {
   if ((globalThis as any).Buffer) {
@@ -737,7 +811,14 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -754,7 +835,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

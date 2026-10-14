@@ -1,10 +1,11 @@
 "use client";
 
 import { useAppKit } from "@reown/appkit/react";
-import { useCallback, useState } from "react";
 import { matchQuoteByType } from "@ston-fi/omniston-sdk-react";
+import { useCallback, useState } from "react";
 
 import { Button, type ButtonProps } from "~/components/ui/button";
+import { CopyJsonCard } from "~/components/ui/copy-json-card";
 import { Spinner } from "~/components/ui/spinner";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { useEvmTransaction } from "~/hooks/useEvmTransaction";
@@ -13,7 +14,6 @@ import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
 import { cn } from "~/lib/utils";
 import { ChainFamily, chainsByFamily } from "~/models/chain-family";
 import { useTradeTrackState } from "~/providers/trade-track";
-import { CopyJsonCard } from "~/components/ui/copy-json-card";
 
 const _QuoteActionEvm = (props: Omit<ButtonProps, "children">) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -23,7 +23,8 @@ const _QuoteActionEvm = (props: Omit<ButtonProps, "children">) => {
   const { startTradeTrack } = useTradeTrackState();
 
   const { data: quoteEvent } = useRfq();
-  const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
+  const quote =
+    quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
 
   const { inputWalletAddress } = useQuoteWallets(quote);
 
@@ -56,7 +57,11 @@ const _QuoteActionEvm = (props: Omit<ButtonProps, "children">) => {
 
       setBuildError(null);
     } catch (error) {
-      setBuildError(error instanceof Error ? error : new Error("Unknown error", { cause: error }));
+      setBuildError(
+        error instanceof Error
+          ? error
+          : new Error("Unknown error", { cause: error }),
+      );
     } finally {
       setIsClicked(false);
     }
@@ -67,16 +72,26 @@ const _QuoteActionEvm = (props: Omit<ButtonProps, "children">) => {
       <Button
         {...props}
         className={cn("relative z-10", props.className)}
-        disabled={isClicked || !handleQuoteClick || props.disabled || !quote || !inputWalletAddress}
+        disabled={
+          isClicked ||
+          !handleQuoteClick ||
+          props.disabled ||
+          !quote ||
+          !inputWalletAddress
+        }
         onClick={handleQuoteClick}
       >
         {isClicked ? <Spinner /> : "Accept quote"}
       </Button>
 
       {buildError && (
-        <div className="animate-in slide-in-from-top-2 fade-in -mt-2 duration-200">
+        <div className="-mt-2 duration-200 animate-in fade-in slide-in-from-top-2">
           <CopyJsonCard
-            title={<span className="m-0 truncate text-red-500">{buildError.message}</span>}
+            title={
+              <span className="m-0 truncate text-red-500">
+                {buildError.message}
+              </span>
+            }
             value={buildError}
             className="rounded-t-none border-t-0 border-red-500/30 bg-gradient-to-b from-red-500/10 to-red-500/5 pt-2"
           >
@@ -90,12 +105,19 @@ const _QuoteActionEvm = (props: Omit<ButtonProps, "children">) => {
   );
 };
 
-function withEvmWalletGuard(Component: React.ComponentType<Omit<ButtonProps, "children">>) {
+function withEvmWalletGuard(
+  Component: React.ComponentType<Omit<ButtonProps, "children">>,
+) {
   return (props: Omit<ButtonProps, "children">) => {
     const { open: openAppKit } = useAppKit();
-    const { walletAddressByChain: connectedWalletAddressByChain } = useConnectedWallets();
+    const { walletAddressByChain: connectedWalletAddressByChain } =
+      useConnectedWallets();
 
-    if (chainsByFamily[ChainFamily.EVM].some((chain) => !connectedWalletAddressByChain[chain])) {
+    if (
+      chainsByFamily[ChainFamily.EVM].some(
+        (chain) => !connectedWalletAddressByChain[chain],
+      )
+    ) {
       return (
         <Button
           {...props}

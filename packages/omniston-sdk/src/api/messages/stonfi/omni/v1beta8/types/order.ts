@@ -8,7 +8,12 @@
 // oxlint-disable
 
 import { ChainAddress } from "../../../common/v1/types/chain_address";
-import { KeepAlive, TradeStatus, tradeStatusFromJSON, tradeStatusToJSON } from "./common";
+import {
+  KeepAlive,
+  TradeStatus,
+  tradeStatusFromJSON,
+  tradeStatusToJSON,
+} from "./common";
 
 export const ExecutionPhase = {
   /**
@@ -24,24 +29,28 @@ export const ExecutionPhase = {
    * no longer be reverted. The resolver that created the reservation may
    * proceed with the successful completion flow of the execution.
    */
-  EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION: "EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION",
+  EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION:
+    "EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION",
   /**
    * EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION - (HTLC only) Public completion is allowed: the private completion window for
    * the resolver that created the reservation has ended, and any authorized
    * resolver may proceed with completion according to protocol rules.
    */
-  EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION: "EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION",
+  EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION:
+    "EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION",
   /**
    * EXECUTION_PHASE_READY_FOR_PRIVATE_ROLLBACK - The resolver that created the reservation may proceed with the private
    * rollback flow of the execution.
    */
-  EXECUTION_PHASE_READY_FOR_PRIVATE_ROLLBACK: "EXECUTION_PHASE_READY_FOR_PRIVATE_ROLLBACK",
+  EXECUTION_PHASE_READY_FOR_PRIVATE_ROLLBACK:
+    "EXECUTION_PHASE_READY_FOR_PRIVATE_ROLLBACK",
   /**
    * EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK - Public rollback is allowed. Any authorized resolver may proceed with
    * rollback according to protocol rules. Only the **Input position** enters
    * this phase.
    */
-  EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK: "EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK",
+  EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK:
+    "EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK",
   /**
    * EXECUTION_PHASE_COMPLETED - Final state: the execution completed successfully (funds unlocked as
    * intended).
@@ -55,10 +64,12 @@ export const ExecutionPhase = {
   UNRECOGNIZED: "UNRECOGNIZED",
 } as const;
 
-export type ExecutionPhase = (typeof ExecutionPhase)[keyof typeof ExecutionPhase];
+export type ExecutionPhase =
+  (typeof ExecutionPhase)[keyof typeof ExecutionPhase];
 
 export namespace ExecutionPhase {
-  export type EXECUTION_PHASE_CREATED = typeof ExecutionPhase.EXECUTION_PHASE_CREATED;
+  export type EXECUTION_PHASE_CREATED =
+    typeof ExecutionPhase.EXECUTION_PHASE_CREATED;
   export type EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION =
     typeof ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION;
   export type EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION =
@@ -67,8 +78,10 @@ export namespace ExecutionPhase {
     typeof ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_ROLLBACK;
   export type EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK =
     typeof ExecutionPhase.EXECUTION_PHASE_READY_FOR_PUBLIC_ROLLBACK;
-  export type EXECUTION_PHASE_COMPLETED = typeof ExecutionPhase.EXECUTION_PHASE_COMPLETED;
-  export type EXECUTION_PHASE_ROLLED_BACK = typeof ExecutionPhase.EXECUTION_PHASE_ROLLED_BACK;
+  export type EXECUTION_PHASE_COMPLETED =
+    typeof ExecutionPhase.EXECUTION_PHASE_COMPLETED;
+  export type EXECUTION_PHASE_ROLLED_BACK =
+    typeof ExecutionPhase.EXECUTION_PHASE_ROLLED_BACK;
   export type UNRECOGNIZED = typeof ExecutionPhase.UNRECOGNIZED;
 }
 
@@ -150,7 +163,9 @@ export namespace OrderCancellationMode {
   export type UNRECOGNIZED = typeof OrderCancellationMode.UNRECOGNIZED;
 }
 
-export function orderCancellationModeFromJSON(object: any): OrderCancellationMode {
+export function orderCancellationModeFromJSON(
+  object: any,
+): OrderCancellationMode {
   switch (object) {
     case 0:
     case "ORDER_CANCELLATION_MODE_UNAVAILABLE":
@@ -168,7 +183,9 @@ export function orderCancellationModeFromJSON(object: any): OrderCancellationMod
   }
 }
 
-export function orderCancellationModeToJSON(object: OrderCancellationMode): number {
+export function orderCancellationModeToJSON(
+  object: OrderCancellationMode,
+): number {
   switch (object) {
     case OrderCancellationMode.ORDER_CANCELLATION_MODE_UNAVAILABLE:
       return 0;
@@ -416,16 +433,24 @@ function createBaseExecutionPhaseTimestamps(): ExecutionPhaseTimestamps {
 export const ExecutionPhaseTimestamps: MessageFns<ExecutionPhaseTimestamps> = {
   fromJSON(object: any): ExecutionPhaseTimestamps {
     return {
-      privateCompletionAvailableTimestamp: isSet(object.private_completion_available_timestamp)
+      privateCompletionAvailableTimestamp: isSet(
+        object.private_completion_available_timestamp,
+      )
         ? globalThis.Number(object.private_completion_available_timestamp)
         : undefined,
-      publicCompletionAvailableTimestamp: isSet(object.public_completion_available_timestamp)
+      publicCompletionAvailableTimestamp: isSet(
+        object.public_completion_available_timestamp,
+      )
         ? globalThis.Number(object.public_completion_available_timestamp)
         : undefined,
-      privateRollbackAvailableTimestamp: isSet(object.private_rollback_available_timestamp)
+      privateRollbackAvailableTimestamp: isSet(
+        object.private_rollback_available_timestamp,
+      )
         ? globalThis.Number(object.private_rollback_available_timestamp)
         : 0,
-      publicRollbackAvailableTimestamp: isSet(object.public_rollback_available_timestamp)
+      publicRollbackAvailableTimestamp: isSet(
+        object.public_rollback_available_timestamp,
+      )
         ? globalThis.Number(object.public_rollback_available_timestamp)
         : undefined,
     };
@@ -469,8 +494,10 @@ export const ExecutionPhaseTimestamps: MessageFns<ExecutionPhaseTimestamps> = {
       object.privateCompletionAvailableTimestamp ?? undefined;
     message.publicCompletionAvailableTimestamp =
       object.publicCompletionAvailableTimestamp ?? undefined;
-    message.privateRollbackAvailableTimestamp = object.privateRollbackAvailableTimestamp ?? 0;
-    message.publicRollbackAvailableTimestamp = object.publicRollbackAvailableTimestamp ?? undefined;
+    message.privateRollbackAvailableTimestamp =
+      object.privateRollbackAvailableTimestamp ?? 0;
+    message.publicRollbackAvailableTimestamp =
+      object.publicRollbackAvailableTimestamp ?? undefined;
     return message;
   },
 };
@@ -498,22 +525,36 @@ export const Execution: MessageFns<Execution> = {
   fromJSON(object: any): Execution {
     return {
       index: isSet(object.index) ? globalThis.Number(object.index) : 0,
-      inputUnits: isSet(object.input_units) ? globalThis.String(object.input_units) : "",
-      outputUnits: isSet(object.output_units) ? globalThis.String(object.output_units) : "",
+      inputUnits: isSet(object.input_units)
+        ? globalThis.String(object.input_units)
+        : "",
+      outputUnits: isSet(object.output_units)
+        ? globalThis.String(object.output_units)
+        : "",
       resolverSendsUnits: isSet(object.resolver_sends_units)
         ? globalThis.String(object.resolver_sends_units)
         : "",
-      secretHash: isSet(object.secret_hash) ? bytesFromBase64(object.secret_hash) : undefined,
-      resolverId: isSet(object.resolver_id) ? globalThis.String(object.resolver_id) : "",
-      resolverName: isSet(object.resolver_name) ? globalThis.String(object.resolver_name) : "",
+      secretHash: isSet(object.secret_hash)
+        ? bytesFromBase64(object.secret_hash)
+        : undefined,
+      resolverId: isSet(object.resolver_id)
+        ? globalThis.String(object.resolver_id)
+        : "",
+      resolverName: isSet(object.resolver_name)
+        ? globalThis.String(object.resolver_name)
+        : "",
       inputPositionAddress: isSet(object.input_position_address)
         ? ChainAddress.fromJSON(object.input_position_address)
         : undefined,
       inputPositionPhase: isSet(object.input_position_phase)
         ? executionPhaseFromJSON(object.input_position_phase)
         : ExecutionPhase.EXECUTION_PHASE_CREATED,
-      inputPositionPhaseTimestamps: isSet(object.input_position_phase_timestamps)
-        ? ExecutionPhaseTimestamps.fromJSON(object.input_position_phase_timestamps)
+      inputPositionPhaseTimestamps: isSet(
+        object.input_position_phase_timestamps,
+      )
+        ? ExecutionPhaseTimestamps.fromJSON(
+            object.input_position_phase_timestamps,
+          )
         : undefined,
       srcResolverAddress: isSet(object.src_resolver_address)
         ? ChainAddress.fromJSON(object.src_resolver_address)
@@ -524,8 +565,12 @@ export const Execution: MessageFns<Execution> = {
       outputPositionPhase: isSet(object.output_position_phase)
         ? executionPhaseFromJSON(object.output_position_phase)
         : undefined,
-      outputPositionPhaseTimestamps: isSet(object.output_position_phase_timestamps)
-        ? ExecutionPhaseTimestamps.fromJSON(object.output_position_phase_timestamps)
+      outputPositionPhaseTimestamps: isSet(
+        object.output_position_phase_timestamps,
+      )
+        ? ExecutionPhaseTimestamps.fromJSON(
+            object.output_position_phase_timestamps,
+          )
         : undefined,
     };
   },
@@ -554,10 +599,14 @@ export const Execution: MessageFns<Execution> = {
       obj.resolver_name = message.resolverName;
     }
     if (message.inputPositionAddress !== undefined) {
-      obj.input_position_address = ChainAddress.toJSON(message.inputPositionAddress);
+      obj.input_position_address = ChainAddress.toJSON(
+        message.inputPositionAddress,
+      );
     }
     if (message.inputPositionPhase !== undefined) {
-      obj.input_position_phase = executionPhaseToJSON(message.inputPositionPhase);
+      obj.input_position_phase = executionPhaseToJSON(
+        message.inputPositionPhase,
+      );
     }
     if (message.inputPositionPhaseTimestamps !== undefined) {
       obj.input_position_phase_timestamps = ExecutionPhaseTimestamps.toJSON(
@@ -565,13 +614,19 @@ export const Execution: MessageFns<Execution> = {
       );
     }
     if (message.srcResolverAddress !== undefined) {
-      obj.src_resolver_address = ChainAddress.toJSON(message.srcResolverAddress);
+      obj.src_resolver_address = ChainAddress.toJSON(
+        message.srcResolverAddress,
+      );
     }
     if (message.outputPositionAddress !== undefined) {
-      obj.output_position_address = ChainAddress.toJSON(message.outputPositionAddress);
+      obj.output_position_address = ChainAddress.toJSON(
+        message.outputPositionAddress,
+      );
     }
     if (message.outputPositionPhase !== undefined) {
-      obj.output_position_phase = executionPhaseToJSON(message.outputPositionPhase);
+      obj.output_position_phase = executionPhaseToJSON(
+        message.outputPositionPhase,
+      );
     }
     if (message.outputPositionPhaseTimestamps !== undefined) {
       obj.output_position_phase_timestamps = ExecutionPhaseTimestamps.toJSON(
@@ -584,7 +639,9 @@ export const Execution: MessageFns<Execution> = {
   create<I extends Exact<DeepPartial<Execution>, I>>(base?: I): Execution {
     return Execution.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<Execution>, I>>(object: I): Execution {
+  fromPartial<I extends Exact<DeepPartial<Execution>, I>>(
+    object: I,
+  ): Execution {
     const message = createBaseExecution();
     message.index = object.index ?? 0;
     message.inputUnits = object.inputUnits ?? "";
@@ -594,7 +651,8 @@ export const Execution: MessageFns<Execution> = {
     message.resolverId = object.resolverId ?? "";
     message.resolverName = object.resolverName ?? "";
     message.inputPositionAddress =
-      object.inputPositionAddress !== undefined && object.inputPositionAddress !== null
+      object.inputPositionAddress !== undefined &&
+      object.inputPositionAddress !== null
         ? ChainAddress.fromPartial(object.inputPositionAddress)
         : undefined;
     message.inputPositionPhase =
@@ -602,21 +660,27 @@ export const Execution: MessageFns<Execution> = {
     message.inputPositionPhaseTimestamps =
       object.inputPositionPhaseTimestamps !== undefined &&
       object.inputPositionPhaseTimestamps !== null
-        ? ExecutionPhaseTimestamps.fromPartial(object.inputPositionPhaseTimestamps)
+        ? ExecutionPhaseTimestamps.fromPartial(
+            object.inputPositionPhaseTimestamps,
+          )
         : undefined;
     message.srcResolverAddress =
-      object.srcResolverAddress !== undefined && object.srcResolverAddress !== null
+      object.srcResolverAddress !== undefined &&
+      object.srcResolverAddress !== null
         ? ChainAddress.fromPartial(object.srcResolverAddress)
         : undefined;
     message.outputPositionAddress =
-      object.outputPositionAddress !== undefined && object.outputPositionAddress !== null
+      object.outputPositionAddress !== undefined &&
+      object.outputPositionAddress !== null
         ? ChainAddress.fromPartial(object.outputPositionAddress)
         : undefined;
     message.outputPositionPhase = object.outputPositionPhase ?? undefined;
     message.outputPositionPhaseTimestamps =
       object.outputPositionPhaseTimestamps !== undefined &&
       object.outputPositionPhaseTimestamps !== null
-        ? ExecutionPhaseTimestamps.fromPartial(object.outputPositionPhaseTimestamps)
+        ? ExecutionPhaseTimestamps.fromPartial(
+            object.outputPositionPhaseTimestamps,
+          )
         : undefined;
     return message;
   },
@@ -671,7 +735,9 @@ export const Order: MessageFns<Order> = {
       obj.status = tradeStatusToJSON(message.status);
     }
     if (message.protocolContractAddress !== undefined) {
-      obj.protocol_contract_address = ChainAddress.toJSON(message.protocolContractAddress);
+      obj.protocol_contract_address = ChainAddress.toJSON(
+        message.protocolContractAddress,
+      );
     }
     if (message.remainingInputUnits !== undefined) {
       obj.remaining_input_units = message.remainingInputUnits;
@@ -680,13 +746,17 @@ export const Order: MessageFns<Order> = {
       obj.escrowed_input_units = message.escrowedInputUnits;
     }
     if (message.cancellationMode !== undefined) {
-      obj.cancellation_mode = orderCancellationModeToJSON(message.cancellationMode);
+      obj.cancellation_mode = orderCancellationModeToJSON(
+        message.cancellationMode,
+      );
     }
     if (message.executions?.length) {
       obj.executions = message.executions.map((e) => Execution.toJSON(e));
     }
     if (message.estimatedFinishTimestamp !== undefined) {
-      obj.estimated_finish_timestamp = Math.round(message.estimatedFinishTimestamp);
+      obj.estimated_finish_timestamp = Math.round(
+        message.estimatedFinishTimestamp,
+      );
     }
     if (message.maximumFinishTimestamp !== undefined) {
       obj.maximum_finish_timestamp = Math.round(message.maximumFinishTimestamp);
@@ -701,15 +771,19 @@ export const Order: MessageFns<Order> = {
     const message = createBaseOrder();
     message.status = object.status ?? TradeStatus.TRADE_STATUS_IN_PROGRESS;
     message.protocolContractAddress =
-      object.protocolContractAddress !== undefined && object.protocolContractAddress !== null
+      object.protocolContractAddress !== undefined &&
+      object.protocolContractAddress !== null
         ? ChainAddress.fromPartial(object.protocolContractAddress)
         : undefined;
     message.remainingInputUnits = object.remainingInputUnits ?? "";
     message.escrowedInputUnits = object.escrowedInputUnits ?? "";
     message.cancellationMode =
-      object.cancellationMode ?? OrderCancellationMode.ORDER_CANCELLATION_MODE_UNAVAILABLE;
-    message.executions = object.executions?.map((e) => Execution.fromPartial(e)) || [];
-    message.estimatedFinishTimestamp = object.estimatedFinishTimestamp ?? undefined;
+      object.cancellationMode ??
+      OrderCancellationMode.ORDER_CANCELLATION_MODE_UNAVAILABLE;
+    message.executions =
+      object.executions?.map((e) => Execution.fromPartial(e)) || [];
+    message.estimatedFinishTimestamp =
+      object.estimatedFinishTimestamp ?? undefined;
     message.maximumFinishTimestamp = object.maximumFinishTimestamp ?? undefined;
     return message;
   },
@@ -740,21 +814,31 @@ export const OrderStatusEvent: MessageFns<OrderStatusEvent> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<OrderStatusEvent>, I>>(base?: I): OrderStatusEvent {
+  create<I extends Exact<DeepPartial<OrderStatusEvent>, I>>(
+    base?: I,
+  ): OrderStatusEvent {
     return OrderStatusEvent.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<OrderStatusEvent>, I>>(object: I): OrderStatusEvent {
+  fromPartial<I extends Exact<DeepPartial<OrderStatusEvent>, I>>(
+    object: I,
+  ): OrderStatusEvent {
     const message = createBaseOrderStatusEvent();
     switch (object.event?.$case) {
       case "order": {
         if (object.event?.value !== undefined && object.event?.value !== null) {
-          message.event = { $case: "order", value: Order.fromPartial(object.event.value) };
+          message.event = {
+            $case: "order",
+            value: Order.fromPartial(object.event.value),
+          };
         }
         break;
       }
       case "keepAlive": {
         if (object.event?.value !== undefined && object.event?.value !== null) {
-          message.event = { $case: "keepAlive", value: KeepAlive.fromPartial(object.event.value) };
+          message.event = {
+            $case: "keepAlive",
+            value: KeepAlive.fromPartial(object.event.value),
+          };
         }
         break;
       }
@@ -777,7 +861,9 @@ export const SignedOrderEvmV1: MessageFns<SignedOrderEvmV1> = {
       encodedOrder: isSet(object.encoded_order)
         ? bytesFromBase64(object.encoded_order)
         : new Uint8Array(0),
-      signature: isSet(object.signature) ? bytesFromBase64(object.signature) : new Uint8Array(0),
+      signature: isSet(object.signature)
+        ? bytesFromBase64(object.signature)
+        : new Uint8Array(0),
       orderExtension: isSet(object.order_extension)
         ? bytesFromBase64(object.order_extension)
         : new Uint8Array(0),
@@ -798,10 +884,14 @@ export const SignedOrderEvmV1: MessageFns<SignedOrderEvmV1> = {
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<SignedOrderEvmV1>, I>>(base?: I): SignedOrderEvmV1 {
+  create<I extends Exact<DeepPartial<SignedOrderEvmV1>, I>>(
+    base?: I,
+  ): SignedOrderEvmV1 {
     return SignedOrderEvmV1.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SignedOrderEvmV1>, I>>(object: I): SignedOrderEvmV1 {
+  fromPartial<I extends Exact<DeepPartial<SignedOrderEvmV1>, I>>(
+    object: I,
+  ): SignedOrderEvmV1 {
     const message = createBaseSignedOrderEvmV1();
     message.encodedOrder = object.encodedOrder ?? new Uint8Array(0);
     message.signature = object.signature ?? new Uint8Array(0);
@@ -834,7 +924,9 @@ export const SignedOrder: MessageFns<SignedOrder> = {
   create<I extends Exact<DeepPartial<SignedOrder>, I>>(base?: I): SignedOrder {
     return SignedOrder.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<SignedOrder>, I>>(object: I): SignedOrder {
+  fromPartial<I extends Exact<DeepPartial<SignedOrder>, I>>(
+    object: I,
+  ): SignedOrder {
     const message = createBaseSignedOrder();
     switch (object.order?.$case) {
       case "evmV1": {
@@ -852,44 +944,51 @@ export const SignedOrder: MessageFns<SignedOrder> = {
 };
 
 function createBaseSignedOrderCancellationEvmV1(): SignedOrderCancellationEvmV1 {
-  return { encodedCancellation: new Uint8Array(0), signature: new Uint8Array(0) };
+  return {
+    encodedCancellation: new Uint8Array(0),
+    signature: new Uint8Array(0),
+  };
 }
 
-export const SignedOrderCancellationEvmV1: MessageFns<SignedOrderCancellationEvmV1> = {
-  fromJSON(object: any): SignedOrderCancellationEvmV1 {
-    return {
-      encodedCancellation: isSet(object.encoded_cancellation)
-        ? bytesFromBase64(object.encoded_cancellation)
-        : new Uint8Array(0),
-      signature: isSet(object.signature) ? bytesFromBase64(object.signature) : new Uint8Array(0),
-    };
-  },
+export const SignedOrderCancellationEvmV1: MessageFns<SignedOrderCancellationEvmV1> =
+  {
+    fromJSON(object: any): SignedOrderCancellationEvmV1 {
+      return {
+        encodedCancellation: isSet(object.encoded_cancellation)
+          ? bytesFromBase64(object.encoded_cancellation)
+          : new Uint8Array(0),
+        signature: isSet(object.signature)
+          ? bytesFromBase64(object.signature)
+          : new Uint8Array(0),
+      };
+    },
 
-  toJSON(message: SignedOrderCancellationEvmV1): unknown {
-    const obj: any = {};
-    if (message.encodedCancellation !== undefined) {
-      obj.encoded_cancellation = base64FromBytes(message.encodedCancellation);
-    }
-    if (message.signature !== undefined) {
-      obj.signature = base64FromBytes(message.signature);
-    }
-    return obj;
-  },
+    toJSON(message: SignedOrderCancellationEvmV1): unknown {
+      const obj: any = {};
+      if (message.encodedCancellation !== undefined) {
+        obj.encoded_cancellation = base64FromBytes(message.encodedCancellation);
+      }
+      if (message.signature !== undefined) {
+        obj.signature = base64FromBytes(message.signature);
+      }
+      return obj;
+    },
 
-  create<I extends Exact<DeepPartial<SignedOrderCancellationEvmV1>, I>>(
-    base?: I,
-  ): SignedOrderCancellationEvmV1 {
-    return SignedOrderCancellationEvmV1.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<SignedOrderCancellationEvmV1>, I>>(
-    object: I,
-  ): SignedOrderCancellationEvmV1 {
-    const message = createBaseSignedOrderCancellationEvmV1();
-    message.encodedCancellation = object.encodedCancellation ?? new Uint8Array(0);
-    message.signature = object.signature ?? new Uint8Array(0);
-    return message;
-  },
-};
+    create<I extends Exact<DeepPartial<SignedOrderCancellationEvmV1>, I>>(
+      base?: I,
+    ): SignedOrderCancellationEvmV1 {
+      return SignedOrderCancellationEvmV1.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<SignedOrderCancellationEvmV1>, I>>(
+      object: I,
+    ): SignedOrderCancellationEvmV1 {
+      const message = createBaseSignedOrderCancellationEvmV1();
+      message.encodedCancellation =
+        object.encodedCancellation ?? new Uint8Array(0);
+      message.signature = object.signature ?? new Uint8Array(0);
+      return message;
+    },
+  };
 
 function createBaseSignedOrderCancellation(): SignedOrderCancellation {
   return { cancellation: undefined };
@@ -899,7 +998,10 @@ export const SignedOrderCancellation: MessageFns<SignedOrderCancellation> = {
   fromJSON(object: any): SignedOrderCancellation {
     return {
       cancellation: isSet(object.evm_v1)
-        ? { $case: "evmV1", value: SignedOrderCancellationEvmV1.fromJSON(object.evm_v1) }
+        ? {
+            $case: "evmV1",
+            value: SignedOrderCancellationEvmV1.fromJSON(object.evm_v1),
+          }
         : undefined,
     };
   },
@@ -907,7 +1009,9 @@ export const SignedOrderCancellation: MessageFns<SignedOrderCancellation> = {
   toJSON(message: SignedOrderCancellation): unknown {
     const obj: any = {};
     if (message.cancellation?.$case === "evmV1") {
-      obj.evm_v1 = SignedOrderCancellationEvmV1.toJSON(message.cancellation.value);
+      obj.evm_v1 = SignedOrderCancellationEvmV1.toJSON(
+        message.cancellation.value,
+      );
     }
     return obj;
   },
@@ -923,10 +1027,15 @@ export const SignedOrderCancellation: MessageFns<SignedOrderCancellation> = {
     const message = createBaseSignedOrderCancellation();
     switch (object.cancellation?.$case) {
       case "evmV1": {
-        if (object.cancellation?.value !== undefined && object.cancellation?.value !== null) {
+        if (
+          object.cancellation?.value !== undefined &&
+          object.cancellation?.value !== null
+        ) {
           message.cancellation = {
             $case: "evmV1",
-            value: SignedOrderCancellationEvmV1.fromPartial(object.cancellation.value),
+            value: SignedOrderCancellationEvmV1.fromPartial(
+              object.cancellation.value,
+            ),
           };
         }
         break;
@@ -961,7 +1070,14 @@ function base64FromBytes(arr: Uint8Array): string {
   }
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+type Builtin =
+  | Date
+  | Function
+  | Uint8Array
+  | string
+  | number
+  | boolean
+  | undefined;
 
 type DeepPartial<T> = T extends Builtin
   ? T
@@ -978,7 +1094,9 @@ type DeepPartial<T> = T extends Builtin
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin
   ? P
-  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & {
+      [K in Exclude<keyof I, KeysOfUnion<P>>]: never;
+    };
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

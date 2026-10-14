@@ -1,12 +1,12 @@
 "use client";
 
+import type { AssetId } from "@ston-fi/omniston-sdk-react";
 import { createContext, type Dispatch, useContext, useReducer } from "react";
 import { z } from "zod";
-import type { AssetId } from "@ston-fi/omniston-sdk-react";
 
-import { Chain } from "~/models/chain";
-import { assetIdSchema, isAssetIdEqual } from "~/models/asset-id";
 import { useLocalStoragePersistence } from "~/hooks/useLocalStoragePersistence";
+import { assetIdSchema, isAssetIdEqual } from "~/models/asset-id";
+import { Chain } from "~/models/chain";
 
 const SWAP_FORM_STORAGE_KEY = "@ston-fi/swap-form-state";
 
@@ -64,7 +64,10 @@ const swapReducer = (state: SwapState, action: IAction): SwapState => {
       return state;
     }
 
-    const shouldResetOutput = isAssetIdEqual(state.outputAssetId, action.payload);
+    const shouldResetOutput = isAssetIdEqual(
+      state.outputAssetId,
+      action.payload,
+    );
 
     return {
       ...state,
@@ -106,12 +109,15 @@ export const SwapFormProvider = ({ children }: React.PropsWithChildren) => {
     key: SWAP_FORM_STORAGE_KEY,
     schema: swapFormSchema,
     value: state,
-    onRestore: (payload) => dispatch({ type: "INITIALIZE_FROM_STORAGE", payload }),
+    onRestore: (payload) =>
+      dispatch({ type: "INITIALIZE_FROM_STORAGE", payload }),
   });
 
   return (
     <SwapContext.Provider value={state}>
-      <SwapContextDispatch.Provider value={dispatch}>{children}</SwapContextDispatch.Provider>
+      <SwapContextDispatch.Provider value={dispatch}>
+        {children}
+      </SwapContextDispatch.Provider>
     </SwapContext.Provider>
   );
 };

@@ -16,16 +16,28 @@ import {
   ExecutionPhase,
 } from "@ston-fi/omniston-sdk-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 type TradeTrackEvent =
   | OneOf<
       "swap",
-      InferObservableData<ReturnType<InstanceType<typeof Omniston>["swapTrack"]>> | UnsubscribeEvent
+      | InferObservableData<
+          ReturnType<InstanceType<typeof Omniston>["swapTrack"]>
+        >
+      | UnsubscribeEvent
     >
   | OneOf<
       "order",
-      | InferObservableData<ReturnType<InstanceType<typeof Omniston>["orderTrack"]>>
+      | InferObservableData<
+          ReturnType<InstanceType<typeof Omniston>["orderTrack"]>
+        >
       | UnsubscribeEvent
     >;
 
@@ -58,10 +70,13 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
   const omniston = useOmniston();
   const queryClient = useQueryClient();
 
-  const tradeSubscriptionsMapRef = useRef<Record<Quote["quoteId"], VoidFunction>>({});
+  const tradeSubscriptionsMapRef = useRef<
+    Record<Quote["quoteId"], VoidFunction>
+  >({});
 
   const [quote, setQuote] = useState<TradeTrackState["quote"]>(null);
-  const [tradeEvent, setTradeEvent] = useState<TradeTrackState["tradeEvent"]>(null);
+  const [tradeEvent, setTradeEvent] =
+    useState<TradeTrackState["tradeEvent"]>(null);
 
   const startTradeTrack = useCallback<TradeTrackState["startTradeTrack"]>(
     async (data) => {
@@ -72,7 +87,8 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
       setQuote(data.quote);
       setTradeEvent(null);
 
-      const invalidateAssets = () => queryClient.invalidateQueries({ queryKey: ["assets"] });
+      const invalidateAssets = () =>
+        queryClient.invalidateQueries({ queryKey: ["assets"] });
 
       const isTradeStatusFinal = (tradeStatus: TradeStatus) =>
         tradeStatus === "TRADE_STATUS_PARTIALLY_FILLED" ||
@@ -82,7 +98,9 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
 
       matchQuoteByType(data.quote, {
         swap: async () => {
-          const stream = await omniston.swapTrack(data.trackTradeData as TrackSwapRequest);
+          const stream = await omniston.swapTrack(
+            data.trackTradeData as TrackSwapRequest,
+          );
           const subscription = stream.subscribe({
             next: (event) => {
               switch (event?.$case) {
@@ -109,7 +127,8 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
           tradeSubscriptionsMapRef.current[quoteId] = subscription.unsubscribe;
         },
         order: async () => {
-          const htlcSecrets = "htlcSecrets" in data ? data.htlcSecrets : undefined;
+          const htlcSecrets =
+            "htlcSecrets" in data ? data.htlcSecrets : undefined;
           const chunksSecretsDisclosed = Array.from(
             { length: htlcSecrets?.length ?? 0 },
             () => false,
@@ -123,27 +142,35 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
                   setTradeEvent({ $case: "order", value: event });
 
                   if (htlcSecrets) {
-                    event.value.executions.forEach((execution, executionIndex) => {
-                      const secret = htlcSecrets[executionIndex];
+                    event.value.executions.forEach(
+                      (execution, executionIndex) => {
+                        const secret = htlcSecrets[executionIndex];
 
-                      const isSecretDisclosed = chunksSecretsDisclosed[executionIndex];
-                      const isSecretDisclosePhase = execution.outputPositionPhase
-                        ? [
-                            ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION,
-                            ExecutionPhase.EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION,
-                          ].includes(execution.outputPositionPhase)
-                        : false;
+                        const isSecretDisclosed =
+                          chunksSecretsDisclosed[executionIndex];
+                        const isSecretDisclosePhase =
+                          execution.outputPositionPhase
+                            ? [
+                                ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION,
+                                ExecutionPhase.EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION,
+                              ].includes(execution.outputPositionPhase)
+                            : false;
 
-                      if (secret && isSecretDisclosePhase && !isSecretDisclosed) {
-                        omniston.orderDiscloseHtlcSecret({
-                          quoteId,
-                          executionIndex,
-                          secret,
-                        });
+                        if (
+                          secret &&
+                          isSecretDisclosePhase &&
+                          !isSecretDisclosed
+                        ) {
+                          omniston.orderDiscloseHtlcSecret({
+                            quoteId,
+                            executionIndex,
+                            secret,
+                          });
 
-                        chunksSecretsDisclosed[executionIndex] = true;
-                      }
-                    });
+                          chunksSecretsDisclosed[executionIndex] = true;
+                        }
+                      },
+                    );
                   }
 
                   if (isTradeStatusFinal(event.value.status)) {
@@ -165,20 +192,27 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
     [omniston, queryClient],
   );
 
-  const stopTradeTrack = useCallback<TradeTrackState["stopTradeTrack"]>((quoteId) => {
-    tradeSubscriptionsMapRef.current[quoteId]?.();
-    delete tradeSubscriptionsMapRef.current[quoteId];
-  }, []);
+  const stopTradeTrack = useCallback<TradeTrackState["stopTradeTrack"]>(
+    (quoteId) => {
+      tradeSubscriptionsMapRef.current[quoteId]?.();
+      delete tradeSubscriptionsMapRef.current[quoteId];
+    },
+    [],
+  );
 
   useEffect(
     () => () => {
-      Object.values(tradeSubscriptionsMapRef.current).forEach((unsubscribe) => unsubscribe());
+      Object.values(tradeSubscriptionsMapRef.current).forEach((unsubscribe) =>
+        unsubscribe(),
+      );
     },
     [],
   );
 
   return (
-    <TradeTrackContext.Provider value={{ quote, tradeEvent, startTradeTrack, stopTradeTrack }}>
+    <TradeTrackContext.Provider
+      value={{ quote, tradeEvent, startTradeTrack, stopTradeTrack }}
+    >
       {children}
     </TradeTrackContext.Provider>
   );
@@ -188,7 +222,9 @@ export const useTradeTrackState = () => {
   const context = useContext(TradeTrackContext);
 
   if (!context) {
-    throw new Error("useTradeTrackState must be used within a TradeTrackProvider");
+    throw new Error(
+      "useTradeTrackState must be used within a TradeTrackProvider",
+    );
   }
 
   return context;

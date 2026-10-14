@@ -26,6 +26,9 @@ export class MockWebSocket {
   close() {}
 }
 
-export const MockWebSocketConstructor = vi.fn(function (this: unknown, url: string) {
+export const MockWebSocketConstructor = vi.fn(function (
+  this: unknown,
+  url: string,
+) {
   return new MockWebSocket(url);
 });

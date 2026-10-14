@@ -2,18 +2,19 @@
 
 import { type Quote, matchQuoteByType } from "@ston-fi/omniston-sdk-react";
 
+import { QuotePreviewOrder } from "~/components/QuotePreviewOrder";
+import { QuotePreviewSwap } from "~/components/QuotePreviewSwap";
+import { RfqEventHistory } from "~/components/RfqEventHistory";
 import { Copy } from "~/components/ui/copy";
 import { DescriptionList } from "~/components/ui/description-list";
 import { useRfq } from "~/hooks/useRfq";
 import { cn, trimStringWithEllipsis } from "~/lib/utils";
 import { useTradeTrackState } from "~/providers/trade-track";
-import { QuotePreviewSwap } from "~/components/QuotePreviewSwap";
-import { QuotePreviewOrder } from "~/components/QuotePreviewOrder";
-import { RfqEventHistory } from "~/components/RfqEventHistory";
 
 export const QuotePreview = (props: { className?: string }) => {
   const { data: quoteEvent, error, isFetching } = useRfq();
-  const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
+  const quote =
+    quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
 
   const { quote: trackingQuote } = useTradeTrackState();
 
@@ -22,7 +23,13 @@ export const QuotePreview = (props: { className?: string }) => {
   }
 
   return (
-    <div {...props} className={cn("flex flex-col gap-2 p-4 border rounded-md", props.className)}>
+    <div
+      {...props}
+      className={cn(
+        "flex flex-col gap-2 rounded-md border p-4",
+        props.className,
+      )}
+    >
       {error ? (
         <QuoteError error={error} />
       ) : quote ? (
@@ -60,7 +67,13 @@ const QuotePreviewPresenter = ({ quote }: { quote: Quote }) => {
   );
 };
 
-const QuoteIdPresenter = ({ quoteId, rfqId }: { quoteId: Quote["quoteId"]; rfqId: string }) => {
+const QuoteIdPresenter = ({
+  quoteId,
+  rfqId,
+}: {
+  quoteId: Quote["quoteId"];
+  rfqId: string;
+}) => {
   return (
     <DescriptionList>
       <li>

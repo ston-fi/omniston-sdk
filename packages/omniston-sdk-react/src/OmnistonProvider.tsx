@@ -35,12 +35,18 @@ export const OmnistonProvider = ({
   };
 
   if (queryClient) {
-    return <OmnistonContext.Provider value={omniston}>{children}</OmnistonContext.Provider>;
+    return (
+      <OmnistonContext.Provider value={omniston}>
+        {children}
+      </OmnistonContext.Provider>
+    );
   }
 
   return (
     <OmnistonContext.Provider value={omniston}>
-      <QueryClientProvider client={getInternalQueryClient()}>{children}</QueryClientProvider>
+      <QueryClientProvider client={getInternalQueryClient()}>
+        {children}
+      </QueryClientProvider>
     </OmnistonContext.Provider>
   );
 };

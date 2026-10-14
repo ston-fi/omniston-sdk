@@ -4,7 +4,11 @@ import { ChevronDown } from "lucide-react";
 import { useMemo } from "react";
 
 import { QuoteDataPresenter } from "~/components/QuotePreview";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { useEnsureQuoteAssets } from "~/hooks/useEnsureQuoteAssets";
 import { useOmniston } from "~/hooks/useOmniston";
@@ -13,7 +17,8 @@ import { bigNumberToFloat, cn } from "~/lib/utils";
 
 export const ActiveOrderList = ({ className }: { className?: string }) => {
   const omniston = useOmniston();
-  const { walletAddressByChain: connectedWalletAddressByChain } = useConnectedWallets();
+  const { walletAddressByChain: connectedWalletAddressByChain } =
+    useConnectedWallets();
 
   const connectedWalletAddresses = useMemo(
     () => Object.values(connectedWalletAddressByChain).filter(Boolean),
@@ -25,8 +30,11 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
       queryKey: ["orderGetActive", { traderAddress: connectedWalletAddress }],
       queryFn: async () => ({
         traderAddress: connectedWalletAddress,
-        orders: (await omniston.orderGetActive({ traderAddress: connectedWalletAddress }))
-          .activeOrders,
+        orders: (
+          await omniston.orderGetActive({
+            traderAddress: connectedWalletAddress,
+          })
+        ).activeOrders,
       }),
     })),
   });
@@ -41,7 +49,9 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
     [activeOrdersQuery],
   );
 
-  const isActiveOrdersQueryLoading = activeOrdersQuery.some((queryResult) => queryResult.isLoading);
+  const isActiveOrdersQueryLoading = activeOrdersQuery.some(
+    (queryResult) => queryResult.isLoading,
+  );
   const activeOrderQuotes = useMemo(
     () => activeOrders.map((activeOrder) => activeOrder.quote),
     [activeOrders],
@@ -59,7 +69,10 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
 
       <ul className="flex flex-col gap-1">
         {activeOrders.map((activeOrder) => (
-          <ActiveOrderListItem key={activeOrder.quote.quoteId} order={activeOrder} />
+          <ActiveOrderListItem
+            key={activeOrder.quote.quoteId}
+            order={activeOrder}
+          />
         ))}
       </ul>
     </div>
@@ -67,9 +80,8 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
 };
 
 function ActiveOrderListItem({ order }: { order: ActiveOrder }) {
-  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(
-    order.quote,
-  );
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
+    useQuoteAssets(order.quote);
 
   return (
     <li className="flex flex-col gap-2 rounded-md border p-4">
@@ -87,7 +99,7 @@ function ActiveOrderListItem({ order }: { order: ActiveOrder }) {
           />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="bg-secondary/50 mt-2 rounded-md p-2">
+          <div className="mt-2 rounded-md bg-secondary/50 p-2">
             <QuoteDataPresenter quote={order.quote} />
           </div>
         </CollapsibleContent>

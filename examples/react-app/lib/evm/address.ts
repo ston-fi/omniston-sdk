@@ -1,8 +1,10 @@
-import { z } from "zod";
 import type { Address as ViemAddres } from "viem";
+import { z } from "zod";
 
 export const erc20AddressSchema = z
-  .custom<ViemAddres>((value) => typeof value === "string" && /^0x[a-fA-F0-9]{40}$/.test(value))
+  .custom<ViemAddres>(
+    (value) => typeof value === "string" && /^0x[a-fA-F0-9]{40}$/.test(value),
+  )
   .brand("Erc20Address");
 
 export type Erc20Address = z.infer<typeof erc20AddressSchema>;

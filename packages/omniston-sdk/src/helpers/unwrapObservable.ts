@@ -20,7 +20,9 @@ export function unwrapObservable<T, TArgs extends Array<unknown>, TReturn>(
 
       void originalMethod.apply(this, args).then(
         (inner) => {
-          const wrappedInner = inner.pipe(catchError((err) => throwError(() => wrapError(err))));
+          const wrappedInner = inner.pipe(
+            catchError((err) => throwError(() => wrapError(err))),
+          );
 
           if (isClosed) {
             // Preserve inner teardown side effects for early unsubscriptions.

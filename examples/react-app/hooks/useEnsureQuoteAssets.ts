@@ -12,7 +12,9 @@ export function useEnsureQuoteAssets(quotes?: Quote | Quote[]) {
   const assetIds = useMemo(() => {
     const quoteList = Array.isArray(quotes) ? quotes : quotes ? [quotes] : [];
     const assetIdsByKey = new Map(
-      quoteList.flatMap(collectQuoteAssets).map((assetId) => [serializeAssetId(assetId), assetId]),
+      quoteList
+        .flatMap(collectQuoteAssets)
+        .map((assetId) => [serializeAssetId(assetId), assetId]),
     );
 
     return Array.from(assetIdsByKey.keys())

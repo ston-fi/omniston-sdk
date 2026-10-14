@@ -1,12 +1,14 @@
 "use server";
 
-import { type Asset } from "~/models/asset";
 import { stonApiClient } from "~/lib/ston-api-client";
 import { retrieveEnvVariable } from "~/lib/utils";
+import { type Asset } from "~/models/asset";
 
 import { tonAssetSchema, transformToAsset } from "./ton-asset-schema";
 
-const ASSET_SEARCH_CONDITION = retrieveEnvVariable("OMNIDEMO__STON_API__ASSETS_SEARCH_CONDITION");
+const ASSET_SEARCH_CONDITION = retrieveEnvVariable(
+  "OMNIDEMO__STON_API__ASSETS_SEARCH_CONDITION",
+);
 
 export async function searchTonAssets({
   searchTerms,
@@ -24,7 +26,9 @@ export async function searchTonAssets({
   const response = await stonApiClient.queryAssets({
     limit,
     searchTerms,
-    condition: condition ? `${ASSET_SEARCH_CONDITION} & ${condition}` : ASSET_SEARCH_CONDITION,
+    condition: condition
+      ? `${ASSET_SEARCH_CONDITION} & ${condition}`
+      : ASSET_SEARCH_CONDITION,
     walletAddress,
     unconditionalAssets,
   });

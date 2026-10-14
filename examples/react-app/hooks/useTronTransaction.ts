@@ -1,4 +1,10 @@
 import {
+  isHtlcOrderQuote,
+  BuildEvmOrderPayloadRequest,
+} from "@ston-fi/omniston-sdk-react";
+import { useMemo } from "react";
+import type { TronWeb } from "tronweb";
+import {
   encodeAbiParameters,
   hashTypedData,
   hexToBytes,
@@ -8,23 +14,24 @@ import {
   type Hex,
 } from "viem";
 import type { useSignTypedData } from "wagmi";
-import { useMemo } from "react";
-import { isHtlcOrderQuote, BuildEvmOrderPayloadRequest } from "@ston-fi/omniston-sdk-react";
-import type { TronWeb } from "tronweb";
 
 import { useOmniston } from "~/hooks/useOmniston";
 import { useRfq } from "~/hooks/useRfq";
 import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
-import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
-import { useSwapSettings } from "~/providers/swap-settings";
-import { Chain } from "~/models/chain";
-import type { TronAddress } from "~/lib/tron/address";
 import { useTronWalletConnection } from "~/hooks/useTronWalletConnection";
 import { useTronWebClient } from "~/hooks/useTronWebClient";
+import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
+import type { TronAddress } from "~/lib/tron/address";
+import { Chain } from "~/models/chain";
+import { useSwapSettings } from "~/providers/swap-settings";
 
-type TypedData = Parameters<ReturnType<typeof useSignTypedData>["mutateAsync"]>[0];
+type TypedData = Parameters<
+  ReturnType<typeof useSignTypedData>["mutateAsync"]
+>[0];
 
-type SignTypedDataResult = Awaited<ReturnType<ReturnType<typeof useSignTypedData>["mutateAsync"]>>;
+type SignTypedDataResult = Awaited<
+  ReturnType<ReturnType<typeof useSignTypedData>["mutateAsync"]>
+>;
 
 export function useTronTransaction() {
   const omniston = useOmniston();
@@ -34,7 +41,8 @@ export function useTronTransaction() {
   const getTronWebClient = useTronWebClient();
 
   const { data: quoteEvent } = useRfq();
-  const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
+  const quote =
+    quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
 
   const { htlcMaxExecutions } = useSwapSettings();
 
@@ -46,31 +54,43 @@ export function useTronTransaction() {
 
     return async () => {
       if (!isHtlcOrderQuote(quote)) {
-        throw new Error(`Expected HTLC order quote, got "${quote.settlementData.$case}"`);
+        throw new Error(
+          `Expected HTLC order quote, got "${quote.settlementData.$case}"`,
+        );
       }
 
       const inputChain = quote.inputAsset.chain.$case;
 
       if (inputChain !== Chain.TRON) {
-        throw new Error(`Expected TRON chain for order quote, got "${inputChain}"`);
+        throw new Error(
+          `Expected TRON chain for order quote, got "${inputChain}"`,
+        );
       }
 
       // --- htlc
 
       let htlcSecrets: Uint8Array[] | undefined;
-      let htlcSecretsData: Required<Pick<BuildEvmOrderPayloadRequest, "htlcSecrets">> | undefined;
+      let htlcSecretsData:
+        | Required<Pick<BuildEvmOrderPayloadRequest, "htlcSecrets">>
+        | undefined;
 
       const shouldUseHtlc = true; // currently TRON order quotes are always HTLC
 
       if (shouldUseHtlc) {
-        htlcSecrets = Array.from({ length: htlcMaxExecutions }, generateHtlcSecret);
+        htlcSecrets = Array.from(
+          { length: htlcMaxExecutions },
+          generateHtlcSecret,
+        );
         htlcSecretsData = {
           htlcSecrets: {
             secretMode: {
               $case: "provided",
               value: {
                 hashes: htlcSecrets.map((secret) =>
-                  generateHtlcHashlock(secret, quote.settlementData.value.htlcHashingFunction),
+                  generateHtlcHashlock(
+                    secret,
+                    quote.settlementData.value.htlcHashingFunction,
+                  ),
                 ),
               },
             },
@@ -88,43 +108,55 @@ export function useTronTransaction() {
         ...htlcSecretsData,
       });
 
-      const orderTypedData = JSON.parse(evmOrderPayload.typedData) as Omit<TypedData, "domain"> & {
+      const orderTypedData = JSON.parse(evmOrderPayload.typedData) as Omit<
+        TypedData,
+        "domain"
+      > & {
         domain: Required<NonNullable<TypedData["domain"]>>;
       };
 
       // --- approval check + request if needed
 
-      const isAllowanceRequired = quote.inputAsset.chain.value.kind.$case !== "native";
+      const isAllowanceRequired =
+        quote.inputAsset.chain.value.kind.$case !== "native";
 
       if (isAllowanceRequired) {
         const ownerAddress = inputWalletAddress.chain.value as TronAddress;
-        const spenderAddress = quote.settlementData.value.srcProtocolContractAddress.chain
-          .value as TronAddress;
+        const spenderAddress = quote.settlementData.value
+          .srcProtocolContractAddress.chain.value as TronAddress;
 
         const tronWeb = getTronWebClient();
 
         tronWeb.setAddress(ownerAddress);
 
-        const tokenAddress = quote.inputAsset.chain.value.kind.value as TronAddress;
+        const tokenAddress = quote.inputAsset.chain.value.kind
+          .value as TronAddress;
         const token = await tronWeb.contract().at(tokenAddress);
-        const allowance = await token.allowance(ownerAddress, spenderAddress).call();
+        const allowance = await token
+          .allowance(ownerAddress, spenderAddress)
+          .call();
         const currentAllowance = BigInt(allowance.toString());
 
-        const isAllowanceSufficient = currentAllowance >= BigInt(quote.inputUnits);
+        const isAllowanceSufficient =
+          currentAllowance >= BigInt(quote.inputUnits);
 
         if (!isAllowanceSufficient) {
           const parameter = [
             { type: "address", value: spenderAddress },
             { type: "uint256", value: quote.inputUnits },
           ];
-          const { transaction } = await tronWeb.transactionBuilder.triggerSmartContract(
-            tokenAddress,
-            "approve(address,uint256)",
-            { feeLimit: 100_000_000, callValue: 0 },
-            parameter,
-          );
+          const { transaction } =
+            await tronWeb.transactionBuilder.triggerSmartContract(
+              tokenAddress,
+              "approve(address,uint256)",
+              { feeLimit: 100_000_000, callValue: 0 },
+              parameter,
+            );
 
-          const signedTransaction = await signTronTransaction({ ownerAddress, transaction });
+          const signedTransaction = await signTronTransaction({
+            ownerAddress,
+            transaction,
+          });
 
           await tronWeb.trx.sendRawTransaction(signedTransaction as any);
 
@@ -176,7 +208,8 @@ export function useTronTransaction() {
 function encodeCompactSignature(serializedSignature: SignTypedDataResult) {
   const signature = parseSignature(serializedSignature);
   const compactSignature = signatureToCompactSignature(signature);
-  const serializedCompactSignature = serializeCompactSignature(compactSignature);
+  const serializedCompactSignature =
+    serializeCompactSignature(compactSignature);
   const bytes = hexToBytes(serializedCompactSignature);
 
   return bytes;
@@ -186,13 +219,19 @@ function encodeTypedData(typedData: any) {
   return hexToBytes(
     encodeAbiParameters(
       typedData.types[typedData.primaryType],
-      typedData.types[typedData.primaryType].map((type: any) => typedData.message[type.name]),
+      typedData.types[typedData.primaryType].map(
+        (type: any) => typedData.message[type.name],
+      ),
     ),
   );
 }
 
 // https://tronweb.network/docu/docs/references/confirmed-vs-unconfirmed#best-practices
-async function waitForConfirmation(tronWeb: TronWeb, txId: string, maxRetries: number = 20) {
+async function waitForConfirmation(
+  tronWeb: TronWeb,
+  txId: string,
+  maxRetries: number = 20,
+) {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const result = await tronWeb.trx.getConfirmedTransaction(txId);

@@ -5,12 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRef } from "react";
 
 import { AssetsProvider } from "./assets";
+import { AppConfigProvider, type AppConfigProviderProps } from "./config";
 import { SwapFormProvider } from "./swap-form";
 import { SwapSettingsProvider } from "./swap-settings";
 import { TonConnectProvider } from "./ton-connect";
 import { TradeTrackProvider } from "./trade-track";
 import { WalletConnectProvider } from "./wallet-connect";
-import { AppConfigProvider, type AppConfigProviderProps } from "./config";
 
 export function Providers({
   children,

@@ -1,16 +1,20 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import type { QuoteOfType } from "@ston-fi/omniston-sdk-react";
+import { ChevronDown } from "lucide-react";
 
-import { bigNumberToFloat, trimStringWithEllipsis } from "~/lib/utils";
-import { DescriptionList } from "~/components/ui/description-list";
 import { ExplorerAddressPreview } from "~/components/ExplorerAddressPreview";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/collapsible";
 import { QuotePresenter } from "~/components/QuotePresenter";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
 import { CopyJsonCard } from "~/components/ui/copy-json-card";
-import { addressFromAssetId } from "~/models/address";
+import { DescriptionList } from "~/components/ui/description-list";
 import { useQuoteAssets } from "~/hooks/useQuoteAssets";
+import { bigNumberToFloat, trimStringWithEllipsis } from "~/lib/utils";
+import { addressFromAssetId } from "~/models/address";
 
 type OrderQuote = QuoteOfType<"order">;
 
@@ -49,7 +53,8 @@ function OrderSettlementDataPresenter({
 }: React.ComponentProps<typeof DescriptionList> & {
   quote: OrderQuote;
 }) {
-  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } = useQuoteAssets(quote);
+  const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
+    useQuoteAssets(quote);
 
   const orderSettlementData = quote.settlementData.value;
 
@@ -57,14 +62,21 @@ function OrderSettlementDataPresenter({
     <DescriptionList {...props}>
       <li>
         <span>srcProtocolContractAddress</span>
-        <ExplorerAddressPreview address={orderSettlementData.srcProtocolContractAddress}>
-          {trimStringWithEllipsis(orderSettlementData.srcProtocolContractAddress.chain.value, 6)}
+        <ExplorerAddressPreview
+          address={orderSettlementData.srcProtocolContractAddress}
+        >
+          {trimStringWithEllipsis(
+            orderSettlementData.srcProtocolContractAddress.chain.value,
+            6,
+          )}
         </ExplorerAddressPreview>
       </li>
       {orderSettlementData.srcWrappedNativeTokenAddress ? (
         <li>
           <span>srcWrappedNativeTokenAddress</span>
-          <ExplorerAddressPreview address={orderSettlementData.srcWrappedNativeTokenAddress}>
+          <ExplorerAddressPreview
+            address={orderSettlementData.srcWrappedNativeTokenAddress}
+          >
             {trimStringWithEllipsis(
               orderSettlementData.srcWrappedNativeTokenAddress.chain.value,
               6,
@@ -75,8 +87,13 @@ function OrderSettlementDataPresenter({
       {orderSettlementData.srcInitialResolverAddress ? (
         <li>
           <span>srcInitialResolverAddress</span>
-          <ExplorerAddressPreview address={orderSettlementData.srcInitialResolverAddress}>
-            {trimStringWithEllipsis(orderSettlementData.srcInitialResolverAddress.chain.value, 6)}
+          <ExplorerAddressPreview
+            address={orderSettlementData.srcInitialResolverAddress}
+          >
+            {trimStringWithEllipsis(
+              orderSettlementData.srcInitialResolverAddress.chain.value,
+              6,
+            )}
           </ExplorerAddressPreview>
         </li>
       ) : null}
@@ -84,7 +101,8 @@ function OrderSettlementDataPresenter({
         <li>
           <span>srcHtlcSecurityDepositAsset</span>
           {trimStringWithEllipsis(
-            addressFromAssetId(orderSettlementData.srcHtlcSecurityDepositAsset)!.chain.value,
+            addressFromAssetId(orderSettlementData.srcHtlcSecurityDepositAsset)!
+              .chain.value,
             6,
           )}
         </li>
@@ -104,8 +122,13 @@ function OrderSettlementDataPresenter({
       {orderSettlementData.dstProtocolContractAddress ? (
         <li>
           <span>dstProtocolContractAddress</span>
-          <ExplorerAddressPreview address={orderSettlementData.dstProtocolContractAddress}>
-            {trimStringWithEllipsis(orderSettlementData.dstProtocolContractAddress.chain.value, 6)}
+          <ExplorerAddressPreview
+            address={orderSettlementData.dstProtocolContractAddress}
+          >
+            {trimStringWithEllipsis(
+              orderSettlementData.dstProtocolContractAddress.chain.value,
+              6,
+            )}
           </ExplorerAddressPreview>
         </li>
       ) : null}
@@ -118,7 +141,9 @@ function OrderSettlementDataPresenter({
       {orderSettlementData.dstWrappedNativeTokenAddress ? (
         <li>
           <span>dstWrappedNativeTokenAddress</span>
-          <ExplorerAddressPreview address={orderSettlementData.dstWrappedNativeTokenAddress}>
+          <ExplorerAddressPreview
+            address={orderSettlementData.dstWrappedNativeTokenAddress}
+          >
             {trimStringWithEllipsis(
               orderSettlementData.dstWrappedNativeTokenAddress.chain.value,
               6,
@@ -130,7 +155,8 @@ function OrderSettlementDataPresenter({
         <li>
           <span>dstSecurityDepositAsset</span>
           {trimStringWithEllipsis(
-            addressFromAssetId(orderSettlementData.dstSecurityDepositAsset)!.chain.value,
+            addressFromAssetId(orderSettlementData.dstSecurityDepositAsset)!
+              .chain.value,
             6,
           )}
         </li>
@@ -143,7 +169,11 @@ function OrderSettlementDataPresenter({
       ) : null}
       <li>
         <span>tradeStartDeadline:</span>
-        <pre>{new Date(orderSettlementData.tradeStartDeadline * 1000).toLocaleString()}</pre>
+        <pre>
+          {new Date(
+            orderSettlementData.tradeStartDeadline * 1000,
+          ).toLocaleString()}
+        </pre>
       </li>
       <li>
         <span>exclusivityTimeout:</span>
@@ -160,8 +190,13 @@ function OrderSettlementDataPresenter({
       {orderSettlementData.protocolFeeRecipientAddress ? (
         <li>
           <span>protocolFeeRecipientAddress:</span>
-          <ExplorerAddressPreview address={orderSettlementData.protocolFeeRecipientAddress}>
-            {trimStringWithEllipsis(orderSettlementData.protocolFeeRecipientAddress.chain.value, 6)}
+          <ExplorerAddressPreview
+            address={orderSettlementData.protocolFeeRecipientAddress}
+          >
+            {trimStringWithEllipsis(
+              orderSettlementData.protocolFeeRecipientAddress.chain.value,
+              6,
+            )}
           </ExplorerAddressPreview>
         </li>
       ) : null}

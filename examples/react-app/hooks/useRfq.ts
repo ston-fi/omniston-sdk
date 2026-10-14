@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import {
   useRfq as _useRfq,
   type SettlementParams,
@@ -8,12 +6,13 @@ import {
   type QuoteRequest,
   SettlementMethod,
 } from "@ston-fi/omniston-sdk-react";
+import { useMemo } from "react";
 
 import { useDebounce } from "~/hooks/useDebounce";
 import { useEnsureQuoteAssets } from "~/hooks/useEnsureQuoteAssets";
-import { isValidAddress } from "~/models/address";
 import { floatToBigNumber } from "~/lib/utils";
 import { percentToPips } from "~/lib/utils/percent";
+import { isValidAddress } from "~/models/address";
 import { useAssets } from "~/providers/assets";
 import { useSwapForm } from "~/providers/swap-form";
 import { useSwapSettings } from "~/providers/swap-settings";
@@ -28,8 +27,12 @@ export const useRfq = () => {
   const { quote: trackingQuote } = useTradeTrackState();
 
   const quoteRequest = useMemo<QuoteRequest | undefined>(() => {
-    const inputAsset = swapForm.inputAssetId ? getAssetById(swapForm.inputAssetId) : undefined;
-    const outputAsset = swapForm.outputAssetId ? getAssetById(swapForm.outputAssetId) : undefined;
+    const inputAsset = swapForm.inputAssetId
+      ? getAssetById(swapForm.inputAssetId)
+      : undefined;
+    const outputAsset = swapForm.outputAssetId
+      ? getAssetById(swapForm.outputAssetId)
+      : undefined;
 
     if (!inputAsset || !outputAsset) return undefined;
 
@@ -38,12 +41,18 @@ export const useRfq = () => {
     if (swapForm.inputUnits) {
       amount = {
         $case: "inputUnits",
-        value: floatToBigNumber(swapForm.inputUnits, inputAsset.metadata.decimals).toString(),
+        value: floatToBigNumber(
+          swapForm.inputUnits,
+          inputAsset.metadata.decimals,
+        ).toString(),
       };
     } else if (swapForm.outputUnits) {
       amount = {
         $case: "outputUnits",
-        value: floatToBigNumber(swapForm.outputUnits, outputAsset.metadata.decimals).toString(),
+        value: floatToBigNumber(
+          swapForm.outputUnits,
+          outputAsset.metadata.decimals,
+        ).toString(),
       };
     }
 
@@ -78,7 +87,9 @@ export const useRfq = () => {
               $case: "swap",
               value: {
                 flexibleIntegratorFee: swapSettings.flexibleIntegratorFee,
-                maxPriceSlippagePips: percentToPips(swapSettings.slippageTolerancePercent),
+                maxPriceSlippagePips: percentToPips(
+                  swapSettings.slippageTolerancePercent,
+                ),
               } satisfies SwapSettlementParams,
             },
           });
@@ -122,7 +133,8 @@ export const useRfq = () => {
     },
   );
 
-  const quote = rfqQuery.data?.$case === "quoteUpdated" ? rfqQuery.data.value : undefined;
+  const quote =
+    rfqQuery.data?.$case === "quoteUpdated" ? rfqQuery.data.value : undefined;
   const quoteAssets = useEnsureQuoteAssets(quote);
 
   const isEnsuringQuoteAssets = quote !== undefined && !quoteAssets.isReady;
@@ -132,6 +144,8 @@ export const useRfq = () => {
   return {
     data: isEnsuringQuoteAssets ? undefined : rfqQuery.data,
     error: rfqQuery.error ?? quoteAssets.error,
-    isFetching: rfqQuery.isFetching || (isEnsuringQuoteAssets && quoteAssets.error === null),
+    isFetching:
+      rfqQuery.isFetching ||
+      (isEnsuringQuoteAssets && quoteAssets.error === null),
   };
 };

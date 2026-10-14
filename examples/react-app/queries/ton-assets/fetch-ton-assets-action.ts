@@ -1,13 +1,14 @@
 "use server";
 
-import type { Asset } from "~/models/asset";
-
 import { stonApiClient } from "~/lib/ston-api-client";
 import { retrieveEnvVariable } from "~/lib/utils";
+import type { Asset } from "~/models/asset";
 
 import { tonAssetSchema, transformToAsset } from "./ton-asset-schema";
 
-const ASSET_QUERY_CONDITION = retrieveEnvVariable("OMNIDEMO__STON_API__ASSETS_QUERY_CONDITION");
+const ASSET_QUERY_CONDITION = retrieveEnvVariable(
+  "OMNIDEMO__STON_API__ASSETS_QUERY_CONDITION",
+);
 
 export async function fetchTonAssets({
   condition,
@@ -19,7 +20,9 @@ export async function fetchTonAssets({
   walletAddress?: string;
 }): Promise<Asset[]> {
   const response = await stonApiClient.queryAssets({
-    condition: condition ? `${ASSET_QUERY_CONDITION} & ${condition}` : ASSET_QUERY_CONDITION,
+    condition: condition
+      ? `${ASSET_QUERY_CONDITION} & ${condition}`
+      : ASSET_QUERY_CONDITION,
     walletAddress,
     unconditionalAssets,
   });

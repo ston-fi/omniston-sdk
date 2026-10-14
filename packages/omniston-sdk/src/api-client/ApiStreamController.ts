@@ -114,9 +114,10 @@ export class ApiStreamController {
 
   private createOutStream() {
     return new Observable((subscriber) => {
-      const connectionEventSubscription = this.options.connectionStatusEvents.subscribe((event) =>
-        this.handleConnectionEvent(event),
-      );
+      const connectionEventSubscription =
+        this.options.connectionStatusEvents.subscribe((event) =>
+          this.handleConnectionEvent(event),
+        );
       const subscription = this.outStreamSubject.subscribe(subscriber);
 
       return () => {
@@ -130,14 +131,20 @@ export class ApiStreamController {
   private async subscribeToInStream() {
     this.resetInStreamSubscriptions();
 
-    const result = await this.apiClient.send(this.options.method, this.options.payload);
+    const result = await this.apiClient.send(
+      this.options.method,
+      this.options.payload,
+    );
 
     if (typeof result !== "number") {
       throw new Error(`Expected subscription id, but got "${result}"`);
     }
 
     const subscriptionId = result;
-    const inStream = this.apiClient.readStream(this.options.eventMethod, subscriptionId);
+    const inStream = this.apiClient.readStream(
+      this.options.eventMethod,
+      subscriptionId,
+    );
     const inStreamClosedByServer = this.apiClient.readStream(
       `${this.options.eventMethod}.closed`,
       subscriptionId,
@@ -146,7 +153,9 @@ export class ApiStreamController {
     // Pipe all updates from the inner stream to the outer stream.
     this.inStreamSubscriptions.add(inStream.subscribe(this.outStreamSubject));
     this.inStreamSubscriptions.add(
-      inStreamClosedByServer.subscribe(() => this.handleInStreamClosedByServer()),
+      inStreamClosedByServer.subscribe(() =>
+        this.handleInStreamClosedByServer(),
+      ),
     );
 
     if (this.pendingUnsubscribeMethod) {
@@ -160,7 +169,11 @@ export class ApiStreamController {
     const isFirstEvent = this.inStreamLastConnectionStatusEvent === undefined;
     this.inStreamLastConnectionStatusEvent = event;
 
-    if (event.status === "connected" && !isFirstEvent && !this.isInStreamClosedByServer) {
+    if (
+      event.status === "connected" &&
+      !isFirstEvent &&
+      !this.isInStreamClosedByServer
+    ) {
       this.subscribeToInStream();
     }
   }

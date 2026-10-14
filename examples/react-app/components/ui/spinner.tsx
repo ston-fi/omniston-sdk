@@ -1,10 +1,9 @@
 import clsx from "clsx";
 import type { ComponentPropsWithoutRef, FC } from "react";
 
-export const Spinner: FC<Omit<ComponentPropsWithoutRef<"span">, "children">> = ({
-  className,
-  ...props
-}) => (
+export const Spinner: FC<
+  Omit<ComponentPropsWithoutRef<"span">, "children">
+> = ({ className, ...props }) => (
   <span
     {...props}
     className={clsx(

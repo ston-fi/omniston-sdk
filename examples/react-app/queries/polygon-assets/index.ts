@@ -21,9 +21,13 @@ export const polygonAssetQueryFactory = createEvmAssetQueryFactory({
   queryKey: POLYGON_ASSETS_QUERY_KEY,
   searchQueryKey: POLYGON_ASSETS_SEARCH_QUERY_KEY,
   getAssets: memoizePromise(async () =>
-    (await resolveAssetsMock(Chain.POLYGON, POLYGON_ASSETS_MOCK, evmAssetMockSchema)).map(
-      transformToAsset,
-    ),
+    (
+      await resolveAssetsMock(
+        Chain.POLYGON,
+        POLYGON_ASSETS_MOCK,
+        evmAssetMockSchema,
+      )
+    ).map(transformToAsset),
   ),
 });
 

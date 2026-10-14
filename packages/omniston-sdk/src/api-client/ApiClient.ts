@@ -6,11 +6,15 @@ import {
   JSONRPCServerAndClient,
 } from "json-rpc-2.0";
 import { BehaviorSubject, Observable } from "rxjs";
+
 import { isJSONRPCError } from "../helpers/isJSONRPCError";
 import type { Logger } from "../logger/Logger";
 import type { IApiClient } from "./ApiClient.types";
 import { ApiStreamController } from "./ApiStreamController";
-import type { ConnectionStatus, ConnectionStatusEvent } from "./ConnectionStatus";
+import type {
+  ConnectionStatus,
+  ConnectionStatusEvent,
+} from "./ConnectionStatus";
 import type { Transport } from "./Transport";
 
 type StreamConsumer = (err: unknown | undefined, data: unknown) => void;
@@ -44,9 +48,10 @@ export class ApiClient implements IApiClient {
 
   private streamConsumers = new Map<string, StreamConsumerMap>();
 
-  public readonly connectionStatusEvents = new BehaviorSubject<ConnectionStatusEvent>({
-    status: "ready",
-  });
+  public readonly connectionStatusEvents =
+    new BehaviorSubject<ConnectionStatusEvent>({
+      status: "ready",
+    });
 
   constructor(options: ApiClientOptions) {
     this.transport = options.transport;
@@ -54,7 +59,9 @@ export class ApiClient implements IApiClient {
 
     this.serverAndClient = new JSONRPCServerAndClient(
       new JSONRPCServer(),
-      new JSONRPCClient((request) => this.transport.send(JSON.stringify(request))),
+      new JSONRPCClient((request) =>
+        this.transport.send(JSON.stringify(request)),
+      ),
     );
 
     this.transport.messages.subscribe((message) => {
@@ -62,7 +69,9 @@ export class ApiClient implements IApiClient {
       this.serverAndClient.receiveAndSend(JSON.parse(message));
     });
 
-    this.transport.connectionStatusEvents.subscribe(this.connectionStatusEvents);
+    this.transport.connectionStatusEvents.subscribe(
+      this.connectionStatusEvents,
+    );
   }
 
   public get connectionStatus(): ConnectionStatus {
@@ -78,7 +87,8 @@ export class ApiClient implements IApiClient {
     const lastConnectionEvent = this.connectionStatusEvents.value;
     if (
       !this.connection ||
-      (lastConnectionEvent.status === "error" && !lastConnectionEvent.isReconnecting)
+      (lastConnectionEvent.status === "error" &&
+        !lastConnectionEvent.isReconnecting)
     ) {
       this.connection = this.transport.connect();
     }
@@ -92,7 +102,9 @@ export class ApiClient implements IApiClient {
    */
   async send(method: string, payload: JSONRPCParams): Promise<unknown> {
     await this.ensureConnection();
-    this.logger?.debug(`Sending: method=${method} payload=${JSON.stringify(payload)}`);
+    this.logger?.debug(
+      `Sending: method=${method} payload=${JSON.stringify(payload)}`,
+    );
     return this.serverAndClient.request(method, payload);
   }
 
@@ -104,7 +116,8 @@ export class ApiClient implements IApiClient {
     return new ApiStreamController({
       apiClient: {
         send: (method, payload) => this.send(method, payload),
-        readStream: (method, subscriptionId) => this.readStream(method, subscriptionId),
+        readStream: (method, subscriptionId) =>
+          this.readStream(method, subscriptionId),
       },
       connectionStatusEvents: this.connectionStatusEvents,
       method,
@@ -119,7 +132,10 @@ export class ApiClient implements IApiClient {
    * @param subscriptionId An unique id, assigned by the server
    * @returns JSON-encoded notifications
    */
-  private readStream(method: string, subscriptionId: number): Observable<unknown> {
+  private readStream(
+    method: string,
+    subscriptionId: number,
+  ): Observable<unknown> {
     return new Observable((subscriber) => {
       this.getStreamConsumerMap(method).set(subscriptionId, (err, data) => {
         if (err) {
@@ -146,7 +162,11 @@ export class ApiClient implements IApiClient {
         const payloadError = payload.error;
 
         const serverError = isJSONRPCError(payloadError)
-          ? new JSONRPCErrorException(payloadError.message, payloadError.code, payloadError.data)
+          ? new JSONRPCErrorException(
+              payloadError.message,
+              payloadError.code,
+              payloadError.data,
+            )
           : new Error(`Server error: ${JSON.stringify(payloadError)}`);
 
         consumer?.(serverError, undefined);

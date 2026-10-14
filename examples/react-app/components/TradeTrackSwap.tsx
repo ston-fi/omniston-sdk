@@ -10,20 +10,22 @@ import {
 } from "@ston-fi/omniston-sdk-react";
 
 import { bigNumberToFloat, cn, trimStringWithEllipsis } from "~/lib/utils";
+import { serializeAssetId } from "~/models/asset-id";
+import { Chain } from "~/models/chain";
 import { useAssets } from "~/providers/assets";
-import { Spinner } from "./ui/spinner";
-import { ExplorerTransactionPreview } from "./ExplorerTransactionPreview";
+import { useTradeTrackState } from "~/providers/trade-track";
+
 import { ExplorerAddressPreview } from "./ExplorerAddressPreview";
+import { ExplorerTransactionPreview } from "./ExplorerTransactionPreview";
 import { TradeTrackStatusPresenter } from "./TradeTrackStatusPresenter";
+import { CopyJsonCard } from "./ui/copy-json-card";
 import { DescriptionList } from "./ui/description-list";
 import { Skeleton } from "./ui/skeleton";
-import { Chain } from "~/models/chain";
-import { CopyJsonCard } from "./ui/copy-json-card";
-import { useTradeTrackState } from "~/providers/trade-track";
-import { serializeAssetId } from "~/models/asset-id";
+import { Spinner } from "./ui/spinner";
 
 export function TradeTrackSwap(props: { className?: string }) {
-  const { quote: trackingQuote, tradeEvent: tradeTrackProgress } = useTradeTrackState();
+  const { quote: trackingQuote, tradeEvent: tradeTrackProgress } =
+    useTradeTrackState();
 
   if (!trackingQuote || !isSwapQuote(trackingQuote)) return null;
 
@@ -35,7 +37,13 @@ export function TradeTrackSwap(props: { className?: string }) {
       return <AwaitingTransferEventView {...props} event={swapTrackEvent} />;
     }
     case "progress": {
-      return <ProgressEventView {...props} quote={trackingQuote} event={swapTrackEvent} />;
+      return (
+        <ProgressEventView
+          {...props}
+          quote={trackingQuote}
+          event={swapTrackEvent}
+        />
+      );
     }
     case "unsubscribed": {
       return <UnsubscribedEventView {...props} />;
@@ -54,9 +62,16 @@ export function TradeTrackSwap(props: { className?: string }) {
   }
 }
 
-function TradeTrackSwapCard({ className, children, ...props }: React.ComponentProps<"div">) {
+function TradeTrackSwapCard({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
-    <div {...props} className={cn("flex flex-col gap-2 p-4 border rounded-md", className)}>
+    <div
+      {...props}
+      className={cn("flex flex-col gap-2 rounded-md border p-4", className)}
+    >
       {children}
     </div>
   );
@@ -66,7 +81,10 @@ function AwaitingTransferEventView({
   event,
   className,
 }: {
-  event: Extract<NonNullable<SwapProgressEvent["event"]>, { $case: "awaitingTransfer" }>;
+  event: Extract<
+    NonNullable<SwapProgressEvent["event"]>,
+    { $case: "awaitingTransfer" }
+  >;
   className?: string;
 }) {
   return (
@@ -102,7 +120,8 @@ function ProgressEventView({
   quote: QuoteOfType<"swap">;
   className?: string;
 }) {
-  const { status, transferTimestamp, estimatedFinishTimestamp, routes } = event.value;
+  const { status, transferTimestamp, estimatedFinishTimestamp, routes } =
+    event.value;
 
   return (
     <TradeTrackSwapCard className={className}>
@@ -123,7 +142,9 @@ function ProgressEventView({
         {estimatedFinishTimestamp ? (
           <li>
             <span>Estimated finish timestamp:</span>
-            <span>{new Date(estimatedFinishTimestamp * 1000).toLocaleString()}</span>
+            <span>
+              {new Date(estimatedFinishTimestamp * 1000).toLocaleString()}
+            </span>
           </li>
         ) : null}
       </DescriptionList>
@@ -273,7 +294,7 @@ function SwapChunkItem({
   }
 
   return (
-    <div {...props} className={cn("flex flex-col gap-2 ml-5", className)}>
+    <div {...props} className={cn("ml-5 flex flex-col gap-2", className)}>
       <span>{`↳ chunk ${step.chunks.indexOf(chunk) + 1}/${step.chunks.length}`}</span>
       <DescriptionList className="ml-5">
         <li>

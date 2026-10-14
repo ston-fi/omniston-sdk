@@ -1,10 +1,10 @@
-import { ExternalLink } from "lucide-react";
 import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
+import { ExternalLink } from "lucide-react";
 import { useMemo } from "react";
 
 import { cn } from "~/lib/utils";
-import { useAppConfig } from "~/providers/config";
 import { Chain } from "~/models/chain";
+import { useAppConfig } from "~/providers/config";
 
 interface ExplorerAddressPreviewProps extends Omit<
   React.ComponentProps<"a">,
@@ -88,7 +88,7 @@ export const ExplorerAddressPreview = ({
       rel="noopener noreferrer"
       {...props}
       href={previewLink}
-      className={cn("flex gap-1 items-center hover:text-primary", className)}
+      className={cn("flex items-center gap-1 hover:text-primary", className)}
     >
       {children}
       <ExternalLink className="size-4 shrink-0" />

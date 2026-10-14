@@ -2,22 +2,24 @@
 
 import { UnplugIcon } from "lucide-react";
 
-import { Button } from "~/components/ui/button";
 import { QuoteActionTon } from "~/components/QuoteActionTon";
-import { QuoteActionEvm } from "./QuoteActionEvm";
+import { QuoteActionTron } from "~/components/QuoteActionTron";
+import { Button } from "~/components/ui/button";
 import { Spinner } from "~/components/ui/spinner";
 import { useRfq } from "~/hooks/useRfq";
-import { useTradeTrackState } from "~/providers/trade-track";
-import { useSwapForm } from "~/providers/swap-form";
-import { ChainFamily, isChainInFamily } from "~/models/chain-family";
 import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
-import { QuoteActionTron } from "~/components/QuoteActionTron";
+import { ChainFamily, isChainInFamily } from "~/models/chain-family";
+import { useSwapForm } from "~/providers/swap-form";
+import { useTradeTrackState } from "~/providers/trade-track";
+
+import { QuoteActionEvm } from "./QuoteActionEvm";
 
 export const QuoteAction = (props: { className?: string }) => {
   const swapForm = useSwapForm();
 
   const { data: quoteEvent } = useRfq();
-  const quote = quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
+  const quote =
+    quoteEvent?.$case === "quoteUpdated" ? quoteEvent.value : undefined;
 
   const { quote: trackingQuote } = useTradeTrackState();
 
@@ -33,7 +35,11 @@ export const QuoteAction = (props: { className?: string }) => {
   } else if (!swapForm.inputUnits && !swapForm.outputUnits) {
     return <QuoteActionButton disabled>Enter an amount</QuoteActionButton>;
   } else if (swapForm.inputUnits === "0" || swapForm.outputUnits === "0") {
-    return <QuoteActionButton disabled>Amount must be greater than 0</QuoteActionButton>;
+    return (
+      <QuoteActionButton disabled>
+        Amount must be greater than 0
+      </QuoteActionButton>
+    );
   }
   // different quote events statuses
   else if (quoteEvent?.$case === "unsubscribed") {
@@ -60,9 +66,13 @@ export const QuoteAction = (props: { className?: string }) => {
   }
   // wallets for known quote validations
   else if (!inputWalletAddress) {
-    return <QuoteActionButton disabled>Connect input wallet.</QuoteActionButton>;
+    return (
+      <QuoteActionButton disabled>Connect input wallet.</QuoteActionButton>
+    );
   } else if (!outputWalletAddress) {
-    return <QuoteActionButton disabled>Connect output wallet.</QuoteActionButton>;
+    return (
+      <QuoteActionButton disabled>Connect output wallet.</QuoteActionButton>
+    );
   }
   // action buttons for known quote
   else if (isChainInFamily(quote.inputAsset.chain.$case, ChainFamily.TON)) {

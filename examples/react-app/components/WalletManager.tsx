@@ -6,21 +6,25 @@ import {
   useDisconnect as useAppKitDisconnect,
   useWalletInfo,
 } from "@reown/appkit/react";
-import { TronLinkAdapterName } from "@tronweb3/tronwallet-adapters";
 import {
   useTonAddress,
   useTonConnectModal,
   useTonConnectUI,
   useTonWallet,
 } from "@tonconnect/ui-react";
+import { TronLinkAdapterName } from "@tronweb3/tronwallet-adapters";
 import { LogOut } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
-import { cn, trimStringWithEllipsis } from "~/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { useTronWalletConnection } from "~/hooks/useTronWalletConnection";
+import { cn, trimStringWithEllipsis } from "~/lib/utils";
 import { CHAIN_FAMILY_METADATA, ChainFamily } from "~/models/chain-family";
 
 type ConnectOption = {
@@ -41,7 +45,11 @@ type WalletFamily = {
   disconnect: () => void | Promise<void>;
 };
 
-const SUPPORTED_WALLET_FAMILIES = [ChainFamily.TON, ChainFamily.EVM, ChainFamily.TRON] as const;
+const SUPPORTED_WALLET_FAMILIES = [
+  ChainFamily.TON,
+  ChainFamily.EVM,
+  ChainFamily.TRON,
+] as const;
 
 export function WalletManager() {
   const walletFamiliesById = useWalletFamilies();
@@ -66,7 +74,10 @@ export function WalletManager() {
       <PopoverContent align="end" className="w-80 p-2">
         <div className="flex flex-col gap-2">
           {SUPPORTED_WALLET_FAMILIES.map((family) => (
-            <WalletFamilyCard key={family} walletFamily={walletFamiliesById[family]} />
+            <WalletFamilyCard
+              key={family}
+              walletFamily={walletFamiliesById[family]}
+            />
           ))}
         </div>
       </PopoverContent>
@@ -82,9 +93,11 @@ function useWalletFamilies(): Record<ChainFamily, WalletFamily> {
 
   const { open: openAppKit } = useAppKit();
   const { disconnect: disconnectAppKit } = useAppKitDisconnect();
-  const { address: evmAddress, isConnected: isEvmConnected } = useAppKitAccount({
-    namespace: "eip155",
-  });
+  const { address: evmAddress, isConnected: isEvmConnected } = useAppKitAccount(
+    {
+      namespace: "eip155",
+    },
+  );
   const { walletInfo: evmWalletInfo } = useWalletInfo("eip155");
   const tronWalletConnection = useTronWalletConnection();
   const { tronLinkWallet } = tronWalletConnection;
@@ -114,7 +127,8 @@ function useWalletFamilies(): Record<ChainFamily, WalletFamily> {
       address: tonAddress || undefined,
       wallet: {
         name: tonWallet && "name" in tonWallet ? tonWallet.name : undefined,
-        iconUrl: tonWallet && "imageUrl" in tonWallet ? tonWallet.imageUrl : undefined,
+        iconUrl:
+          tonWallet && "imageUrl" in tonWallet ? tonWallet.imageUrl : undefined,
       },
       connectOptions: [
         {
@@ -184,7 +198,11 @@ function WalletFamilyCard({ walletFamily }: { walletFamily: WalletFamily }) {
   );
 }
 
-function WalletFamilyCardHeader({ walletFamily }: { walletFamily: WalletFamily }) {
+function WalletFamilyCardHeader({
+  walletFamily,
+}: {
+  walletFamily: WalletFamily;
+}) {
   const metadata = CHAIN_FAMILY_METADATA[walletFamily.family];
 
   // const isConnected = Boolean(walletFamily.address);
@@ -196,7 +214,11 @@ function WalletFamilyCardHeader({ walletFamily }: { walletFamily: WalletFamily }
   );
 }
 
-function ConnectedWalletDetails({ walletFamily }: { walletFamily: WalletFamily }) {
+function ConnectedWalletDetails({
+  walletFamily,
+}: {
+  walletFamily: WalletFamily;
+}) {
   const metadata = CHAIN_FAMILY_METADATA[walletFamily.family];
   const address = walletFamily.address;
 
@@ -205,14 +227,17 @@ function ConnectedWalletDetails({ walletFamily }: { walletFamily: WalletFamily }
   return (
     <div className="flex min-w-0 items-center gap-3">
       <Avatar className="size-9">
-        <AvatarImage src={walletFamily.wallet?.iconUrl || metadata.imageUrl} alt={metadata.label} />
+        <AvatarImage
+          src={walletFamily.wallet?.iconUrl || metadata.imageUrl}
+          alt={metadata.label}
+        />
       </Avatar>
 
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">
           {walletFamily.wallet?.name || metadata.label}
         </div>
-        <div className="text-muted-foreground truncate font-mono text-xs">
+        <div className="truncate font-mono text-xs text-muted-foreground">
           {trimStringWithEllipsis(address, 6, 4)}
         </div>
       </div>
@@ -241,9 +266,15 @@ function ConnectOptionList({ options }: { options: ConnectOption[] }) {
           className="h-9 w-full justify-start p-1"
           onClick={option.connect}
         >
-          <img src={option.imageUrl} alt={option.label} className="mr-4 size-7 rounded-md" />
+          <img
+            src={option.imageUrl}
+            alt={option.label}
+            className="mr-4 size-7 rounded-md"
+          />
 
-          <span className="text-muted-foreground text-sm font-medium">{option.label}</span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {option.label}
+          </span>
         </Button>
       ))}
     </div>
@@ -254,17 +285,25 @@ function ChainFamilyAvatarStack({ children }: { children: React.ReactNode }) {
   return <div className="flex -space-x-2">{children}</div>;
 }
 
-function ChainFamilyAvatar({ isConnected, family }: { isConnected: boolean; family: ChainFamily }) {
+function ChainFamilyAvatar({
+  isConnected,
+  family,
+}: {
+  isConnected: boolean;
+  family: ChainFamily;
+}) {
   const metadata = CHAIN_FAMILY_METADATA[family];
 
   return (
-    <Avatar className="bg-background h-6 w-6 border">
+    <Avatar className="h-6 w-6 border bg-background">
       <AvatarImage
         src={metadata.imageUrl}
         alt={metadata.label}
-        className={cn(!isConnected && "grayscale opacity-20")}
+        className={cn(!isConnected && "opacity-20 grayscale")}
       />
-      <AvatarFallback className="text-[10px]">{metadata.label.slice(0, 1)}</AvatarFallback>
+      <AvatarFallback className="text-[10px]">
+        {metadata.label.slice(0, 1)}
+      </AvatarFallback>
     </Avatar>
   );
 }
