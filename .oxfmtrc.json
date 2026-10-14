@@ -2,5 +2,16 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "sortImports": true,
   "sortPackageJson": true,
-  "printWidth": 80
+  "printWidth": 80,
+  "overrides": [
+    {
+      "files": ["examples/react-app/**"],
+      "options": {
+        "sortTailwindcss": {
+          "stylesheet": "./examples/react-app/app/globals.css",
+          "functions": ["cn", "cva"]
+        }
+      }
+    }
+  ]
 }

@@ -1,3 +1,4 @@
 {
-  "extends": ["../../.oxlintrc.json"]
+  "extends": ["../../.oxlintrc.json"],
+  "plugins": ["react"]
 }

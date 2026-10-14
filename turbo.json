@@ -1,5 +1,6 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.dev/schema.json",
+  "agentGuidance": false,
   "ui": "tui",
   "globalDependencies": ["tsconfig.base.json"],
   "tasks": {
@@ -15,7 +16,7 @@
     "@ston-fi/omniston-example-react-app#build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
     },
     "lint": {
       "cache": false

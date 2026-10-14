@@ -6,12 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Runtime data
-node_modules
-dist
-coverage
-*.local
-
 # Editor directories and files
 .vscode
 .idea
@@ -22,7 +16,11 @@ coverage
 *.sln
 *.sw?
 
+# Runtime data
+node_modules
+dist
+coverage
+.vitest
 .turbo
-.vercel
-
+*.local
 .gitlab-ci.yml

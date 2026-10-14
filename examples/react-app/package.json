@@ -40,7 +40,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.2",
     "@total-typescript/ts-reset": "0.6.1",
-    "@types/node": "24.6.0",
+    "@types/node": "24.19.2",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "postcss": "8.5.16",

@@ -1,13 +1,12 @@
-FROM node:24-alpine AS base
+FROM node:24.21.0-alpine AS base
 
 FROM base AS pnpm-base
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
 
-RUN corepack enable
-RUN corepack prepare pnpm@12.6.0 --activate
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install turbo --global
+RUN corepack enable && corepack prepare pnpm@12.12.0 --activate
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install turbo@2.11.7 --global
 
 
 FROM pnpm-base AS builder

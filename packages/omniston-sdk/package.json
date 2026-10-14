@@ -42,7 +42,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
     "@protobuf-ts/protoc": "2.11.1",
-    "@types/node": "25.6.0",
+    "@types/node": "24.19.2",
     "@types/ws": "8.18.1",
     "protobufjs": "8.0.1",
     "publint": "catalog:",
