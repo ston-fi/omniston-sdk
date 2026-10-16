@@ -12,9 +12,8 @@ import {
 } from "~/components/ui/collapsible";
 import { CopyJsonCard } from "~/components/ui/copy-json-card";
 import { DescriptionList } from "~/components/ui/description-list";
+import { useFormatters } from "~/hooks/useFormatters";
 import { useQuoteAssets } from "~/hooks/useQuoteAssets";
-import { bigNumberToFloat, trimStringWithEllipsis } from "~/lib/utils";
-import { addressFromAssetId } from "~/models/address";
 
 type OrderQuote = QuoteOfType<"order">;
 
@@ -53,6 +52,7 @@ function OrderSettlementDataPresenter({
 }: React.ComponentProps<typeof DescriptionList> & {
   quote: OrderQuote;
 }) {
+  const { formatAddress, formatAssetId, formatAssetAmount } = useFormatters();
   const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
     useQuoteAssets(quote);
 
@@ -65,10 +65,7 @@ function OrderSettlementDataPresenter({
         <ExplorerAddressPreview
           address={orderSettlementData.srcProtocolContractAddress}
         >
-          {trimStringWithEllipsis(
-            orderSettlementData.srcProtocolContractAddress.chain.value,
-            6,
-          )}
+          {formatAddress(orderSettlementData.srcProtocolContractAddress)}
         </ExplorerAddressPreview>
       </li>
       {orderSettlementData.srcWrappedNativeTokenAddress ? (
@@ -77,10 +74,7 @@ function OrderSettlementDataPresenter({
           <ExplorerAddressPreview
             address={orderSettlementData.srcWrappedNativeTokenAddress}
           >
-            {trimStringWithEllipsis(
-              orderSettlementData.srcWrappedNativeTokenAddress.chain.value,
-              6,
-            )}
+            {formatAddress(orderSettlementData.srcWrappedNativeTokenAddress)}
           </ExplorerAddressPreview>
         </li>
       ) : null}
@@ -90,21 +84,16 @@ function OrderSettlementDataPresenter({
           <ExplorerAddressPreview
             address={orderSettlementData.srcInitialResolverAddress}
           >
-            {trimStringWithEllipsis(
-              orderSettlementData.srcInitialResolverAddress.chain.value,
-              6,
-            )}
+            {formatAddress(orderSettlementData.srcInitialResolverAddress)}
           </ExplorerAddressPreview>
         </li>
       ) : null}
       {orderSettlementData.srcHtlcSecurityDepositAsset ? (
         <li>
           <span>srcHtlcSecurityDepositAsset</span>
-          {trimStringWithEllipsis(
-            addressFromAssetId(orderSettlementData.srcHtlcSecurityDepositAsset)!
-              .chain.value,
-            6,
-          )}
+          <span>
+            {formatAssetId(orderSettlementData.srcHtlcSecurityDepositAsset)}
+          </span>
         </li>
       ) : null}
       {orderSettlementData.srcHtlcSecurityDepositUnits ? (
@@ -125,17 +114,17 @@ function OrderSettlementDataPresenter({
           <ExplorerAddressPreview
             address={orderSettlementData.dstProtocolContractAddress}
           >
-            {trimStringWithEllipsis(
-              orderSettlementData.dstProtocolContractAddress.chain.value,
-              6,
-            )}
+            {formatAddress(orderSettlementData.dstProtocolContractAddress)}
           </ExplorerAddressPreview>
         </li>
       ) : null}
       <li>
         <span>resolverSendsUnits</span>
         <span>
-          {`${bigNumberToFloat(orderSettlementData.resolverSendsUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}
+          {formatAssetAmount(
+            orderSettlementData.resolverSendsUnits,
+            outputAsset,
+          )}
         </span>
       </li>
       {orderSettlementData.dstWrappedNativeTokenAddress ? (
@@ -144,21 +133,16 @@ function OrderSettlementDataPresenter({
           <ExplorerAddressPreview
             address={orderSettlementData.dstWrappedNativeTokenAddress}
           >
-            {trimStringWithEllipsis(
-              orderSettlementData.dstWrappedNativeTokenAddress.chain.value,
-              6,
-            )}
+            {formatAddress(orderSettlementData.dstWrappedNativeTokenAddress)}
           </ExplorerAddressPreview>
         </li>
       ) : null}
       {orderSettlementData.dstSecurityDepositAsset ? (
         <li>
           <span>dstSecurityDepositAsset</span>
-          {trimStringWithEllipsis(
-            addressFromAssetId(orderSettlementData.dstSecurityDepositAsset)!
-              .chain.value,
-            6,
-          )}
+          <span>
+            {formatAssetId(orderSettlementData.dstSecurityDepositAsset)}
+          </span>
         </li>
       ) : null}
       {orderSettlementData.dstSecurityDepositUnits ? (
@@ -193,10 +177,7 @@ function OrderSettlementDataPresenter({
           <ExplorerAddressPreview
             address={orderSettlementData.protocolFeeRecipientAddress}
           >
-            {trimStringWithEllipsis(
-              orderSettlementData.protocolFeeRecipientAddress.chain.value,
-              6,
-            )}
+            {formatAddress(orderSettlementData.protocolFeeRecipientAddress)}
           </ExplorerAddressPreview>
         </li>
       ) : null}

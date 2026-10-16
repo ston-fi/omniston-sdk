@@ -1,6 +1,6 @@
 import {
   isHtlcOrderQuote,
-  BuildEvmOrderPayloadRequest,
+  type BuildEvmOrderPayloadRequest,
 } from "@ston-fi/omniston-sdk-react";
 import { useMemo } from "react";
 import type { TronWeb } from "tronweb";

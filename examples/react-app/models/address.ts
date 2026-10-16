@@ -1,10 +1,9 @@
 import type { AssetId, ChainAddress } from "@ston-fi/omniston-sdk-react";
-import z from "zod";
+import * as z from "zod";
 
 import { isErc20Address } from "~/lib/evm/address";
 import { isTonAddress } from "~/lib/ton/address";
 import { isTronAddress } from "~/lib/tron/address";
-import { trimStringWithEllipsis } from "~/lib/utils";
 
 import { Chain } from "./chain";
 import {
@@ -105,8 +104,4 @@ export function isValidAddress(chain: Chain, src: string) {
       throw new Error(`Unexpected chain family: ${chainFamily}`);
     }
   }
-}
-
-export function truncateAddress(address: ChainAddress): string {
-  return trimStringWithEllipsis(address.chain.value, 6, 4);
 }

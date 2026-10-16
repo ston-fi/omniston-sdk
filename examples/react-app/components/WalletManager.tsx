@@ -23,8 +23,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
+import { useFormatters } from "~/hooks/useFormatters";
 import { useTronWalletConnection } from "~/hooks/useTronWalletConnection";
-import { cn, trimStringWithEllipsis } from "~/lib/utils";
+import { cn } from "~/lib/utils";
 import { CHAIN_FAMILY_METADATA, ChainFamily } from "~/models/chain-family";
 
 type ConnectOption = {
@@ -219,6 +220,8 @@ function ConnectedWalletDetails({
 }: {
   walletFamily: WalletFamily;
 }) {
+  const { formatAddressString } = useFormatters();
+
   const metadata = CHAIN_FAMILY_METADATA[walletFamily.family];
   const address = walletFamily.address;
 
@@ -238,7 +241,7 @@ function ConnectedWalletDetails({
           {walletFamily.wallet?.name || metadata.label}
         </div>
         <div className="truncate font-mono text-xs text-muted-foreground">
-          {trimStringWithEllipsis(address, 6, 4)}
+          {formatAddressString(address)}
         </div>
       </div>
 

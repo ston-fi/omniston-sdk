@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useEffectEvent, useState } from "react";
-import { z } from "zod";
+import * as z from "zod";
 
 type LocalStoragePersistenceOptions<T> = {
   key: string;

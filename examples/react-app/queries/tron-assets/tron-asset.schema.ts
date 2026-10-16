@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 import { tronAddressSchema } from "~/lib/tron/address";
 import type { Asset } from "~/models/asset";

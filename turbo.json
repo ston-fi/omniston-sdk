@@ -2,35 +2,41 @@
   "$schema": "https://turborepo.dev/schema.json",
   "agentGuidance": false,
   "ui": "tui",
-  "globalDependencies": ["tsconfig.base.json"],
+  "globalDependencies": [
+    ".oxlintrc.json",
+    ".oxfmtrc.json",
+    "tsconfig.base.json"
+  ],
   "tasks": {
     "dev": {
-      "dependsOn": ["^build"],
       "cache": false,
+      "dependsOn": ["^build"],
       "persistent": true
     },
     "build": {
+      "cache": true,
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "@ston-fi/omniston-example-react-app#build": {
+      "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
     },
     "lint": {
-      "cache": false
+      "cache": true
     },
     "format": {
       "cache": false
     },
     "typecheck": {
-      "dependsOn": ["^build"],
-      "cache": false
+      "cache": true,
+      "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": ["^build"],
-      "cache": false
+      "cache": false,
+      "dependsOn": ["^build"]
     }
   }
 }

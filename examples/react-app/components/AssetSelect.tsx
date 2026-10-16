@@ -24,8 +24,9 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Skeleton } from "~/components/ui/skeleton";
-import { bigNumberToFloat, cn } from "~/lib/utils";
-import { truncateAddress, addressFromAssetId } from "~/models/address";
+import { useFormatters } from "~/hooks/useFormatters";
+import { cn } from "~/lib/utils";
+import { addressFromAssetId } from "~/models/address";
 import type { Asset } from "~/models/asset";
 import {
   isAssetIdEqual,
@@ -61,6 +62,7 @@ export const AssetSelect = ({
   className,
 }: AssetSelectProps) => {
   const { insertAsset } = useAssets();
+  const { formatAddress, formatUnits } = useFormatters();
 
   const defaultChain = chains[0];
 
@@ -212,7 +214,7 @@ export const AssetSelect = ({
                         <span>{asset.metadata.symbol}</span>
                         <span className="text-sm text-muted-foreground tabular-nums">
                           {asset?.balance
-                            ? bigNumberToFloat(
+                            ? formatUnits(
                                 asset.balance,
                                 asset.metadata.decimals,
                               )
@@ -226,7 +228,7 @@ export const AssetSelect = ({
                           onClick={(e) => e.stopPropagation()}
                           className="w-fit text-xs opacity-50 hover:opacity-100"
                         >
-                          {truncateAddress(assetAddress)}
+                          {formatAddress(assetAddress)}
                         </ExplorerAddressPreview>
                       ) : null}
                     </div>

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 import { tonAddressSchema } from "~/lib/ton/address";
 import type { Asset } from "~/models/asset";

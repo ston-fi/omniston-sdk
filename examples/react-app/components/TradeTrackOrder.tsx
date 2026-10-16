@@ -16,8 +16,9 @@ import { Copy } from "~/components/ui/copy";
 import { CopyJsonCard } from "~/components/ui/copy-json-card";
 import { DescriptionList } from "~/components/ui/description-list";
 import { Skeleton } from "~/components/ui/skeleton";
+import { useFormatters } from "~/hooks/useFormatters";
 import { useQuoteAssets } from "~/hooks/useQuoteAssets";
-import { bigNumberToFloat, cn, trimStringWithEllipsis } from "~/lib/utils";
+import { cn, trimStringWithEllipsis } from "~/lib/utils";
 import { Chain } from "~/models/chain";
 import { useTradeTrackState } from "~/providers/trade-track";
 
@@ -94,6 +95,7 @@ function OrderEventView({
   order: Order;
   className?: string;
 }) {
+  const { formatAddress, formatAssetAmount } = useFormatters();
   const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
     useQuoteAssets(quote);
 
@@ -140,12 +142,12 @@ function OrderEventView({
         <li>
           <span>Protocol contract address:</span>
           <ExplorerAddressPreview address={protocolContractAddress}>
-            {trimStringWithEllipsis(protocolContractAddress.chain.value, 6)}
+            {formatAddress(protocolContractAddress)}
           </ExplorerAddressPreview>
         </li>
         <li>
           <span>Remaining input units:</span>
-          <p>{`${bigNumberToFloat(remainingInputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(remainingInputUnits, inputAsset)}</p>
         </li>
       </DescriptionList>
 
@@ -174,6 +176,7 @@ function EscrowExecution({
   executions: Execution[];
   execution: Execution;
 }) {
+  const { formatAddress, formatAssetAmount } = useFormatters();
   const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
     useQuoteAssets(quote);
 
@@ -224,20 +227,20 @@ function EscrowExecution({
         <hr />
         <li>
           <span>inputUnits:</span>
-          <p>{`${bigNumberToFloat(inputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(inputUnits, inputAsset)}</p>
         </li>
         {
           <li>
             <span>srcResolverAddress</span>
             <ExplorerAddressPreview address={srcResolverAddress}>
-              {trimStringWithEllipsis(srcResolverAddress.chain.value, 6)}
+              {formatAddress(srcResolverAddress)}
             </ExplorerAddressPreview>
           </li>
         }
         <li>
           <span>inputPositionAddress</span>
           <ExplorerAddressPreview address={inputPositionAddress}>
-            {trimStringWithEllipsis(inputPositionAddress.chain.value, 6)}
+            {formatAddress(inputPositionAddress)}
           </ExplorerAddressPreview>
         </li>
         <li>
@@ -250,17 +253,17 @@ function EscrowExecution({
         <hr />
         <li>
           <span>outputUnits</span>
-          <p>{`${bigNumberToFloat(outputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(outputUnits, outputAsset)}</p>
         </li>
         <li>
           <span>resolverSendsUnits</span>
-          <p>{`${bigNumberToFloat(resolverSendsUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(resolverSendsUnits, outputAsset)}</p>
         </li>
         {outputPositionAddress ? (
           <li>
             <span>outputPositionAddress</span>
             <ExplorerAddressPreview address={outputPositionAddress}>
-              {trimStringWithEllipsis(outputPositionAddress.chain.value, 6)}
+              {formatAddress(outputPositionAddress)}
             </ExplorerAddressPreview>
           </li>
         ) : null}

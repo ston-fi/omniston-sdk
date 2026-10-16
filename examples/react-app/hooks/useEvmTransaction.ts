@@ -1,6 +1,6 @@
 import {
   isHtlcOrderQuote,
-  BuildEvmOrderPayloadRequest,
+  type BuildEvmOrderPayloadRequest,
 } from "@ston-fi/omniston-sdk-react";
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { useMemo } from "react";

@@ -1,5 +1,5 @@
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
-import { z } from "zod";
+import * as z from "zod";
 
 import type { Brand } from "~/lib/types";
 
@@ -64,6 +64,10 @@ export function serializeAssetId(assetId: AssetId): SerializedAssetId {
 
 export function deserializeAssetId(serialized: string): AssetId {
   return assetIdSchema.parse(JSON.parse(serialized));
+}
+
+export function isNativeAssetKind(assetId: AssetId): boolean {
+  return assetId.chain.value.kind.$case === "native";
 }
 
 export function isAssetIdEqual(

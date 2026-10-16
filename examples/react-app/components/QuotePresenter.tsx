@@ -4,8 +4,8 @@ import type { Quote } from "@ston-fi/omniston-sdk-react";
 
 import { ExplorerAddressPreview } from "~/components/ExplorerAddressPreview";
 import { DescriptionList } from "~/components/ui/description-list";
+import { useFormatters } from "~/hooks/useFormatters";
 import { useQuoteAssets } from "~/hooks/useQuoteAssets";
-import { bigNumberToFloat, trimStringWithEllipsis } from "~/lib/utils";
 import { Chain } from "~/models/chain";
 
 export function QuotePresenter({
@@ -14,6 +14,7 @@ export function QuotePresenter({
 }: React.ComponentProps<typeof DescriptionList> & {
   quote: Quote;
 }) {
+  const { formatAddress, formatAssetAmount } = useFormatters();
   const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
     useQuoteAssets(quote);
 
@@ -50,48 +51,42 @@ export function QuotePresenter({
       </li>
       <li>
         <span>Input amount:</span>
-        <span>
-          {`${bigNumberToFloat(inputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol}`}
-        </span>
+        <span>{formatAssetAmount(inputUnits, inputAsset)}</span>
       </li>
       <li>
         <span>Output amount:</span>
-        <span>
-          {`${bigNumberToFloat(outputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}
-        </span>
+        <span>{formatAssetAmount(outputUnits, outputAsset)}</span>
       </li>
       <li>
         <span>Protocol fee:</span>
-        <span>
-          {`${bigNumberToFloat(protocolFeeUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}
-        </span>
+        <span>{formatAssetAmount(protocolFeeUnits, outputAsset)}</span>
       </li>
       {integratorAddress ? (
         <>
           <li>
             <span>Integrator fee address:</span>
             <ExplorerAddressPreview address={integratorAddress}>
-              {trimStringWithEllipsis(integratorAddress.chain.value, 6)}
+              {formatAddress(integratorAddress)}
             </ExplorerAddressPreview>
           </li>
           <li>
             <span>Integrator fee:</span>
-            <span>
-              {`${bigNumberToFloat(integratorFeeUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}
-            </span>
+            <span>{formatAssetAmount(integratorFeeUnits, outputAsset)}</span>
           </li>
         </>
       ) : null}
       {gasBudget ? (
         <li>
           <span>Gas budget:</span>
-          <span>{`${bigNumberToFloat(gasBudget, inputNativeAsset.metadata.decimals)} ${inputNativeAsset.metadata.symbol}`}</span>
+          <span>{formatAssetAmount(gasBudget, inputNativeAsset)}</span>
         </li>
       ) : null}
       {estimatedGasConsumption ? (
         <li>
           <span>Estimated gas consumption:</span>
-          <span>{`${bigNumberToFloat(estimatedGasConsumption, inputNativeAsset.metadata.decimals)} ${inputNativeAsset.metadata.symbol}`}</span>
+          <span>
+            {formatAssetAmount(estimatedGasConsumption, inputNativeAsset)}
+          </span>
         </li>
       ) : null}
       {estimatedSettlementDuration ? (

@@ -1,4 +1,8 @@
-import { AssetId, matchQuoteByType, Quote } from "@ston-fi/omniston-sdk-react";
+import {
+  type AssetId,
+  matchQuoteByType,
+  type Quote,
+} from "@ston-fi/omniston-sdk-react";
 
 export function collectQuoteAssets(quote: Quote): AssetId[] {
   const assetIds = new Set<AssetId>();

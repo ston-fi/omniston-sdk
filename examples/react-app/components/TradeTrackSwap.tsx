@@ -9,7 +9,8 @@ import {
   isSwapQuote,
 } from "@ston-fi/omniston-sdk-react";
 
-import { bigNumberToFloat, cn, trimStringWithEllipsis } from "~/lib/utils";
+import { useFormatters } from "~/hooks/useFormatters";
+import { cn, trimStringWithEllipsis } from "~/lib/utils";
 import { serializeAssetId } from "~/models/asset-id";
 import { Chain } from "~/models/chain";
 import { useAssets } from "~/providers/assets";
@@ -273,6 +274,7 @@ function SwapChunkItem({
     txHash,
   } = chunk;
 
+  const { formatAddress, formatAssetAmount } = useFormatters();
   const { getAssetById } = useAssets();
 
   const inputAssetId = swapSettlementData.inputAsset;
@@ -307,20 +309,20 @@ function SwapChunkItem({
         </li>
         <li>
           <span>inputUnits:</span>
-          <p>{`${bigNumberToFloat(inputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(inputUnits, inputAsset)}</p>
         </li>
         <li>
           <span>expectedOutputUnits:</span>
-          <p>{`${bigNumberToFloat(expectedOutputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(expectedOutputUnits, outputAsset)}</p>
         </li>
         <li>
           <span>actualOutputUnits:</span>
-          <p>{`${bigNumberToFloat(actualOutputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(actualOutputUnits, outputAsset)}</p>
         </li>
         <li>
           <span>targetAddress</span>
           <ExplorerAddressPreview address={targetAddress}>
-            {trimStringWithEllipsis(targetAddress.chain.value, 6)}
+            {formatAddress(targetAddress)}
           </ExplorerAddressPreview>
         </li>
         <li>

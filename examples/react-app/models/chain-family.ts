@@ -15,7 +15,7 @@ type ChainFamilyMetadata = {
 
 export const CHAIN_FAMILY_METADATA: Record<ChainFamily, ChainFamilyMetadata> = {
   [ChainFamily.TON]: {
-    label: "TON",
+    label: CHAIN_METADATA[Chain.TON].label,
     imageUrl: CHAIN_METADATA[Chain.TON].imageUrl,
   },
   [ChainFamily.EVM]: {
@@ -23,7 +23,7 @@ export const CHAIN_FAMILY_METADATA: Record<ChainFamily, ChainFamilyMetadata> = {
     imageUrl: CHAIN_METADATA[Chain.ETHEREUM].imageUrl,
   },
   [ChainFamily.TRON]: {
-    label: "TRON",
+    label: CHAIN_METADATA[Chain.TRON].label,
     imageUrl: CHAIN_METADATA[Chain.TRON].imageUrl,
   },
 };

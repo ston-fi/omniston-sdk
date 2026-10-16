@@ -2,7 +2,7 @@ import type { ChainAddress } from "@ston-fi/omniston-sdk-react";
 import { queryOptions } from "@tanstack/react-query";
 import { getBalance, multicall, type Config } from "@wagmi/core";
 import { erc20Abi, type Address as ViemAddress } from "viem";
-import { z } from "zod";
+import * as z from "zod";
 
 import { erc20AddressSchema } from "~/lib/evm/address";
 import type { Asset } from "~/models/asset";

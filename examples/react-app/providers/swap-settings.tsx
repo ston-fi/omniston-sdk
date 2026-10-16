@@ -2,7 +2,7 @@
 
 import { SettlementMethod } from "@ston-fi/omniston-sdk-react";
 import { createContext, useContext, useReducer } from "react";
-import { z } from "zod";
+import * as z from "zod";
 
 import { useLocalStoragePersistence } from "~/hooks/useLocalStoragePersistence";
 

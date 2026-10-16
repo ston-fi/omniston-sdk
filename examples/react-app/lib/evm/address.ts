@@ -1,5 +1,5 @@
 import type { Address as ViemAddres } from "viem";
-import { z } from "zod";
+import * as z from "zod";
 
 export const erc20AddressSchema = z
   .custom<ViemAddres>(

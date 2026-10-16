@@ -11,9 +11,11 @@ import {
 } from "~/components/ui/collapsible";
 import { useConnectedWallets } from "~/hooks/useConnectedWallets";
 import { useEnsureQuoteAssets } from "~/hooks/useEnsureQuoteAssets";
+import { useFormatters } from "~/hooks/useFormatters";
 import { useOmniston } from "~/hooks/useOmniston";
 import { useQuoteAssets } from "~/hooks/useQuoteAssets";
-import { bigNumberToFloat, cn } from "~/lib/utils";
+import { cn } from "~/lib/utils";
+import { CHAIN_METADATA } from "~/models/chain";
 
 export const ActiveOrderList = ({ className }: { className?: string }) => {
   const omniston = useOmniston();
@@ -80,6 +82,7 @@ export const ActiveOrderList = ({ className }: { className?: string }) => {
 };
 
 function ActiveOrderListItem({ order }: { order: ActiveOrder }) {
+  const { formatAssetAmount } = useFormatters();
   const { inputAsset, inputNativeAsset, outputAsset, outputNativeAsset } =
     useQuoteAssets(order.quote);
 
@@ -88,9 +91,9 @@ function ActiveOrderListItem({ order }: { order: ActiveOrder }) {
       <Collapsible className="group">
         <CollapsibleTrigger className="flex w-full flex-row items-center gap-1">
           <p className="flex flex-wrap items-baseline gap-x-1 font-mono">
-            <span className="whitespace-nowrap">{`${bigNumberToFloat(order.quote.inputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol} (${inputAsset.id.chain.$case.toLocaleUpperCase()})`}</span>
+            <span className="whitespace-nowrap">{`${formatAssetAmount(order.quote.inputUnits, inputAsset)} (${CHAIN_METADATA[inputAsset.id.chain.$case].label})`}</span>
             <span className="text-muted-foreground">→</span>
-            <span className="whitespace-nowrap">{`${bigNumberToFloat(order.quote.outputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol} (${outputAsset.id.chain.$case.toLocaleUpperCase()})`}</span>
+            <span className="whitespace-nowrap">{`${formatAssetAmount(order.quote.outputUnits, outputAsset)} (${CHAIN_METADATA[outputAsset.id.chain.$case].label})`}</span>
           </p>
 
           <ChevronDown

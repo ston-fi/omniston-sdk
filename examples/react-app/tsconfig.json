@@ -4,7 +4,7 @@
     "paths": {
       "~/*": ["./*"]
     },
-    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "lib": ["es2022", "ES2023.Intl", "DOM", "DOM.Iterable"],
     "plugins": [
       {
         "name": "next"

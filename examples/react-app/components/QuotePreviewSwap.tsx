@@ -11,7 +11,8 @@ import {
 } from "~/components/ui/collapsible";
 import { CopyJsonCard } from "~/components/ui/copy-json-card";
 import { DescriptionList } from "~/components/ui/description-list";
-import { bigNumberToFloat, cn } from "~/lib/utils";
+import { useFormatters } from "~/hooks/useFormatters";
+import { cn } from "~/lib/utils";
 import { pipsToPercent } from "~/lib/utils/percent";
 import { serializeAssetId } from "~/models/asset-id";
 import { useAssets } from "~/providers/assets";
@@ -113,6 +114,7 @@ function SwapChunkItem({
   step: SwapQuote["settlementData"]["value"]["routes"][number]["steps"][number];
   chunk: SwapQuote["settlementData"]["value"]["routes"][number]["steps"][number]["chunks"][number];
 }) {
+  const { formatAssetAmount } = useFormatters();
   const { getAssetById } = useAssets();
 
   const inputAssetId = step.inputAsset;
@@ -143,11 +145,11 @@ function SwapChunkItem({
         </li>
         <li>
           <span>inputUnits:</span>
-          <p>{`${bigNumberToFloat(chunk.inputUnits, inputAsset.metadata.decimals)} ${inputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(chunk.inputUnits, inputAsset)}</p>
         </li>
         <li>
           <span>outputUnits:</span>
-          <p>{`${bigNumberToFloat(chunk.outputUnits, outputAsset.metadata.decimals)} ${outputAsset.metadata.symbol}`}</p>
+          <p>{formatAssetAmount(chunk.outputUnits, outputAsset)}</p>
         </li>
       </DescriptionList>
     </div>

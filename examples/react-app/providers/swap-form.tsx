@@ -2,7 +2,7 @@
 
 import type { AssetId } from "@ston-fi/omniston-sdk-react";
 import { createContext, type Dispatch, useContext, useReducer } from "react";
-import { z } from "zod";
+import * as z from "zod";
 
 import { useLocalStoragePersistence } from "~/hooks/useLocalStoragePersistence";
 import { assetIdSchema, isAssetIdEqual } from "~/models/asset-id";

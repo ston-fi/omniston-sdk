@@ -144,27 +144,31 @@ export const TradeTrackProvider = ({ children }: React.PropsWithChildren) => {
                   if (htlcSecrets) {
                     event.value.executions.forEach(
                       (execution, executionIndex) => {
-                        const secret = htlcSecrets[executionIndex];
+                        const htlcSecret = htlcSecrets[executionIndex];
 
-                        const isSecretDisclosed =
-                          chunksSecretsDisclosed[executionIndex];
-                        const isSecretDisclosePhase =
-                          execution.outputPositionPhase
-                            ? [
-                                ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION,
-                                ExecutionPhase.EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION,
-                              ].includes(execution.outputPositionPhase)
-                            : false;
+                        const isInputReadyForCompletion = [
+                          ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION,
+                          ExecutionPhase.EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION,
+                        ].includes(execution.inputPositionPhase);
 
-                        if (
-                          secret &&
-                          isSecretDisclosePhase &&
-                          !isSecretDisclosed
-                        ) {
+                        const isOutputReadyForCompletion =
+                          execution.outputPositionPhase !== undefined &&
+                          [
+                            ExecutionPhase.EXECUTION_PHASE_READY_FOR_PRIVATE_COMPLETION,
+                            ExecutionPhase.EXECUTION_PHASE_READY_FOR_PUBLIC_COMPLETION,
+                          ].includes(execution.outputPositionPhase);
+
+                        const shouldDiscloseHtlcSecret =
+                          htlcSecret &&
+                          !chunksSecretsDisclosed[executionIndex] &&
+                          isInputReadyForCompletion &&
+                          isOutputReadyForCompletion;
+
+                        if (shouldDiscloseHtlcSecret) {
                           omniston.orderDiscloseHtlcSecret({
                             quoteId,
                             executionIndex,
-                            secret,
+                            secret: htlcSecret,
                           });
 
                           chunksSecretsDisclosed[executionIndex] = true;
