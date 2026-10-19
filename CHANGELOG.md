@@ -1,5 +1,16 @@
 # Changelog
 
+## 19-10-2026
+
+### @ston-fi/omniston-sdk@0.8.12
+
+This release is focused on dependency upgrades and does not introduce any new functionality.
+
+#### Changed
+
+- Upgraded [ws 8.20.0 → 8.22.0](https://github.com/websockets/ws/compare/8.20.0...8.22.0) to fix [memory disclosure](https://github.com/websockets/ws/security/advisories/GHSA-58qx-3vcg-4xpx) and [memory-exhaustion DoS](https://github.com/websockets/ws/security/advisories/GHSA-96hv-2xvq-fx4p).
+- Upgraded [protobufjs 8.0.1 → 8.8.1](https://github.com/protobufjs/protobuf.js/compare/protobufjs-v8.0.1...protobufjs-v8.8.1) to fix [code injection](https://github.com/protobufjs/protobuf.js/security/advisories/GHSA-66ff-xgx4-vchm) and [schema-parsing DoS](https://github.com/protobufjs/protobuf.js/security/advisories/GHSA-j3f2-48v5-ccww) (development-time code generation).
+
 ## 30-09-2026
 
 ### @ston-fi/omniston-sdk@0.8.11
