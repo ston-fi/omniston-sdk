@@ -4,6 +4,8 @@
 
 ### @ston-fi/omniston-sdk@0.8.12
 
+### @ston-fi/omniston-sdk-react@0.8.12
+
 This release is focused on dependency upgrades and does not introduce any new functionality.
 
 #### Changed
