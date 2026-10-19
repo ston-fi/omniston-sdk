@@ -37,14 +37,14 @@
     "isomorphic-ws": "5.0.0",
     "json-rpc-2.0": "1.7.1",
     "rxjs": "7.8.2",
-    "ws": "8.20.0"
+    "ws": "8.22.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
     "@protobuf-ts/protoc": "2.11.1",
     "@types/node": "24.19.2",
     "@types/ws": "8.18.1",
-    "protobufjs": "8.0.1",
+    "protobufjs": "8.8.1",
     "publint": "catalog:",
     "ts-proto": "2.11.6",
     "tsdown": "catalog:",
