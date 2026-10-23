@@ -23,3 +23,7 @@ pnpm dev
 The root development command builds the local SDK packages before starting Next.js. Open [localhost:3000](http://localhost:3000) once the server is ready.
 
 The [`.env.development`](./.env.development) file defines the default development configuration. To customize endpoints, wallet configuration, or asset query conditions, add local overrides in `examples/react-app/.env.development.local`.
+
+## Deployment
+
+For deployment options and instructions, see the official [Next.js deployment documentation](https://nextjs.org/docs/app/getting-started/deploying).
