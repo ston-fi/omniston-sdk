@@ -21,12 +21,5 @@
     "turbo": "2.11.7",
     "typescript": "5.9.3"
   },
-  "devEngines": {
-    "runtime": {
-      "name": "node",
-      "version": "24.21.0",
-      "onFail": "download"
-    }
-  },
   "packageManager": "pnpm@12.12.0"
 }
