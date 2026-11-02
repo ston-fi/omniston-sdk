@@ -241,7 +241,6 @@ export function useEvmTransaction() {
         quoteId: quote.quoteId,
         ownerSrcAddress: inputWalletAddress,
         traderDstAddress: outputWalletAddress,
-        traderDstDiscloseAddress: outputWalletAddress,
         ...htlcSecretsData,
         ...permitData,
       });

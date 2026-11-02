@@ -104,7 +104,6 @@ export function useTronTransaction() {
         quoteId: quote.quoteId,
         ownerSrcAddress: inputWalletAddress,
         traderDstAddress: outputWalletAddress,
-        traderDstDiscloseAddress: outputWalletAddress,
         ...htlcSecretsData,
       });
 
