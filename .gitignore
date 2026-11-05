@@ -10,10 +10,6 @@ pnpm-debug.log*
 .vscode
 .idea
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.sw?
 
 # Runtime data
@@ -23,4 +19,3 @@ coverage
 .vitest
 .turbo
 *.local
-.gitlab-ci.yml
