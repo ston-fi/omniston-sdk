@@ -4,15 +4,7 @@ import {
 } from "@ston-fi/omniston-sdk-react";
 import { useMemo } from "react";
 import type { TronWeb } from "tronweb";
-import {
-  encodeAbiParameters,
-  hashTypedData,
-  hexToBytes,
-  parseSignature,
-  serializeCompactSignature,
-  signatureToCompactSignature,
-  type Hex,
-} from "viem";
+import { hashTypedData, type Hex } from "viem";
 import type { useSignTypedData } from "wagmi";
 
 import { useOmniston } from "~/hooks/useOmniston";
@@ -20,6 +12,7 @@ import { useRfq } from "~/hooks/useRfq";
 import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
 import { useTronWalletConnection } from "~/hooks/useTronWalletConnection";
 import { useTronWebClient } from "~/hooks/useTronWebClient";
+import { encodeCompactSignature, encodeTypedData } from "~/lib/evm/encoding";
 import { generateHtlcHashlock, generateHtlcSecret } from "~/lib/omniston/htlc";
 import type { TronAddress } from "~/lib/tron/address";
 import { Chain } from "~/models/chain";
@@ -28,10 +21,6 @@ import { useSwapSettings } from "~/providers/swap-settings";
 type TypedData = Parameters<
   ReturnType<typeof useSignTypedData>["mutateAsync"]
 >[0];
-
-type SignTypedDataResult = Awaited<
-  ReturnType<ReturnType<typeof useSignTypedData>["mutateAsync"]>
->;
 
 export function useTronTransaction() {
   const omniston = useOmniston();
@@ -202,27 +191,6 @@ export function useTronTransaction() {
   ]);
 
   return buildAndSendTransaction;
-}
-
-function encodeCompactSignature(serializedSignature: SignTypedDataResult) {
-  const signature = parseSignature(serializedSignature);
-  const compactSignature = signatureToCompactSignature(signature);
-  const serializedCompactSignature =
-    serializeCompactSignature(compactSignature);
-  const bytes = hexToBytes(serializedCompactSignature);
-
-  return bytes;
-}
-
-function encodeTypedData(typedData: any) {
-  return hexToBytes(
-    encodeAbiParameters(
-      typedData.types[typedData.primaryType],
-      typedData.types[typedData.primaryType].map(
-        (type: any) => typedData.message[type.name],
-      ),
-    ),
-  );
 }
 
 // https://tronweb.network/docu/docs/references/confirmed-vs-unconfirmed#best-practices

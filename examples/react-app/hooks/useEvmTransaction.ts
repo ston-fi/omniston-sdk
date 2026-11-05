@@ -5,13 +5,9 @@ import {
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { useMemo } from "react";
 import {
-  encodeAbiParameters,
   erc20Abi,
   hexToBytes,
   maxUint256,
-  parseSignature,
-  serializeCompactSignature,
-  signatureToCompactSignature,
   type Address as EvmAddress,
 } from "viem";
 import {
@@ -25,6 +21,7 @@ import { useOmniston } from "~/hooks/useOmniston";
 import { useRfq } from "~/hooks/useRfq";
 import { useQuoteWallets } from "~/hooks/useTraderQuoteWallets";
 import { mapChainToChainId } from "~/lib/evm/chain";
+import { encodeCompactSignature, encodeTypedData } from "~/lib/evm/encoding";
 import { getContractNonce, getPermit2Nonce } from "~/lib/evm/on-chain";
 import {
   PERMIT2_ADDRESS,
@@ -335,27 +332,6 @@ export function useEvmTransaction() {
   return buildAndSendTransaction;
 }
 
-function encodeCompactSignature(serializedSignature: SignTypedDataResult) {
-  const signature = parseSignature(serializedSignature);
-  const compactSignature = signatureToCompactSignature(signature);
-  const serializedCompactSignature =
-    serializeCompactSignature(compactSignature);
-  const bytes = hexToBytes(serializedCompactSignature);
-
-  return bytes;
-}
-
 function encodeRawSignature(serializedSignature: SignTypedDataResult) {
   return hexToBytes(serializedSignature);
-}
-
-function encodeTypedData(typedData: any) {
-  return hexToBytes(
-    encodeAbiParameters(
-      typedData.types[typedData.primaryType],
-      typedData.types[typedData.primaryType].map(
-        (type: any) => typedData.message[type.name],
-      ),
-    ),
-  );
 }
