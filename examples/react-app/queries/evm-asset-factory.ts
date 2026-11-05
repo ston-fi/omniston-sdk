@@ -5,7 +5,7 @@ import { erc20Abi, type Address as ViemAddress } from "viem";
 import * as z from "zod";
 
 import { erc20AddressSchema } from "~/lib/evm/address";
-import type { Asset } from "~/models/asset";
+import { sortAssetsForSelection, type Asset } from "~/models/asset";
 import type { EvmChain } from "~/models/chain-family";
 
 export const evmAssetMockSchema = z.object({
@@ -121,7 +121,7 @@ export function createEvmAssetQueryFactory({
             );
           }
 
-          return sortAssets(assets);
+          return sortAssetsForSelection(assets);
         },
       });
     },
@@ -153,38 +153,9 @@ export function createEvmAssetQueryFactory({
             walletAddress.chain.value as ViemAddress,
           );
 
-          return sortAssets(assets);
+          return sortAssetsForSelection(assets);
         },
       });
     },
   };
-}
-
-function sortAssets(assets: Asset[]) {
-  return assets.sort((a, b) => {
-    const aBalance = a.balance ?? 0n;
-    const bBalance = b.balance ?? 0n;
-
-    if (aBalance > 0n && !(bBalance > 0n)) return -1;
-    if (bBalance > 0n && !(aBalance > 0n)) return 1;
-
-    const aAmountUSD = a.priceUsd ? a.priceUsd * Number(aBalance) : undefined;
-    const bAmountUSD = b.priceUsd ? b.priceUsd * Number(bBalance) : undefined;
-
-    if (aAmountUSD && !bAmountUSD) return -1;
-    if (!aAmountUSD && bAmountUSD) return 1;
-
-    if (aAmountUSD && bAmountUSD) {
-      return bAmountUSD - aAmountUSD;
-    }
-
-    if (aBalance > bBalance) return -1;
-    if (aBalance < bBalance) return 1;
-
-    if (a.metadata.symbol && b.metadata.symbol) {
-      return a.metadata.symbol.localeCompare(b.metadata.symbol);
-    }
-
-    return 0;
-  });
 }
