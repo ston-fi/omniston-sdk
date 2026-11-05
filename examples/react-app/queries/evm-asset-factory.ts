@@ -68,7 +68,7 @@ export function createEvmAssetQueryFactory({
         ? getBalance(wagmiConfig, {
             address: walletAddress,
             chainId: wagmiChainId,
-          })
+          }).catch(() => undefined)
         : Promise.resolve(undefined),
       erc20Addresses.length
         ? multicall(wagmiConfig, {
@@ -80,7 +80,7 @@ export function createEvmAssetQueryFactory({
               args: [walletAddress],
               account: walletAddress,
             })),
-          })
+          }).catch(() => [])
         : Promise.resolve([]),
     ]);
 
@@ -93,7 +93,7 @@ export function createEvmAssetQueryFactory({
       ) {
         return {
           ...asset,
-          balance: nativeBalance?.value,
+          balance: nativeBalance?.value ?? 0n,
         };
       }
 
@@ -101,7 +101,7 @@ export function createEvmAssetQueryFactory({
 
       return {
         ...asset,
-        balance: balance?.result ? BigInt(balance.result) : undefined,
+        balance: BigInt(balance?.result ?? 0n),
       };
     });
   };
