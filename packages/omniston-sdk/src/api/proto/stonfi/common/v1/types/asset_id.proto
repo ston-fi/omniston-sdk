@@ -35,6 +35,8 @@ message AssetId {
     EvmAssetId plasma = 11;
     // HyperEVM.
     EvmAssetId hyperevm = 12;
+    // Elysium (see [https://elysium.kinetiq.xyz/]).
+    EvmAssetId elysium = 13;
 
     //////////////////////////////////////////////////
     // TON

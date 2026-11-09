@@ -42,6 +42,8 @@ message ChainAddress {
     string plasma = 11;
     // HyperEVM address in EIP-55 format.
     string hyperevm = 12;
+    // Elysium address in EIP-55 format (see [https://elysium.kinetiq.xyz/]).
+    string elysium = 13;
 
     //////////////////////////////////////////////////
     // TON

@@ -103,6 +103,11 @@ export interface ChainAddress {
         $case: "hyperevm";
         value: string;
       } //
+    /** Elysium address in EIP-55 format (see [https://elysium.kinetiq.xyz/]). */
+    | {
+        $case: "elysium";
+        value: string;
+      } //
     /**
      * Any valid TON address string format (see
      * [https://docs.ton.org/foundations/addresses/formats]).
@@ -173,17 +178,22 @@ export const ChainAddress: MessageFns<ChainAddress> = {
                                   $case: "hyperevm",
                                   value: globalThis.String(object.hyperevm),
                                 }
-                              : isSet(object.ton)
+                              : isSet(object.elysium)
                                 ? {
-                                    $case: "ton",
-                                    value: globalThis.String(object.ton),
+                                    $case: "elysium",
+                                    value: globalThis.String(object.elysium),
                                   }
-                                : isSet(object.tron)
+                                : isSet(object.ton)
                                   ? {
-                                      $case: "tron",
-                                      value: globalThis.String(object.tron),
+                                      $case: "ton",
+                                      value: globalThis.String(object.ton),
                                     }
-                                  : undefined,
+                                  : isSet(object.tron)
+                                    ? {
+                                        $case: "tron",
+                                        value: globalThis.String(object.tron),
+                                      }
+                                    : undefined,
     };
   },
 
@@ -213,6 +223,8 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       obj.plasma = message.chain.value;
     } else if (message.chain?.$case === "hyperevm") {
       obj.hyperevm = message.chain.value;
+    } else if (message.chain?.$case === "elysium") {
+      obj.elysium = message.chain.value;
     } else if (message.chain?.$case === "ton") {
       obj.ton = message.chain.value;
     } else if (message.chain?.$case === "tron") {
@@ -300,6 +312,12 @@ export const ChainAddress: MessageFns<ChainAddress> = {
       case "hyperevm": {
         if (object.chain?.value !== undefined && object.chain?.value !== null) {
           message.chain = { $case: "hyperevm", value: object.chain.value };
+        }
+        break;
+      }
+      case "elysium": {
+        if (object.chain?.value !== undefined && object.chain?.value !== null) {
+          message.chain = { $case: "elysium", value: object.chain.value };
         }
         break;
       }
