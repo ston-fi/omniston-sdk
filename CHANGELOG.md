@@ -1,5 +1,13 @@
 # Changelog
 
+## 09-11-2026
+
+### @ston-fi/omniston-sdk@0.8.13
+
+#### Added
+
+- Added support for the `Elysium (99901)` chain.
+
 ## 19-10-2026
 
 ### @ston-fi/omniston-sdk@0.8.12
