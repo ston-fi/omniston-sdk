@@ -4,6 +4,8 @@
 
 ### @ston-fi/omniston-sdk@0.8.13
 
+### @ston-fi/omniston-sdk-react@0.8.13
+
 #### Added
 
 - Added support for the `Elysium (99901)` chain.
