@@ -6,6 +6,7 @@ export const Chain = {
   AVALANCHE: "avalanche",
   BASE: "base",
   BNB: "bnb",
+  ELYSIUM: "elysium",
   ETHEREUM: "ethereum",
   HYPEREVM: "hyperevm",
   MONAD: "monad",
@@ -46,6 +47,11 @@ export const CHAIN_METADATA: Record<Chain, ChainMetadata> = {
   [Chain.BNB]: {
     label: "BNB",
     imageUrl: "https://s2.coinmarketcap.com/static/img/coins/64x64/1839.png",
+  },
+  [Chain.ELYSIUM]: {
+    label: "Elysium",
+    imageUrl:
+      "https://storage.googleapis.com/conduit-prd-apps-web-cdn/elysium-mainnet-530143cd-b91d-49bf-ba75-87d80000f9a2.svg",
   },
   [Chain.ETHEREUM]: {
     label: "ETHEREUM",

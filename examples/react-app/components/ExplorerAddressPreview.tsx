@@ -48,6 +48,9 @@ export const ExplorerAddressPreview = ({
       case Chain.BNB: {
         return `https://bscscan.com/address/${address.chain.value}`;
       }
+      case Chain.ELYSIUM: {
+        return `https://elysium.kinetiq.xyz/address/${address.chain.value}`;
+      }
       case Chain.ETHEREUM: {
         return `https://etherscan.io/address/${address.chain.value}`;
       }

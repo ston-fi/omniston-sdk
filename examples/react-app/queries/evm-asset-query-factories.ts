@@ -5,6 +5,7 @@ import { arcAssetQueryFactory } from "~/queries/arc-assets";
 import { avalancheAssetQueryFactory } from "~/queries/avalanche-assets";
 import { baseAssetQueryFactory } from "~/queries/base-assets";
 import { bnbAssetQueryFactory } from "~/queries/bnb-assets";
+import { elysiumAssetQueryFactory } from "~/queries/elysium-assets";
 import { ethereumAssetQueryFactory } from "~/queries/ethereum-assets";
 import type { createEvmAssetQueryFactory } from "~/queries/evm-asset-factory";
 import { hyperEvmAssetQueryFactory } from "~/queries/hyperevm-assets";
@@ -20,6 +21,7 @@ export const EVM_ASSET_QUERY_FACTORIES = {
   [Chain.AVALANCHE]: avalancheAssetQueryFactory,
   [Chain.BASE]: baseAssetQueryFactory,
   [Chain.BNB]: bnbAssetQueryFactory,
+  [Chain.ELYSIUM]: elysiumAssetQueryFactory,
   [Chain.ETHEREUM]: ethereumAssetQueryFactory,
   [Chain.HYPEREVM]: hyperEvmAssetQueryFactory,
   [Chain.MONAD]: monadAssetQueryFactory,

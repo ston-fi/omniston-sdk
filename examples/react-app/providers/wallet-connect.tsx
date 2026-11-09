@@ -28,6 +28,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { WagmiProvider } from "wagmi";
 
+import { elysium } from "~/lib/evm/elysium";
 import { useAppConfig } from "~/providers/config";
 
 let isAppKitCreated = false;
@@ -53,6 +54,7 @@ export function WalletConnectProvider({
         base,
         polygon,
         bsc,
+        elysium,
         hyperEvm,
         monad,
         plasma,

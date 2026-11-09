@@ -41,6 +41,9 @@ export const ExplorerTransactionPreview = ({
       case Chain.BNB: {
         return `https://bscscan.com/tx/${txId}`;
       }
+      case Chain.ELYSIUM: {
+        return `https://elysium.kinetiq.xyz/tx/${txId}`;
+      }
       case Chain.ETHEREUM: {
         return `https://etherscan.io/tx/${txId}`;
       }

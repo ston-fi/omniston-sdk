@@ -1,0 +1,20 @@
+[
+  {
+    "address": "native",
+    "metadata": {
+      "decimals": 18,
+      "symbol": "HYPE",
+      "displayName": "Hyperliquid",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/32196.png"
+    }
+  },
+  {
+    "address": "0xb47c4C8F73F009CC0C0d3f92B388d13E293F0B65",
+    "metadata": {
+      "decimals": 6,
+      "symbol": "USDC",
+      "displayName": "USD Coin",
+      "imageUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    }
+  }
+]

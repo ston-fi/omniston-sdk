@@ -170,6 +170,11 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     ...getCommonQueryOptions(Chain.BNB),
   });
 
+  const elysiumAssetsQuery = useQuery({
+    ...getEvmAssetFetchOptions(Chain.ELYSIUM),
+    ...getCommonQueryOptions(Chain.ELYSIUM),
+  });
+
   const ethereumAssetsQuery = useQuery({
     ...getEvmAssetFetchOptions(Chain.ETHEREUM),
     ...getCommonQueryOptions(Chain.ETHEREUM),
@@ -227,6 +232,7 @@ export const AssetsProvider = ({ children }: React.PropsWithChildren) => {
     [Chain.AVALANCHE]: avalancheAssetsQuery,
     [Chain.BASE]: baseAssetsQuery,
     [Chain.BNB]: bnbAssetsQuery,
+    [Chain.ELYSIUM]: elysiumAssetsQuery,
     [Chain.ETHEREUM]: ethereumAssetsQuery,
     [Chain.HYPEREVM]: hyperEvmAssetsQuery,
     [Chain.MONAD]: monadAssetsQuery,
